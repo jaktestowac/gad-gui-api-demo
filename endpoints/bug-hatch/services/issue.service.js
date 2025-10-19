@@ -6,6 +6,7 @@ const {
   createBugHatchIssue,
   updateBugHatchIssue,
   archiveBugHatchIssue,
+  unarchiveBugHatchIssue,
   transitionBugHatchIssue,
   createBugHatchAuditLog,
   readBugHatchDemoDb,
@@ -143,7 +144,13 @@ function listIssuesService(projectId, query, currentUser) {
     order = "desc",
     limit = 50,
     offset = 0,
+    includeArchived = false,
   } = query || {};
+
+  // Filter out archived issues by default unless explicitly requested
+  if (!includeArchived) {
+    issues = issues.filter((i) => !i.archived);
+  }
 
   if (status) issues = issues.filter((i) => i.status === status);
   if (type) issues = issues.filter((i) => i.type === type);
@@ -297,6 +304,27 @@ async function archiveIssueService(issueId, currentUser) {
   }
 }
 
+async function unarchiveIssueService(issueId, currentUser) {
+  if (!currentUser) return { success: false, error: "Not authenticated", errorType: "unauthorized" };
+  const existing = findBugHatchIssueById(issueId);
+  if (!existing) return { success: false, error: "Issue not found", errorType: "notfound" };
+  const project = findBugHatchProjectById(existing.projectId);
+  if (!project) return { success: false, error: "Project not found", errorType: "notfound" };
+  if (!userCanMutateProject(project, currentUser))
+    return { success: false, error: "Forbidden", errorType: "forbidden" };
+  try {
+    const unarchived = await unarchiveBugHatchIssue(issueId);
+    await createBugHatchAuditLog({
+      actorUserId: currentUser.id,
+      eventType: "issue.unarchived",
+      payloadObject: { issueId: unarchived.id, projectId: project.id },
+    });
+    return { success: true, issue: unarchived };
+  } catch (e) {
+    return { success: false, error: e.message };
+  }
+}
+
 module.exports = {
   listIssuesService,
   createIssueService,
@@ -304,4 +332,5 @@ module.exports = {
   patchIssueService,
   transitionIssueService,
   archiveIssueService,
+  unarchiveIssueService,
 };

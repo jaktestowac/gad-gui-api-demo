@@ -14,6 +14,7 @@ const {
   patchIssueService,
   transitionIssueService,
   archiveIssueService,
+  unarchiveIssueService,
   userCanMutateProject,
 } = require("./services/issue.service");
 
@@ -95,13 +96,21 @@ async function handlePatchIssue(req, res, issueId) {
 
 async function handleArchiveIssue(req, res, issueId) {
   const user = getCurrentUser(req);
-  const issue = await getIssueService(issueId, user); // Pass user to getIssueService
-
-  if (!userCanMutateIssue(issue, user)) {
-    return res.status(HTTP_FORBIDDEN).send({ error: "Forbidden: Cannot archive demo issues." });
-  }
-
   const result = await archiveIssueService(issueId, user);
+  if (!result.success) {
+    let status = HTTP_BAD_REQUEST;
+    if (result.errorType === "unauthorized") status = 401;
+    if (result.errorType === "forbidden") status = HTTP_FORBIDDEN;
+    if (result.errorType === "notfound") status = HTTP_NOT_FOUND;
+    res.status(status).send(formatErrorResponse(result.error));
+    return;
+  }
+  res.status(HTTP_OK).send({ ok: true, data: result.issue });
+}
+
+async function handleUnarchiveIssue(req, res, issueId) {
+  const user = getCurrentUser(req);
+  const result = await unarchiveIssueService(issueId, user);
   if (!result.success) {
     let status = HTTP_BAD_REQUEST;
     if (result.errorType === "unauthorized") status = 401;
@@ -178,6 +187,16 @@ function handleBugHatchIssues(req, res) {
     const issueId = transitionMatch[1];
     if (req.method === "POST") {
       handleTransitionIssue(req, res, issueId);
+      return;
+    }
+  }
+
+  // unarchive endpoint: /api/bug-hatch/issues/:iid/unarchive
+  const unarchiveMatch = url.match(/\/api\/bug-hatch\/issues\/([^/]+)\/unarchive\/?$/);
+  if (unarchiveMatch) {
+    const issueId = unarchiveMatch[1];
+    if (req.method === "POST") {
+      handleUnarchiveIssue(req, res, issueId);
       return;
     }
   }

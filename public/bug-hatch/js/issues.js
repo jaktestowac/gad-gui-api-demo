@@ -82,6 +82,7 @@
       search: qs("#filterSearch").value.trim(),
       limit: 200,
       order: "desc",
+      includeArchived: qs("#filterIncludeArchived").checked,
     };
     return filters;
   }
@@ -138,7 +139,7 @@
     const tbody = qs("#issuesTbody");
     if (!tbody) return;
     if (!issues.length) {
-      tbody.innerHTML = '<tr><td colspan="7" class="bh-text-center bh-text-dim">No issues found</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" class="bh-text-center bh-text-dim">No issues found</td></tr>';
       return;
     }
     tbody.innerHTML = issues
@@ -153,6 +154,11 @@
           i.assigneeId ? `<span class="bh-text-dim">${i.assigneeId}</span>` : '<span class="bh-text-faint">—</span>'
         }</td>
         <td class="bh-text-dim">${formatTime(i.updatedAt)}</td>
+        <td>${
+          i.archived
+            ? '<span class="inline-flex items-center rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-[10px] text-amber-300">Archived</span>'
+            : ""
+        }</td>
       </tr>`;
       })
       .join("");
@@ -173,6 +179,7 @@
     if (filters.assigneeId) params.set("assigneeId", filters.assigneeId);
     if (filters.labels) params.set("labels", filters.labels);
     if (filters.search) params.set("search", filters.search);
+    if (filters.includeArchived) params.set("includeArchived", "true");
     params.set("limit", filters.limit);
     params.set("order", "desc");
     if (isDemo || forceDemo) params.set("demo", "true");
@@ -197,6 +204,8 @@
       const el = qs(id);
       if (el) el.value = "";
     });
+    const archivedCheckbox = qs("#filterIncludeArchived");
+    if (archivedCheckbox) archivedCheckbox.checked = false;
     loadIssues();
   }
 

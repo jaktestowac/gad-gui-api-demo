@@ -6,6 +6,7 @@
   let currentUser = null;
   let projectCache = null;
   let issuesCache = [];
+  let currentArchiveIssueId = null;
 
   function formatTime(iso) {
     try {
@@ -101,6 +102,12 @@
     const issuesLink = qs("#issuesLink");
     if (issuesLink) {
       issuesLink.href = `/bug-hatch/issues.html?project=${encodeURIComponent(p.key)}${forceDemo ? "&demo=true" : ""}`;
+    }
+    const archivedIssuesLink = qs("#archivedIssuesLink");
+    if (archivedIssuesLink) {
+      archivedIssuesLink.href = `/bug-hatch/archived-issues.html?id=${encodeURIComponent(p.id)}${
+        forceDemo ? "&demo=true" : ""
+      }`;
     }
   }
 
@@ -328,6 +335,38 @@
           )
           .join("");
     }
+    // Action buttons
+    const actionsContainer = qs("#pvActions");
+    if (actionsContainer) {
+      const readOnly = forceDemo || (currentUser && (currentUser.isDemo || currentUser.role === "viewer"));
+      if (!readOnly) {
+        const isArchived = issue.archived;
+        const actionBtn = document.createElement("button");
+        actionBtn.className = `inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-medium ${
+          isArchived
+            ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20"
+            : "border-amber-500/40 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20"
+        }`;
+        actionBtn.innerHTML = isArchived
+          ? `<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+            </svg>Unarchive`
+          : `<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8M9 12h6"></path>
+            </svg>Archive`;
+        actionBtn.addEventListener("click", () => {
+          if (isArchived) {
+            unarchiveIssue(issue.id);
+          } else {
+            archiveIssue(issue.id);
+          }
+        });
+        actionsContainer.innerHTML = "";
+        actionsContainer.appendChild(actionBtn);
+      } else {
+        actionsContainer.innerHTML = "";
+      }
+    }
     modal.classList.remove("bh-hidden", "hidden");
     // Animate panel in
     const panel = modal.querySelector(".bh-modal-content");
@@ -405,10 +444,68 @@
     if (e.target && (e.target.id === "pvCloseBtn" || e.target.id === "issuePreviewModal")) {
       closePreview();
     }
+    // Close archive confirmation modal
+    if (e.target && e.target.closest("#archiveConfirmModal") && e.target.hasAttribute("data-modal-close")) {
+      const modal = qs("#archiveConfirmModal");
+      if (modal) {
+        modal.setAttribute("aria-hidden", "true");
+        const panel = modal.querySelector(".bh-modal-content");
+        if (panel) {
+          panel.classList.add("transition", "duration-150", "opacity-0", "translate-y-1", "scale-95");
+          setTimeout(() => {
+            modal.classList.add("hidden");
+            modal.classList.remove("open");
+            panel.classList.remove(
+              "opacity-0",
+              "translate-y-1",
+              "scale-95",
+              "opacity-100",
+              "translate-y-0",
+              "scale-100"
+            );
+          }, 150);
+        } else {
+          modal.classList.add("hidden");
+          modal.classList.remove("open");
+        }
+      }
+    }
   });
   document.addEventListener("keyup", (e) => {
-    if (e.key === "Escape") closePreview();
+    if (e.key === "Escape") {
+      closePreview();
+      // Also close archive confirmation modal
+      const modal = qs("#archiveConfirmModal");
+      if (modal && !modal.classList.contains("hidden")) {
+        modal.setAttribute("aria-hidden", "true");
+        const panel = modal.querySelector(".bh-modal-content");
+        if (panel) {
+          panel.classList.add("transition", "duration-150", "opacity-0", "translate-y-1", "scale-95");
+          setTimeout(() => {
+            modal.classList.add("hidden");
+            modal.classList.remove("open");
+            panel.classList.remove(
+              "opacity-0",
+              "translate-y-1",
+              "scale-95",
+              "opacity-100",
+              "translate-y-0",
+              "scale-100"
+            );
+          }, 150);
+        } else {
+          modal.classList.add("hidden");
+          modal.classList.remove("open");
+        }
+      }
+    }
   });
+
+  // Archive confirmation modal event listener
+  const confirmArchiveBtn = qs("#confirmArchiveBtn");
+  if (confirmArchiveBtn) {
+    confirmArchiveBtn.addEventListener("click", confirmArchiveIssue);
+  }
 
   async function load() {
     const project = await fetchProject();
@@ -510,6 +607,94 @@
         qcToast(err.message || "Network error");
       }
     });
+  }
+
+  async function archiveIssue(issueId) {
+    // Store the issue ID for the confirmation modal
+    currentArchiveIssueId = issueId;
+    // Show confirmation modal
+    const modal = qs("#archiveConfirmModal");
+    if (modal) {
+      modal.setAttribute("aria-hidden", "false");
+      modal.classList.remove("hidden");
+      modal.classList.add("open");
+      const panel = modal.querySelector(".bh-modal-content");
+      if (panel) {
+        panel.classList.add("opacity-0", "translate-y-1", "scale-95");
+        requestAnimationFrame(() => {
+          panel.classList.add("transition", "duration-150");
+          panel.classList.remove("opacity-0", "translate-y-1", "scale-95");
+          panel.classList.add("opacity-100", "translate-y-0", "scale-100");
+        });
+      }
+    }
+  }
+
+  async function confirmArchiveIssue() {
+    const issueId = currentArchiveIssueId;
+    if (!issueId) return;
+
+    try {
+      const resp = await fetch(`/api/bug-hatch/issues/${encodeURIComponent(issueId)}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        alert(data.error || "Failed to archive issue");
+        return;
+      }
+      // Remove from cache and re-render
+      issuesCache = issuesCache.filter((i) => i.id !== issueId);
+      renderBoard();
+      closePreview();
+      // Close the confirmation modal
+      const modal = qs("#archiveConfirmModal");
+      if (modal) {
+        modal.setAttribute("aria-hidden", "true");
+        const panel = modal.querySelector(".bh-modal-content");
+        if (panel) {
+          panel.classList.add("transition", "duration-150", "opacity-0", "translate-y-1", "scale-95");
+          setTimeout(() => {
+            modal.classList.add("hidden");
+            modal.classList.remove("open");
+            panel.classList.remove(
+              "opacity-0",
+              "translate-y-1",
+              "scale-95",
+              "opacity-100",
+              "translate-y-0",
+              "scale-100"
+            );
+          }, 150);
+        } else {
+          modal.classList.add("hidden");
+          modal.classList.remove("open");
+        }
+      }
+    } catch (e) {
+      alert("Network error: " + e.message);
+    }
+  }
+
+  async function unarchiveIssue(issueId) {
+    try {
+      const resp = await fetch(`/api/bug-hatch/issues/${encodeURIComponent(issueId)}/unarchive`, {
+        method: "POST",
+        credentials: "include",
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        alert(data.error || "Failed to unarchive issue");
+        return;
+      }
+      // Add to cache and re-render
+      issuesCache.push(data.data);
+      renderBoard();
+      closePreview();
+    } catch (e) {
+      alert("Network error: " + e.message);
+    }
   }
 
   function setupQuickCreateToggle() {

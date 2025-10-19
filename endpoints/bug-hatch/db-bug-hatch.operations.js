@@ -784,6 +784,10 @@ async function archiveBugHatchIssue(issueId) {
   return updateBugHatchIssue(issueId, { archived: true });
 }
 
+async function unarchiveBugHatchIssue(issueId) {
+  return updateBugHatchIssue(issueId, { archived: false });
+}
+
 // Transition only adjusts status + updatedAt; validation happens in service layer
 async function transitionBugHatchIssue(issueId, toStatus) {
   return updateBugHatchIssue(issueId, { status: toStatus });
@@ -828,6 +832,7 @@ module.exports = {
   createBugHatchIssue,
   updateBugHatchIssue,
   archiveBugHatchIssue,
+  unarchiveBugHatchIssue,
   transitionBugHatchIssue,
 
   // Audit
