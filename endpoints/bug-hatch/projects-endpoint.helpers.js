@@ -113,30 +113,6 @@ function handleBugHatchProjects(req, res) {
   // Normalize URL path
   const url = req.url.replace(/\?.*$/, "");
 
-  // /api/bug-hatch/projects
-  if (req.method === "GET" && /\/api\/bug-hatch\/projects(\/?$|\?)/.test(url)) {
-    handleListProjects(req, res);
-    return;
-  }
-  if (req.method === "POST" && /\/api\/bug-hatch\/projects\/?$/.test(url)) {
-    handleCreateProject(req, res);
-    return;
-  }
-
-  // /api/bug-hatch/projects/:pid
-  const projectMatch = url.match(/\/api\/bug-hatch\/projects\/([^/]+)\/?$/);
-  if (projectMatch) {
-    const projectId = projectMatch[1];
-    if (req.method === "GET") {
-      handleGetProject(req, res, projectId);
-      return;
-    }
-    if (req.method === "PATCH") {
-      handlePatchProject(req, res, projectId);
-      return;
-    }
-  }
-
   // /api/bug-hatch/projects/:pid/members
   const membersAddMatch = url.match(/\/api\/bug-hatch\/projects\/([^/]+)\/members\/?$/);
   if (membersAddMatch) {
@@ -156,6 +132,51 @@ function handleBugHatchProjects(req, res) {
       handleRemoveMember(req, res, projectId, userId);
       return;
     }
+  }
+
+  // /api/bug-hatch/projects/:pid/invitations
+  const invitationsMatch = url.match(/\/api\/bug-hatch\/projects\/([^/]+)\/invitations\/?$/);
+  if (invitationsMatch) {
+    const projectId = invitationsMatch[1];
+    if (req.method === "GET") {
+      // This should be handled by invitations-endpoint.helpers.js
+      // But we need to pass the projectId somehow
+      req.params = { projectId };
+      const { handleGetProjectInvitations } = require("./invitations-endpoint.helpers");
+      handleGetProjectInvitations(req, res);
+      return;
+    }
+    if (req.method === "POST") {
+      // This should be handled by invitations-endpoint.helpers.js
+      req.params = { projectId };
+      const { handleCreateInvitation } = require("./invitations-endpoint.helpers");
+      handleCreateInvitation(req, res);
+      return;
+    }
+  }
+
+  // /api/bug-hatch/projects/:pid
+  const projectMatch = url.match(/\/api\/bug-hatch\/projects\/([^/]+)(?!\/)/);
+  if (projectMatch) {
+    const projectId = projectMatch[1];
+    if (req.method === "GET") {
+      handleGetProject(req, res, projectId);
+      return;
+    }
+    if (req.method === "PATCH") {
+      handlePatchProject(req, res, projectId);
+      return;
+    }
+  }
+
+  // /api/bug-hatch/projects
+  if (req.method === "GET" && /\/api\/bug-hatch\/projects(\/?$|\?)/.test(url)) {
+    handleListProjects(req, res);
+    return;
+  }
+  if (req.method === "POST" && /\/api\/bug-hatch\/projects\/?$/.test(url)) {
+    handleCreateProject(req, res);
+    return;
   }
 
   res.status(404).send(formatErrorResponse("Project endpoint not found"));

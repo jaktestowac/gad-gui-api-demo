@@ -599,7 +599,6 @@ hr.bh-separator {
   animation: bh-toast-slide-in 0.3s ease-out;
   backdrop-filter: blur(8px);
   top: 26px !important;
-  margin-top: 26px !important;
 }
 
 .bh-toast-info {

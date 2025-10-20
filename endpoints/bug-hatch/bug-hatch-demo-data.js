@@ -46,6 +46,7 @@ module.exports = {
       id: "proj-demo-core",
       key: "CORE",
       name: "Core Platform (DEMO)",
+      admin: "user-demo-003", // Team Lead is admin
       members: ["user-demo-001", "user-demo-002", "user-demo-003"],
       archived: false,
       demo: true,
@@ -64,6 +65,7 @@ module.exports = {
       id: "proj-demo-web",
       key: "WEB",
       name: "Web App (DEMO)",
+      admin: "user-demo-003", // Team Lead is admin
       members: ["user-demo-001", "user-demo-003"],
       archived: false,
       workflow: {
@@ -159,4 +161,5 @@ module.exports = {
   attachments: [],
   filters: [],
   outbox: [],
+  invitations: [],
 };

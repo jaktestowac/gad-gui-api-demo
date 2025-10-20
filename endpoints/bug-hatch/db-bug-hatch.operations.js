@@ -5,6 +5,7 @@ const { areIdsEqual, areStringsEqualIgnoringCase } = require("../../helpers/comp
 
 // Database paths
 const DB_PATH = path.join(__dirname, "../../db/bug-hatch-db-tmp.json");
+const DB_INVITATIONS_PATH = path.join(__dirname, "../../db/bug-hatch-invitations-db-tmp.json");
 const AUDIT_DB_PATH = path.join(__dirname, "../../db/bug-hatch-audit-db-tmp.json");
 const DEMO_DB_PATH = path.join(__dirname, "../../db/bug-hatch-demo-db-tmp.json");
 
@@ -67,6 +68,7 @@ function readBugHatchDb() {
         filters: [],
         audit: [],
         outbox: [],
+        invitations: [],
       };
       fs.writeFileSync(DB_PATH, JSON.stringify(emptyDb, null, 2));
       return emptyDb;
@@ -139,7 +141,16 @@ function readBugHatchDemoDb() {
     return demoDb;
   } catch (error) {
     logError("Error reading Demo BugHatch DB:", error);
-    return { users: [], projects: [], issues: [], comments: [], attachments: [], filters: [], outbox: [] };
+    return {
+      users: [],
+      projects: [],
+      issues: [],
+      comments: [],
+      attachments: [],
+      filters: [],
+      outbox: [],
+      invitations: [],
+    };
   }
 }
 
@@ -220,27 +231,26 @@ async function writeAuditDb(data) {
 }
 
 /**
- * Create a new audit log entry
- * @param {Object} data - Audit data
- * @param {string} data.actorUserId - User who performed the action
- * @param {string} data.eventType - Type of event (e.g., 'issue.created', 'comment.added')
- * @param {Object} data.payloadObject - Additional data for the event
+ * Create an audit log entry
+ * @param {Object} auditData - Audit data
  * @returns {Promise<Object>} Created audit entry
  */
-async function createBugHatchAuditLog(data) {
-  let created;
+async function createBugHatchAuditLog(auditData) {
   const db = readAuditDb();
-  const now = new Date().toISOString();
-  created = {
-    id: generateBugHatchId("aud"),
-    actorUserId: data.actorUserId,
-    eventType: data.eventType,
-    payloadObject: data.payloadObject || {},
-    createdAt: now,
+
+  const auditEntry = {
+    id: auditData.id || `audit-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    actorUserId: auditData.actorUserId,
+    eventType: auditData.eventType,
+    payloadObject: auditData.payloadObject || {},
+    createdAt: auditData.createdAt || new Date().toISOString(),
   };
-  db.audit.push(created);
+
+  db.audit.push(auditEntry);
   await writeAuditDb(db);
-  return created;
+
+  logTrace("BugHatch audit log created:", { id: auditEntry.id, eventType: auditEntry.eventType });
+  return auditEntry;
 }
 
 /**
@@ -325,6 +335,7 @@ async function initializeBugHatchDb() {
       filters: (seed && seed.filters) || [],
       audit: [],
       outbox: (seed && seed.outbox) || [],
+      invitations: [],
     };
 
     // Write to database
@@ -413,6 +424,7 @@ async function resetBugHatchDatabaseWithDemoData() {
       filters: demoDb.filters || [],
       audit: [],
       outbox: demoDb.outbox || [],
+      invitations: [],
     };
 
     // Overwrite database
@@ -552,6 +564,7 @@ async function createBugHatchProject(data) {
     id,
     key: data.key,
     name: data.name,
+    admin: data.createdBy, // User who creates the project becomes admin
     members: data.members || (data.createdBy ? [data.createdBy] : []),
     archived: false,
     workflow: data.workflow || {
@@ -686,29 +699,6 @@ async function updateBugHatchUser(userId, updates) {
 // (duplicate project retrieval functions removed - defined earlier in file)
 
 // ==================== AUDIT OPERATIONS ====================
-
-/**
- * Create an audit log entry
- * @param {Object} auditData - Audit data
- * @returns {Promise<Object>} Created audit entry
- */
-async function createBugHatchAuditLog(auditData) {
-  const db = readAuditDb();
-
-  const auditEntry = {
-    id: auditData.id || `audit-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    actorUserId: auditData.actorUserId,
-    eventType: auditData.eventType,
-    payloadObject: auditData.payloadObject || {},
-    createdAt: auditData.createdAt || new Date().toISOString(),
-  };
-
-  db.audit.push(auditEntry);
-  await writeAuditDb(db);
-
-  logTrace("BugHatch audit log created:", { id: auditEntry.id, eventType: auditEntry.eventType });
-  return auditEntry;
-}
 
 /**
  * Get audit logs with optional filters
@@ -1003,6 +993,67 @@ async function markBugHatchAttachmentDeleted(attachmentId) {
   return updated;
 }
 
+/** INVITATION OPERATIONS **/
+
+function bugHatchInvitationsDb() {
+  return readBugHatchDb().invitations || [];
+}
+
+function findBugHatchInvitationById(invitationId) {
+  return bugHatchInvitationsDb().find((i) => areIdsEqual(i.id, invitationId));
+}
+
+function findBugHatchInvitationByToken(token) {
+  return bugHatchInvitationsDb().find((i) => i.token === token);
+}
+
+function findBugHatchInvitationsByProjectId(projectId) {
+  return bugHatchInvitationsDb().filter((i) => areIdsEqual(i.projectId, projectId));
+}
+
+function findBugHatchInvitationsByEmail(email) {
+  return bugHatchInvitationsDb().filter((i) => i.email.toLowerCase() === email.toLowerCase());
+}
+
+async function createBugHatchInvitation(data) {
+  let created;
+  await mutateAndWriteDb((db) => {
+    const now = new Date().toISOString();
+    created = {
+      id: data.id || generateBugHatchId("inv"),
+      projectId: data.projectId,
+      email: data.email,
+      invitedBy: data.invitedBy,
+      token: data.token,
+      status: data.status || "pending",
+      createdAt: now,
+      updatedAt: now,
+    };
+    db.invitations.push(created);
+  });
+  return created;
+}
+
+async function updateBugHatchInvitation(invitationId, updates) {
+  let updated;
+  await mutateAndWriteDb((db) => {
+    const idx = db.invitations.findIndex((i) => areIdsEqual(i.id, invitationId));
+    if (idx === -1) throw new Error("Invitation not found");
+    const current = db.invitations[idx];
+    updated = { ...current, ...updates, updatedAt: new Date().toISOString() };
+    db.invitations[idx] = updated;
+  });
+  return updated;
+}
+
+async function deleteBugHatchInvitation(invitationId) {
+  await mutateAndWriteDb((db) => {
+    const idx = db.invitations.findIndex((i) => areIdsEqual(i.id, invitationId));
+    if (idx === -1) throw new Error("Invitation not found");
+    db.invitations.splice(idx, 1);
+  });
+}
+
 // Re-export with new functions (node caches previous module.exports; we extend in place)
 Object.assign(module.exports, {
   // Audit
@@ -1021,4 +1072,13 @@ Object.assign(module.exports, {
   findBugHatchAttachmentsByIssueId,
   createBugHatchAttachment,
   markBugHatchAttachmentDeleted,
+  // Invitations
+  bugHatchInvitationsDb,
+  findBugHatchInvitationById,
+  findBugHatchInvitationByToken,
+  findBugHatchInvitationsByProjectId,
+  findBugHatchInvitationsByEmail,
+  createBugHatchInvitation,
+  updateBugHatchInvitation,
+  deleteBugHatchInvitation,
 });

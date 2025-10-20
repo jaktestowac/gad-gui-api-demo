@@ -479,6 +479,32 @@
         }
       }
     }
+    // Close member removal confirmation modal
+    if (e.target && e.target.closest("#memberRemoveConfirmModal") && e.target.hasAttribute("data-modal-close")) {
+      const modal = qs("#memberRemoveConfirmModal");
+      if (modal) {
+        modal.setAttribute("aria-hidden", "true");
+        const panel = modal.querySelector(".bh-modal-content");
+        if (panel) {
+          panel.classList.add("transition", "duration-150", "opacity-0", "translate-y-1", "scale-95");
+          setTimeout(() => {
+            modal.classList.add("hidden");
+            modal.classList.remove("open");
+            panel.classList.remove(
+              "opacity-0",
+              "translate-y-1",
+              "scale-95",
+              "opacity-100",
+              "translate-y-0",
+              "scale-100"
+            );
+          }, 150);
+        } else {
+          modal.classList.add("hidden");
+          modal.classList.remove("open");
+        }
+      }
+    }
   });
   document.addEventListener("keyup", (e) => {
     if (e.key === "Escape") {
@@ -524,6 +550,9 @@
     renderIssues(issues);
     setupQuickCreate();
     setupQuickCreateToggle();
+    await loadMembers();
+    setupInvitationsPanel();
+    await loadInvitations();
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
@@ -535,6 +564,7 @@
       demoBannerEl.classList.remove("hidden", "bh-hidden");
       demoBannerEl.classList.add("visible");
     }
+    setupMembersPanel();
     load();
   });
 
@@ -650,7 +680,7 @@
       });
       const data = await resp.json().catch(() => ({}));
       if (!resp.ok) {
-        alert(data.error || "Failed to archive issue");
+        showBoardError(data.error || "Failed to archive issue");
         return;
       }
       // Remove from cache and re-render
@@ -682,7 +712,7 @@
         }
       }
     } catch (e) {
-      alert("Network error: " + e.message);
+      showBoardError(e.message || "Network error");
     }
   }
 
@@ -706,6 +736,263 @@
     }
   }
 
+  // ==================== MEMBERS MANAGEMENT ====================
+
+  async function loadMembers() {
+    if (!projectId) return;
+
+    const loadingEl = qs("#membersLoading");
+    const errorEl = qs("#membersError");
+    const listEl = qs("#membersList");
+
+    loadingEl.style.display = "block";
+    errorEl.classList.add("bh-hidden");
+    listEl.innerHTML = "";
+
+    try {
+      const url = `/api/bug-hatch/projects/${encodeURIComponent(projectId)}${forceDemo ? "?demo=true" : ""}`;
+      const resp = await fetch(url, { credentials: "include" });
+      const data = await resp.json().catch(() => ({}));
+
+      if (!resp.ok) {
+        throw new Error(data.error || "Failed to load project");
+      }
+
+      const project = data.data;
+      const members = project.members || [];
+      const isAdmin = currentUser && (currentUser.role === "admin" || project.admin === currentUser.id);
+
+      // Render members list
+      if (members.length === 0) {
+        listEl.innerHTML = '<div class="text-xs text-neutral-400 text-center py-2">No members yet</div>';
+      } else {
+        members.forEach((member) => {
+          const memberEl = document.createElement("div");
+          memberEl.className = "flex items-center justify-between py-1";
+          memberEl.innerHTML = `
+            <div class="flex items-center gap-2">
+              <div class="w-6 h-6 rounded-full bg-neutral-700 flex items-center justify-center text-xs font-medium text-neutral-300">
+                ${member.name ? member.name.charAt(0).toUpperCase() : "?"}
+              </div>
+              <div class="min-w-0">
+                <div class="text-xs font-medium text-neutral-200 truncate">${member.name || "Unknown"}</div>
+                <div class="text-[10px] text-neutral-400 truncate">${member.email}</div>
+              </div>
+            </div>
+            ${
+              isAdmin && member.id !== currentUser.id
+                ? `
+              <button
+                class="member-remove-btn text-neutral-400 hover:text-red-400 text-xs p-1"
+                data-member-id="${member.id}"
+                title="Remove member"
+              >
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            `
+                : ""
+            }
+          `;
+          listEl.appendChild(memberEl);
+        });
+      }
+
+      // Show/hide add member section based on admin status
+      const addMemberSection = qs("#addMemberSection");
+      if (isAdmin) {
+        addMemberSection.classList.remove("hidden");
+      } else {
+        addMemberSection.classList.add("hidden");
+      }
+
+      loadingEl.style.display = "none";
+    } catch (error) {
+      console.error("Failed to load members:", error);
+      loadingEl.style.display = "none";
+      errorEl.textContent = error.message || "Failed to load members";
+      errorEl.classList.remove("bh-hidden");
+    }
+  }
+
+  async function addMember(email) {
+    if (!projectId || !email) return;
+
+    try {
+      // First, find user by email
+      const usersResp = await fetch(`/api/bug-hatch/users/search${forceDemo ? "?demo=true" : ""}`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+      const usersData = await usersResp.json().catch(() => ({}));
+
+      if (!usersData.ok || !usersData.data || usersData.data.length === 0) {
+        throw new Error("User not found with that email");
+      }
+
+      const userToAdd = usersData.data[0];
+
+      // Add member to project
+      const addResp = await fetch(
+        `/api/bug-hatch/projects/${encodeURIComponent(projectId)}/members${forceDemo ? "?demo=true" : ""}`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userId: userToAdd.id }),
+        }
+      );
+
+      const addData = await addResp.json().catch(() => ({}));
+
+      if (!addResp.ok) {
+        throw new Error(addData.error || "Failed to add member");
+      }
+
+      // Reload members list
+      await loadMembers();
+
+      // Clear form
+      qs("#memberEmail").value = "";
+
+      if (window.bhToast && typeof window.bhToast.show === "function") {
+        window.bhToast.show("Member added successfully", { type: "success", timeout: 3000 });
+      }
+    } catch (error) {
+      console.error("Failed to add member:", error);
+      if (window.bhToast && typeof window.bhToast.show === "function") {
+        window.bhToast.show(error.message || "Failed to add member", { type: "error", timeout: 6000 });
+      }
+    }
+  }
+
+  async function removeMember(memberId) {
+    if (!projectId || !memberId) return;
+
+    // Find member details for the modal
+    const member = projectCache.members.find((m) => m.id === memberId);
+    if (!member) return;
+
+    // Show custom confirmation modal
+    showMemberRemoveConfirmModal(member);
+  }
+
+  function showMemberRemoveConfirmModal(member) {
+    const modal = qs("#memberRemoveConfirmModal");
+    const memberNameSpan = qs("#memberRemoveName");
+    const confirmBtn = qs("#confirmMemberRemoveBtn");
+
+    if (!modal || !memberNameSpan || !confirmBtn) return;
+
+    // Set member name in modal
+    memberNameSpan.textContent = member.name || member.email || "this member";
+
+    // Store member ID for confirmation
+    confirmBtn.dataset.memberId = member.id;
+
+    // Show modal
+    modal.classList.remove("hidden");
+    modal.setAttribute("aria-hidden", "false");
+  }
+
+  function hideMemberRemoveConfirmModal() {
+    const modal = qs("#memberRemoveConfirmModal");
+    if (modal) {
+      modal.classList.add("hidden");
+      modal.setAttribute("aria-hidden", "true");
+    }
+  }
+
+  async function performMemberRemoval(memberId) {
+    if (!projectId || !memberId) return;
+
+    try {
+      const resp = await fetch(
+        `/api/bug-hatch/projects/${encodeURIComponent(projectId)}/members/${encodeURIComponent(memberId)}${
+          forceDemo ? "?demo=true" : ""
+        }`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      const data = await resp.json().catch(() => ({}));
+
+      if (!resp.ok) {
+        throw new Error(data.error || "Failed to remove member");
+      }
+
+      // Reload members list
+      await loadMembers();
+
+      if (window.bhToast && typeof window.bhToast.show === "function") {
+        window.bhToast.show("Member removed successfully", { type: "success", timeout: 3000 });
+      }
+    } catch (error) {
+      console.error("Failed to remove member:", error);
+      if (window.bhToast && typeof window.bhToast.show === "function") {
+        window.bhToast.show(error.message || "Failed to remove member", { type: "error", timeout: 6000 });
+      }
+    }
+  }
+
+  function setupMembersPanel() {
+    // Toggle members panel
+    const toggleBtn = qs("#toggleMembersBtn");
+    const panel = qs("#membersPanel");
+    if (toggleBtn && panel) {
+      toggleBtn.addEventListener("click", () => {
+        panel.classList.toggle("hidden");
+        const isHidden = panel.classList.contains("hidden");
+        toggleBtn.textContent = isHidden ? "Show Members" : "Hide Members";
+      });
+    }
+
+    // Member removal confirmation modal
+    const confirmBtn = qs("#confirmMemberRemoveBtn");
+    if (confirmBtn) {
+      confirmBtn.addEventListener("click", async () => {
+        const memberId = confirmBtn.dataset.memberId;
+        if (memberId) {
+          await performMemberRemoval(memberId);
+        }
+        hideMemberRemoveConfirmModal();
+      });
+    }
+
+    // Close modal handlers
+    const modal = qs("#memberRemoveConfirmModal");
+    if (modal) {
+      modal.addEventListener("click", (e) => {
+        if (e.target && (e.target.hasAttribute("data-modal-close") || e.target.id === "memberRemoveConfirmModal")) {
+          hideMemberRemoveConfirmModal();
+        }
+      });
+    }
+
+    const listEl = qs("#membersList");
+    if (listEl) {
+      listEl.addEventListener("click", async (e) => {
+        const removeBtn = e.target.closest(".member-remove-btn");
+        if (removeBtn) {
+          e.preventDefault();
+          const memberId = removeBtn.dataset.memberId;
+          if (memberId) {
+            await removeMember(memberId);
+          }
+        }
+      });
+    }
+  }
+
   function setupQuickCreateToggle() {
     const btn = document.getElementById("toggleQuickCreateBtn");
     const wrap = document.getElementById("quickCreateWrap");
@@ -723,5 +1010,191 @@
       wrap.style.display = isHidden ? "block" : "none";
       setBtn(isHidden);
     });
+  }
+
+  // ==================== INVITATIONS MANAGEMENT ====================
+
+  async function loadInvitations() {
+    if (!projectId) return;
+
+    try {
+      const url = `/api/bug-hatch/projects/${encodeURIComponent(projectId)}/invitations${
+        forceDemo ? "?demo=true" : ""
+      }`;
+      const resp = await fetch(url, { credentials: "include" });
+      const data = await resp.json().catch(() => ({}));
+
+      if (!resp.ok) {
+        console.error("Failed to load invitations:", data.error);
+        return;
+      }
+
+      const invitations = data.data || [];
+      renderInvitations(invitations);
+    } catch (error) {
+      console.error("Failed to load invitations:", error);
+    }
+  }
+
+  function renderInvitations(invitations) {
+    const listEl = qs("#invitationsList");
+
+    if (invitations.length === 0) {
+      listEl.innerHTML = '<div class="text-xs text-neutral-400 text-center py-1">No pending invitations</div>';
+      return;
+    }
+
+    listEl.innerHTML = invitations
+      .filter((inv) => inv.status === "pending")
+      .map(
+        (inv) => `
+        <div class="flex items-center justify-between py-1 px-2 rounded bg-neutral-800/40">
+          <div class="min-w-0 flex-1">
+            <div class="text-xs font-medium text-neutral-200 truncate">${inv.email}</div>
+            <div class="text-[10px] text-neutral-400">Sent ${formatTime(inv.createdAt)}</div>
+          </div>
+          <button
+            class="invitation-cancel-btn text-neutral-400 hover:text-red-400 text-xs p-1 ml-1"
+            data-invitation-id="${inv.id}"
+            title="Cancel invitation"
+          >
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      `
+      )
+      .join("");
+  }
+
+  async function sendInvitation(email) {
+    if (!projectId || !email) return;
+
+    try {
+      const resp = await fetch(`/api/bug-hatch/invitations${forceDemo ? "?demo=true" : ""}`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ projectId, email }),
+      });
+
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        const errorMessage = data.error?.message || data.error || "Failed to send invitation";
+        throw new Error(errorMessage);
+      }
+
+      // Reload invitations
+      await loadInvitations();
+
+      // Clear and hide form
+      qs("#invitationEmail").value = "";
+      qs("#sendInvitationForm").classList.add("hidden");
+
+      if (window.bhToast && typeof window.bhToast.show === "function") {
+        window.bhToast.show("Invitation sent successfully", { type: "success", timeout: 3000 });
+      }
+    } catch (error) {
+      console.error("Failed to send invitation:", error);
+      if (window.bhToast && typeof window.bhToast.show === "function") {
+        window.bhToast.show(error.message || "Failed to send invitation", { type: "error", timeout: 6000 });
+      }
+    }
+  }
+
+  async function cancelInvitation(invitationId) {
+    if (!invitationId) return;
+
+    if (!confirm("Are you sure you want to cancel this invitation?")) {
+      return;
+    }
+
+    try {
+      const resp = await fetch(
+        `/api/bug-hatch/invitations/${encodeURIComponent(invitationId)}${forceDemo ? "?demo=true" : ""}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      const data = await resp.json().catch(() => ({}));
+
+      if (!resp.ok) {
+        throw new Error(data.error || "Failed to cancel invitation");
+      }
+
+      // Reload invitations
+      await loadInvitations();
+
+      if (window.bhToast && typeof window.bhToast.show === "function") {
+        window.bhToast.show("Invitation cancelled", { type: "success", timeout: 3000 });
+      }
+    } catch (error) {
+      console.error("Failed to cancel invitation:", error);
+      if (window.bhToast && typeof window.bhToast.show === "function") {
+        window.bhToast.show(error.message || "Failed to cancel invitation", { type: "error", timeout: 6000 });
+      }
+    }
+  }
+
+  function setupInvitationsPanel() {
+    // Show/hide invitations section based on admin status
+    const invitationsSection = qs("#invitationsSection");
+    const isAdmin =
+      currentUser && (currentUser.role === "admin" || (projectCache && projectCache.admin === currentUser.id));
+    if (isAdmin) {
+      invitationsSection.classList.remove("hidden");
+    } else {
+      invitationsSection.classList.add("hidden");
+    }
+
+    // Send invitation button
+    const sendBtn = qs("#sendInvitationBtn");
+    const sendForm = qs("#sendInvitationForm");
+    const cancelBtn = qs("#cancelInvitationBtn");
+
+    if (sendBtn && sendForm) {
+      sendBtn.addEventListener("click", () => {
+        sendForm.classList.toggle("hidden");
+      });
+    }
+
+    if (cancelBtn && sendForm) {
+      cancelBtn.addEventListener("click", () => {
+        sendForm.classList.add("hidden");
+        qs("#invitationEmail").value = "";
+      });
+    }
+
+    // Send invitation form
+    const sendInvitationForm = qs("#sendInvitationForm");
+    if (sendInvitationForm) {
+      sendInvitationForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = qs("#invitationEmail").value.trim();
+        if (email) {
+          await sendInvitation(email);
+        }
+      });
+    }
+
+    // Cancel invitation buttons (delegated)
+    const listEl = qs("#invitationsList");
+    if (listEl) {
+      listEl.addEventListener("click", async (e) => {
+        const cancelBtn = e.target.closest(".invitation-cancel-btn");
+        if (cancelBtn) {
+          e.preventDefault();
+          const invitationId = cancelBtn.dataset.invitationId;
+          if (invitationId) {
+            await cancelInvitation(invitationId);
+          }
+        }
+      });
+    }
   }
 })();

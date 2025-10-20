@@ -52,7 +52,11 @@
                             <option value="high">High</option>
                         </select>
                     </label>
-                    <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Assignee Id</span><input id="fieldAssignee" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" /></label>
+                    <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Assignee</span>
+                        <select id="fieldAssignee" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none">
+                            <option value="">Unassigned</option>
+                        </select>
+                    </label>
                     <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Labels (comma)</span><input id="fieldLabels" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" /></label>
                     <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Description</span><textarea id="fieldDescription" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" rows="6"></textarea></label>
                     <div id="editError" class="bh-alert bh-alert-error bh-hidden rounded-md border border-red-500/40 bg-red-500/10 text-red-200 text-sm px-3 py-2" style="display:none;"></div>

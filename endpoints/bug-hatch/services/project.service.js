@@ -8,6 +8,7 @@ const {
   createBugHatchAuditLog,
   bugHatchUsersDb,
   readBugHatchDemoDb,
+  findBugHatchUserById,
 } = require("../db-bug-hatch.operations");
 const { areStringsEqualIgnoringCase } = require("../../../helpers/compare.helpers");
 
@@ -159,7 +160,25 @@ function getProjectService(projectId, currentUser) {
     }
   }
   if (!currentUser) return { success: false, error: "Not authenticated", errorType: "unauthorized" };
-  return { success: true, project };
+
+  // Enrich project members with user details
+  const enrichedProject = { ...project };
+  enrichedProject.members = project.members.map((memberId) => {
+    const user = findBugHatchUserById(memberId);
+    return user
+      ? {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+        }
+      : {
+          id: memberId,
+          name: "Unknown",
+          email: "Unknown",
+        };
+  });
+
+  return { success: true, project: enrichedProject };
 }
 
 async function patchProjectService(projectId, patch, currentUser) {
@@ -197,17 +216,26 @@ async function patchProjectService(projectId, patch, currentUser) {
 
 async function addMemberService(projectId, userId, currentUser) {
   if (!currentUser) return { success: false, error: "Not authenticated", errorType: "unauthorized" };
-  if (currentUser.role !== "admin") return { success: false, error: "Forbidden", errorType: "forbidden" };
+
+  // Check if user is global admin or project admin
+  const isGlobalAdmin = currentUser.role === "admin";
+  const project = findBugHatchProjectById(projectId);
+  const isProjectAdmin = project && project.admin === currentUser.id;
+
+  if (!isGlobalAdmin && !isProjectAdmin) {
+    return { success: false, error: "Forbidden", errorType: "forbidden" };
+  }
+
   const userExists = bugHatchUsersDb().some((u) => u.id === userId);
   if (!userExists) return { success: false, error: "User not found" };
   try {
-    const project = await addBugHatchProjectMember(projectId, userId);
+    const updatedProject = await addBugHatchProjectMember(projectId, userId);
     await createBugHatchAuditLog({
       actorUserId: currentUser.id,
       eventType: "project.member.added",
       payloadObject: { projectId, userId },
     });
-    return { success: true, project };
+    return { success: true, project: updatedProject };
   } catch (e) {
     return { success: false, error: e.message };
   }
@@ -215,15 +243,24 @@ async function addMemberService(projectId, userId, currentUser) {
 
 async function removeMemberService(projectId, userId, currentUser) {
   if (!currentUser) return { success: false, error: "Not authenticated", errorType: "unauthorized" };
-  if (currentUser.role !== "admin") return { success: false, error: "Forbidden", errorType: "forbidden" };
+
+  // Check if user is global admin or project admin
+  const isGlobalAdmin = currentUser.role === "admin";
+  const project = findBugHatchProjectById(projectId);
+  const isProjectAdmin = project && project.admin === currentUser.id;
+
+  if (!isGlobalAdmin && !isProjectAdmin) {
+    return { success: false, error: "Forbidden", errorType: "forbidden" };
+  }
+
   try {
-    const project = await removeBugHatchProjectMember(projectId, userId);
+    const updatedProject = await removeBugHatchProjectMember(projectId, userId);
     await createBugHatchAuditLog({
       actorUserId: currentUser.id,
       eventType: "project.member.removed",
       payloadObject: { projectId, userId },
     });
-    return { success: true, project };
+    return { success: true, project: updatedProject };
   } catch (e) {
     return { success: false, error: e.message };
   }

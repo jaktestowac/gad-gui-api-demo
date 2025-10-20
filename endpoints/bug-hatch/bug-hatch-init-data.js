@@ -96,4 +96,5 @@ module.exports = {
   attachments: [],
   filters: [],
   outbox: [],
+  invitations: [],
 };

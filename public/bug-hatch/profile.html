@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - BugHatch</title>
+    <link rel="stylesheet" href="/bug-hatch/css/bh-fallback.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐛</text></svg>">
+</head>
+
+<body class="bg-neutral-900 text-neutral-100 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-neutral-800 border-b border-neutral-700/50 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="/bug-hatch/dashboard.html" class="bh-navbar-brand bh-brand-badge inline-flex items-center gap-2 text-lg font-semibold">
+                <span class="bh-logo-icon text-2xl">🐛</span>
+                <span>BugHatch</span>
+            </a>
+
+            <div class="flex items-center gap-4">
+                <a href="/bug-hatch/dashboard.html" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">
+                    Dashboard
+                </a>
+                <a href="/bug-hatch/issues.html" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">
+                    Issues
+                </a>
+                <button id="logoutBtn" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-8">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-neutral-100 mb-2">User Profile</h1>
+            <p class="text-neutral-400">Manage your account settings and preferences</p>
+        </div>
+
+        <!-- Profile Form -->
+        <div class="bg-neutral-800 rounded-lg border border-neutral-700/50 p-6 mb-8">
+            <h2 class="text-xl font-semibold text-neutral-100 mb-6">Profile Information</h2>
+
+            <form id="profileForm" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-neutral-300 mb-2">
+                            Full Name
+                        </label>
+                        <input type="text" id="name" name="name" class="bh-input w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-md text-neutral-100 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand" placeholder="Enter your full name" required>
+                    </div>
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-neutral-300 mb-2">
+                            Email Address
+                        </label>
+                        <input type="email" id="email" name="email" class="bh-input w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-md text-neutral-100 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand" placeholder="Enter your email" required>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <button type="submit" id="saveProfileBtn" class="bh-btn bh-btn-primary inline-flex items-center justify-center rounded-md text-sm font-medium px-4 py-2">
+                        Save Changes
+                    </button>
+                    <button type="button" id="cancelBtn" class="bh-btn bh-btn-secondary inline-flex items-center justify-center rounded-md text-sm font-medium px-4 py-2">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Change Password Form -->
+        <div class="bg-neutral-800 rounded-lg border border-neutral-700/50 p-6">
+            <h2 class="text-xl font-semibold text-neutral-100 mb-6">Change Password</h2>
+
+            <form id="passwordForm" class="space-y-6">
+                <div class="max-w-md">
+                    <div class="mb-4">
+                        <label for="currentPassword" class="block text-sm font-medium text-neutral-300 mb-2">
+                            Current Password
+                        </label>
+                        <input type="password" id="currentPassword" name="currentPassword" class="bh-input w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-md text-neutral-100 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand" placeholder="Enter current password" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="newPassword" class="block text-sm font-medium text-neutral-300 mb-2">
+                            New Password
+                        </label>
+                        <input type="password" id="newPassword" name="newPassword" class="bh-input w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-md text-neutral-100 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand" placeholder="Enter new password" required>
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="confirmPassword" class="block text-sm font-medium text-neutral-300 mb-2">
+                            Confirm New Password
+                        </label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" class="bh-input w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-md text-neutral-100 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand" placeholder="Confirm new password" required>
+                    </div>
+
+                    <button type="submit" id="changePasswordBtn" class="bh-btn bh-btn-primary inline-flex items-center justify-center rounded-md text-sm font-medium px-4 py-2">
+                        Change Password
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-50"></div>
+
+    <script src="/bug-hatch/js/common.js"></script>
+    <script src="/bug-hatch/js/auth.js"></script>
+    <script src="/bug-hatch/js/toast.js"></script>
+    <script src="/bug-hatch/js/profile.js"></script>
+</body>
+
+</html>

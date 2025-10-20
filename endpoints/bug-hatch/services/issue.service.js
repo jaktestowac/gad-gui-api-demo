@@ -189,6 +189,11 @@ async function createIssueService(data, currentUser) {
   if (!userCanMutateProject(project, currentUser))
     return { success: false, error: "Forbidden", errorType: "forbidden" };
 
+  // Validate assignee is a project member or null
+  if (data.assigneeId && !project.members.includes(data.assigneeId)) {
+    return { success: false, error: "Assignee must be a project member" };
+  }
+
   try {
     const issue = await createBugHatchIssue({ ...data, createdBy: currentUser.id });
     await createBugHatchAuditLog({
@@ -243,6 +248,11 @@ async function patchIssueService(issueId, patch, currentUser) {
   if (patch.description && patch.description.length > 5000) return { success: false, error: "description too long" };
   if (patch.status && !project.workflow.statuses.includes(patch.status)) {
     return { success: false, error: "Invalid status for workflow" };
+  }
+
+  // Validate assignee is a project member or null
+  if (patch.assigneeId !== undefined && patch.assigneeId !== null && !project.members.includes(patch.assigneeId)) {
+    return { success: false, error: "Assignee must be a project member" };
   }
 
   try {

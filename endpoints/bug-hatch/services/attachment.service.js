@@ -9,7 +9,7 @@ const {
   createBugHatchAuditLog,
   readBugHatchDemoDb,
   findBugHatchAttachmentById,
-} = require("../endpoints/bug-hatch/db-bug-hatch.operations");
+} = require("../db-bug-hatch.operations");
 const { areIdsEqual } = require("../../../helpers/compare.helpers");
 
 const UPLOAD_DIR = path.join(__dirname, "../../../uploads/bug-hatch");

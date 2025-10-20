@@ -285,6 +285,62 @@
     if (currentWorkflow && Array.isArray(currentWorkflow.statuses)) {
       renderStatusesSelect(currentWorkflow.statuses);
     }
+
+    // Populate assignee dropdowns with project members
+    const members = await fetchProjectMembers(meta.id || projectInput);
+    populateAssigneeDropdowns(members);
+  }
+
+  async function fetchProjectMembers(projectId) {
+    if (!projectId) return [];
+    try {
+      const resp = await fetch(
+        `/api/bug-hatch/projects/${encodeURIComponent(projectId)}${isDemo || forceDemo ? "?demo=true" : ""}`,
+        {
+          credentials: "include",
+        }
+      );
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) return [];
+
+      const project = data.data;
+      const members = project.members || [];
+
+      // Return members as they come from the API (could be IDs or objects)
+      return members;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function populateAssigneeDropdowns(members) {
+    // Populate filter assignee dropdown
+    const filterSelect = qs("#filterAssignee");
+    if (filterSelect) {
+      filterSelect.innerHTML = '<option value="">All</option>';
+      members.forEach((member) => {
+        const memberId = typeof member === "string" ? member : member.id;
+        const memberName = typeof member === "string" ? member : member.name || member.email || member.id;
+        const option = document.createElement("option");
+        option.value = memberId;
+        option.textContent = memberName;
+        filterSelect.appendChild(option);
+      });
+    }
+
+    // Populate create assignee dropdown
+    const createSelect = qs("#createAssignee");
+    if (createSelect) {
+      createSelect.innerHTML = '<option value="">Unassigned</option>';
+      members.forEach((member) => {
+        const memberId = typeof member === "string" ? member : member.id;
+        const memberName = typeof member === "string" ? member : member.name || member.email || member.id;
+        const option = document.createElement("option");
+        option.value = memberId;
+        option.textContent = memberName;
+        createSelect.appendChild(option);
+      });
+    }
   }
 
   function init() {

@@ -75,7 +75,36 @@
       { credentials: "include" }
     );
     const data = await resp.json().catch(() => ({}));
-    if (resp.ok) projectWorkflow = data?.data?.project?.workflow || null;
+    if (resp.ok) {
+      projectWorkflow = data?.data?.workflow || null;
+      // Populate assignee dropdown with project members
+      populateAssigneeDropdown(data.data);
+    }
+  }
+
+  function populateAssigneeDropdown(project) {
+    const assigneeSelect = qs("#fieldAssignee");
+    if (!assigneeSelect || !project) return;
+
+    // Clear existing options except "Unassigned"
+    assigneeSelect.innerHTML = '<option value="">Unassigned</option>';
+
+    // Add project members
+    if (project.members && Array.isArray(project.members)) {
+      project.members.forEach((member) => {
+        const memberId = typeof member === "string" ? member : member.id;
+        const memberName = typeof member === "string" ? member : member.name || member.email || member.id;
+        const option = document.createElement("option");
+        option.value = memberId;
+        option.textContent = memberName;
+        assigneeSelect.appendChild(option);
+      });
+    }
+
+    // Set current assignee if issue is loaded
+    if (issueData && issueData.assigneeId) {
+      assigneeSelect.value = issueData.assigneeId;
+    }
   }
 
   async function fetchComments() {

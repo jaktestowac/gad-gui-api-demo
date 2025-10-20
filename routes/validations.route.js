@@ -359,6 +359,96 @@ const validationsRoutes = (req, res, next) => {
         handleBugHatchProjects(req, res);
         return;
       }
+
+      // BugHatch user endpoints
+      if (req.url.includes("/api/bug-hatch/users")) {
+        const {
+          handleGetUserProfile,
+          handleUpdateUserProfile,
+          handleChangeUserPassword,
+          handleSearchUsers,
+          handleSearchUsersPost,
+        } = require("../endpoints/bug-hatch/users-endpoint.helpers");
+
+        if (req.method === "GET" && req.url.includes("/api/bug-hatch/users/profile")) {
+          handleGetUserProfile(req, res);
+          return;
+        }
+
+        if (req.method === "GET" && req.url.match(/^\/api\/bug-hatch\/users(\?.*)?$/)) {
+          handleSearchUsers(req, res);
+          return;
+        }
+
+        if (req.method === "PATCH" && req.url.includes("/api/bug-hatch/users/profile")) {
+          handleUpdateUserProfile(req, res);
+          return;
+        }
+
+        if (req.method === "POST" && req.url.includes("/api/bug-hatch/users/change-password")) {
+          handleChangeUserPassword(req, res);
+          return;
+        }
+
+        if (req.method === "POST" && req.url === "/api/bug-hatch/users/search") {
+          handleSearchUsersPost(req, res);
+          return;
+        }
+
+        return; // End of user endpoints
+      }
+
+      // BugHatch invitations endpoints
+      if (req.url.includes("/api/bug-hatch/invitations")) {
+        const {
+          handleCreateInvitation,
+          handleGetProjectInvitations,
+          handleAcceptInvitation,
+          handleRejectInvitation,
+          handleCancelInvitation,
+        } = require("../endpoints/bug-hatch/invitations-endpoint.helpers");
+
+        if (req.method === "POST" && req.url === "/api/bug-hatch/invitations") {
+          handleCreateInvitation(req, res);
+          return;
+        }
+
+        if (req.method === "GET" && /\/api\/bug-hatch\/projects\/[^/]+\/invitations/.test(req.url)) {
+          const projectId = req.url.match(/\/api\/bug-hatch\/projects\/([^/]+)\/invitations/)?.[1];
+          if (projectId) {
+            req.params = { projectId };
+            handleGetProjectInvitations(req, res);
+            return;
+          }
+        }
+
+        if (req.method === "POST" && /\/api\/bug-hatch\/invitations\/[^/]+\/accept/.test(req.url)) {
+          const token = req.url.match(/\/api\/bug-hatch\/invitations\/([^/]+)\/accept/)?.[1];
+          if (token) {
+            req.params = { token };
+            handleAcceptInvitation(req, res);
+            return;
+          }
+        }
+
+        if (req.method === "POST" && /\/api\/bug-hatch\/invitations\/[^/]+\/reject/.test(req.url)) {
+          const token = req.url.match(/\/api\/bug-hatch\/invitations\/([^/]+)\/reject/)?.[1];
+          if (token) {
+            req.params = { token };
+            handleRejectInvitation(req, res);
+            return;
+          }
+        }
+
+        if (req.method === "DELETE" && /\/api\/bug-hatch\/invitations\/[^/]+/.test(req.url)) {
+          const invitationId = req.url.match(/\/api\/bug-hatch\/invitations\/([^/]+)/)?.[1];
+          if (invitationId) {
+            req.params = { invitationId };
+            handleCancelInvitation(req, res);
+            return;
+          }
+        }
+      }
     }
 
     logTrace("validationsRoutes: Returning:", {
