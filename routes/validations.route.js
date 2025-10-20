@@ -323,21 +323,14 @@ const validationsRoutes = (req, res, next) => {
         return;
       }
 
-      // BugHatch issue endpoints (check before generic project handler so /projects/:id/issues is not swallowed)
-      if (req.url.includes("/api/bug-hatch/issues") || /\/api\/bug-hatch\/projects\/[^/]+\/issues/.test(req.url)) {
-        const { handleBugHatchIssues } = require("../endpoints/bug-hatch/issues-endpoint.helpers");
-        handleBugHatchIssues(req, res);
-        return;
-      }
-
-      // BugHatch comments endpoints
+      // BugHatch comments endpoints (check before issues to avoid conflicts)
       if (req.url.includes("/api/bug-hatch/comments") || /\/api\/bug-hatch\/issues\/[^/]+\/comments/.test(req.url)) {
         const { handleBugHatchComments } = require("../endpoints/bug-hatch/comments-endpoint.helpers");
         handleBugHatchComments(req, res);
         return;
       }
 
-      // BugHatch attachments endpoints
+      // BugHatch attachments endpoints (check before issues to avoid conflicts)
       if (
         req.url.includes("/api/bug-hatch/attachments") ||
         /\/api\/bug-hatch\/issues\/[^/]+\/attachments/.test(req.url)
@@ -347,10 +340,16 @@ const validationsRoutes = (req, res, next) => {
         return;
       }
 
-      // BugHatch activity endpoint
+      // BugHatch activity endpoint (check before issues to avoid conflicts)
       if (/\/api\/bug-hatch\/issues\/[^/]+\/activity/.test(req.url)) {
         const { handleBugHatchActivity } = require("../endpoints/bug-hatch/activity-endpoint.helpers");
         handleBugHatchActivity(req, res);
+        return;
+      }
+      // BugHatch issue endpoints (check after specific sub-endpoints)
+      if (req.url.includes("/api/bug-hatch/issues") || /\/api\/bug-hatch\/projects\/[^/]+\/issues/.test(req.url)) {
+        const { handleBugHatchIssues } = require("../endpoints/bug-hatch/issues-endpoint.helpers");
+        handleBugHatchIssues(req, res);
         return;
       }
 

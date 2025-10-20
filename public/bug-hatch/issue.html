@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
+    <link rel="icon" href="/data/icons/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BugHatch – Issue</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -27,7 +28,7 @@
             </div>
         </div>
     </nav>
-    <main class="bh-max-w-screen bh-mx-auto bh-p-lg bh-flex bh-gap-lg bh-flex-wrap max-w-7xl mx-auto px-4 py-6 flex gap-6 flex-wrap">
+    <main class="bh-max-w-screen bh-mx-auto bh-p-lg bh-flex bh-gap-lg max-w-7xl mx-auto px-4 py-6 flex gap-6">
         <section class="bh-flex-1 bh-min-w-0 flex-1 min-w-0">
             <div class="bh-card bh-card-glow bh-mb-md rounded-xl border border-neutral-800 bg-neutral-900/40 p-4 mb-4">
                 <h1 id="issueTitle" class="bh-heading-section bh-mb-xs bh-text-md text-lg font-semibold mb-1">Loading...</h1>
@@ -69,10 +70,31 @@
                 <div id="transitionError" class="bh-alert bh-alert-error bh-hidden rounded-md border border-red-500/40 bg-red-500/10 text-red-200 text-sm px-3 py-2" style="display:none;"></div>
             </div>
         </section>
+        <aside class="bh-w-80 bh-min-w-0 w-80 min-w-0">
+            <div class="bh-card bh-card-glow bh-mb-md rounded-xl border border-neutral-800 bg-neutral-900/40 p-4 mb-4" id="activityCard">
+                <h2 class="bh-heading-section bh-text-sm bh-mb-sm text-sm font-semibold mb-2 flex items-center justify-between">
+                    <span>Activity</span>
+                    <button id="activityToggle" class="bh-btn bh-btn-ghost bh-btn-2xs text-neutral-400 hover:text-neutral-200 text-xs">▼</button>
+                </h2>
+                <div id="activityFeed" class="bh-stack bh-gap-sm flex flex-col space-y-2 max-h-96 overflow-y-auto" style="display: none;"></div>
+            </div>
+            <div class="bh-card bh-card-glow rounded-xl border border-neutral-800 bg-neutral-900/40 p-4" id="commentsCard">
+                <h2 class="bh-heading-section bh-text-sm bh-mb-sm text-sm font-semibold mb-2">Comments</h2>
+                <div id="commentsList" class="bh-stack bh-gap-sm bh-mb-sm flex flex-col space-y-2 mb-2 max-h-96 overflow-y-auto"></div>
+                <form id="commentForm" class="bh-stack bh-gap-sm flex flex-col space-y-2">
+                    <textarea id="commentBody" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none resize-none" rows="3" placeholder="Add a comment..." required></textarea>
+                    <div class="bh-flex bh-justify-end flex justify-end">
+                        <button type="submit" class="bh-btn bh-btn-primary bh-btn-xs inline-flex items-center justify-center rounded-md text-xs font-medium bg-emerald-500 text-neutral-900 hover:bg-emerald-600 px-2 py-1">Comment</button>
+                    </div>
+                </form>
+            </div>
+        </aside>
     </main>
 
     <script src="/bug-hatch/js/auth.js"></script>
     <script src="/bug-hatch/js/demo-propagate.js"></script>
+    <script src="/bug-hatch/js/activity-renderer.js"></script>
+    <script src="/bug-hatch/js/comments-renderer.js"></script>
     <script src="/bug-hatch/js/issue-detail.js"></script>
 </body>
 

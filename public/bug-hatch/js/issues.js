@@ -144,7 +144,7 @@
     }
     tbody.innerHTML = issues
       .map((i) => {
-        return `<tr data-issue-id="${i.id}" class="bh-row-hover">
+        return `<tr data-issue-id="${i.id}" class="bh-row-hover cursor-pointer">
         <td><a href="/bug-hatch/issue.html?id=${encodeURIComponent(i.id)}" class="bh-link">${i.key}</a></td>
         <td title="${i.title}">${i.title}</td>
         <td><span class="bh-badge">${i.status}</span></td>
@@ -162,6 +162,18 @@
       </tr>`;
       })
       .join("");
+
+    // Add click handlers for preview modal
+    tbody.querySelectorAll("tr[data-issue-id]").forEach((row) => {
+      row.addEventListener("click", (e) => {
+        // Don't trigger if clicking on the link
+        if (e.target.tagName === "A") return;
+        const issueId = row.getAttribute("data-issue-id");
+        if (issueId) {
+          window.bugHatchIssuePreview.showIssuePreview(issueId);
+        }
+      });
+    });
   }
 
   async function loadIssues() {

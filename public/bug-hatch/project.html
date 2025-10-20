@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/data/icons/favicon.png" />
     <title>BugHatch – Project</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/bug-hatch/css/bh-fallback.css">
@@ -118,16 +119,16 @@
         </section>
         <!-- Issue preview modal -->
         <div id="issuePreviewModal" class="bh-modal-backdrop bh-hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <div class="bh-modal-content relative z-10 w-full max-w-3xl rounded-xl border border-neutral-800 bg-neutral-900/95 p-0 shadow-2xl ring-1 ring-neutral-800" role="dialog" aria-modal="true">
+            <div class="bh-modal-content relative z-10 w-full max-w-3xl max-h-[90vh] rounded-xl border border-neutral-800 bg-neutral-900/95 p-0 shadow-2xl ring-1 ring-neutral-800 overflow-hidden flex flex-col" role="dialog" aria-modal="true">
                 <!-- Header -->
                 <div class="flex items-start justify-between gap-3 border-b border-neutral-800 px-4 py-3">
                     <div class="min-w-0">
                         <div class="flex items-center gap-2 text-[11px] text-neutral-400">
-                            <h3 id="pvIssueKey" class="m-0 font-medium tracking-tight text-neutral-300"></h3>
-                            <a id="pvOpenFull" href="#" class="inline-flex items-center gap-1 rounded-md border border-neutral-700/70 px-2 py-0.5 text-[10px] text-neutral-300 hover:bg-neutral-800" title="Open full view">↗ Open</a>
+                            <h3 id="previewIssueKey" class="m-0 font-medium tracking-tight text-neutral-300"></h3>
+                            <a id="previewIssueLink" href="#" class="inline-flex items-center gap-1 rounded-md border border-neutral-700/70 px-2 py-0.5 text-[10px] text-neutral-300 hover:bg-neutral-800" title="Open full view">↗ Open</a>
                         </div>
-                        <div id="pvIssueTitle" class="mt-1 text-base font-semibold text-neutral-100"></div>
-                        <div id="pvMeta" class="mt-2 flex flex-wrap gap-1 text-[10px]"></div>
+                        <div id="previewIssueTitle" class="mt-1 text-base font-semibold text-neutral-100"></div>
+                        <div id="previewIssueTitleText" class="mt-2 flex flex-wrap gap-1 text-[10px]"></div>
                     </div>
                     <div class="flex items-center gap-2">
                         <div id="pvActions" class="flex items-center gap-1"></div>
@@ -135,7 +136,7 @@
                     </div>
                 </div>
                 <!-- Body -->
-                <div id="pvBody" class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+                <div id="pvBody" class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 overflow-y-auto flex-1">
                     <!-- Main content -->
                     <div class="md:col-span-2 space-y-3">
                         <div>
@@ -144,7 +145,23 @@
                         </div>
                         <div class="rounded-lg border border-neutral-800 bg-neutral-900/60 p-3">
                             <h4 class="text-xs font-semibold text-neutral-300">Description</h4>
-                            <div id="pvDescription" class="prose prose-invert max-w-none text-[13px] leading-relaxed prose-p:m-0 prose-li:m-0 whitespace-pre-line"></div>
+                            <div id="previewIssueDescription" class="prose prose-invert max-w-none text-[13px] leading-relaxed prose-p:m-0 prose-li:m-0 whitespace-pre-line"></div>
+                        </div>
+
+                        <!-- Comments Section -->
+                        <div class="rounded-lg border border-neutral-800 bg-neutral-900/60 p-3">
+                            <h4 class="text-xs font-semibold text-neutral-300 mb-2">Comments</h4>
+                            <div id="previewCommentsList" class="space-y-3 max-h-64 overflow-y-auto">
+                                <div class="text-xs text-neutral-500">Loading comments...</div>
+                            </div>
+                        </div>
+
+                        <!-- Activity Section -->
+                        <div class="rounded-lg border border-neutral-800 bg-neutral-900/60 p-3">
+                            <h4 class="text-xs font-semibold text-neutral-300 mb-2">Activity</h4>
+                            <div id="previewActivityFeed" class="space-y-2 max-h-64 overflow-y-auto">
+                                <div class="text-xs text-neutral-500">Loading activity...</div>
+                            </div>
                         </div>
                     </div>
                     <!-- Aside -->
@@ -185,6 +202,9 @@
     <script src="/bug-hatch/js/auth.js"></script>
     <script src="/bug-hatch/js/demo-propagate.js"></script>
     <script src="/bug-hatch/js/toast.js"></script>
+    <script src="/bug-hatch/js/activity-renderer.js"></script>
+    <script src="/bug-hatch/js/comments-renderer.js"></script>
+    <script src="/bug-hatch/js/issue-preview.js"></script>
     <script src="/bug-hatch/js/project-detail.js"></script>
 </body>
 

@@ -219,6 +219,58 @@ async function writeAuditDb(data) {
   }
 }
 
+/**
+ * Create a new audit log entry
+ * @param {Object} data - Audit data
+ * @param {string} data.actorUserId - User who performed the action
+ * @param {string} data.eventType - Type of event (e.g., 'issue.created', 'comment.added')
+ * @param {Object} data.payloadObject - Additional data for the event
+ * @returns {Promise<Object>} Created audit entry
+ */
+async function createBugHatchAuditLog(data) {
+  let created;
+  const db = readAuditDb();
+  const now = new Date().toISOString();
+  created = {
+    id: generateBugHatchId("aud"),
+    actorUserId: data.actorUserId,
+    eventType: data.eventType,
+    payloadObject: data.payloadObject || {},
+    createdAt: now,
+  };
+  db.audit.push(created);
+  await writeAuditDb(db);
+  return created;
+}
+
+/**
+ * Get audit logs with optional filtering
+ * @param {Object} filters - Optional filters
+ * @param {string} filters.actorUserId - Filter by user
+ * @param {string} filters.eventType - Filter by event type
+ * @param {Object} filters.payloadObject - Filter by payload content
+ * @returns {Array} Array of audit entries
+ */
+function getBugHatchAuditLogs(filters = {}) {
+  const db = readAuditDb();
+  let logs = db.audit || [];
+  if (filters.actorUserId) {
+    logs = logs.filter((log) => areIdsEqual(log.actorUserId, filters.actorUserId));
+  }
+  if (filters.eventType) {
+    logs = logs.filter((log) => log.eventType === filters.eventType);
+  }
+  if (filters.payloadObject) {
+    logs = logs.filter((log) => {
+      for (const [key, value] of Object.entries(filters.payloadObject)) {
+        if (log.payloadObject[key] !== value) return false;
+      }
+      return true;
+    });
+  }
+  return logs;
+}
+
 // ==================== DATABASE INITIALIZATION ====================
 
 /**
@@ -953,6 +1005,9 @@ async function markBugHatchAttachmentDeleted(attachmentId) {
 
 // Re-export with new functions (node caches previous module.exports; we extend in place)
 Object.assign(module.exports, {
+  // Audit
+  createBugHatchAuditLog,
+  getBugHatchAuditLogs,
   // Comments
   bugHatchCommentsDb,
   findBugHatchCommentsByIssueId,

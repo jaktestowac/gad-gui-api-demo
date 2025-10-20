@@ -221,7 +221,16 @@
         });
         card.addEventListener("dragend", () => card.classList.remove("opacity-50"));
       }
-      card.addEventListener("click", () => openPreview(issue.id));
+      // Add click handler for issue preview
+      card.addEventListener("click", (e) => {
+        // Don't trigger if dragging or clicking on links
+        if (card.classList.contains("opacity-50") || e.target.closest("a")) {
+          return;
+        }
+        if (window.bugHatchIssuePreview && window.bugHatchIssuePreview.showIssuePreview) {
+          window.bugHatchIssuePreview.showIssuePreview(issue.id);
+        }
+      });
       dz.appendChild(card);
     });
     // update counts

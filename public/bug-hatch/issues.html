@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
+    <link rel="icon" href="/data/icons/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BugHatch – Issues</title>
     <script src="/bug-hatch/js/common.js"></script>
@@ -126,10 +127,62 @@
                 </form>
             </div>
         </div>
+
+        <!-- Issue Preview Modal -->
+        <div id="issuePreviewModal" class="bh-modal fixed inset-0 hidden z-50 flex items-center justify-center p-4" aria-hidden="true">
+            <div class="bh-modal-backdrop fixed inset-0 bg-black/60" data-modal-close></div>
+            <div class="bh-modal-dialog bh-card bh-card-glow relative z-10 w-full max-w-4xl rounded-lg border border-neutral-800 bg-neutral-900 p-0 shadow-xl max-h-[90vh] overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="previewIssueTitle">
+                <div class="bh-modal-header flex items-center justify-between border-b border-neutral-800 p-4 pb-3">
+                    <div class="flex items-center gap-3">
+                        <h3 id="previewIssueTitle" class="bh-heading-section bh-text-lg text-lg font-semibold">Issue Preview</h3>
+                        <span id="previewIssueKey" class="bh-badge inline-flex items-center rounded-full border border-neutral-700/60 bg-neutral-900/60 px-2 py-0.5 text-xs text-neutral-300"></span>
+                        <span id="previewIssueStatus" class="bh-badge inline-flex items-center rounded-full border border-neutral-700/60 bg-neutral-900/60 px-2 py-0.5 text-xs text-neutral-300"></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <a id="previewIssueLink" href="#" class="bh-btn bh-btn-secondary bh-btn-xs inline-flex items-center justify-center rounded-md text-xs font-medium border border-neutral-700/70 bg-neutral-900 hover:bg-neutral-800 text-neutral-100 px-2 py-1" target="_blank">View Full Issue</a>
+                        <button class="bh-modal-close text-neutral-400 hover:text-neutral-200 text-xl" data-modal-close>&times;</button>
+                    </div>
+                </div>
+                <div class="overflow-y-auto max-h-[calc(90vh-120px)]">
+                    <div class="p-4 space-y-4">
+                        <!-- Issue Details -->
+                        <div class="space-y-3">
+                            <h4 id="previewIssueTitleText" class="text-base font-medium text-neutral-100"></h4>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div><span class="text-neutral-400">Type:</span> <span id="previewIssueType" class="text-neutral-200"></span></div>
+                                <div><span class="text-neutral-400">Priority:</span> <span id="previewIssuePriority" class="text-neutral-200"></span></div>
+                                <div><span class="text-neutral-400">Assignee:</span> <span id="previewIssueAssignee" class="text-neutral-200"></span></div>
+                                <div><span class="text-neutral-400">Labels:</span> <span id="previewIssueLabels" class="text-neutral-200"></span></div>
+                            </div>
+                            <div id="previewIssueDescription" class="text-sm text-neutral-300 mt-3"></div>
+                        </div>
+
+                        <!-- Comments Section -->
+                        <div class="border-t border-neutral-800 pt-4">
+                            <h4 class="text-sm font-medium text-neutral-200 mb-3">Comments</h4>
+                            <div id="previewCommentsList" class="space-y-3 max-h-64 overflow-y-auto">
+                                <div class="text-xs text-neutral-500">Loading comments...</div>
+                            </div>
+                        </div>
+
+                        <!-- Activity Section -->
+                        <div class="border-t border-neutral-800 pt-4">
+                            <h4 class="text-sm font-medium text-neutral-200 mb-3">Activity</h4>
+                            <div id="previewActivityFeed" class="space-y-2 max-h-64 overflow-y-auto">
+                                <div class="text-xs text-neutral-500">Loading activity...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <script src="/bug-hatch/js/auth.js"></script>
     <script src="/bug-hatch/js/demo-propagate.js"></script>
+    <script src="/bug-hatch/js/activity-renderer.js"></script>
+    <script src="/bug-hatch/js/comments-renderer.js"></script>
+    <script src="/bug-hatch/js/issue-preview.js"></script>
     <script src="/bug-hatch/js/issues.js"></script>
 </body>
 

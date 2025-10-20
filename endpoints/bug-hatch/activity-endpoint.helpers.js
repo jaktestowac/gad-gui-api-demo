@@ -1,6 +1,6 @@
-const { formatErrorResponse } = require("../../../helpers/helpers");
-const { verifyToken } = require("../../../helpers/jwtauth");
-const { HTTP_OK, HTTP_BAD_REQUEST, HTTP_FORBIDDEN, HTTP_NOT_FOUND } = require("../../../helpers/response.helpers");
+const { formatErrorResponse } = require("../../helpers/helpers");
+const { verifyToken } = require("../../helpers/jwtauth");
+const { HTTP_OK, HTTP_BAD_REQUEST, HTTP_FORBIDDEN, HTTP_NOT_FOUND } = require("../../helpers/response.helpers");
 const { activityForIssueService } = require("./services/activity.service");
 
 function getCurrentUser(req) {

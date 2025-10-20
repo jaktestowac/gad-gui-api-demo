@@ -5,6 +5,7 @@ const {
   findBugHatchAttachmentsByIssueId,
   getBugHatchAuditLogs,
   readBugHatchDemoDb,
+  findBugHatchUserById,
 } = require("../db-bug-hatch.operations");
 
 function userCanSeeProject(project, user) {
@@ -50,15 +51,48 @@ function activityForIssueService(issueId, currentUser) {
   // Audit events filtered for this issue
   const audit = getBugHatchAuditLogs({}).filter((a) => a.payloadObject && a.payloadObject.issueId === issue.id);
 
+  // Helper function to get user name
+  const getUserName = (userId) => {
+    if (!userId) return "Unknown User";
+    let user = findBugHatchUserById(userId);
+    if (currentUser.isDemo && !user) {
+      try {
+        const demo = readBugHatchDemoDb();
+        user = (demo.users || []).find((u) => u.id === userId);
+      } catch (e) {
+        /* ignore */
+      }
+    }
+    return user ? user.name : userId; // fallback to ID if name not found
+  };
+
   const activity = [];
   for (const c of comments) {
-    activity.push({ type: "comment", id: c.id, createdAt: c.createdAt, data: c });
+    const userName = getUserName(c.authorId);
+    activity.push({
+      type: "comment",
+      id: c.id,
+      createdAt: c.createdAt,
+      data: { ...c, authorName: userName },
+    });
   }
   for (const a of attachments) {
-    activity.push({ type: "attachment", id: a.id, createdAt: a.createdAt, data: a });
+    const userName = getUserName(a.uploadedBy);
+    activity.push({
+      type: "attachment",
+      id: a.id,
+      createdAt: a.createdAt,
+      data: { ...a, uploaderName: userName },
+    });
   }
   for (const ev of audit) {
-    activity.push({ type: "event", id: ev.id, createdAt: ev.createdAt, data: ev });
+    const userName = getUserName(ev.actorUserId);
+    activity.push({
+      type: "event",
+      id: ev.id,
+      createdAt: ev.createdAt,
+      data: { ...ev, actorName: userName },
+    });
   }
 
   activity.sort((x, y) => (x.createdAt < y.createdAt ? -1 : x.createdAt > y.createdAt ? 1 : 0));

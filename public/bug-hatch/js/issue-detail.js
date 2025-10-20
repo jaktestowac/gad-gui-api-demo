@@ -7,6 +7,8 @@
   let isDemo = false;
   let forceDemo = false; // query param enforced demo mode
   let projectWorkflow = null;
+  let comments = [];
+  let activity = [];
 
   function showError(id, msg) {
     const el = qs(id);
@@ -22,6 +24,12 @@
       el.style.display = "none";
       el.classList.add("bh-hidden");
     }
+  }
+
+  function canEditComment(comment) {
+    return (
+      !isDemo && !forceDemo && currentUser && (currentUser.id === comment.authorId || currentUser.role === "admin")
+    );
   }
 
   function parseQuery() {
@@ -57,6 +65,8 @@
     renderIssue();
     await fetchProjectWorkflow(issueData.projectId);
     renderTransitions();
+    await fetchComments();
+    await fetchActivity();
   }
 
   async function fetchProjectWorkflow(projectId) {
@@ -68,20 +78,71 @@
     if (resp.ok) projectWorkflow = data?.data?.project?.workflow || null;
   }
 
+  async function fetchComments() {
+    const resp = await fetch(
+      `/api/bug-hatch/issues/${encodeURIComponent(issueId)}/comments${forceDemo ? "?demo=true" : ""}`,
+      {
+        credentials: "include",
+      }
+    );
+    const data = await resp.json().catch(() => ({}));
+    if (resp.ok) {
+      comments = data.data.comments || [];
+      renderComments();
+    }
+  }
+
+  async function fetchActivity() {
+    const resp = await fetch(
+      `/api/bug-hatch/issues/${encodeURIComponent(issueId)}/activity${forceDemo ? "?demo=true" : ""}`,
+      {
+        credentials: "include",
+      }
+    );
+    const data = await resp.json().catch(() => ({}));
+    if (resp.ok) {
+      activity = data.data.activity || [];
+      renderActivity();
+    }
+  }
+
   function renderIssue() {
     if (!issueData) return;
+
     qs("#issueTitle").textContent = issueData.title;
     qs("#issueKey").textContent = issueData.key;
+
+    // Add back to project link
+    const titleContainer = qs("#issueTitle").parentElement;
+    if (issueData.projectId && !qs("#backToProject")) {
+      const backLink = document.createElement("a");
+      backLink.id = "backToProject";
+      backLink.href = `/bug-hatch/project.html?id=${encodeURIComponent(issueData.projectId)}${
+        forceDemo ? "&demo=true" : ""
+      }`;
+      backLink.className =
+        "bh-btn bh-btn-ghost bh-btn-2xs inline-flex items-center gap-1 text-neutral-400 hover:text-neutral-200 text-xs mr-2";
+      backLink.innerHTML = "← Back to Project";
+      titleContainer.insertBefore(backLink, qs("#issueTitle"));
+    }
+
     qs("#fieldTitle").value = issueData.title;
     qs("#fieldType").value = issueData.type;
     qs("#fieldPriority").value = issueData.priority;
     qs("#fieldAssignee").value = issueData.assigneeId || "";
     qs("#fieldLabels").value = (issueData.labels || []).join(", ");
     qs("#fieldDescription").value = issueData.description || "";
-    qs("#currentStatus").textContent = issueData.status;
+    const currentStatusEl = qs("#currentStatus");
+    currentStatusEl.textContent = issueData.status;
+    currentStatusEl.className = `bh-badge inline-flex items-center rounded-full border border-neutral-700/60 bg-neutral-900/60 px-2 py-0.5 text-xs ${window.bugHatchActivityRenderer.getStatusColor(
+      issueData.status
+    )}`;
     if (isDemo) {
       qs("#issueEditForm")
         .querySelectorAll("input,textarea,select,button[type=submit]")
+        .forEach((el) => (el.disabled = true));
+      qs("#commentForm")
+        .querySelectorAll("textarea,button[type=submit]")
         .forEach((el) => (el.disabled = true));
     }
   }
@@ -106,6 +167,16 @@
     });
   }
 
+  function renderComments() {
+    const container = qs("#commentsList");
+    window.bugHatchCommentsRenderer.renderComments(comments, container, canEditComment);
+  }
+
+  function renderActivity() {
+    const container = qs("#activityFeed");
+    window.bugHatchActivityRenderer.renderActivity(activity, container, { collapsible: false });
+  }
+
   async function doTransition(to) {
     clearError("#transitionError");
     const resp = await fetch(`/api/bug-hatch/issues/${encodeURIComponent(issueId)}/transition`, {
@@ -122,6 +193,7 @@
     issueData = data.data;
     renderIssue();
     renderTransitions();
+    await fetchActivity(); // refresh activity after transition
   }
 
   function collectPatch() {
@@ -159,6 +231,74 @@
     }
     issueData = data.data;
     renderIssue();
+    await fetchActivity(); // refresh activity after update
+  }
+
+  async function submitComment(e) {
+    e.preventDefault();
+    if (isDemo) return;
+    const body = qs("#commentBody").value.trim();
+    if (!body) return;
+    const resp = await fetch(`/api/bug-hatch/issues/${encodeURIComponent(issueId)}/comments`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ body }),
+    });
+    if (!resp.ok) return; // TODO: show error
+    qs("#commentBody").value = "";
+    await fetchComments();
+    await fetchActivity();
+  }
+
+  function handleCommentActions(e) {
+    const target = e.target;
+    if (target.classList.contains("bh-edit-comment")) {
+      const commentId = target.getAttribute("data-id");
+      editComment(commentId);
+    } else if (target.classList.contains("bh-delete-comment")) {
+      const commentId = target.getAttribute("data-id");
+      deleteComment(commentId);
+    } else if (target.classList.contains("bh-reply-comment")) {
+      const commentId = target.getAttribute("data-id");
+      startReply(commentId);
+    }
+  }
+
+  async function editComment(commentId) {
+    const comment = comments.find((c) => c.id === commentId);
+    if (!comment) return;
+    const newBody = prompt("Edit comment:", comment.body);
+    if (!newBody || newBody.trim() === comment.body) return;
+    const resp = await fetch(`/api/bug-hatch/comments/${encodeURIComponent(commentId)}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ body: newBody.trim() }),
+    });
+    if (!resp.ok) return; // TODO: show error
+    await fetchComments();
+    await fetchActivity();
+  }
+
+  function startReply(parentId) {
+    // Simple reply: focus textarea and add @mention
+    const textarea = qs("#commentBody");
+    textarea.focus();
+    textarea.value = `@${comments.find((c) => c.id === parentId)?.authorId || "user"} `;
+    // TODO: store parentId for submission
+  }
+
+  async function deleteComment(commentId) {
+    if (isDemo) return;
+    if (!confirm("Delete this comment?")) return;
+    const resp = await fetch(`/api/bug-hatch/comments/${encodeURIComponent(commentId)}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    if (!resp.ok) return;
+    await fetchComments();
+    await fetchActivity();
   }
 
   function init() {
@@ -168,6 +308,19 @@
       return;
     }
     qs("#issueEditForm").addEventListener("submit", saveIssue);
+    qs("#commentForm").addEventListener("submit", submitComment);
+    qs("#commentsList").addEventListener("click", handleCommentActions);
+
+    // Activity toggle
+    const activityToggle = qs("#activityToggle");
+    const activityFeed = qs("#activityFeed");
+    if (activityToggle && activityFeed) {
+      activityToggle.addEventListener("click", () => {
+        const isHidden = activityFeed.style.display === "none";
+        activityFeed.style.display = isHidden ? "block" : "none";
+        activityToggle.textContent = isHidden ? "▲" : "▼";
+      });
+    }
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
