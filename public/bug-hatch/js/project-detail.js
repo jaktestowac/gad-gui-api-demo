@@ -330,20 +330,46 @@
       ${statusChip}
       <span class="text-neutral-400 text-[10px]">Updated: ${formatTime(issue.updatedAt)}</span>
     `;
-    renderPreviewTransitions(issue);
-    // Labels in modal
+    // Priority and Labels in modal
+    const priorityWrap = qs("#pvPriority");
     const lblWrap = qs("#pvLabels");
-    if (lblWrap) {
+    if (priorityWrap && lblWrap) {
+      // Priority badge
+      const priorityClass =
+        issue.priority === "high"
+          ? "border-red-500/40 bg-red-500/10 text-red-300"
+          : issue.priority === "low"
+          ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300"
+          : "border-amber-500/40 bg-amber-500/10 text-amber-300";
+      priorityWrap.innerHTML = `<span class="inline-flex items-center rounded-md border ${priorityClass} px-2 py-0.5 text-[10px] font-medium">${issue.priority}</span>`;
+
+      // Labels with colorful styling like kanban board
       const all = issue.labels || [];
-      if (!all.length) lblWrap.innerHTML = '<span class="text-neutral-400 text-[10px]">No labels</span>';
-      else
+      if (!all.length) {
+        lblWrap.innerHTML = '<span class="text-neutral-400 text-[10px]">No labels</span>';
+      } else {
         lblWrap.innerHTML = all
-          .map(
-            (l) =>
-              `<span class="inline-flex items-center rounded-full border border-neutral-600 px-1.5 py-0 text-[10px] text-neutral-300" data-label="${l}">${l}</span>`
-          )
+          .slice(0, 6) // Show more labels in modal
+          .map((l, i) => {
+            const shade = i % 3;
+            const palette =
+              shade === 0
+                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
+                : shade === 1
+                ? "border-sky-500/30 bg-sky-500/10 text-sky-300"
+                : "border-fuchsia-500/30 bg-fuchsia-500/10 text-fuchsia-300";
+            return `<span class="inline-flex items-center rounded-md border ${palette} px-1.5 py-0 text-[10px]" data-shade="${shade}">${l}</span>`;
+          })
           .join("");
+        // Add "+X more" if there are more labels
+        if (all.length > 6) {
+          lblWrap.innerHTML += `<span class="inline-flex items-center rounded-full border border-neutral-700/60 bg-neutral-900/60 px-1.5 py-0 text-[10px] text-neutral-300">+${
+            all.length - 6
+          }</span>`;
+        }
+      }
     }
+    renderPreviewTransitions(issue);
     // Action buttons
     const actionsContainer = qs("#pvActions");
     if (actionsContainer) {
@@ -947,13 +973,36 @@
   function setupMembersPanel() {
     // Toggle members panel
     const toggleBtn = qs("#toggleMembersBtn");
-    const panel = qs("#membersPanel");
-    if (toggleBtn && panel) {
-      toggleBtn.addEventListener("click", () => {
-        panel.classList.toggle("hidden");
-        const isHidden = panel.classList.contains("hidden");
-        toggleBtn.textContent = isHidden ? "Show Members" : "Hide Members";
-      });
+    const sidebar = qs("#members-management-sidebar");
+    const backdrop = qs("#membersSidebarBackdrop");
+    if (toggleBtn && sidebar && backdrop) {
+      const toggleSidebar = () => {
+        const isCollapsed = sidebar.classList.contains("translate-x-full");
+        if (isCollapsed) {
+          // Show sidebar (slide in from right)
+          sidebar.classList.remove("translate-x-full");
+          backdrop.classList.remove("hidden");
+          toggleBtn.innerHTML = `
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+            Close
+          `;
+          toggleBtn.title = "Hide members panel";
+        } else {
+          // Hide sidebar (slide out to right)
+          sidebar.classList.add("translate-x-full");
+          backdrop.classList.add("hidden");
+          toggleBtn.innerHTML = `
+            <i class="fa-solid fa-people-group"></i>&nbsp;
+            
+          `;
+          toggleBtn.title = "Show members panel";
+        }
+      };
+
+      toggleBtn.addEventListener("click", toggleSidebar);
+      backdrop.addEventListener("click", toggleSidebar);
     }
 
     // Member removal confirmation modal
