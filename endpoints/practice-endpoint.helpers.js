@@ -825,6 +825,8 @@ function handlePractice(req, res) {
         return res.status(HTTP_NOT_FOUND).json({ error: "Translations not found" });
       }
     }
+
+    // GraphQL endpoints
     if (req.url.includes("/api/practice/weather/v1/graphql")) {
       // Handle Weather GraphQL requests
       return handleGraphQLRequest(req, res);
