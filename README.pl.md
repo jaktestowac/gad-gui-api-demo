@@ -1,7 +1,7 @@
 # Wprowadzenie
 
 <p align="center">
-  <img src="https://github.com/jaktestowac/gad-gui-api-demo/assets/72373858/eadec2e8-229c-414f-81da-9ec4601b0972" alt="GAD" width="300" height="300">
+  <img src="./assets/gad-header.png" alt="GAD" width="300" height="300">
 </p>
 
 > [!TIP]
@@ -307,6 +307,20 @@ Zebraliśmy kolekcję zasobów, które pomogą ci nauczyć się i opanować Play
 - [Playwright MCP](https://www.youtube.com/playlist?list=PLfKhn9AcZ-cCqD34AG5YRejujaBqCBgl4) - Kurs o Playwright MCP i AI
 - [Discord Community](https://discord.gg/mUAqQ7FUaZ) - Pierwsza polska społeczność Playwright
 - [Playwright Info](https://playwright.info/) - Pierwszy i jedyny polski blog o Playwright
+
+### AI_Testers
+
+<div align="center">
+<a href="https://aitesters.pl">
+<img src="./assets/aitesters-header-photo.jpg" alt="AI Testers Logo" height="400"/>
+</a>
+</div>
+
+Zdobądź przewagę łącząc wiedzę AI z najpopularniejszymi narzędziami na rynku IT.
+Pokażemy Ci jak przyspieszyć z AI i zbudować profesjonalny framework do automatyzacji testów 😉
+
+- [AI_Testers](https://aitesters.pl) - Strona o Programie AI_Testers
+- [AI_Testers LinkedIn](https://www.linkedin.com/company/aitesters) - Nasz profil na LinkedIn
 
 ## 🇬🇧 English Resources
 
