@@ -20,7 +20,7 @@ Aplikacja zawiera funkcje takie jak prosta logika, statystyki, wykresy, gry oraz
 
 **🦎 GAD** jest idealny do nauki automatyzacji testów, doskonalenia technik QA oraz praktykowania scenariuszy spotykanych w różnorodnych, **rzeczywistych projektach** z różnorodnymi scenariuszami, które odwzorowują rzeczywiste projekty.
 
-P.S. Dodatkowo, aplikacja ma pewne **poważne wady architektury** - ciekawe czy je zauważysz?😉
+P.S. Dodatkowo, aplikacja ma pewne **poważne wady w architekturze** - ciekawe czy je zauważysz?😉
 
 > [!IMPORTANT]  
 > Chcesz szybko uruchomić aplikację?
