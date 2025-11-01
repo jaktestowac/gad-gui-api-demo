@@ -5,7 +5,7 @@
 const express = require("express");
 const path = require("path");
 const app = express();
-const PORT = process.env.PORT || 3124;
+const PORT = process.env.PORT || 3121;
 
 // Middleware
 app.use(express.json({ limit: "1mb" }));

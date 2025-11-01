@@ -32,6 +32,7 @@ const getServiceUrl = (serviceName) => {
     webmetadata: "http://localhost:3119",
     apimockgenerator: "http://localhost:3120",
     locationservice: "http://localhost:3121",
+    taskservice: "http://localhost:3122",
   };
 
   const key = String(serviceName || "").toLowerCase();
@@ -64,9 +65,10 @@ const serviceNeedsApiPrefix = (serviceName) => {
     "webmetadata",
     "apimockgenerator",
     "locationservice",
-    "default",
+    "taskservice",
+    "simpletodolist"
   ]; // treat default (MiniTemplate) as needing /api
-  return servicesNeedingApi.includes(key);
+  return servicesNeedingApi.includes(key) || servicesNeedingApi.includes(serviceName.toLowerCase());
 };
 
 // Get all available services from environment variables and defaults
@@ -139,6 +141,12 @@ const getAvailableServices = () => {
       url: "http://localhost:3121",
       name: "Location Service",
       description: "Provides location-based services and data",
+      default: true,
+    },
+    taskService: {
+      url: "http://localhost:3122",
+      name: "Task Service (GraphQL Todo List)",
+      description: "Manages tasks and todos via a GraphQL API interface",
       default: true,
     },
   };

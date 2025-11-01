@@ -32,7 +32,8 @@
     "ex:password": "node external/password-generator/server.js",
     "ex:meta": "node external/web-metadata/server.js",
     "ex:apimock": "node external/api-mock-generator/server.js",
-    "ex:locationService": "node external/location-service/server.js"
+    "ex:locationService": "node external/location-service/server.js",
+    "ex:todoList": "node external/todo-list-graphql/server.js"
   },
   "keywords": [
     "testautomation",
