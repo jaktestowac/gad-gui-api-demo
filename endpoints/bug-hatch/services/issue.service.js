@@ -207,10 +207,27 @@ async function createIssueService(data, currentUser) {
   }
 }
 
-function getIssueService(issueId, currentUser) {
+function getIssueService(issueId, currentUser, isDemo = false) {
   let issue = findBugHatchIssueById(issueId);
+  let project = null;
+
+  // If issue not found in main DB, try demo DB
+  if (!issue) {
+    try {
+      const demo = readBugHatchDemoDb();
+      issue = (demo.issues || []).find((i) => i.id === issueId);
+      if (issue) {
+        project = (demo.projects || []).find((p) => p.id === issue.projectId);
+        isDemo = true;
+      }
+    } catch (e) {
+      /* ignore */
+    }
+  } else {
+    project = findBugHatchProjectById(issue.projectId);
+  }
+
   if (!issue) return { success: false, error: "Issue not found", errorType: "notfound" };
-  let project = findBugHatchProjectById(issue.projectId);
   if (!project) return { success: false, error: "Project not found", errorType: "notfound" };
 
   if (currentUser && currentUser.isDemo) {
@@ -224,7 +241,7 @@ function getIssueService(issueId, currentUser) {
   }
 
   // Allow access to demo projects without requiring a user
-  if (!currentUser && project.demo) {
+  if (!currentUser && (project.demo || isDemo)) {
     return { success: true, issue };
   }
 
