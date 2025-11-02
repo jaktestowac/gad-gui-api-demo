@@ -308,6 +308,8 @@
         const socket = new WebSocket(wsAddr);
         let username = '';
         let selectedUser = null;
+        // local flag set to true when server confirms this client is in the user list
+        let joined = false;
 
         function validateUsername(username) {
             if (username.length < 3) {
@@ -366,6 +368,8 @@
             switch (data.type) {
                 case 'practiceChatMessage':
                 case 'practiceChatPrivate': {
+                    // don't show chat messages to clients who haven't joined yet
+                    if (!joined) break;
                     let className = 'message-content';
                     if (data.username?.toLowerCase().includes('[system]')) {
                         className += ' system-message';
@@ -386,12 +390,18 @@
                 }
                 case 'practiceChatUserList':
                     updateUserList(data.users);
-                    document.getElementById('loginScreen').classList.add('hidden');
+                    // only hide login and mark joined when this client's username is present
+                    if (username && Array.isArray(data.users) && data.users.includes(username)) {
+                        joined = true;
+                        document.getElementById('loginScreen').classList.add('hidden');
+                    }
                     break;
                 case 'error':
                     if (data.message.toLowerCase().includes('username')) {
                         showError(data.message);
                     } else {
+                        // non-username errors should not be visible before join
+                        if (!joined) break;
                         messagesDiv.innerHTML += `
                             <p>
                                 <span class="message-time">${time}</span>
@@ -410,7 +420,7 @@
             const messageInput = document.getElementById('messageInput');
             const message = messageInput.value.trim();
 
-            if (message && username) {
+            if (message && username && joined) {
                 socket.send(JSON.stringify({
                     type: selectedUser ? 'practiceChatPrivate' : 'practiceChatMessage',
                     username: username,

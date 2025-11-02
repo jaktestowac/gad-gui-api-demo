@@ -268,6 +268,8 @@
     <script>
         const socket = new WebSocket(wsAddr);
         let username = '';
+        // local flag to indicate this client has successfully joined the chat
+        let joined = false;
 
         function validateUsername(username) {
             if (username.length < 3) {
@@ -324,7 +326,42 @@
             const data = JSON.parse(event.data);
             const time = formatTime(new Date());
 
+            // If the server sent the user list, only hide the login screen
+            // when this client's username appears in the list (i.e. server confirmed join).
+            if (data.type === 'practiceChatUserList') {
+                if (username && Array.isArray(data.users) && data.users.includes(username)) {
+                    joined = true;
+                    document.getElementById('loginScreen').classList.add('hidden');
+                }
+                // don't render any chat content here if not joined
+                return;
+            }
+
+            // Allow username-related errors to be shown on the login screen before join.
+            if (data.type === 'error') {
+                if (data.message.toLowerCase().includes('username')) {
+                    showError(data.message);
+                    return;
+                }
+                // Non-username errors are system messages; only show them when joined.
+                if (!joined) return;
+
+                messagesDiv.innerHTML += `
+                    <p>
+                        <span class="message-time">${time}</span>
+                        <span class="message-content system-message">
+                            ${data.message}
+                        </span>
+                    </p>
+                `;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                return;
+            }
+
+            // Regular chat messages are only visible when the local client has joined.
             if (data.type === 'practiceChatMessage') {
+                if (!joined) return;
+
                 let className = 'message-content';
                 if (data.username?.toLowerCase().includes('[system]')) {
                     className += ' system-message';
@@ -340,22 +377,6 @@
                     </p>
                 `;
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            } else if (data.type === 'error') {
-                if (data.message.toLowerCase().includes('username')) {
-                    showError(data.message);
-                } else {
-                    messagesDiv.innerHTML += `
-                        <p>
-                            <span class="message-time">${time}</span>
-                            <span class="message-content system-message">
-                                ${data.message}
-                            </span>
-                        </p>
-                    `;
-                }
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            } else if (data.type === 'practiceChatUserList') {
-                document.getElementById('loginScreen').classList.add('hidden');
             }
         });
 
@@ -363,7 +384,7 @@
             const messageInput = document.getElementById('messageInput');
             const message = messageInput.value.trim();
 
-            if (message && username) {
+            if (message && username && joined) {
                 socket.send(JSON.stringify({
                     type: 'practiceChatMessage',
                     username: username,

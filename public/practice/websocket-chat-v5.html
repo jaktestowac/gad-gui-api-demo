@@ -1581,6 +1581,8 @@
         let selectedUser = null;
         let conversations = new Map();
         let isChatActive = false;
+        // set to true when server confirms this client is in the user list
+        let joined = false;
 
         // Weather widget data
         let weatherData = {
@@ -2283,6 +2285,7 @@
                 switch (data.type) {
                     case 'practiceChatMessage':
                     case 'practiceChatPrivate': {
+                        if (!joined) break;
                         const isPrivate = data.type === 'practiceChatPrivate';
                         const conversationId = isPrivate ?
                             (data.username === username ? data.recipient : data.username) :
@@ -2319,8 +2322,28 @@
                     }
                     case 'practiceChatUserList':
                         updateUserList(data.users);
+                        if (username && Array.isArray(data.users) && data.users.includes(username)) {
+                            joined = true;
+                        }
                         break;
                     case 'error':
+                        // allow username-related errors to be handled even before joined
+                        const errMsg = data.message || data?.data?.message;
+                        if (errMsg && errMsg.toLowerCase().includes('username')) {
+                            // show join related message in UI if present
+                            if (errMsg === 'Username already taken') {
+                                leaveChat();
+                                const el = document.getElementById('join-button-text');
+                                if (el) {
+                                    el.innerHTML = 'Username already taken<br>Are you logged in another window?';
+                                }
+                            }
+                            break;
+                        }
+
+                        // other errors should not be shown before join
+                        if (!joined) break;
+
                         const messagesDiv = document.querySelector('.conversation.active');
                         if (messagesDiv) {
                             const contentDiv = messagesDiv.querySelector('.messages-content');
@@ -2338,14 +2361,6 @@
                             contentDiv.appendChild(errorElement);
                             scrollToLatestMessage(contentDiv);
                         }
-                        if (data.data.message === 'Username already taken') {
-                            leaveChat();
-                            const el = document.getElementById('join-button-text');
-                            if (el) {
-                                el.innerHTML = 'Username already taken<br>Are you logged in another window?';
-                            }
-                        }
-
                         break;
                 }
             });
@@ -2368,7 +2383,7 @@
             const messageInput = document.getElementById(`messageInput-${conversationId}`);
             const message = messageInput.value.trim();
 
-            if (message && username) {
+            if (message && username && joined) {
                 socket.send(JSON.stringify({
                     type: conversationId !== 'general' ? 'practiceChatPrivate' : 'practiceChatMessage',
                     username: username,
