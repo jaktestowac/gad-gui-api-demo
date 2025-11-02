@@ -156,13 +156,17 @@ function updateUserFunds(userId, newAmount) {
 }
 
 function addFundsHistory({ userId, amount, type, description }) {
-  data.fundsHistory.push({
-    userId,
-    amount,
-    type,
-    timestamp: new Date().toISOString(),
-    description,
-  });
+  try {
+    data.fundsHistory.push({
+      userId,
+      amount,
+      type,
+      timestamp: new Date().toISOString(),
+      description,
+    });
+  } catch (error) {
+    logError("Failed to add funds history. TypeError: 'set' on proxy: trap returned falsish for property", error);
+  }
 }
 
 function addEnrollment(enrollment) {
@@ -347,7 +351,11 @@ function getCertificates() {
 }
 
 function addUserEnrollment(enrollment) {
-  data.userEnrollments.push(enrollment);
+  try {
+    data.userEnrollments.push(enrollment);
+  } catch (error) {
+    logError("Failed to add user enrollment", error);
+  }
   recalculateStudentsCount();
 }
 

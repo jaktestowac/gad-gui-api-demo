@@ -10,7 +10,7 @@ describe("Instructor Features", async () => {
   before(async () => {
     await setupEnv();
     // Login as instructor
-    instructorData = await authLearningUser("john_doe", "demo");
+    instructorData = await authLearningUser("john_doe", "demo1");
     // Login as student for comparison
     studentData = await authLearningUser("user", "demo");
   });

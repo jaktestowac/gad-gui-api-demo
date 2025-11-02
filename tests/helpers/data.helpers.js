@@ -405,7 +405,7 @@ async function authDefaultLearningUser() {
 }
 
 async function authInstructor() {
-  return authLearningUser("john_doe", "demo");
+  return authLearningUser("john_doe", "demo1");
 }
 
 async function authAdminUser() {
