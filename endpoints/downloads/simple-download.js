@@ -283,6 +283,38 @@ function handleSimpleDownload(req, res) {
       return res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Method not allowed"));
     }
 
+    // Support test header 'invokeError' to force an error response for testing the client
+    const invokeErrorFileTooBigHeader =
+      req.headers["invokeErrorFileTooBig"] || req.headers["invoke-error-file-too-big"];
+    if (invokeErrorFileTooBigHeader) {
+      logDebug("handleSimpleDownload:docx invoked error by header", { invokeErrorFileTooBigHeader });
+      return res.status(500).send(formatErrorResponse("File is too big"));
+    }
+    const invokeErrorFileNotSupportedHeader =
+      req.headers["invokeErrorFileNotSupported"] || req.headers["invoke-error-file-not-supported"];
+    if (invokeErrorFileNotSupportedHeader) {
+      logDebug("handleSimpleDownload:docx invoked error by header", { invokeErrorFileNotSupportedHeader });
+      return res.status(500).send(formatErrorResponse("File format not supported"));
+    }
+    const invokeErrorFileNotFoundHeader =
+      req.headers["invokeErrorFileNotFound"] || req.headers["invoke-error-file-not-found"];
+    if (invokeErrorFileNotFoundHeader) {
+      logDebug("handleSimpleDownload:docx invoked error by header", { invokeErrorFileNotFoundHeader });
+      return res.status(404).send(formatErrorResponse("File not found"));
+    }
+    const invokeErrorFileCorruptedHeader =
+      req.headers["invokeErrorFileCorrupted"] || req.headers["invoke-error-file-corrupted"];
+    if (invokeErrorFileCorruptedHeader) {
+      logDebug("handleSimpleDownload:docx invoked error by header", { invokeErrorFileCorruptedHeader });
+      return res.status(500).send(formatErrorResponse("File is corrupted"));
+    }
+    const invokeErrorFileAccessDeniedHeader =
+      req.headers["invokeErrorFileAccessDenied"] || req.headers["invoke-error-file-access-denied"];
+    if (invokeErrorFileAccessDeniedHeader) {
+      logDebug("handleSimpleDownload:docx invoked error by header", { invokeErrorFileAccessDeniedHeader });
+      return res.status(403).send(formatErrorResponse("Access denied to file"));
+    }
+
     const requestedFileName = req.headers["x-filename"] || req.headers["filename"] || "generated-document.docx";
 
     try {
