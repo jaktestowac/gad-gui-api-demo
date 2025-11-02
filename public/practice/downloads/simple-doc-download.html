@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Simple Doc Report Download</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+    <style>
+        /* Minimal modern styling */
+        :root {
+            --bg-1: #667eea;
+            --bg-2: #764ba2;
+            --glass: rgba(255, 255, 255, 0.92);
+            --muted: #6b7280;
+            --accent: linear-gradient(135deg, var(--bg-1), var(--bg-2));
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #eaf2ff 0%, #f8efff 100%);
+            color: #222
+        }
+
+        .page {
+            min-height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 18px
+        }
+
+        .card {
+            width: 100%;
+            max-width: 720px;
+            background: var(--glass);
+            border-radius: 16px;
+            padding: 36px;
+            box-shadow: 0 10px 30px rgba(50, 50, 93, 0.08);
+            backdrop-filter: blur(6px)
+        }
+
+        .card h2 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.8rem;
+            color: #1f2937
+        }
+
+        .card p.lead {
+            margin: 6px 0 22px;
+            color: var(--muted);
+            font-size: 1rem
+        }
+
+        .controls {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            flex-wrap: wrap;
+            flex-direction: column;
+        }
+
+        .download-btn {
+            background: var(--accent);
+            color: #fff;
+            border: 0;
+            padding: 14px 28px;
+            border-radius: 999px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.18);
+            transition: transform .18s ease, box-shadow .18s ease
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 40px rgba(102, 126, 234, 0.22)
+        }
+
+        .download-btn:disabled {
+            opacity: .8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none
+        }
+
+        .status {
+            width: 100%;
+            max-width: 420px
+        }
+
+        .status-msg {
+            display: none;
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-weight: 500;
+            text-align: center
+        }
+
+        .info {
+            background: #e6f7ff;
+            color: #055160;
+            border: 1px solid rgba(13, 148, 136, 0.06)
+        }
+
+        .success {
+            background: #f0fff4;
+            color: #064e3b;
+            border: 1px solid rgba(5, 150, 105, 0.06)
+        }
+
+        .error {
+            background: #fff5f5;
+            color: #7f1d1d;
+            border: 1px solid rgba(239, 68, 68, 0.06)
+        }
+
+        .progress-wrap {
+            margin-top: 14px;
+            width: 100%;
+            max-width: 320px
+        }
+
+        .progress-track {
+            height: 10px;
+            background: rgba(0, 0, 0, 0.06);
+            border-radius: 999px;
+            overflow: hidden
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0;
+            background: var(--bg-1);
+            background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.15)100%);
+            transition: width .28s ease
+        }
+
+        .progress-text {
+            font-size: .9rem;
+            color: var(--muted);
+            text-align: center;
+            margin-top: 8px
+        }
+
+        @media (max-width:520px) {
+            .card {
+                padding: 20px
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch
+            }
+
+            .download-btn {
+                width: 100%
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <div class="page">
+            <div class="card" role="main">
+                <div class="header">
+                    <h2>Business Report</h2>
+                    <p class="lead">Generate Business Performance Report<br />for TechCorp Solutions - Q4 2024.</p>
+                </div>
+
+                <div class="controls">
+                    <button id="download-report-btn" class="download-btn" aria-live="polite">
+                        <i class="fas fa-download" aria-hidden="true"></i>&nbsp;<span id="btn-text">Download Report</span>
+                    </button>
+
+                    <div class="status">
+                        <div id="status-message" class="status-msg info" role="status" aria-hidden="true"></div>
+                        <div class="progress-wrap" id="progress-wrap" aria-hidden="true">
+                            <div class="progress-track">
+                                <div id="progress-fill" class="progress-fill"></div>
+                            </div>
+                            <div id="progress-text" class="progress-text"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="footer">
+            <a href="https://jaktestowac.pl"><img src="/data/icons/favicon.png" alt="logo" style="width:28px;vertical-align:middle;margin-right:8px">jaktestowac.pl</a>
+        </div>
+        <script type="text/javascript" src="/js/common.js"></script>
+        <script type="text/javascript" src="/js/header.js"></script>
+        <script type="text/javascript" src="/version.js"></script>
+        <script type="text/javascript" src="./js/practice-common.js"></script>
+
+        <script>
+            (function () {
+                const downloadBtn = document.getElementById('download-report-btn');
+                const btnText = document.getElementById('btn-text');
+                const statusMessage = document.getElementById('status-message');
+                const progressWrap = document.getElementById('progress-wrap');
+                const progressFill = document.getElementById('progress-fill');
+                const progressText = document.getElementById('progress-text');
+
+                function setStatus(text, cls) {
+                    statusMessage.textContent = text;
+                    statusMessage.className = 'status-msg ' + cls;
+                    statusMessage.style.display = 'block';
+                    statusMessage.setAttribute('aria-hidden', 'false');
+                }
+
+                function clearStatus() {
+                    statusMessage.style.display = 'none';
+                    statusMessage.setAttribute('aria-hidden', 'true');
+                }
+
+                function showProgress(pct, txt) {
+                    progressWrap.style.display = 'block';
+                    progressFill.style.width = Math.min(100, Math.max(0, pct)) + '%';
+                    progressText.textContent = txt || `${Math.round(pct)}%`;
+                }
+
+                function hideProgress() {
+                    progressWrap.style.display = 'none';
+                    progressFill.style.width = '0%';
+                    progressText.textContent = '';
+                }
+
+                function simulatePreparation() {
+                    return new Promise(resolve => {
+                        let p = 0;
+                        setStatus('Preparing report...', 'info');
+                        const t = setInterval(() => {
+                            p += Math.random() * 12 + 6;
+                            showProgress(p, 'Preparing...');
+                            if (p >= 90) { clearInterval(t); showProgress(95, 'Finalizing...'); setTimeout(resolve, 300); }
+                        }, 140);
+                    });
+                }
+
+                async function downloadReport() {
+                    downloadBtn.disabled = true;
+                    btnText.textContent = 'Preparing...';
+                    try {
+                        await simulatePreparation();
+                        setStatus('Requesting file from server...', 'info');
+
+                        const resp = await fetch('/api/practice/download/doc', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'x-filename': 'business-report.doc' },
+                            body: JSON.stringify({ type: 'report', title: 'Business Performance Report', company: 'TechCorp Solutions', period: 'Q4 2024', includeTimestamp: true })
+                        });
+
+                        if (!resp.ok) throw new Error('Server responded with ' + resp.status);
+
+                        setStatus('Downloading...', 'success');
+                        showProgress(98, 'Downloading...');
+
+                        const blob = await resp.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a'); a.href = url; a.download = 'business-report.doc'; document.body.appendChild(a); a.click(); a.remove(); window.URL.revokeObjectURL(url);
+
+                        setStatus('Download complete', 'success');
+                    } catch (err) {
+                        setStatus('Unable to download: ' + err.message, 'error');
+                    } finally {
+                        btnText.textContent = 'Download Report';
+                        downloadBtn.disabled = false;
+                        setTimeout(() => { clearStatus(); hideProgress(); }, 4500);
+                    }
+                }
+
+                downloadBtn.addEventListener('click', downloadReport);
+            })();
+        </script>
+
+</body>
+
+</html>

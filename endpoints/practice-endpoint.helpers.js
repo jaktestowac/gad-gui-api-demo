@@ -32,6 +32,7 @@ const hotelHandlers = require("./practice/hotel-handlers");
 const { orderV1, restaurantV1, itemV1, reviewV1 } = require("./practice/order-handlers");
 const { loanProcessingV1 } = require("./practice/loan-processing-handlers");
 const chibi = require("./practice/chibi/chibi-handlers");
+const { handleSimpleDownload } = require("./downloads/simple-download");
 
 function isIdValid(id) {
   return id !== undefined && id !== "";
@@ -1099,6 +1100,12 @@ function handlePractice(req, res) {
           return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
       }
     }
+
+    // --- Download endpoints ---
+    if (req.url.includes("/api/practice/download/")) {
+      return handleSimpleDownload(req, res);
+    }
+
     return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
   }
 }

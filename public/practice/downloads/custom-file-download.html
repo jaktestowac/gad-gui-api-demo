@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Report Download</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+    <style>
+        /* Minimal modern styling */
+        :root {
+            --bg-1: #667eea;
+            --bg-2: #764ba2;
+            --glass: rgba(255, 255, 255, 0.92);
+            --muted: #6b7280;
+            --accent: linear-gradient(135deg, var(--bg-1), var(--bg-2));
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #eaf2ff 0%, #f8efff 100%);
+            color: #222
+        }
+
+        .page {
+            min-height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 18px
+        }
+
+        .card {
+            width: 100%;
+            max-width: 720px;
+            background: var(--glass);
+            border-radius: 16px;
+            padding: 36px;
+            box-shadow: 0 10px 30px rgba(50, 50, 93, 0.08);
+            backdrop-filter: blur(6px)
+        }
+
+        .card h2 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.8rem;
+            color: #1f2937
+        }
+
+        .card p.lead {
+            margin: 6px 0 22px;
+            color: var(--muted);
+            font-size: 1rem
+        }
+
+        .controls {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            flex-wrap: wrap;
+            flex-direction: column;
+        }
+
+        .download-btn {
+            background: var(--accent);
+            color: #fff;
+            border: 0;
+            padding: 14px 28px;
+            border-radius: 999px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.18);
+            transition: transform .18s ease, box-shadow .18s ease
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 40px rgba(102, 126, 234, 0.22)
+        }
+
+        .download-btn:disabled {
+            opacity: .8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none
+        }
+
+        .status {
+            width: 100%;
+            max-width: 420px
+        }
+
+        .status-msg {
+            display: none;
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-weight: 500;
+            text-align: center
+        }
+
+        .info {
+            background: #e6f7ff;
+            color: #055160;
+            border: 1px solid rgba(13, 148, 136, 0.06)
+        }
+
+        .success {
+            background: #f0fff4;
+            color: #064e3b;
+            border: 1px solid rgba(5, 150, 105, 0.06)
+        }
+
+        .error {
+            background: #fff5f5;
+            color: #7f1d1d;
+            border: 1px solid rgba(239, 68, 68, 0.06)
+        }
+
+        .progress-wrap {
+            margin-top: 14px;
+            width: 100%;
+            max-width: 320px
+        }
+
+        .progress-track {
+            height: 10px;
+            background: rgba(0, 0, 0, 0.06);
+            border-radius: 999px;
+            overflow: hidden
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0;
+            background: var(--bg-1);
+            background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.15)100%);
+            transition: width .28s ease
+        }
+
+        .progress-text {
+            font-size: .9rem;
+            color: var(--muted);
+            text-align: center;
+            margin-top: 8px
+        }
+
+        @media (max-width:520px) {
+            .card {
+                padding: 20px
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch
+            }
+
+            .download-btn {
+                width: 100%
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+
+    <br />
+    <br />
+    <br />
+    <div align="center">
+        <div class="page">
+            <div class="card" role="main">
+                <div class="header">
+                    <h2>Business Report</h2>
+                    <p class="lead">Generate Business Performance Report</p>
+                </div>
+
+                <div class="controls">
+                    <div style="width:100%;max-width:560px;display:flex;flex-direction:column;gap:10px">
+                        <label style="font-weight:600;color:#334155">Report title</label>
+                        <input id="input-title" type="text" placeholder="Business Performance Report" value="Business Performance Report" style="padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.08);font-size:1rem">
+
+                        <div style="display:flex;gap:10px">
+                            <div style="flex:1">
+                                <label style="font-weight:600;color:#334155">Company</label>
+                                <input id="input-company" type="text" placeholder="TechCorp Solutions" value="TechCorp Solutions" style="padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.08);width:100%">
+                            </div>
+                            <div style="width:160px">
+                                <label style="font-weight:600;color:#334155">Period</label>
+                                <select id="select-period" style="padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.08);width:100%">
+                                    <option>Q4 2024</option>
+                                    <option>Q3 2024</option>
+                                    <option>Q2 2024</option>
+                                    <option>Q1 2024</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style="display:flex;gap:10px;align-items:center">
+                            <div style="flex:1">
+                                <label style="font-weight:600;color:#334155">Format</label>
+                                <select id="select-format" style="padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.08);width:100%">
+                                    <option value="report">Plain report (txt)</option>
+                                    <option value="json">JSON</option>
+                                    <option value="csv">CSV</option>
+                                </select>
+                            </div>
+                            <div style="width:120px">
+                                <label style="font-weight:600;color:#334155">Rows (CSV)</label>
+                                <input id="input-rows" type="number" min="1" max="1000" value="10" style="padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.08);width:100%">
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div style="display:flex;gap:12px;align-items:center">
+                        <label style="display:flex;align-items:center;gap:8px"><input id="check-timestamp" type="checkbox" checked> Include timestamp</label>
+                        <label style="display:flex;align-items:center;gap:8px"><input id="check-preview" type="checkbox"> Show preview after generation</label>
+                    </div>
+                    <div style="display:flex;gap:12px;align-items:center">
+                        <button id="download-report-btn" class="download-btn" aria-live="polite">
+                            <i class="fas fa-download" aria-hidden="true"></i>&nbsp;<span id="btn-text">Download Report</span>
+                        </button>
+                    </div>
+
+                    <div class="status">
+                        <div id="status-message" class="status-msg info" role="status" aria-hidden="true"></div>
+                        <div class="progress-wrap" id="progress-wrap" aria-hidden="true">
+                            <div class="progress-track">
+                                <div id="progress-fill" class="progress-fill"></div>
+                            </div>
+                            <div id="progress-text" class="progress-text"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="footer">
+            <a href="https://jaktestowac.pl"><img src="/data/icons/favicon.png" alt="logo" style="width:28px;vertical-align:middle;margin-right:8px">jaktestowac.pl</a>
+        </div>
+        <script type="text/javascript" src="/js/common.js"></script>
+        <script type="text/javascript" src="/js/header.js"></script>
+        <script type="text/javascript" src="/version.js"></script>
+        <script type="text/javascript" src="./js/practice-common.js"></script>
+
+        <script>
+            (function () {
+                const downloadBtn = document.getElementById('download-report-btn');
+                const btnText = document.getElementById('btn-text');
+                const statusMessage = document.getElementById('status-message');
+                const progressWrap = document.getElementById('progress-wrap');
+                const progressFill = document.getElementById('progress-fill');
+                const progressText = document.getElementById('progress-text');
+
+                function setStatus(text, cls) {
+                    statusMessage.textContent = text;
+                    statusMessage.className = 'status-msg ' + cls;
+                    statusMessage.style.display = 'block';
+                    statusMessage.setAttribute('aria-hidden', 'false');
+                }
+
+                function clearStatus() {
+                    statusMessage.style.display = 'none';
+                    statusMessage.setAttribute('aria-hidden', 'true');
+                }
+
+                function showProgress(pct, txt) {
+                    progressWrap.style.display = 'block';
+                    progressFill.style.width = Math.min(100, Math.max(0, pct)) + '%';
+                    progressText.textContent = txt || `${Math.round(pct)}%`;
+                }
+
+                function hideProgress() {
+                    progressWrap.style.display = 'none';
+                    progressFill.style.width = '0%';
+                    progressText.textContent = '';
+                }
+
+                function simulatePreparation() {
+                    return new Promise(resolve => {
+                        let p = 0;
+                        setStatus('Preparing report...', 'info');
+                        const t = setInterval(() => {
+                            p += Math.random() * 12 + 6;
+                            showProgress(p, 'Preparing...');
+                            if (p >= 90) { clearInterval(t); showProgress(95, 'Finalizing...'); setTimeout(resolve, 300); }
+                        }, 140);
+                    });
+                }
+
+                async function downloadReport() {
+                    downloadBtn.disabled = true;
+                    btnText.textContent = 'Preparing...';
+                    try {
+                        await simulatePreparation();
+
+                        // Read user inputs
+                        const title = (document.getElementById('input-title').value || 'Business Report').trim();
+                        const company = (document.getElementById('input-company').value || 'Company').trim();
+                        const period = (document.getElementById('select-period').value || 'Q4 2024');
+                        const format = (document.getElementById('select-format').value || 'report');
+                        const rows = parseInt(document.getElementById('input-rows').value, 10) || 10;
+                        const includeTimestamp = document.getElementById('check-timestamp').checked;
+                        const preview = document.getElementById('check-preview').checked;
+
+                        setStatus('Requesting file from server...', 'info');
+
+                        const payload = {
+                            type: format === 'report' ? 'report' : format,
+                            title,
+                            company,
+                            period,
+                            includeTimestamp
+                        };
+                        if (format === 'csv') payload.rows = rows;
+                        if (format === 'json') payload.count = rows;
+
+                        // Build filename
+                        const safeTitle = title.replace(/[^a-z0-9\-_]/gi, '-').toLowerCase();
+                        const ext = format === 'json' ? 'json' : format === 'csv' ? 'csv' : 'txt';
+                        const filename = `${safeTitle || 'report'}.${ext}`;
+
+                        const resp = await fetch('/api/practice/download/generate', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'x-filename': filename },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!resp.ok) throw new Error('Server responded with ' + resp.status);
+
+                        setStatus('Downloading...', 'success');
+                        showProgress(98, 'Downloading...');
+
+                        const blob = await resp.blob();
+
+                        // If preview requested show a text preview overlay (attempt to decode as text)
+                        if (preview) {
+                            try {
+                                const text = await blob.text();
+                                showPreview(text, ext);
+                            } catch (e) {
+                                // ignore preview errors
+                            }
+                        }
+
+                        // Trigger download
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                        window.URL.revokeObjectURL(url);
+
+                        setStatus('Download complete', 'success');
+                    } catch (err) {
+                        setStatus('Unable to download: ' + err.message, 'error');
+                    } finally {
+                        btnText.textContent = 'Download Report';
+                        downloadBtn.disabled = false;
+                        setTimeout(() => { clearStatus(); hideProgress(); }, 4500);
+                    }
+                }
+
+                function showPreview(text, ext) {
+                    // create modal elements
+                    const overlay = document.createElement('div');
+                    overlay.style.position = 'fixed';
+                    overlay.style.left = 0;
+                    overlay.style.top = 0;
+                    overlay.style.right = 0;
+                    overlay.style.bottom = 0;
+                    overlay.style.background = 'rgba(0,0,0,0.45)';
+                    overlay.style.display = 'flex';
+                    overlay.style.alignItems = 'center';
+                    overlay.style.justifyContent = 'center';
+                    overlay.style.zIndex = 9999;
+
+                    const box = document.createElement('div');
+                    box.style.width = 'min(920px, 96%)';
+                    box.style.maxHeight = '80%';
+                    box.style.background = '#fff';
+                    box.style.borderRadius = '10px';
+                    box.style.padding = '14px';
+                    box.style.boxShadow = '0 20px 50px rgba(2,6,23,0.2)';
+                    box.style.display = 'flex';
+                    box.style.flexDirection = 'column';
+
+                    const title = document.createElement('div');
+                    title.textContent = 'Preview (' + ext.toUpperCase() + ')';
+                    title.style.fontWeight = '700';
+                    title.style.marginBottom = '8px';
+
+                    const area = document.createElement('textarea');
+                    area.readOnly = true;
+                    area.style.width = '100%';
+                    area.style.height = '60vh';
+                    area.style.resize = 'vertical';
+                    area.style.padding = '10px';
+                    area.style.border = '1px solid rgba(0,0,0,0.08)';
+                    area.value = text;
+
+                    const actions = document.createElement('div');
+                    actions.style.display = 'flex';
+                    actions.style.justifyContent = 'flex-end';
+                    actions.style.gap = '8px';
+                    actions.style.marginTop = '10px';
+
+                    const closeBtn = document.createElement('button');
+                    closeBtn.textContent = 'Close';
+                    closeBtn.style.padding = '8px 12px';
+                    closeBtn.style.borderRadius = '8px';
+                    closeBtn.onclick = () => overlay.remove();
+
+                    const dlBtn = document.createElement('button');
+                    dlBtn.textContent = 'Download';
+                    dlBtn.style.padding = '8px 12px';
+                    dlBtn.style.borderRadius = '8px';
+                    dlBtn.style.background = 'linear-gradient(135deg,#667eea,#764ba2)';
+                    dlBtn.style.color = '#fff';
+                    dlBtn.onclick = () => {
+                        // trigger download of text preview
+                        const b = new Blob([text], { type: 'text/plain' });
+                        const u = window.URL.createObjectURL(b);
+                        const l = document.createElement('a');
+                        l.href = u;
+                        l.download = 'preview.' + (ext || 'txt');
+                        document.body.appendChild(l);
+                        l.click();
+                        l.remove();
+                        window.URL.revokeObjectURL(u);
+                    };
+
+                    actions.appendChild(closeBtn);
+                    actions.appendChild(dlBtn);
+
+                    box.appendChild(title);
+                    box.appendChild(area);
+                    box.appendChild(actions);
+                    overlay.appendChild(box);
+                    document.body.appendChild(overlay);
+                }
+
+                downloadBtn.addEventListener('click', downloadReport);
+            })();
+        </script>
+
+</body>
+
+</html>

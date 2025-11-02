@@ -1,0 +1,8 @@
+This is another sample text file for testing downloads.
+It demonstrates the flexibility of the download endpoints.
+You can download files by:
+- Filename in URL path
+- Filename in request headers
+- POST method with headers
+
+This file contains different content to verify downloads work correctly.
