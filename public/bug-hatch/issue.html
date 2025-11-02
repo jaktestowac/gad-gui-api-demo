@@ -32,13 +32,19 @@
         <section class="bh-flex-1 bh-min-w-0 flex-1 min-w-0">
             <div class="bh-card bh-card-glow bh-mb-md rounded-xl border border-neutral-800 bg-neutral-900/40 p-4 mb-4" id="issueHeaderCard">
                 <h1 id="issueTitle" class="bh-heading-section bh-mb-xs bh-text-md text-lg font-semibold mb-1">Loading...</h1>
-                <div id="issueKey" class="bh-text-dim bh-text-xs text-neutral-400 text-[11px]"></div>
+                <div class="flex items-center gap-2">
+                    <div id="issueKey" class="bh-text-dim bh-text-xs text-neutral-400 text-[11px]"></div>
+                </div>
             </div>
-            <div class="bh-card bh-card-glow rounded-xl border border-neutral-800 bg-neutral-900/40 p-4 mb-4" id="transitionsCard">
-                <h2 class="bh-heading-section bh-text-sm bh-mb-sm text-sm font-semibold mb-2">Status & Transitions</h2>
+            <div class="bh-card bh-card-glow rounded-xl border border-neutral-800 bg-neutral-900/40 p-4 mb-4 flex items-center gap-2 mb-2" id="transitionsCard">
+                <h2 class="bh-heading-section bh-text-sm bh-mb-sm text-sm font-semibold  mb-2">Status & Transitions</h2>
                 <div class="bh-flex bh-gap-sm bh-items-center bh-mb-sm flex items-center gap-2 mb-2">
                     <span class="bh-badge inline-flex items-center rounded-full border border-neutral-700/60 bg-neutral-900/60 px-2 py-0.5 text-xs text-neutral-300" id="currentStatus">—</span>
                     <div id="transitionButtons" class="bh-flex bh-gap-xs flex gap-1"></div>
+                </div>
+                <div class="bh-flex bh-gap-sm bh-items-center bh-mb-sm flex items-center gap-2 mb-2">
+                    <span id="issueArchivedLabel" class="bh-badge inline-flex items-center rounded-full border border-red-500/30 bg-red-500/10 px-2 py-0.5 text-xs text-red-300 hidden">Archived</span>
+                    <button id="archiveIssueBtn" class="bh-btn bh-btn-danger bh-btn-2xs hidden inline-flex items-center justify-center rounded-md text-xs font-medium bg-red-600 hover:bg-red-500 text-white px-2 py-1">Move to Archive</button>
                 </div>
                 <div id="transitionError" class="bh-alert bh-alert-error bh-hidden rounded-md border border-red-500/40 bg-red-500/10 text-red-200 text-sm px-3 py-2" style="display:none;"></div>
             </div>

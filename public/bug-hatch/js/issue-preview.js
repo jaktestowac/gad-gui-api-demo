@@ -85,6 +85,51 @@
         }
       }
     });
+
+    // Archive button in modal (issues.html preview)
+    const pvArchiveBtn = document.getElementById("pvArchiveBtn");
+    if (pvArchiveBtn) {
+      pvArchiveBtn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        if (forceDemo) {
+          if (window.bhToast && typeof window.bhToast.show === "function") {
+            window.bhToast.show("Cannot archive issues in demo mode", { type: "error", timeout: 4000 });
+          } else {
+            alert("Cannot archive issues in demo mode");
+          }
+          return;
+        }
+        if (!currentIssueId) return;
+        const ok = confirm("Archive this issue? This can be undone from Archived view.");
+        if (!ok) return;
+        try {
+          const resp = await fetch(`/api/bug-hatch/issues/${encodeURIComponent(currentIssueId)}`, {
+            method: "DELETE",
+            credentials: "include",
+          });
+          const data = await resp.json().catch(() => ({}));
+          if (!resp.ok) {
+            if (window.bhToast && typeof window.bhToast.show === "function") {
+              window.bhToast.show(data.error || "Failed to archive issue", { type: "error", timeout: 6000 });
+            } else {
+              alert(data.error || "Failed to archive issue");
+            }
+            return;
+          }
+          // Success: close modal and show toast
+          closeModal("#issuePreviewModal");
+          if (window.bhToast && typeof window.bhToast.show === "function") {
+            window.bhToast.show("Issue archived", { type: "success", timeout: 3000 });
+          }
+        } catch (err) {
+          if (window.bhToast && typeof window.bhToast.show === "function") {
+            window.bhToast.show("Network error", { type: "error", timeout: 6000 });
+          } else {
+            alert("Network error");
+          }
+        }
+      });
+    }
   }
 
   // Show issue preview modal
@@ -205,6 +250,17 @@
     const linkEl = document.getElementById("previewIssueLink");
     if (linkEl)
       linkEl.href = `/bug-hatch/issue.html?id=${encodeURIComponent(issue.id)}${forceDemo ? "&demo=true" : ""}`;
+
+    // Update archive button visibility for modal
+    const pvArchiveBtn = document.getElementById("pvArchiveBtn");
+    if (pvArchiveBtn) {
+      // hide for demo or if issue already archived
+      if (forceDemo || issue.demo || issue.archived) {
+        pvArchiveBtn.style.display = "none";
+      } else {
+        pvArchiveBtn.style.display = "inline-flex";
+      }
+    }
   }
 
   // Load and display comments

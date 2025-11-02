@@ -174,6 +174,37 @@
         .querySelectorAll("textarea,button[type=submit]")
         .forEach((el) => (el.disabled = true));
     }
+
+    // Archive button: show and set label based on archived state and permissions
+    const archiveBtn = qs("#archiveIssueBtn");
+    if (archiveBtn) {
+      // Hide if demo or user shouldn't archive
+      if (isDemo || forceDemo) {
+        archiveBtn.classList.add("hidden");
+      } else {
+        archiveBtn.classList.remove("hidden");
+        // Toggle text and styling for archive/unarchive
+        if (issueData.archived) {
+          archiveBtn.textContent = "Unarchive";
+          archiveBtn.classList.remove("bg-red-600", "hover:bg-red-500");
+          archiveBtn.classList.add("bg-emerald-600", "hover:bg-emerald-500");
+        } else {
+          archiveBtn.textContent = "Archive";
+          archiveBtn.classList.remove("bg-emerald-600", "hover:bg-emerald-500");
+          archiveBtn.classList.add("bg-red-600", "hover:bg-red-500");
+        }
+      }
+    }
+
+    // Show archived label if archived
+    const archivedLabel = qs("#issueArchivedLabel");
+    if (archivedLabel) {
+      if (issueData.archived) {
+        archivedLabel.classList.remove("hidden");
+      } else {
+        archivedLabel.classList.add("hidden");
+      }
+    }
   }
 
   function renderTransitions() {
@@ -339,6 +370,60 @@
     qs("#issueEditForm").addEventListener("submit", saveIssue);
     qs("#commentForm").addEventListener("submit", submitComment);
     qs("#commentsList").addEventListener("click", handleCommentActions);
+
+    // Archive button handler on issue page header
+    const archiveBtn = qs("#archiveIssueBtn");
+    if (archiveBtn) {
+      archiveBtn.addEventListener("click", async () => {
+        if (isDemo || forceDemo) {
+          showError("#editError", "Demo mode: read-only");
+          return;
+        }
+        if (!issueData) return;
+        if (issueData.archived) {
+          // Unarchive
+          try {
+            const resp = await fetch(`/api/bug-hatch/issues/${encodeURIComponent(issueId)}/unarchive`, {
+              method: "POST",
+              credentials: "include",
+            });
+            const data = await resp.json().catch(() => ({}));
+            if (!resp.ok) {
+              showError("#editError", data.error || "Failed to unarchive issue");
+              return;
+            }
+            issueData = data.data;
+            renderIssue();
+            await fetchActivity();
+          } catch (e) {
+            showError("#editError", "Network error: " + e.message);
+          }
+        } else {
+          // Archive - ask confirmation
+          if (!confirm("Archive this issue? This can be undone later.")) return;
+          try {
+            const resp = await fetch(`/api/bug-hatch/issues/${encodeURIComponent(issueId)}`, {
+              method: "DELETE",
+              credentials: "include",
+            });
+            const data = await resp.json().catch(() => ({}));
+            if (!resp.ok) {
+              showError("#editError", data.error || "Failed to archive issue");
+              return;
+            }
+            // After archiving, redirect to project issues list
+            if (issueData && issueData.projectId) {
+              window.location.href = `/bug-hatch/issues.html?project=${encodeURIComponent(issueData.projectId)}`;
+            } else {
+              // fallback: reload
+              window.location.reload();
+            }
+          } catch (e) {
+            showError("#editError", "Network error: " + e.message);
+          }
+        }
+      });
+    }
 
     // Activity toggle
     const activityToggle = qs("#activityToggle");
