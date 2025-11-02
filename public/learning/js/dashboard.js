@@ -33,7 +33,7 @@ async function loadCourses() {
 
 function getTagPopularity(tag, courses) {
   return courses.reduce((count, course) => {
-    return count + (course.tags.includes(tag) ? 1 : 0);
+    return count + (course.tags?.includes(tag) ? 1 : 0);
   }, 0);
 }
 
@@ -53,7 +53,7 @@ function initializeTags(courses) {
   const allTags = new Set();
 
   courses.forEach((course) => {
-    course.tags.forEach((tag) => allTags.add(tag));
+    course.tags?.forEach((tag) => allTags.add(tag));
   });
 
   document.querySelector(".tags-header").innerHTML = `
@@ -231,9 +231,9 @@ function filterAndDisplayCourses(searchTerm = "") {
     const matchesSearch =
       course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       course.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      course.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+      course.tags?.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()));
 
-    const matchesTags = selectedTags.size === 0 || course.tags.some((tag) => selectedTags.has(tag));
+    const matchesTags = selectedTags.size === 0 || course.tags?.some((tag) => selectedTags.has(tag));
     const matchesLevels = selectedLevels.size === 0 || selectedLevels.has(course.level);
 
     return matchesSearch && matchesTags && matchesLevels;
@@ -272,7 +272,7 @@ function filterAndDisplayCourses(searchTerm = "") {
                     <p>${course.description}</p>
                     <div class="course-tags">
                         ${course.tags
-                          .map(
+                          ?.map(
                             (tag) => `
                             <span class="course-tag" title="${tag}">${formatTagText(tag)}</span>
                         `
@@ -372,7 +372,7 @@ async function renderCourses(courses = allCourses) {
                     <p>${course.description}</p>
                     <div class="course-tags">
                         ${course.tags
-                          .map(
+                          ?.map(
                             (tag) => `
                             <span class="course-tag">${tag}</span>
                         `
