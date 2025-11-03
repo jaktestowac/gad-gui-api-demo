@@ -4,8 +4,7 @@ const { formatErrorResponse } = require("../../helpers/helpers");
 const { logDebug } = require("../../helpers/logger-api");
 const { HTTP_OK, HTTP_BAD_REQUEST } = require("../../helpers/response.helpers");
 
-// Define GraphQL schema
-const schema = buildSchema(`
+const schemaRaw = `
   type Query {
     # Weather data queries
     currentWeather: WeatherData
@@ -79,7 +78,10 @@ const schema = buildSchema(`
     users: [User]
     events: [WeatherEvent]
   }
-`);
+`;
+
+// Define GraphQL schema
+const schema = buildSchema(schemaRaw);
 
 // Create mock request and response objects for the resolver functions
 function createMockReq(args = {}, user = null, headers = {}) {
@@ -306,4 +308,6 @@ async function handleGraphQLRequest(req, res) {
 
 module.exports = {
   handleGraphQLRequest,
+  schema,
+  schemaRaw,
 };
