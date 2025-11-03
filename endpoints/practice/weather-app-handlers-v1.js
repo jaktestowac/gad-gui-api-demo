@@ -347,8 +347,29 @@ function register(req, res) {
   users.push(newUser);
   logDebug("weatherApp:register", { username, isAdmin });
 
+  // Auto-login newly registered user: create session + token identical to login()
+  const thirtyMinutesInMs = 30 * 60 * 1000;
+  const expiryDate = new Date(Date.now() + thirtyMinutesInMs);
+
+  const token = generateUuid();
+  sessions[token] = {
+    id: newUser.id,
+    username: newUser.username,
+    isAdmin: newUser.isAdmin,
+    createdAt: new Date().toISOString(),
+    expiresAt: expiryDate.toISOString(),
+  };
+
+  res.cookie("weatherAppSession", token, {
+    expires: expiryDate,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+
   return res.status(HTTP_OK).json({
     message: "Registration successful!",
+    token,
     user: {
       id: newUser.id,
       username: newUser.username,

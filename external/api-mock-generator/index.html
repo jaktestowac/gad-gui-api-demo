@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Mock Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            background: #f5f5f5;
+            border: none;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: white;
+            border-bottom: 3px solid #4CAF50;
+            color: #4CAF50;
+        }
+
+        .tab:hover {
+            background: #e9e9e9;
+        }
+
+        .content {
+            padding: 30px;
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4CAF50;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+        }
+
+        .btn-secondary {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #1976D2;
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d32f2f;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .mock-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .mock-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background: #f9f9f9;
+            transition: all 0.3s ease;
+        }
+
+        .mock-item:hover {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .mock-item.disabled {
+            opacity: 0.6;
+            background: #f0f0f0;
+        }
+
+        .mock-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .mock-method {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+            color: white;
+        }
+
+        .method-get { background: #4CAF50; }
+        .method-post { background: #2196F3; }
+        .method-put { background: #FF9800; }
+        .method-delete { background: #f44336; }
+        .method-patch { background: #9C27B0; }
+
+        .mock-path {
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .mock-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            border: 1px solid #eee;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .response-builder {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            background: #f9f9f9;
+        }
+
+        .response-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .condition-builder {
+            background: #e3f2fd;
+            border: 1px solid #2196F3;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success { background: #4CAF50; }
+        .toast.error { background: #f44336; }
+        .toast.info { background: #2196F3; }
+        .toast.warning { background: #FF9800; }
+
+        .api-endpoints {
+            display: grid;
+            gap: 10px;
+        }
+
+        .endpoint {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .endpoint-method {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+            color: white;
+            margin-right: 15px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .endpoint-path {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            margin-right: 15px;
+            flex: 1;
+        }
+
+        .endpoint-desc {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .logs-container {
+            max-height: 600px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .log-entry {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .log-entry:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .log-timestamp {
+            color: #666;
+            margin-right: 15px;
+        }
+
+        .log-method {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .log-path {
+            color: #4CAF50;
+            margin-right: 15px;
+        }
+
+        .collapsible {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .collapsible:hover {
+            background: #f0f0f0;
+        }
+
+        .collapsible-content {
+            display: none;
+            padding: 15px;
+            background: #f9f9f9;
+            border-top: 1px solid #ddd;
+        }
+
+        .collapsible-content.show {
+            display: block;
+        }
+
+        .json-viewer {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 0;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab {
+                flex: 1;
+                min-width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎭 API Mock Generator</h1>
+            <p>Create and manage mock API endpoints for testing and development</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('overview')">Overview</button>
+            <button class="tab" onclick="showTab('create')">Create Mock</button>
+            <button class="tab" onclick="showTab('manage')">Manage Mocks</button>
+            <button class="tab" onclick="showTab('generate')">Generate Data</button>
+            <button class="tab" onclick="showTab('logs')">Request Logs</button>
+            <button class="tab" onclick="showTab('docs')">API Docs</button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="overview" class="content active">
+            <div class="section">
+                <h2>Service Overview</h2>
+                <div class="mock-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="stat-mocks">-</div>
+                        <div class="stat-label">Mock Endpoints</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="stat-requests">-</div>
+                        <div class="stat-label">Total Requests</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="stat-uptime">-</div>
+                        <div class="stat-label">Uptime</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="stat-errors">-</div>
+                        <div class="stat-label">Error Rate</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Quick Actions</h2>
+                <button class="btn btn-primary" onclick="showTab('create')">Create New Mock</button>
+                <button class="btn btn-secondary" onclick="loadMocks()">Refresh Mocks</button>
+                <button class="btn btn-secondary" onclick="showTab('generate')">Generate Test Data</button>
+                <button class="btn btn-danger" onclick="clearLogs()">Clear Request Logs</button>
+            </div>
+
+            <div class="section">
+                <h2>Recent Activity</h2>
+                <div id="recent-logs" class="logs-container" style="max-height: 300px;">
+                    <div class="loading show">Loading recent activity...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Mock Tab -->
+        <div id="create" class="content">
+            <div class="section">
+                <h2>Create New Mock Endpoint</h2>
+                <form id="mockForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="method">HTTP Method</label>
+                            <select id="method" required>
+                                <option value="GET">GET</option>
+                                <option value="POST">POST</option>
+                                <option value="PUT">PUT</option>
+                                <option value="DELETE">DELETE</option>
+                                <option value="PATCH">PATCH</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="path">Path</label>
+                            <input type="text" id="path" placeholder="/api/users" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input type="text" id="description" placeholder="Get list of users">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="delay">Response Delay (ms)</label>
+                            <input type="number" id="delay" value="0" min="0" max="30000">
+                        </div>
+                        <div class="form-group">
+                            <label for="enabled">Enabled</label>
+                            <select id="enabled">
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h3>Response Configuration</h3>
+                    <div id="responses-container">
+                        <div class="response-builder">
+                            <div class="response-header">
+                                <h4>Response 1</h4>
+                                <button type="button" class="btn btn-danger btn-small" onclick="removeResponse(this)">Remove</button>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Status Code</label>
+                                    <input type="number" name="statusCode" value="200" min="100" max="599">
+                                </div>
+                                <div class="form-group">
+                                    <label>Content Type</label>
+                                    <select name="type">
+                                        <option value="json">JSON</option>
+                                        <option value="text">Text</option>
+                                        <option value="html">HTML</option>
+                                        <option value="xml">XML</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Response Body (JSON)</label>
+                                <textarea name="body" placeholder='{"message": "Hello World"}'></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Headers (JSON)</label>
+                                <textarea name="headers" placeholder='{"Content-Type": "application/json"}'></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Data Schema (for dynamic generation)</label>
+                                <textarea name="schema" placeholder='{"name": "string", "age": "number", "email": "email"}'></textarea>
+                            </div>
+
+                            <h5>Response Conditions</h5>
+                            <div class="condition-builder">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Condition Type</label>
+                                        <select name="conditionType">
+                                            <option value="">No condition</option>
+                                            <option value="header">Header</option>
+                                            <option value="query">Query Parameter</option>
+                                            <option value="body">Body Contains</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Key/Field</label>
+                                        <input type="text" name="conditionKey" placeholder="Content-Type">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Expected Value</label>
+                                    <input type="text" name="conditionValue" placeholder="application/json">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-secondary" onclick="addResponse()">Add Another Response</button>
+                    <button type="submit" class="btn btn-primary">Create Mock Endpoint</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Manage Mocks Tab -->
+        <div id="manage" class="content">
+            <div class="section">
+                <h2>Mock Endpoints</h2>
+                <div style="margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="loadMocks()">Refresh</button>
+                    <button class="btn btn-danger" onclick="deleteSelectedMocks()">Delete Selected</button>
+                    <button class="btn btn-secondary" onclick="toggleSelectedMocks(true)">Enable Selected</button>
+                    <button class="btn btn-secondary" onclick="toggleSelectedMocks(false)">Disable Selected</button>
+                </div>
+                <div id="mocks-list" class="mock-list">
+                    <div class="loading show">Loading mock endpoints...</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Data Management</h2>
+                <div style="margin-bottom: 20px;">
+                    <button class="btn btn-secondary" onclick="exportData()">Export Backup</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Import Backup</button>
+                    <button class="btn btn-primary" onclick="forceSave()">Force Save</button>
+                    <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(this)">
+                </div>
+                <p style="color: #666; font-size: 14px;">
+                    📁 Mock data is automatically saved to <code>mocks-data.json</code><br>
+                    📁 Request logs are saved to <code>request-logs.json</code><br>
+                    💾 Data is persisted automatically and on server shutdown
+                </p>
+            </div>
+        </div>
+
+        <!-- Generate Data Tab -->
+        <div id="generate" class="content">
+            <div class="section">
+                <h2>Generate Mock Data</h2>
+                <form id="generateForm">
+                    <div class="form-group">
+                        <label for="generateSchema">Data Schema (JSON)</label>
+                        <textarea id="generateSchema" rows="10" placeholder='{
+  "name": "string",
+  "email": "email", 
+  "age": "number",
+  "isActive": "boolean",
+  "createdAt": "date",
+  "id": "uuid",
+  "tags": { "type": "array", "items": "string", "length": 3 }
+}'></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="generateCount">Number of Records</label>
+                            <input type="number" id="generateCount" value="5" min="1" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Quick Templates</label>
+                            <select onchange="useTemplate(this.value)">
+                                <option value="">Select template...</option>
+                                <option value="user">User Profile</option>
+                                <option value="product">Product</option>
+                                <option value="order">Order</option>
+                                <option value="post">Blog Post</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Generate Data</button>
+                </form>
+
+                <div id="generated-data" style="margin-top: 30px; display: none;">
+                    <h3>Generated Data</h3>
+                    <button class="btn btn-secondary btn-small" onclick="copyGeneratedData()">Copy JSON</button>
+                    <div id="generated-output" class="json-viewer"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Request Logs Tab -->
+        <div id="logs" class="content">
+            <div class="section">
+                <h2>Request Logs</h2>
+                <div style="margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="loadLogs()">Refresh</button>
+                    <button class="btn btn-danger" onclick="clearLogs()">Clear Logs</button>
+                    <input type="text" id="logFilter" placeholder="Filter logs..." style="width: 300px; margin-left: 10px;">
+                    <button class="btn btn-secondary" onclick="filterLogs()">Filter</button>
+                </div>
+                <div id="logs-container" class="logs-container">
+                    <div class="loading show">Loading request logs...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Documentation Tab -->
+        <div id="docs" class="content">
+            <div class="section">
+                <h2>API Documentation</h2>
+                
+                <h3>Mock Management Endpoints</h3>
+                <div class="api-endpoints">
+                    <div class="endpoint">
+                        <span class="endpoint-method method-get">GET</span>
+                        <span class="endpoint-path">/api/mocks</span>
+                        <div class="endpoint-desc">List all mock endpoints</div>
+                    </div>
+                    <div class="endpoint">
+                        <span class="endpoint-method method-post">POST</span>
+                        <span class="endpoint-path">/api/mocks</span>
+                        <div class="endpoint-desc">Create new mock endpoint</div>
+                    </div>
+                    <div class="endpoint">
+                        <span class="endpoint-method method-get">GET</span>
+                        <span class="endpoint-path">/api/mocks/{id}</span>
+                        <div class="endpoint-desc">Get specific mock endpoint</div>
+                    </div>
+                    <div class="endpoint">
+                        <span class="endpoint-method method-put">PUT</span>
+                        <span class="endpoint-path">/api/mocks/{id}</span>
+                        <div class="endpoint-desc">Update mock endpoint</div>
+                    </div>
+                    <div class="endpoint">
+                        <span class="endpoint-method method-delete">DELETE</span>
+                        <span class="endpoint-path">/api/mocks/{id}</span>
+                        <div class="endpoint-desc">Delete mock endpoint</div>
+                    </div>
+                </div>
+
+                <h3>Utility Endpoints</h3>
+                <div class="api-endpoints">
+                    <div class="endpoint">
+                        <span class="endpoint-method method-post">POST</span>
+                        <span class="endpoint-path">/api/generate</span>
+                        <div class="endpoint-desc">Generate mock data from schema</div>
+                    </div>
+                    <div class="endpoint">
+                        <span class="endpoint-method method-get">GET</span>
+                        <span class="endpoint-path">/api/logs</span>
+                        <div class="endpoint-desc">Get request logs</div>
+                    </div>
+                    <div class="endpoint">
+                        <span class="endpoint-method method-delete">DELETE</span>
+                        <span class="endpoint-path">/api/logs</span>
+                        <div class="endpoint-desc">Clear request logs</div>
+                    </div>
+                </div>
+
+                <h3>Standard Endpoints</h3>
+                <div class="api-endpoints">
+                    <div class="endpoint">
+                        <span class="endpoint-method method-get">GET</span>
+                        <span class="endpoint-path">/api/status</span>
+                        <div class="endpoint-desc">Get service status and metrics</div>
+                    </div>
+                    <div class="endpoint">
+                        <span class="endpoint-method method-get">GET</span>
+                        <span class="endpoint-path">/api/health</span>
+                        <div class="endpoint-desc">Health check endpoint</div>
+                    </div>
+                    <div class="endpoint">
+                        <span class="endpoint-method method-get">GET</span>
+                        <span class="endpoint-path">/api/capabilities</span>
+                        <div class="endpoint-desc">List service features and endpoints</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const baseUrl = window.location.origin;
+        let mocks = [];
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStatus();
+            loadMocks();
+            loadLogs();
+            
+            // Setup form handlers
+            document.getElementById('mockForm').addEventListener('submit', createMock);
+            document.getElementById('generateForm').addEventListener('submit', generateData);
+        });
+
+        // Tab management
+        function showTab(tabName) {
+            // Hide all content
+            document.querySelectorAll('.content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected content and activate tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Toast notifications
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        // Load service status
+        async function loadStatus() {
+            try {
+                const response = await fetch(`${baseUrl}/api/status`);
+                const data = await response.json();
+                
+                document.getElementById('stat-mocks').textContent = data.metrics.mockEndpoints || 0;
+                document.getElementById('stat-requests').textContent = data.metrics.requestCount || 0;
+                document.getElementById('stat-uptime').textContent = data.uptime.human || '0s';
+                document.getElementById('stat-errors').textContent = data.metrics.errorRate || '0%';
+            } catch (error) {
+                console.error('Failed to load status:', error);
+            }
+        }
+
+        // Load mock endpoints
+        async function loadMocks() {
+            const container = document.getElementById('mocks-list');
+            container.innerHTML = '<div class="loading show">Loading mock endpoints...</div>';
+            
+            try {
+                const response = await fetch(`${baseUrl}/api/mocks`);
+                const data = await response.json();
+                mocks = data.mocks || [];
+                
+                container.innerHTML = '';
+                
+                if (mocks.length === 0) {
+                    container.innerHTML = '<p>No mock endpoints found. <a href="#" onclick="showTab(\'create\')">Create your first mock</a></p>';
+                    return;
+                }
+                
+                mocks.forEach(mock => {
+                    const mockElement = createMockElement(mock);
+                    container.appendChild(mockElement);
+                });
+                
+                showToast(`Loaded ${mocks.length} mock endpoints`, 'success');
+            } catch (error) {
+                console.error('Failed to load mocks:', error);
+                container.innerHTML = '<p>Failed to load mock endpoints</p>';
+                showToast('Failed to load mock endpoints', 'error');
+            }
+        }
+
+        // Create mock element
+        function createMockElement(mock) {
+            const div = document.createElement('div');
+            div.className = `mock-item ${mock.enabled ? '' : 'disabled'}`;
+            div.innerHTML = `
+                <div class="mock-header">
+                    <div>
+                        <input type="checkbox" class="mock-select" data-id="${mock.id}">
+                        <span class="mock-method method-${mock.method.toLowerCase()}">${mock.method}</span>
+                        <span class="mock-path">${mock.path}</span>
+                    </div>
+                    <div>
+                        <button class="btn btn-small btn-secondary" onclick="editMock('${mock.id}')">Edit</button>
+                        <button class="btn btn-small btn-danger" onclick="deleteMock('${mock.id}')">Delete</button>
+                        <button class="btn btn-small btn-primary" onclick="testMock('${mock.id}')"">Test</button>
+                    </div>
+                </div>
+                
+                <p>${mock.description || 'No description'}</p>
+                
+                <div class="mock-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">${mock.requestCount || 0}</div>
+                        <div class="stat-label">Requests</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${mock.enabled ? 'Enabled' : 'Disabled'}</div>
+                        <div class="stat-label">Status</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${new Date(mock.createdAt).toLocaleDateString()}</div>
+                        <div class="stat-label">Created</div>
+                    </div>
+                </div>
+                
+                <div class="collapsible" onclick="toggleCollapsible(this)">
+                    <strong>📋 View Configuration</strong>
+                </div>
+                <div class="collapsible-content">
+                    <div class="json-viewer">${JSON.stringify(mock, null, 2)}</div>
+                </div>
+            `;
+            return div;
+        }
+
+        // Create new mock endpoint
+        async function createMock(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const responses = collectResponses();
+            
+            const mockData = {
+                method: document.getElementById('method').value,
+                path: document.getElementById('path').value,
+                description: document.getElementById('description').value,
+                delay: parseInt(document.getElementById('delay').value) || 0,
+                enabled: document.getElementById('enabled').value === 'true',
+                responses: responses
+            };
+            
+            try {
+                const response = await fetch(`${baseUrl}/api/mocks`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(mockData)
+                });
+                
+                if (response.ok) {
+                    showToast('Mock endpoint created successfully', 'success');
+                    document.getElementById('mockForm').reset();
+                    loadMocks();
+                    showTab('manage');
+                } else {
+                    const error = await response.json();
+                    showToast(`Failed to create mock: ${error.error}`, 'error');
+                }
+            } catch (error) {
+                console.error('Failed to create mock:', error);
+                showToast('Failed to create mock endpoint', 'error');
+            }
+        }
+
+        // Collect response configurations from form
+        function collectResponses() {
+            const responses = [];
+            const responseBuilders = document.querySelectorAll('.response-builder');
+            
+            responseBuilders.forEach(builder => {
+                try {
+                    const statusCode = parseInt(builder.querySelector('input[name="statusCode"]').value) || 200;
+                    const type = builder.querySelector('select[name="type"]').value || 'json';
+                    const bodyText = builder.querySelector('textarea[name="body"]').value;
+                    const headersText = builder.querySelector('textarea[name="headers"]').value;
+                    const schemaText = builder.querySelector('textarea[name="schema"]').value;
+                    
+                    const conditionType = builder.querySelector('select[name="conditionType"]').value;
+                    const conditionKey = builder.querySelector('input[name="conditionKey"]').value;
+                    const conditionValue = builder.querySelector('input[name="conditionValue"]').value;
+                    
+                    let body = {};
+                    if (bodyText) {
+                        try {
+                            body = JSON.parse(bodyText);
+                        } catch {
+                            body = bodyText;
+                        }
+                    }
+                    
+                    let headers = {};
+                    if (headersText) {
+                        try {
+                            headers = JSON.parse(headersText);
+                        } catch {
+                            console.warn('Invalid headers JSON');
+                        }
+                    }
+                    
+                    let schema = null;
+                    if (schemaText) {
+                        try {
+                            schema = JSON.parse(schemaText);
+                        } catch {
+                            console.warn('Invalid schema JSON');
+                        }
+                    }
+                    
+                    const conditions = [];
+                    if (conditionType && conditionKey && conditionValue) {
+                        conditions.push({
+                            type: conditionType,
+                            key: conditionKey,
+                            value: conditionValue
+                        });
+                    }
+                    
+                    responses.push({
+                        statusCode,
+                        type,
+                        body,
+                        headers,
+                        schema,
+                        conditions
+                    });
+                } catch (error) {
+                    console.error('Error processing response:', error);
+                }
+            });
+            
+            return responses.length > 0 ? responses : [{ statusCode: 200, body: { message: 'Hello World' } }];
+        }
+
+        // Add new response configuration
+        function addResponse() {
+            const container = document.getElementById('responses-container');
+            const responseCount = container.children.length + 1;
+            
+            const responseBuilder = document.createElement('div');
+            responseBuilder.className = 'response-builder';
+            responseBuilder.innerHTML = `
+                <div class="response-header">
+                    <h4>Response ${responseCount}</h4>
+                    <button type="button" class="btn btn-danger btn-small" onclick="removeResponse(this)">Remove</button>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Status Code</label>
+                        <input type="number" name="statusCode" value="200" min="100" max="599">
+                    </div>
+                    <div class="form-group">
+                        <label>Content Type</label>
+                        <select name="type">
+                            <option value="json">JSON</option>
+                            <option value="text">Text</option>
+                            <option value="html">HTML</option>
+                            <option value="xml">XML</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Response Body (JSON)</label>
+                    <textarea name="body" placeholder='{"message": "Hello World"}'></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Headers (JSON)</label>
+                    <textarea name="headers" placeholder='{"Content-Type": "application/json"}'></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Data Schema (for dynamic generation)</label>
+                    <textarea name="schema" placeholder='{"name": "string", "age": "number", "email": "email"}'></textarea>
+                </div>
+
+                <h5>Response Conditions</h5>
+                <div class="condition-builder">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Condition Type</label>
+                            <select name="conditionType">
+                                <option value="">No condition</option>
+                                <option value="header">Header</option>
+                                <option value="query">Query Parameter</option>
+                                <option value="body">Body Contains</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Key/Field</label>
+                            <input type="text" name="conditionKey" placeholder="Content-Type">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Expected Value</label>
+                        <input type="text" name="conditionValue" placeholder="application/json">
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(responseBuilder);
+        }
+
+        // Remove response configuration
+        function removeResponse(button) {
+            const responseBuilder = button.closest('.response-builder');
+            const container = responseBuilder.parentNode;
+            
+            if (container.children.length > 1) {
+                responseBuilder.remove();
+                
+                // Update response numbers
+                Array.from(container.children).forEach((child, index) => {
+                    const header = child.querySelector('h4');
+                    if (header) {
+                        header.textContent = `Response ${index + 1}`;
+                    }
+                });
+            } else {
+                showToast('Cannot remove the last response', 'warning');
+            }
+        }
+
+        // Delete mock endpoint
+        async function deleteMock(id) {
+            if (!confirm('Are you sure you want to delete this mock endpoint?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${baseUrl}/api/mocks/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    showToast('Mock endpoint deleted successfully', 'success');
+                    loadMocks();
+                } else {
+                    showToast('Failed to delete mock endpoint', 'error');
+                }
+            } catch (error) {
+                console.error('Failed to delete mock:', error);
+                showToast('Failed to delete mock endpoint', 'error');
+            }
+        }
+
+        // Test mock endpoint
+        async function testMock(id) {
+            const mock = mocks.find(m => m.id === id);
+            if (!mock) return;
+            
+            try {
+                const response = await fetch(`${baseUrl}${mock.path}`, {
+                    method: mock.method,
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const data = await response.text();
+                showToast(`Mock test: ${response.status} ${response.statusText}`, 'info');
+                console.log('Mock response:', data);
+            } catch (error) {
+                console.error('Mock test failed:', error);
+                showToast('Mock test failed', 'error');
+            }
+        }
+
+        // Generate test data
+        async function generateData(event) {
+            event.preventDefault();
+            
+            const schema = document.getElementById('generateSchema').value;
+            const count = parseInt(document.getElementById('generateCount').value) || 1;
+            
+            if (!schema) {
+                showToast('Schema is required', 'warning');
+                return;
+            }
+            
+            try {
+                const schemaObj = JSON.parse(schema);
+                
+                const response = await fetch(`${baseUrl}/api/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ schema: schemaObj, count })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('generated-output').textContent = JSON.stringify(data.data, null, 2);
+                    document.getElementById('generated-data').style.display = 'block';
+                    showToast('Data generated successfully', 'success');
+                } else {
+                    showToast('Failed to generate data', 'error');
+                }
+            } catch (error) {
+                console.error('Failed to generate data:', error);
+                showToast('Invalid schema or generation failed', 'error');
+            }
+        }
+
+        // Use data template
+        function useTemplate(templateName) {
+            const templates = {
+                user: {
+                    id: "uuid",
+                    name: "name",
+                    email: "email",
+                    age: "number",
+                    isActive: "boolean",
+                    createdAt: "date"
+                },
+                product: {
+                    id: "uuid",
+                    name: "string",
+                    price: "number",
+                    category: "string",
+                    inStock: "boolean",
+                    description: "string"
+                },
+                order: {
+                    id: "uuid",
+                    userId: "uuid",
+                    total: "number",
+                    status: "string",
+                    items: { type: "array", items: "string", length: 3 },
+                    createdAt: "date"
+                },
+                post: {
+                    id: "uuid",
+                    title: "string",
+                    content: "string",
+                    author: "name",
+                    publishedAt: "date",
+                    tags: { type: "array", items: "string", length: 5 }
+                }
+            };
+            
+            if (templates[templateName]) {
+                document.getElementById('generateSchema').value = JSON.stringify(templates[templateName], null, 2);
+            }
+        }
+
+        // Copy generated data
+        function copyGeneratedData() {
+            const output = document.getElementById('generated-output').textContent;
+            navigator.clipboard.writeText(output).then(() => {
+                showToast('Data copied to clipboard', 'success');
+            });
+        }
+
+        // Load request logs
+        async function loadLogs() {
+            const container = document.getElementById('logs-container');
+            const recentContainer = document.getElementById('recent-logs');
+            
+            container.innerHTML = '<div class="loading show">Loading request logs...</div>';
+            
+            try {
+                const response = await fetch(`${baseUrl}/api/logs?limit=100`);
+                const data = await response.json();
+                
+                container.innerHTML = '';
+                recentContainer.innerHTML = '';
+                
+                if (data.logs.length === 0) {
+                    container.innerHTML = '<p>No request logs found</p>';
+                    recentContainer.innerHTML = '<p>No recent activity</p>';
+                    return;
+                }
+                
+                data.logs.forEach(log => {
+                    const logElement = createLogElement(log);
+                    container.appendChild(logElement);
+                });
+                
+                // Show recent logs in overview
+                data.logs.slice(0, 10).forEach(log => {
+                    const logElement = createLogElement(log);
+                    recentContainer.appendChild(logElement);
+                });
+                
+            } catch (error) {
+                console.error('Failed to load logs:', error);
+                container.innerHTML = '<p>Failed to load request logs</p>';
+                showToast('Failed to load request logs', 'error');
+            }
+        }
+
+        // Create log element
+        function createLogElement(log) {
+            const div = document.createElement('div');
+            div.className = 'log-entry collapsible';
+            div.onclick = () => toggleCollapsible(div);
+            
+            div.innerHTML = `
+                <span class="log-timestamp">${new Date(log.timestamp).toLocaleString()}</span>
+                <span class="log-method">${log.method}</span>
+                <span class="log-path">${log.path}</span>
+                <span>${log.ip}</span>
+                
+                <div class="collapsible-content">
+                    <div class="json-viewer">${JSON.stringify(log, null, 2)}</div>
+                </div>
+            `;
+            
+            return div;
+        }
+
+        // Clear request logs
+        async function clearLogs() {
+            if (!confirm('Are you sure you want to clear all request logs?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${baseUrl}/api/logs`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    showToast('Request logs cleared', 'success');
+                    loadLogs();
+                } else {
+                    showToast('Failed to clear logs', 'error');
+                }
+            } catch (error) {
+                console.error('Failed to clear logs:', error);
+                showToast('Failed to clear logs', 'error');
+            }
+        }
+
+        // Toggle collapsible content
+        function toggleCollapsible(element) {
+            const content = element.querySelector('.collapsible-content');
+            if (content) {
+                content.classList.toggle('show');
+            }
+        }
+
+        // Filter logs
+        function filterLogs() {
+            const filter = document.getElementById('logFilter').value;
+            loadLogsWithFilter(filter);
+        }
+
+        async function loadLogsWithFilter(filter) {
+            const container = document.getElementById('logs-container');
+            container.innerHTML = '<div class="loading show">Filtering logs...</div>';
+            
+            try {
+                const url = filter ? 
+                    `${baseUrl}/api/logs?limit=100&filter=${encodeURIComponent(filter)}` :
+                    `${baseUrl}/api/logs?limit=100`;
+                    
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                container.innerHTML = '';
+                
+                if (data.logs.length === 0) {
+                    container.innerHTML = '<p>No matching logs found</p>';
+                    return;
+                }
+                
+                data.logs.forEach(log => {
+                    const logElement = createLogElement(log);
+                    container.appendChild(logElement);
+                });
+                
+                showToast(`Found ${data.logs.length} matching logs`, 'info');
+                
+            } catch (error) {
+                console.error('Failed to filter logs:', error);
+                container.innerHTML = '<p>Failed to filter logs</p>';
+                showToast('Failed to filter logs', 'error');
+            }
+        }
+
+        // Bulk operations
+        function deleteSelectedMocks() {
+            const selected = getSelectedMockIds();
+            if (selected.length === 0) {
+                showToast('No mocks selected', 'warning');
+                return;
+            }
+            
+            if (!confirm(`Delete ${selected.length} selected mock(s)?`)) {
+                return;
+            }
+            
+            bulkOperation('delete', selected);
+        }
+
+        function toggleSelectedMocks(enable) {
+            const selected = getSelectedMockIds();
+            if (selected.length === 0) {
+                showToast('No mocks selected', 'warning');
+                return;
+            }
+            
+            const action = enable ? 'enable' : 'disable';
+            bulkOperation(action, selected);
+        }
+
+        function getSelectedMockIds() {
+            const checkboxes = document.querySelectorAll('.mock-select:checked');
+            return Array.from(checkboxes).map(cb => cb.dataset.id);
+        }
+
+        async function bulkOperation(action, ids) {
+            try {
+                const response = await fetch(`${baseUrl}/api/mocks/bulk`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action, ids })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    showToast(`Bulk ${action} completed: ${data.results.length} processed`, 'success');
+                    loadMocks();
+                } else {
+                    showToast(`Bulk ${action} failed`, 'error');
+                }
+            } catch (error) {
+                console.error(`Bulk ${action} failed:`, error);
+                showToast(`Bulk ${action} failed`, 'error');
+            }
+        }
+
+        // Export data
+        async function exportData() {
+            try {
+                const response = await fetch(`${baseUrl}/api/export`);
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `api-mocks-backup-${Date.now()}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    showToast('Backup exported successfully', 'success');
+                } else {
+                    showToast('Failed to export backup', 'error');
+                }
+            } catch (error) {
+                console.error('Export failed:', error);
+                showToast('Export failed', 'error');
+            }
+        }
+
+        // Import data
+        async function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            try {
+                const text = await file.text();
+                const data = JSON.parse(text);
+                
+                const replaceExisting = confirm('Do you want to replace existing data? Click OK to replace, Cancel to merge.');
+                
+                const response = await fetch(`${baseUrl}/api/import`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        mocks: data.mocks,
+                        logs: data.logs,
+                        replaceExisting
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    showToast(`Import completed: ${result.imported.mocks} mocks, ${result.imported.logs} logs`, 'success');
+                    loadMocks();
+                    loadLogs();
+                } else {
+                    const error = await response.json();
+                    showToast(`Import failed: ${error.error}`, 'error');
+                }
+            } catch (error) {
+                console.error('Import failed:', error);
+                showToast('Import failed - invalid file format', 'error');
+            }
+            
+            // Reset file input
+            input.value = '';
+        }
+
+        // Force save data to files
+        async function forceSave() {
+            try {
+                const response = await fetch(`${baseUrl}/api/save`, {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    showToast('Data saved to files successfully', 'success');
+                } else {
+                    showToast('Failed to save data', 'error');
+                }
+            } catch (error) {
+                console.error('Save failed:', error);
+                showToast('Save failed', 'error');
+            }
+        }
+
+        // Auto-refresh status every 10 seconds
+        setInterval(loadStatus, 10000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BugHatch – Issues</title>
+    <script src="/bug-hatch/js/common.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/bug-hatch/css/bh-fallback.css">
+</head>
+
+<body class="bh-bg-dark bh-text-light bg-neutral-950 text-neutral-100">
+    <div class="bh-demo-banner hidden flex items-center justify-between gap-3 px-4 py-2 text-sm border border-amber-500/30 bg-amber-500/10 text-amber-100" id="demo-banner">
+        <span class="demo-banner-icon">🎯</span>
+        <div class="demo-banner-text">
+            <strong>Demo Mode:</strong> Read-only preview. Create/edit actions are disabled.
+        </div>
+        <a href="/bug-hatch/signup.html" class="bh-demo-cta inline-flex items-center rounded-md border border-amber-500/40 px-3 py-1.5 text-amber-100 hover:bg-amber-500/10">Sign Up Free</a>
+    </div>
+    <nav class="bh-navbar px-4 py-3 sticky top-0 z-20 border-b border-neutral-800 bg-neutral-950/70 backdrop-blur">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="/" class="gad-link">🦎 GAD</a>
+            <a href="/bug-hatch/dashboard.html" class="bh-navbar-brand bh-brand-badge inline-flex items-center gap-2 text-lg font-semibold"><span class="bh-logo-icon text-2xl">🐛</span><span>BugHatch</span></a>
+            <div class="flex gap-2">
+                <a href="/bug-hatch/dashboard.html" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">Dashboard</a>
+                <button id="logoutBtn" class="bh-btn bh-btn-danger bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium bg-red-600 hover:bg-red-500 text-white px-2.5 py-1.5">Logout</button>
+            </div>
+        </div>
+    </nav>
+    <main class="bh-max-w-screen bh-mx-auto bh-p-lg bh-flex bh-gap-lg bh-flex-wrap max-w-7xl mx-auto px-4 py-6 flex gap-6 flex-wrap">
+        <!-- Filters Panel -->
+        <aside class="bh-card bh-card-glow bh-flex-grow-0 bh-flex-shrink-0 min-w-[260px] max-w-[300px] rounded-xl border border-neutral-800 bg-neutral-900/40 p-4">
+            <h2 class="bh-heading-section bh-mb-sm bh-text-sm text-lg font-semibold mb-2">Filters</h2>
+            <form id="filtersForm" class="bh-stack bh-gap-sm bh-text-xs flex flex-col space-y-2 text-xs">
+                <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Project (ID or Key)</span><input id="filterProject" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" placeholder="proj-demo-core or CORE" /></label>
+                <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Search</span><input id="filterSearch" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" placeholder="text..." /></label>
+                <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Status</span>
+                    <select id="filterStatus" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none">
+                        <option value="">Any</option>
+                    </select>
+                </label>
+                <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Type</span>
+                    <select id="filterType" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none">
+                        <option value="">Any</option>
+                        <option value="task">Task</option>
+                        <option value="bug">Bug</option>
+                        <option value="story">Story</option>
+                    </select>
+                </label>
+                <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Assignee</span>
+                    <select id="filterAssignee" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none">
+                        <option value="">All</option>
+                    </select>
+                </label>
+                <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Labels (comma)</span><input id="filterLabels" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" placeholder="ui,api" /></label>
+                <label class="bh-field flex items-center space-x-2"><input type="checkbox" style="width: 30px;" id="filterIncludeArchived" class="bh-input rounded border border-neutral-700 bg-neutral-900 text-emerald-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" /><span class="bh-label block text-xs font-medium text-neutral-300">Include archived issues</span></label>
+                <div class="bh-flex bh-gap-xs flex gap-1">
+                    <button type="submit" class="bh-btn bh-btn-primary bh-btn-xs bh-flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium bg-emerald-500 text-neutral-900 hover:bg-emerald-600 px-2 py-1">Apply</button>
+                    <button type="button" id="resetFilters" class="bh-btn bh-btn-secondary bh-btn-xs inline-flex items-center justify-center rounded-md text-xs font-medium border border-neutral-700/70 bg-neutral-900 hover:bg-neutral-800 text-neutral-100 px-2 py-1">Reset</button>
+                </div>
+            </form>
+            <hr class="bh-separator my-2 border-neutral-800" />
+            <button id="createIssueBtn" class="bh-btn bh-btn-success bh-btn-xs inline-flex items-center justify-center rounded-md text-xs font-medium bg-emerald-600 hover:bg-emerald-500 text-white px-2 py-1" data-testid="create-issue-btn">＋ Create Issue</button>
+            <div id="filtersInfo" class="bh-text-dim bh-text-2xs bh-mt-sm text-neutral-400 text-[11px] mt-2"></div>
+        </aside>
+
+        <!-- Main Issues Content -->
+        <section class="bh-flex-1 bh-min-w-0 flex-1 min-w-0">
+            <div class="bh-card bh-card-glow bh-mb-md rounded-xl border border-neutral-800 bg-neutral-900/40 p-4 mb-4">
+                <h1 class="bh-heading-section bh-mb-xs bh-text-md text-lg font-semibold mb-1">Issues</h1>
+                <div id="issuesMeta" class="bh-text-dim bh-text-2xs text-neutral-400 text-[11px]"></div>
+            </div>
+            <div class="bh-card bh-card-glow overflow-auto rounded-xl border border-neutral-800 bg-neutral-900/40 p-0">
+                <table class="bh-table bh-text-xs min-w-full divide-y divide-neutral-800 text-xs" id="issuesTable">
+                    <thead class="bg-neutral-900">
+                        <tr>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-neutral-400">Key</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-neutral-400">Title</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-neutral-400">Status</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-neutral-400">Type</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-neutral-400">Priority</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-neutral-400">Assignee</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-neutral-400">Updated</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-neutral-400">Archived</th>
+                        </tr>
+                    </thead>
+                    <tbody id="issuesTbody" class="divide-y divide-neutral-800">
+                        <tr>
+                            <td colspan="8" class="bh-text-center bh-text-dim px-4 py-2 text-center text-neutral-400">Enter a project above and apply filters</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Create Issue Modal -->
+        <div id="createIssueModal" class="bh-modal fixed inset-0 hidden z-50 flex items-center justify-center p-4" aria-hidden="true">
+            <div class="bh-modal-backdrop fixed inset-0 bg-black/60" data-modal-close></div>
+            <div class="bh-modal-dialog bh-card bh-card-glow relative z-10 w-full max-w-lg rounded-lg border border-neutral-800 bg-neutral-900 p-4 shadow-xl" role="dialog" aria-modal="true" aria-labelledby="createIssueTitle">
+                <div class="bh-modal-header flex items-center justify-between border-b border-neutral-800 pb-2 mb-3">
+                    <h3 id="createIssueTitle" class="bh-heading-section bh-text-sm text-sm font-semibold">Create Issue</h3>
+                    <button class="bh-modal-close text-neutral-400 hover:text-neutral-200" data-modal-close>&times;</button>
+                </div>
+                <form id="createIssueForm" class="bh-stack bh-gap-sm bh-text-xs flex flex-col space-y-2 text-xs">
+                    <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Project ID</span><input id="createProjectId" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" required /></label>
+                    <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Title</span><input id="createTitle" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" minlength="3" required /></label>
+                    <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Type</span>
+                        <select id="createType" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none">
+                            <option value="task">Task</option>
+                            <option value="bug">Bug</option>
+                            <option value="story">Story</option>
+                        </select>
+                    </label>
+                    <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Priority</span>
+                        <select id="createPriority" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </label>
+                    <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Assignee (optional)</span>
+                        <select id="createAssignee" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none">
+                            <option value="">Unassigned</option>
+                        </select>
+                    </label>
+                    <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Labels (comma)</span><input id="createLabels" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" /></label>
+                    <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Description</span><textarea id="createDescription" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" rows="4"></textarea></label>
+                    <div id="createIssueError" class="bh-alert bh-alert-error bh-hidden rounded-md border border-red-500/40 bg-red-500/10 text-red-200 text-sm px-3 py-2" style="display:none;"></div>
+                    <div class="bh-flex bh-gap-sm bh-justify-end flex items-center justify-end gap-2">
+                        <button type="button" class="bh-btn bh-btn-secondary bh-btn-xs inline-flex items-center justify-center rounded-md text-xs font-medium border border-neutral-700/70 bg-neutral-900 hover:bg-neutral-800 text-neutral-100 px-2 py-1" data-modal-close>Cancel</button>
+                        <button type="submit" class="bh-btn bh-btn-primary bh-btn-xs inline-flex items-center justify-center rounded-md text-xs font-medium bg-emerald-500 text-neutral-900 hover:bg-emerald-600 px-2 py-1">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Issue Preview Modal -->
+        <div id="issuePreviewModal" class="bh-modal fixed inset-0 hidden z-50 flex items-center justify-center p-4" aria-hidden="true">
+            <div class="bh-modal-backdrop fixed inset-0 bg-black/60" data-modal-close></div>
+            <div class="bh-modal-dialog bh-card bh-card-glow relative z-10 w-full max-w-4xl rounded-lg border border-neutral-800 bg-neutral-900 p-0 shadow-xl max-h-[90vh] overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="previewIssueTitle">
+                <div class="bh-modal-header flex items-center justify-between border-b border-neutral-800 p-4 pb-3">
+                    <div class="flex items-center gap-3">
+                        <h3 id="previewIssueTitle" class="bh-heading-section bh-text-lg text-lg font-semibold">Issue Preview</h3>
+                        <span id="previewIssueKey" class="bh-badge inline-flex items-center rounded-full border border-neutral-700/60 bg-neutral-900/60 px-2 py-0.5 text-xs text-neutral-300"></span>
+                        <span id="previewIssueStatus" class="bh-badge inline-flex items-center rounded-full border border-neutral-700/60 bg-neutral-900/60 px-2 py-0.5 text-xs text-neutral-300"></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <a id="previewIssueLink" href="#" class="bh-btn bh-btn-secondary bh-btn-xs inline-flex items-center justify-center rounded-md text-xs font-medium border border-neutral-700/70 bg-neutral-900 hover:bg-neutral-800 text-neutral-100 px-2 py-1" target="_blank">View Full Issue</a>
+                        <button id="pvArchiveBtn" class="bh-btn bh-btn-danger bh-btn-xs inline-flex items-center justify-center rounded-md text-xs font-medium bg-red-600 hover:bg-red-500 text-white px-2 py-1" title="Archive Issue">Move to Archive</button>
+                        <button class="bh-modal-close text-neutral-400 hover:text-neutral-200 text-xl" data-modal-close>&times;</button>
+                    </div>
+                </div>
+                <div class="overflow-y-auto max-h-[calc(90vh-120px)]">
+                    <div class="p-4 space-y-4">
+                        <!-- Issue Details -->
+                        <div class="space-y-3">
+                            <h4 id="previewIssueTitleText" class="text-base font-medium text-neutral-100"></h4>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div><span class="text-neutral-400">Type:</span> <span id="previewIssueType" class="text-neutral-200"></span></div>
+                                <div><span class="text-neutral-400">Priority:</span> <span id="previewIssuePriority" class="text-neutral-200"></span></div>
+                                <div><span class="text-neutral-400">Assignee:</span> <span id="previewIssueAssignee" class="text-neutral-200"></span></div>
+                                <div><span class="text-neutral-400">Labels:</span> <span id="previewIssueLabels" class="text-neutral-200"></span></div>
+                            </div>
+                            <div id="previewIssueDescription" class="text-sm text-neutral-300 mt-3"></div>
+                        </div>
+
+                        <!-- Comments Section -->
+                        <div class="border-t border-neutral-800 pt-4">
+                            <h4 class="text-sm font-medium text-neutral-200 mb-3">Comments</h4>
+                            <div id="previewCommentsList" class="space-y-3 max-h-64 overflow-y-auto">
+                                <div class="text-xs text-neutral-500">Loading comments...</div>
+                            </div>
+                        </div>
+
+                        <!-- Activity Section -->
+                        <div class="border-t border-neutral-800 pt-4">
+                            <h4 class="text-sm font-medium text-neutral-200 mb-3">Activity</h4>
+                            <div id="previewActivityFeed" class="space-y-2 max-h-64 overflow-y-auto">
+                                <div class="text-xs text-neutral-500">Loading activity...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/bug-hatch/js/auth.js"></script>
+    <script src="/bug-hatch/js/demo-propagate.js"></script>
+    <script src="/bug-hatch/js/activity-renderer.js"></script>
+    <script src="/bug-hatch/js/comments-renderer.js"></script>
+    <script src="/bug-hatch/js/issue-preview.js"></script>
+    <script src="/bug-hatch/js/issues.js"></script>
+</body>
+
+</html>

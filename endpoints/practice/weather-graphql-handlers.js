@@ -4,8 +4,7 @@ const { formatErrorResponse } = require("../../helpers/helpers");
 const { logDebug } = require("../../helpers/logger-api");
 const { HTTP_OK, HTTP_BAD_REQUEST } = require("../../helpers/response.helpers");
 
-// Define GraphQL schema
-const schema = buildSchema(`
+const schemaRaw = `
   type Query {
     # Weather data queries
     currentWeather: WeatherData
@@ -79,7 +78,10 @@ const schema = buildSchema(`
     users: [User]
     events: [WeatherEvent]
   }
-`);
+`;
+
+// Define GraphQL schema
+const schema = buildSchema(schemaRaw);
 
 // Create mock request and response objects for the resolver functions
 function createMockReq(args = {}, user = null, headers = {}) {
@@ -202,8 +204,11 @@ const root = {
     if (!context.user) {
       throw new Error("Authentication required");
     }
-
-    const req = createMockReq({ id, event }, context.user);
+    // Forward Authorization header and token for backend validation
+    const authHeaders = context.token ? { authorization: `Bearer ${context.token}` } : {};
+    const req = createMockReq({ id, event }, context.user, authHeaders);
+    // Ensure req.token is available as backend compares req.token with header token
+    req.token = context.token;
     req.params = { id };
     const res = createMockRes();
     weatherApp.updateWeatherEvent(req, res);
@@ -227,6 +232,11 @@ const root = {
     const req = createMockReq({ username, password, isAdmin });
     const res = createMockRes();
     weatherApp.register(req, res);
+    if (res.statusCode !== 200) {
+      // Ensure GraphQL surfaces this as an error
+      const errMsg = (res.data && (res.data.error?.message || res.data.message)) || "Registration failed";
+      throw new Error(errMsg);
+    }
     return res.data;
   },
 
@@ -234,6 +244,10 @@ const root = {
     const req = createMockReq({ username, password });
     const res = createMockRes();
     weatherApp.login(req, res);
+    if (res.statusCode !== 200) {
+      const errMsg = (res.data && (res.data.error?.message || res.data.message)) || "Login failed";
+      throw new Error(errMsg);
+    }
     return res.data;
   },
 
@@ -294,4 +308,6 @@ async function handleGraphQLRequest(req, res) {
 
 module.exports = {
   handleGraphQLRequest,
+  schema,
+  schemaRaw,
 };

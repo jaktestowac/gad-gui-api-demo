@@ -232,6 +232,42 @@
         .sub-tab-content {
             padding: 20px 0;
         }
+
+        .refresh-btn {
+            padding: 8px 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .refresh-btn:hover {
+            background: #0056b3;
+        }
+
+        .refresh-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .refresh-btn i {
+            font-size: 12px;
+        }
+
+        .refresh-btn.loading i {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 
@@ -271,11 +307,17 @@
 
             <div class="tab-content" id="usersTab" style="display: none;">
                 <div class="users-grid">
-                    <h2>User Role Management</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2>User Role Management</h2>
+                        <button id="refreshUsersBtn" class="refresh-btn">
+                            <i class="fas fa-sync-alt"></i> Refresh Users
+                        </button>
+                    </div>
                     <div class="search-container">
                         <input type="text" class="search-input" placeholder="Search users by name or email..." id="searchInput">
                     </div>
                     <div class="error-message" id="errorMessage"></div>
+                    <div id="usersContainer"></div>
                 </div>
             </div>
 
@@ -300,15 +342,62 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            const usersGrid = document.querySelector('.users-grid');
             const successMessage = document.getElementById('successMessage');
             const errorMessage = document.getElementById('errorMessage');
             const searchInput = document.getElementById('searchInput');
+            const refreshUsersBtn = document.getElementById('refreshUsersBtn');
 
             // Load role requests immediately when page loads
             await loadRoleRequests();
 
+            // Load users initially
+            await loadUsers();
+
+            // Add refresh button event listener
+            refreshUsersBtn.addEventListener('click', async () => {
+                await loadUsers();
+            });
+
+            // Add search functionality
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                document.querySelectorAll('.user-card').forEach(card => {
+                    const userName = card.querySelector('.user-name').textContent.toLowerCase();
+                    const userEmail = card.querySelector('.user-email').textContent.toLowerCase();
+                    if (userName.includes(searchTerm) || userEmail.includes(searchTerm)) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+            });
+
+            // Add sub-tab event listeners
+            document.querySelectorAll('.sub-tab-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('.sub-tab-button').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.sub-tab-content').forEach(c => c.style.display = 'none');
+
+                    button.classList.add('active');
+                    const subTabId = button.dataset.subtab + 'SubTab';
+                    document.getElementById(subTabId).style.display = 'block';
+                });
+            });
+        });
+
+        async function loadUsers() {
+            const usersContainer = document.getElementById('usersContainer');
+            const refreshBtn = document.getElementById('refreshUsersBtn');
+
             try {
+                // Show loading state
+                refreshBtn.disabled = true;
+                refreshBtn.classList.add('loading');
+                refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Loading...';
+
+                // Clear existing users
+                usersContainer.innerHTML = '';
+
                 const users = await api.getAllUsers();
                 users.forEach(user => {
                     const userCard = document.createElement('div');
@@ -324,22 +413,10 @@
                             <option value="instructor" ${user.role === 'instructor' ? 'selected' : ''}>Instructor</option>
                         </select>
                     `;
-                    usersGrid.appendChild(userCard);
+                    usersContainer.appendChild(userCard);
                 });
 
-                searchInput.addEventListener('input', (e) => {
-                    const searchTerm = e.target.value.toLowerCase();
-                    document.querySelectorAll('.user-card').forEach(card => {
-                        const userName = card.querySelector('.user-name').textContent.toLowerCase();
-                        const userEmail = card.querySelector('.user-email').textContent.toLowerCase();
-                        if (userName.includes(searchTerm) || userEmail.includes(searchTerm)) {
-                            card.classList.remove('hidden');
-                        } else {
-                            card.classList.add('hidden');
-                        }
-                    });
-                });
-
+                // Add event listeners to role selects
                 document.querySelectorAll('.role-select').forEach(select => {
                     select.addEventListener('change', async (e) => {
                         const userId = e.target.dataset.userId;
@@ -358,23 +435,18 @@
                         e.target.dataset.previousValue = e.target.value;
                     });
                 });
+
+                notifications.show("Users refreshed successfully", "success");
             } catch (error) {
                 console.error('Failed to load users:', error);
                 notifications.show("Failed to load users", "error");
+            } finally {
+                // Reset button state
+                refreshBtn.disabled = false;
+                refreshBtn.classList.remove('loading');
+                refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Users';
             }
-
-            // Add sub-tab event listeners
-            document.querySelectorAll('.sub-tab-button').forEach(button => {
-                button.addEventListener('click', () => {
-                    document.querySelectorAll('.sub-tab-button').forEach(b => b.classList.remove('active'));
-                    document.querySelectorAll('.sub-tab-content').forEach(c => c.style.display = 'none');
-
-                    button.classList.add('active');
-                    const subTabId = button.dataset.subtab + 'SubTab';
-                    document.getElementById(subTabId).style.display = 'block';
-                });
-            });
-        });
+        }
 
         async function loadRoleRequests() {
             try {
@@ -441,6 +513,12 @@
                 const comment = status === 'rejected' ? prompt('Please provide a reason for rejection:') : '';
                 await api.updateRoleRequest(requestId, { status, comment });
                 await loadRoleRequests();
+                
+                // If request was approved, also refresh the user list to show updated roles
+                if (status === 'approved') {
+                    await loadUsers();
+                }
+                
                 notifications.show(`Request ${status} successfully`, "success");
             } catch (error) {
                 notifications.show("Failed to update request", "error");

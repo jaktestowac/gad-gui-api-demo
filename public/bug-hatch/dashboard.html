@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BugHatch - Issue Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/bug-hatch/css/bh-fallback.css">
+</head>
+
+<body class="bh-bg-dark bh-text-light bg-neutral-950 text-neutral-100">
+    <div class="bh-demo-banner hidden flex items-center justify-between gap-3 px-4 py-2 text-sm border border-amber-500/30 bg-amber-500/10 text-amber-100" id="demo-banner">
+        <span class="demo-banner-icon">🎯</span>
+        <div class="demo-banner-text">
+            <strong>Demo Mode:</strong> You're exploring BugHatch in read-only mode. All features are visible, but you cannot create, edit, or delete items.
+        </div>
+        <a href="/bug-hatch/signup.html" class="bh-demo-cta">Sign Up Free</a>
+    </div>
+    <nav class="bh-navbar px-4 py-3 sticky top-0 z-20 border-b border-neutral-800 bg-neutral-950/70 backdrop-blur">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="/" class="gad-link">🦎 GAD</a>
+            <a href="/bug-hatch/dashboard.html" class="bh-navbar-brand bh-brand-badge inline-flex items-center gap-2 text-lg font-semibold"><span class="bh-logo-icon text-2xl">🐛</span><span>BugHatch</span></a>
+            <div class="flex gap-2">
+                <span class="bh-badge" id="user-info" data-testid="user-info">Loading...</span>
+                <button id="logout-btn" class="bh-btn bh-btn-danger bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium bg-red-600 hover:bg-red-500 text-white px-2.5 py-1.5">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="bh-max-w-screen bh-mx-auto bh-p-xl">
+        <div class="bh-card bh-card-glow bh-mb-xl bh-text-center">
+            <h1 id="welcome-message" data-testid="welcome-message" class="bh-heading-display bh-heading-gradient bh-mb-sm">Welcome to BugHatch</h1>
+            <p class="bh-text-dim bh-text-sm">Lightweight issue tracking for teams</p>
+        </div>
+
+        <div id="error-message" class="bh-alert bh-alert-error bh-hidden" style="display: none;"></div>
+
+        <div class="bh-stat-grid bh-mb-xl">
+            <div class="bh-stat-card">
+                <h3>Projects</h3>
+                <div class="bh-text-2xl" data-testid="projects-count" id="projects-count">0</div>
+            </div>
+            <div class="bh-stat-card">
+                <h3>Open Issues</h3>
+                <div class="bh-text-2xl" data-testid="open-issues-count">0</div>
+            </div>
+            <div class="bh-stat-card">
+                <h3>Closed Issues</h3>
+                <div class="bh-text-2xl" data-testid="closed-issues-count">0</div>
+            </div>
+        </div>
+
+        <div class="bh-card bh-card-glow bh-mb-xl" id="projects-list-card" style="display:none;">
+            <h2 class="bh-heading-gradient bh-text-lg bh-mb-md">Projects</h2>
+            <div id="projects-empty" class="bh-text-dim bh-text-sm" style="display:none;">No projects found.</div>
+            <ul id="projects-list" class="bh-list"></ul>
+        </div>
+
+        <div class="bh-card bh-card-glow">
+            <h2 class="bh-heading-gradient bh-text-xl bh-mb-lg">Quick Actions</h2>
+            <div class="bh-flex bh-gap-sm bh-wrap bh-mb-lg">
+                <button class="bh-btn bh-btn-secondary" id="create-project-btn" data-testid="create-project-button">📁 Create Project</button>
+                <button class="bh-btn bh-btn-secondary" id="create-issue-btn" data-testid="create-issue-button">🐛 Create Issue</button>
+                <button class="bh-btn bh-btn-secondary" id="view-projects-btn" data-testid="view-projects-button">📋 View All Projects</button>
+                <button class="bh-btn bh-btn-secondary" id="view-issues-btn" data-testid="view-issues-button">🔍 View Issues</button>
+            </div>
+            <div class="bh-alert bh-alert-info bh-hidden" id="quick-actions-info">
+                💡 <strong>Quick Actions:</strong> Use these buttons to quickly perform common tasks.
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Project Modal -->
+    <div id="createProjectModal" class="bh-modal" aria-hidden="true">
+        <div class="bh-modal-backdrop" data-modal-close></div>
+        <div class="bh-modal-dialog bh-card bh-card-glow" role="dialog" aria-modal="true" aria-labelledby="createProjectTitle">
+            <div class="bh-modal-header">
+                <h3 id="createProjectTitle" class="bh-heading-section bh-text-sm">Create Project</h3>
+                <button class="bh-modal-close" data-modal-close>&times;</button>
+            </div>
+            <form id="createProjectForm" class="bh-stack bh-gap-sm bh-text-xs p-4">
+                <label class="bh-field"><span class="bh-label">Project Key</span><input id="createProjectKey" class="bh-input" placeholder="e.g., CORE, DEMO" maxlength="10" required /></label>
+                <label class="bh-field"><span class="bh-label">Project Name</span><input id="createProjectName" class="bh-input" placeholder="e.g., Core Platform" required /></label>
+                <label class="bh-field"><span class="bh-label">Description (optional)</span><textarea id="createProjectDescription" class="bh-input" rows="3" placeholder="Project description..."></textarea></label>
+                <div class="bh-flex bh-gap-sm bh-justify-end">
+                    <button type="submit" class="bh-btn bh-btn-primary bh-flex-1">Create Project</button>
+                    <button type="button" class="bh-btn bh-btn-secondary" data-modal-close>Cancel</button>
+                </div>
+            </form>
+            <div id="createProjectError" class="bh-alert bh-alert-error bh-hidden bh-mt-sm"></div>
+        </div>
+    </div>
+
+    <!-- Create Issue Modal -->
+    <div id="createIssueModal" class="bh-modal" aria-hidden="true">
+        <div class="bh-modal-backdrop" data-modal-close></div>
+        <div class="bh-modal-dialog bh-card bh-card-glow" role="dialog" aria-modal="true" aria-labelledby="createIssueTitle">
+            <div class="bh-modal-header">
+                <h3 id="createIssueTitle" class="bh-heading-section bh-text-sm">Create Issue</h3>
+                <button class="bh-modal-close" data-modal-close>&times;</button>
+            </div>
+            <form id="createIssueForm" class="bh-stack bh-gap-sm bh-text-xs p-4">
+                <label class="bh-field"><span class="bh-label">Project</span>
+                    <select id="createIssueProject" class="bh-input" required></select>
+                </label>
+                <label class="bh-field"><span class="bh-label">Title</span><input id="createIssueTitleInput" class="bh-input" minlength="3" required /></label>
+                <div class="bh-flex bh-gap-sm">
+                    <label class="bh-field bh-flex-1"><span class="bh-label">Type</span>
+                        <select id="createIssueType" class="bh-input">
+                            <option value="task">Task</option>
+                            <option value="bug">Bug</option>
+                            <option value="story">Story</option>
+                        </select>
+                    </label>
+                    <label class="bh-field bh-flex-1"><span class="bh-label">Priority</span>
+                        <select id="createIssuePriority" class="bh-input">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </label>
+                </div>
+                <label class="bh-field"><span class="bh-label">Assignee (optional user id)</span><input id="createIssueAssignee" class="bh-input" /></label>
+                <label class="bh-field"><span class="bh-label">Labels (comma)</span><input id="createIssueLabels" class="bh-input" placeholder="ui,api" /></label>
+                <label class="bh-field"><span class="bh-label">Description</span><textarea id="createIssueDescription" class="bh-input" rows="4"></textarea></label>
+                <div id="createIssueErrorDash" class="bh-alert bh-alert-error bh-hidden"></div>
+                <div class="bh-flex bh-gap-sm bh-justify-end">
+                    <button type="button" class="bh-btn bh-btn-secondary" data-modal-close>Cancel</button>
+                    <button type="submit" class="bh-btn bh-btn-primary bh-flex-1">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script src="/bug-hatch/js/auth.js"></script>
+    <script src="/bug-hatch/js/demo-propagate.js"></script>
+    <script>
+        // Initialize the landing page
+        document.addEventListener('DOMContentLoaded', async () => {
+            const userInfoEl = document.getElementById('user-info');
+            const welcomeMessageEl = document.getElementById('welcome-message');
+            const logoutBtn = document.getElementById('logout-btn');
+            const demoBanner = document.getElementById('demo-banner');
+            const projectsCountEl = document.getElementById('projects-count');
+            const projectsListCard = document.getElementById('projects-list-card');
+            const projectsListEl = document.getElementById('projects-list');
+            const projectsEmptyEl = document.getElementById('projects-empty');
+
+            const urlObj = new URL(window.location.href);
+            const forceDemo = urlObj.searchParams.get('demo') === 'true';
+
+            const user = await window.bugHatchAuth.checkAuth();
+            if (!user && !forceDemo) {
+                window.location.href = `/bug-hatch/login.html`;
+                return;
+            }
+
+            const isDemo = (user && user.isDemo) || forceDemo;
+            if (isDemo) {
+                demoBanner.classList.remove('hidden');
+                welcomeMessageEl.textContent = 'Welcome to BugHatch Demo!';
+                logoutBtn.textContent = 'Exit Demo';
+            }
+
+            userInfoEl.textContent = user.name || user.email;
+            if (!user.isDemo) {
+                welcomeMessageEl.textContent = `Welcome, ${user.name || 'User'}!`;
+            }
+
+            logoutBtn.addEventListener('click', async () => {
+                await window.bugHatchAuth.handleLogout();
+            });
+
+            async function loadProjectsAndIssueStats() {
+                try {
+                    const resp = await fetch('/api/bug-hatch/projects' + (forceDemo ? '?demo=true' : ''), { credentials: 'include' });
+                    if (!resp.ok) return;
+                    const data = await resp.json();
+                    const projects = data?.data?.projects || [];
+                    projectsCountEl.textContent = projects.length;
+                    projectsListCard.style.display = 'block';
+                    if (projects.length === 0) {
+                        projectsEmptyEl.style.display = 'block';
+                        return;
+                    }
+                    projectsListEl.innerHTML = '';
+                    projects.forEach(p => {
+                        const li = document.createElement('li');
+                        li.className = 'bh-list-item';
+                        const link = `/bug-hatch/project.html?id=${encodeURIComponent(p.id)}${forceDemo ? '&demo=true' : ''}`;
+                        li.innerHTML = `<strong><a class="bh-link" href="${link}">${p.key}</a></strong> – ${p.name}${p.archived ? ' <span class="bh-badge bh-badge-warn">Archived</span>' : ''}`;
+                        projectsListEl.appendChild(li);
+                    });
+
+                    let open = 0; let closed = 0;
+                    for (const p of projects) {
+                        try {
+                            const ir = await fetch(`/api/bug-hatch/projects/${encodeURIComponent(p.id)}/issues?limit=200${forceDemo ? '&demo=true' : ''}`, { credentials: 'include' });
+                            if (!ir.ok) continue;
+                            const idata = await ir.json();
+                            const issues = idata?.data?.issues || [];
+                            issues.forEach(i => { if (i.status === 'Done') closed++; else open++; });
+                        } catch (e) { /* ignore per-project stats error */ }
+                    }
+                    const openEl = document.querySelector('[data-testid="open-issues-count"]');
+                    const closedEl = document.querySelector('[data-testid="closed-issues-count"]');
+                    if (openEl) openEl.textContent = open;
+                    if (closedEl) closedEl.textContent = closed;
+                } catch (err) { /* ignore aggregate stats error */ }
+            }
+
+            await loadProjectsAndIssueStats();
+
+            function setupQuickActions() {
+                const createProjectBtn = document.getElementById('create-project-btn');
+                const createIssueBtn = document.getElementById('create-issue-btn');
+                const viewProjectsBtn = document.getElementById('view-projects-btn');
+                const viewIssuesBtn = document.getElementById('view-issues-btn');
+                const quickActionsInfo = document.getElementById('quick-actions-info');
+
+                quickActionsInfo.classList.remove('bh-hidden');
+
+                createProjectBtn.addEventListener('click', () => {
+                    if (isDemo) { showToast('Demo mode: Project creation is disabled', 'warning'); return; }
+                    showModal('createProjectModal');
+                });
+                createIssueBtn.addEventListener('click', () => {
+                    if (isDemo) { showToast('Demo mode: Issue creation is disabled', 'warning'); return; }
+                    populateIssueProjectSelect();
+                    showModal('createIssueModal');
+                });
+                viewProjectsBtn.addEventListener('click', () => {
+                    const projectsCard = document.getElementById('projects-list-card');
+                    if (projectsCard && projectsCard.style.display !== 'none') {
+                        projectsCard.scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                        showToast('No projects available. Create a project first!', 'info');
+                    }
+                });
+                viewIssuesBtn.addEventListener('click', () => {
+                    window.location.href = `/bug-hatch/issues.html${forceDemo ? '?demo=true' : ''}`;
+                });
+            }
+            setupQuickActions();
+
+            const createProjectForm = document.getElementById('createProjectForm');
+            createProjectForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const projectKey = document.getElementById('createProjectKey').value.trim().toUpperCase();
+                const projectName = document.getElementById('createProjectName').value.trim();
+                const description = document.getElementById('createProjectDescription').value.trim();
+                if (!projectKey || !projectName) { showCreateProjectError('Project key and name are required'); return; }
+                if (!/^[A-Z0-9]{1,10}$/.test(projectKey)) { showCreateProjectError('Project key must be 1-10 uppercase letters/numbers'); return; }
+                try {
+                    const response = await fetch('/api/bug-hatch/projects', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
+                        body: JSON.stringify({ key: projectKey, name: projectName, description: description || null })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) { showCreateProjectError(data.error || 'Failed to create project'); return; }
+                    closeModal(document.getElementById('createProjectModal'));
+                    createProjectForm.reset();
+                    const projName = data?.data?.name || data?.data?.project?.name || 'Project';
+                    showToast(`Project "${projName}" created successfully!`, 'info');
+                    await loadProjectsAndIssueStats();
+                } catch (error) { showCreateProjectError('Network error. Please try again.'); }
+            });
+
+            function showCreateProjectError(message) {
+                const errorEl = document.getElementById('createProjectError');
+                errorEl.textContent = message;
+                errorEl.classList.remove('bh-hidden');
+            }
+
+            async function populateIssueProjectSelect() {
+                const sel = document.getElementById('createIssueProject');
+                if (!sel) return;
+                sel.innerHTML = '<option value="" disabled selected>Loading...</option>';
+                try {
+                    const resp = await fetch('/api/bug-hatch/projects' + (forceDemo ? '?demo=true' : ''), { credentials: 'include' });
+                    if (!resp.ok) { sel.innerHTML = '<option value="" disabled>Error</option>'; return; }
+                    const data = await resp.json();
+                    const projects = data?.data?.projects || [];
+                    if (!projects.length) { sel.innerHTML = '<option value="" disabled>No projects</option>'; return; }
+                    sel.innerHTML = projects.map(p => `<option value="${p.id}">${p.key} – ${p.name}</option>`).join('');
+                } catch (e) { sel.innerHTML = '<option value="" disabled>Error</option>'; }
+            }
+
+            const createIssueForm = document.getElementById('createIssueForm');
+            createIssueForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (isDemo) { return; }
+                const projectId = document.getElementById('createIssueProject').value;
+                const title = document.getElementById('createIssueTitleInput').value.trim();
+                const errorEl = document.getElementById('createIssueErrorDash');
+                errorEl.classList.add('bh-hidden');
+                if (!projectId || !title) { errorEl.textContent = 'Project & Title required'; errorEl.classList.remove('bh-hidden'); return; }
+                const body = {
+                    projectId,
+                    title,
+                    type: document.getElementById('createIssueType').value,
+                    priority: document.getElementById('createIssuePriority').value,
+                    assigneeId: document.getElementById('createIssueAssignee').value.trim() || null,
+                    labels: (document.getElementById('createIssueLabels').value || '').split(',').map(l => l.trim()).filter(Boolean),
+                    description: document.getElementById('createIssueDescription').value.trim()
+                };
+                try {
+                    const resp = await fetch(`/api/bug-hatch/projects/${encodeURIComponent(projectId)}/issues`, {
+                        method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+                    });
+                    const data = await resp.json().catch(() => ({}));
+                    if (!resp.ok) { errorEl.textContent = data.error || 'Create failed'; errorEl.classList.remove('bh-hidden'); return; }
+                    closeModal(document.getElementById('createIssueModal'));
+                    createIssueForm.reset();
+                    showToast(`Issue ${data.data?.key || data.data?.id || ''} created`, 'info');
+                } catch (err) {
+                    errorEl.textContent = err.message || 'Network error';
+                    errorEl.classList.remove('bh-hidden');
+                }
+            });
+
+            function showToast(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = `bh-alert bh-alert-${type === 'warning' ? 'warn' : type === 'error' ? 'error' : 'info'} bh-fixed bh-top-4 bh-right-4 bh-z-50 bh-max-w-sm`;
+                toast.style.cssText = 'position: fixed; top: 1rem; right: 1rem; z-index: 50; max-width: 24rem;';
+                toast.innerHTML = `<div class="bh-flex bh-items-center bh-gap-sm"><span>${message}</span><button class="bh-btn bh-btn-xs bh-btn-ghost" onclick="this.parentElement.parentElement.remove()">×</button></div>`;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 5000);
+            }
+
+            function showModal(id) {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.setAttribute('aria-hidden', 'false');
+                el.classList.add('bh-modal-open');
+                el.classList.remove('hidden');
+            }
+            function closeModal(el) {
+                if (!el) return;
+                el.setAttribute('aria-hidden', 'true');
+                el.classList.remove('bh-modal-open');
+                el.classList.add('hidden');
+            }
+            function bindModalEvents() {
+                document.addEventListener('click', (e) => {
+                    if (e.target.matches('[data-modal-close]')) {
+                        const modal = e.target.closest('.bh-modal');
+                        if (modal) closeModal(modal);
+                    }
+                });
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        document.querySelectorAll('.bh-modal').forEach((m) => closeModal(m));
+                    }
+                });
+            }
+            bindModalEvents();
+        });
+    </script>
+</body>
+
+</html>

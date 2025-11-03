@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Demo Preview - BugHatch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/bug-hatch/css/bh-fallback.css">
+</head>
+
+<body class="min-h-screen bg-neutral-950 text-neutral-100">
+    <nav class="bh-navbar px-4 py-3 sticky top-0 z-20 border-b border-neutral-800 bg-neutral-950/70 backdrop-blur">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="/" class="gad-link">🦎 GAD</a>
+            <a href="/bug-hatch/dashboard.html" class="bh-navbar-brand bh-brand-badge inline-flex items-center gap-2 text-lg font-semibold">
+                <span class="bh-logo-icon text-2xl">🐛</span><span>BugHatch</span>
+            </a>
+            <div class="flex gap-2">
+                <!-- Existing navigation items -->
+            </div>
+        </div>
+    </nav>
+
+    <div class="mx-auto max-w-2xl px-4 py-12">
+        <div class="rounded-xl border border-neutral-800 bg-neutral-900/40 p-6 shadow-lg">
+            <a href="/bug-hatch/" class="flex items-center gap-2 justify-center mb-4 text-lg font-semibold">
+                <span class="text-2xl">🐛</span>
+                <span>BugHatch</span>
+            </a>
+            <h1 class="text-2xl font-bold text-center">Demo Preview Mode</h1>
+            <p class="text-sm text-neutral-400 text-center">Loading demo environment...</p>
+
+            <div class="mt-6 grid gap-4 md:grid-cols-2">
+                <div class="rounded-lg border border-blue-500/30 bg-blue-500/10 p-4">
+                    <div class="font-medium">ℹ️ <span>What you can do in demo mode:</span></div>
+                    <ul class="mt-2 list-disc pl-5 text-sm text-neutral-300 space-y-1">
+                        <li>Explore pre-populated projects and issues</li>
+                        <li>View comments, attachments, and activity feeds</li>
+                        <li>Test filters and search functionality</li>
+                        <li>Navigate through the complete interface</li>
+                    </ul>
+                </div>
+                <div class="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
+                    <div class="font-medium">🔒 <span>Demo Limitations:</span></div>
+                    <ul class="mt-2 list-disc pl-5 text-sm text-neutral-300 space-y-1">
+                        <li>Read-only mode - no data modifications allowed</li>
+                        <li>Cannot create, edit, or delete items</li>
+                        <li>All mutation attempts will be blocked</li>
+                        <li>Sign up for a free account to get full access</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-6 flex items-center justify-center">
+                <div class="h-5 w-5 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent"></div>
+            </div>
+            <p class="mt-2 text-center text-sm text-neutral-300" id="status">Initializing demo session...</p>
+
+            <div class="text-center">
+                <a href="/bug-hatch/" id="backBtn" class="mt-4 inline-flex items-center rounded-md border border-neutral-700/70 px-3 py-1.5 text-sm text-neutral-100 hover:bg-neutral-800 hidden">← Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Auto-login to demo account
+        async function loginToDemo() {
+            const statusEl = document.getElementById('status');
+            const backBtn = document.getElementById('backBtn');
+
+            try {
+                statusEl.textContent = 'Connecting to demo account...';
+
+                const response = await fetch('/api/bug-hatch/auth/demo-login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                });
+
+                if (response.ok) {
+                    statusEl.textContent = 'Demo session ready! Redirecting...';
+                    setTimeout(() => {
+                        window.location.href = '/bug-hatch/dashboard.html?demo=true';
+                    }, 1000);
+                } else {
+                    const data = await response.json();
+                    statusEl.textContent = 'Error loading demo: ' + (data.error || 'Unknown error');
+                    statusEl.style.color = '#dc2626';
+                    backBtn.style.display = 'inline-block';
+                }
+            } catch (error) {
+                // Log suppressed to satisfy lint; surface a friendly message instead
+                statusEl.textContent = 'Failed to connect to demo. Please try again later.';
+                statusEl.style.color = '#dc2626';
+                backBtn.style.display = 'inline-block';
+            }
+        }
+
+        // Start demo login on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(loginToDemo, 1500);
+        });
+    </script>
+</body>
+
+</html>

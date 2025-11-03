@@ -140,6 +140,7 @@ const FeatureFlagConfigKeys = {
   FEATURE_VALIDATE_ARTICLE_TITLE: "feature_validate_article_title",
   FEATURE_SOFT_DELETE_USERS: "feature_soft_delete_users",
   STRICT_SURNAME_VALIDATION: "strict_surname_validation",
+  FEATURE_BUG_HATCH_MODULE: "feature_bug_hatch_module",
 };
 
 module.exports = {

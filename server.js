@@ -57,6 +57,9 @@ const { bookShopCoverUploadRoutes, multerUpload, multerErrorHandling } = require
 const WebSocket = require("ws");
 const { websocketRoute } = require("./routes/websocket.route");
 const { assertFreePorts } = require("./helpers/port.checker");
+const { externalRoutes } = require("./routes/external.route");
+const { initializeAllBugHatchDatabases } = require("./endpoints/bug-hatch/db-bug-hatch.operations");
+const { injectDemoContext, blockDemoMutations } = require("./endpoints/bug-hatch/bug-hatch-demo.middleware");
 
 const middlewares = jsonServer.defaults();
 
@@ -72,6 +75,15 @@ overwriteDbIfDefined();
 simpleMigrator(getDbPath(getConfigValue(ConfigKeys.DB_PATH)), getDbPath(getConfigValue(ConfigKeys.DB_RESTORE_PATH)));
 checkDatabase();
 initVisits();
+
+// Enable BugHatch module & demo middlewares early so later routers see req.isDemo
+const isBugHatchEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_BUG_HATCH_MODULE);
+if (isBugHatchEnabled === true) {
+  logDebug("> BugHatch Module is ENABLED");
+  initializeAllBugHatchDatabases().catch((err) => {
+    logError("Failed to initialize BugHatch Module databases:", err);
+  });
+}
 
 const server = jsonServer.create();
 const router = jsonServer.router(getDbPath(getConfigValue(ConfigKeys.DB_PATH)));
@@ -222,6 +234,13 @@ server.use(visitsRoutes);
 server.use(queryRoutes);
 server.use(customRoutes);
 server.use(randomErrorsRoutes);
+
+// Attach demo middlewares BEFORE validationsRoutes so handlers see demo context
+if (isBugHatchEnabled === true) {
+  server.use(injectDemoContext);
+  server.use(blockDemoMutations);
+}
+
 server.use(validationsRoutes);
 
 server.use(fileUploadRoutes);
@@ -277,7 +296,11 @@ server.use(function (req, res, next) {
   next();
 });
 
+server.use("/api/external", externalRoutes);
+
 server.use("/api", router);
+
+// (BugHatch enable block moved earlier)
 
 router.render = renderResponse;
 

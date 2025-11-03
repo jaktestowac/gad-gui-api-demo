@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Analytics Service - Text Analysis & Insights</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 15px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 3px solid #3b82f6;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 1.2em;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: bold;
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-family: inherit;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .result-box {
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
+            border-radius: 4px;
+            padding: 12px;
+            margin-top: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .error-box {
+            background: #fef2f2;
+            border: 1px solid #ef4444;
+            border-radius: 4px;
+            padding: 12px;
+            margin-top: 8px;
+            color: #b91c1c;
+            font-size: 12px;
+        }
+
+        .success-box {
+            background: #f0fdf4;
+            border: 1px solid #10b981;
+            border-radius: 4px;
+            padding: 12px;
+            margin-top: 8px;
+            color: #065f46;
+            font-size: 12px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .stats-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .stats-card h3 {
+            color: #3b82f6;
+            margin-bottom: 6px;
+            font-size: 0.9em;
+        }
+
+        .stats-card .value {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .sentiment-bar {
+            width: 100%;
+            height: 20px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 8px 0;
+            display: flex;
+        }
+
+        .sentiment-positive {
+            background: #10b981;
+            transition: width 0.3s ease;
+        }
+
+        .sentiment-negative {
+            background: #ef4444;
+            transition: width 0.3s ease;
+        }
+
+        .sentiment-neutral {
+            background: #6b7280;
+            transition: width 0.3s ease;
+        }
+
+        .keywords-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .keyword-tag {
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .keyword-tag.frequent {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .analysis-section {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 15px;
+        }
+
+        .analysis-section h3 {
+            color: #3b82f6;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .sample-texts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .sample-text {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+        }
+
+        .sample-text:hover {
+            border-color: #3b82f6;
+        }
+
+        .sample-text h4 {
+            color: #3b82f6;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .sample-text p {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Text Analytics Service</h1>
+            <p>Advanced text analysis with sentiment, keywords, and statistics</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Text Input Section -->
+            <div class="section">
+                <h2>📝 Text Analysis</h2>
+                <div class="form-group">
+                    <label for="textInput">Text to Analyze:</label>
+                    <textarea id="textInput" placeholder="Enter your text here for analysis..."></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="analysisType">Analysis Type:</label>
+                        <select id="analysisType">
+                            <option value="analyze">Complete Analysis</option>
+                            <option value="sentiment">Sentiment Only</option>
+                            <option value="keywords">Keywords Only</option>
+                            <option value="statistics">Statistics Only</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="wordsPerMinute">Reading Speed (WPM):</label>
+                        <input type="number" id="wordsPerMinute" min="50" max="1000" value="200">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="maxKeywords">Max Keywords:</label>
+                        <input type="number" id="maxKeywords" min="5" max="100" value="20">
+                    </div>
+                    <div class="form-group">
+                        <label for="minKeywordLength">Min Keyword Length:</label>
+                        <input type="number" id="minKeywordLength" min="2" max="10" value="3">
+                    </div>
+                </div>
+
+                <button class="btn" onclick="analyzeText()">Analyze Text</button>
+                <button class="btn btn-secondary" onclick="clearResults()">Clear Results</button>
+                <button class="btn btn-info" onclick="showSampleTexts()">Load Sample Text</button>
+                
+                <div id="analysisResult"></div>
+            </div>
+
+            <!-- Sample Texts Section -->
+            <div class="section" id="sampleTextsSection" style="display: none;">
+                <h2>📚 Sample Texts</h2>
+                <div class="sample-texts">
+                    <!-- Original samples -->
+                    <div class="sample-text" onclick="loadSampleText('positive')">
+                        <h4>🟢 Positive Review</h4>
+                        <p>This is an absolutely amazing product! I love how well it works and the excellent customer service...</p>
+                    </div>
+                    <div class="sample-text" onclick="loadSampleText('negative')">
+                        <h4>🔴 Negative Review</h4>
+                        <p>This product is terrible and disappointing. The quality is poor and it doesn't work as advertised...</p>
+                    </div>
+                    <div class="sample-text" onclick="loadSampleText('neutral')">
+                        <h4>🔵 Technical Article</h4>
+                        <p>The implementation uses standard algorithms for data processing. The system provides basic functionality...</p>
+                    </div>
+                    <div class="sample-text" onclick="loadSampleText('mixed')">
+                        <h4>🟡 Mixed Sentiment</h4>
+                        <p>The product has some great features that I really enjoy, but there are also significant problems...</p>
+                    </div>
+                    
+                    <!-- Extended samples -->
+                    <div class="sample-text" onclick="loadSampleText('shortPositive')">
+                        <h4>✨ Short Positive</h4>
+                        <p>Great! Love it! Perfect! Amazing quality and fantastic service. Highly recommend!</p>
+                    </div>
+                    <div class="sample-text" onclick="loadSampleText('shortNegative')">
+                        <h4>💥 Short Negative</h4>
+                        <p>Terrible! Hate it! Awful quality! Worst purchase ever. Don't buy this!</p>
+                    </div>
+                    <div class="sample-text" onclick="loadSampleText('longPositive')">
+                        <h4>📝 Long Positive</h4>
+                        <p>I cannot express how thrilled I am with this extraordinary purchase! From the moment I opened the package...</p>
+                    </div>
+                    <div class="sample-text" onclick="loadSampleText('longNegative')">
+                        <h4>📄 Long Negative</h4>
+                        <p>This purchase was an absolute nightmare from start to finish! I am completely disgusted and infuriated...</p>
+                    </div>
+                    <div class="sample-text" onclick="loadSampleText('businessEmail')">
+                        <h4>💼 Business Email</h4>
+                        <p>Dear Mr. Johnson, Thank you for your inquiry regarding our quarterly performance metrics...</p>
+                    </div>
+                    <div class="sample-text" onclick="loadSampleText('academicText')">
+                        <h4>🎓 Academic Text</h4>
+                        <p>The study investigated the relationship between cognitive load theory and multimedia learning effectiveness...</p>
+                    </div>
+                    <div class="sample-text" onclick="loadSampleText('newsArticle')">
+                        <h4>📰 News Article</h4>
+                        <p>BREAKING: Technology Giant Announces Revolutionary AI Breakthrough. In a groundbreaking development...</p>
+                    </div>
+                    <div class="sample-text" onclick="loadSampleText('poeticText')">
+                        <h4>🌙 Poetic Text</h4>
+                        <p>Beneath the silver moonlight's gentle glow, the ancient oak tree stands in silent majesty...</p>
+                    </div>
+                    <div class="sample-text" onclick="loadSampleText('technicalManual')">
+                        <h4>⚙️ Technical Manual</h4>
+                        <p>System Configuration Protocol 7.2.1: Initialize the database connection by establishing secure SSL parameters...</p>
+                    </div>
+                    <div class="sample-text" onclick="loadSampleText('casualConversation')">
+                        <h4>💭 Casual Conversation</h4>
+                        <p>Hey Sarah! How was your weekend? I had such a blast at the music festival - the bands were incredible...</p>
+                    </div>
+                    <div class="sample-text" onclick="loadSampleText('productDescription')">
+                        <h4>🛍️ Product Description</h4>
+                        <p>Introducing the UltraComfort Pro Gaming Chair - the ultimate seating solution for serious gamers...</p>
+                    </div>
+                    <div class="sample-text" onclick="loadSampleText('literaryExcerpt')">
+                        <h4>📚 Literary Excerpt</h4>
+                        <p>The old lighthouse keeper gazed out across the turbulent waters, his weathered hands gripping...</p>
+                    </div>
+                    <div class="sample-text" onclick="loadSampleText('scientificAbstract')">
+                        <h4>🔬 Scientific Abstract</h4>
+                        <p>Background: Climate change impacts on marine ecosystems require comprehensive monitoring...</p>
+                    </div>
+                    <div class="sample-text" onclick="loadSampleText('motivationalSpeech')">
+                        <h4>🎯 Motivational Speech</h4>
+                        <p>Today, I stand before you not just as a speaker, but as someone who has faced incredible challenges...</p>
+                    </div>
+                    <div class="sample-text" onclick="loadSampleText('customerSupport')">
+                        <h4>🎧 Customer Support</h4>
+                        <p>Thank you for contacting TechSupport Solutions. We sincerely apologize for the inconvenience...</p>
+                    </div>
+                    <div class="sample-text" onclick="loadSampleText('cookingRecipe')">
+                        <h4>👩‍🍳 Cooking Recipe</h4>
+                        <p>Grandma's Secret Chocolate Chip Cookies - A family recipe passed down for generations!</p>
+                    </div>
+                    <div class="sample-text" onclick="loadSampleText('travelBlog')">
+                        <h4>✈️ Travel Blog</h4>
+                        <p>Day 3 in Tokyo: What an absolutely incredible adventure! Started the morning at Tsukiji Fish Market...</p>
+                    </div>
+                    <div class="sample-text" onclick="loadSampleText('philosophical')">
+                        <h4>🤔 Philosophical</h4>
+                        <p>What defines the essence of human existence in our modern digital age? We find ourselves perpetually connected...</p>
+                    </div>
+                    <div class="sample-text" onclick="loadSampleText('economicAnalysis')">
+                        <h4>📊 Economic Analysis</h4>
+                        <p>The Federal Reserve's recent interest rate adjustments have created significant ripple effects...</p>
+                    </div>
+                    <div class="sample-text" onclick="loadSampleText('historicalNarrative')">
+                        <h4>🏛️ Historical Narrative</h4>
+                        <p>The year 1969 marked a pivotal moment in human history when Neil Armstrong became the first person...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service Status Section -->
+            <div class="section">
+                <h2>📊 Service Status</h2>
+                <button class="btn btn-info" onclick="refreshStatus(true)">Refresh Status</button>
+                <div id="statusResult"></div>
+            </div>
+
+            <!-- Configuration Section -->
+            <div class="section">
+                <h2>⚙️ Configuration</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="configMaxTextLength">Max Text Length:</label>
+                        <input type="number" id="configMaxTextLength" min="1000" max="1000000" value="50000">
+                    </div>
+                    <div class="form-group">
+                        <label for="configWordsPerMinute">Default WPM:</label>
+                        <input type="number" id="configWordsPerMinute" min="50" max="1000" value="200">
+                    </div>
+                </div>
+                <button class="btn" onclick="updateConfig()">Update Configuration</button>
+                <button class="btn btn-secondary" onclick="getConfig()">Get Current Config</button>
+                <div id="configResult"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        const sampleTexts = {
+            positive: "This is an absolutely amazing product! I love how well it works and the excellent customer service. The quality is outstanding and it exceeded all my expectations. I'm really happy with this purchase and would definitely recommend it to others. The design is beautiful, the functionality is perfect, and the price is great. This is exactly what I was looking for!",
+            
+            negative: "This product is terrible and disappointing. The quality is poor and it doesn't work as advertised. I'm really frustrated with this purchase and feel like I wasted my money. The customer service was unhelpful and the product broke after just a few days. I hate this experience and would never recommend this to anyone. It's a complete disaster.",
+            
+            neutral: "The implementation uses standard algorithms for data processing. The system provides basic functionality with moderate performance characteristics. Documentation includes technical specifications and usage examples. The software follows conventional design patterns and integrates with existing infrastructure. Performance metrics indicate acceptable response times under normal load conditions.",
+            
+            mixed: "The product has some great features that I really enjoy, but there are also significant problems that are frustrating. The design is beautiful and the interface is intuitive, which I love. However, the performance is sometimes slow and there are occasional bugs that are annoying. Overall, it's decent but could be much better with some improvements.",
+
+            // Extended sample texts for comprehensive testing
+            shortPositive: "Great! Love it! Perfect! Amazing quality and fantastic service. Highly recommend!",
+            
+            shortNegative: "Terrible! Hate it! Awful quality! Worst purchase ever. Don't buy this!",
+            
+            longPositive: "I cannot express how thrilled I am with this extraordinary purchase! From the moment I opened the package, I was absolutely delighted by the exceptional attention to detail and superior craftsmanship. The product exceeded every single one of my expectations in ways I never imagined possible. The innovative design is not only aesthetically beautiful but also incredibly functional and user-friendly. The customer service team was phenomenally helpful, responsive, and professional throughout the entire process. They went above and beyond to ensure my complete satisfaction, answering all my questions with patience and expertise. The delivery was remarkably fast and the packaging was perfect, protecting the item beautifully. This outstanding product has completely transformed my daily routine for the better. The quality is absolutely superb, built to last, and worth every penny. I am genuinely excited to recommend this magnificent product to all my friends and family. This company has earned my loyalty and trust forever. Thank you for creating such an incredible, life-changing product!",
+            
+            longNegative: "This purchase was an absolute nightmare from start to finish! I am completely disgusted and infuriated with this terrible, worthless product. The quality is absolutely appalling - cheap, flimsy, and poorly constructed with no attention to detail whatsoever. It broke within hours of opening the package, which is completely unacceptable. The customer service was a horrific experience - rude, unhelpful, and completely unprofessional. They ignored my complaints, refused to provide assistance, and made me feel like my concerns didn't matter at all. The delivery took forever, far longer than promised, and when it finally arrived, the packaging was damaged and the product was clearly defective. This useless item has caused me nothing but frustration, wasted time, and disappointment. I deeply regret this purchase and feel completely cheated. The price was ridiculously overpriced for such inferior quality, and I demand a full refund immediately. I will never shop with this company again and will warn everyone I know to avoid this disaster of a product at all costs!",
+            
+            businessEmail: "Dear Mr. Johnson, Thank you for your inquiry regarding our quarterly performance metrics. I am pleased to report that our team has successfully achieved a 15% increase in productivity compared to the previous quarter. The implementation of our new project management system has resulted in improved workflow efficiency and better resource allocation. We have also completed the integration of the customer feedback system, which has provided valuable insights for product development. Our market analysis indicates favorable conditions for the upcoming expansion into the European market. Please find the detailed financial reports attached for your review. I would be happy to schedule a meeting to discuss these findings in greater detail. Best regards, Sarah Thompson, Operations Manager.",
+            
+            academicText: "The study investigated the relationship between cognitive load theory and multimedia learning effectiveness in educational environments. Participants (n=150) were randomly assigned to three experimental conditions: text-only, audio-visual, and interactive multimedia presentations. Results indicated that multimedia presentations significantly improved learning outcomes (p<0.001) compared to traditional text-based methods. The interactive group demonstrated the highest retention rates (M=87.3%, SD=5.2) followed by audio-visual (M=79.1%, SD=6.8) and text-only (M=71.4%, SD=7.3) conditions. These findings support Mayer's cognitive theory of multimedia learning and suggest that educational institutions should prioritize technology integration to enhance student engagement and comprehension. Future research should examine the long-term retention effects and investigate individual differences in learning preferences.",
+            
+            newsArticle: "BREAKING: Technology Giant Announces Revolutionary AI Breakthrough. In a groundbreaking development that could reshape the artificial intelligence landscape, TechCorp announced today the successful creation of their new neural processing system. The innovation promises to deliver unprecedented computational efficiency while reducing energy consumption by up to 40%. CEO Maria Rodriguez stated during the press conference that this breakthrough represents five years of intensive research and development. The company's stock price surged 23% following the announcement, reflecting investor confidence in the technology's commercial potential. Industry experts predict this advancement could accelerate AI adoption across healthcare, transportation, and manufacturing sectors. The first products incorporating this technology are expected to reach consumers by the end of next year.",
+            
+            poeticText: "Beneath the silver moonlight's gentle glow, the ancient oak tree stands in silent majesty, its weathered branches reaching toward the star-filled sky like outstretched arms embracing eternity. The whispered secrets of a thousand seasons dance through its rustling leaves, carrying tales of love and loss, of dreams both realized and forgotten. Time flows like a river around its sturdy trunk, carving stories into bark and bone, while seasons paint their colors across its crown. In this sacred space where earth meets heaven, where past converges with future, the tree remains a steadfast guardian of memory and hope, reminding us that beauty endures beyond the fleeting moments of our brief existence.",
+            
+            technicalManual: "System Configuration Protocol 7.2.1: Initialize the database connection by establishing secure SSL parameters using RSA-2048 encryption. Set the connection timeout to 30 seconds and enable automatic failover redundancy. Configure the load balancer to distribute traffic across three server instances using round-robin algorithm. Ensure all API endpoints implement rate limiting at 1000 requests per minute per client. Enable comprehensive logging with JSON format, including timestamp, user ID, request type, and response code. Database queries must utilize prepared statements to prevent SQL injection attacks. Cache frequently accessed data using Redis with TTL set to 3600 seconds. Monitor system performance metrics including CPU usage, memory consumption, and disk I/O operations. Alert administrators when resource utilization exceeds 80% threshold.",
+            
+            casualConversation: "Hey Sarah! How was your weekend? I had such a blast at the music festival - the bands were incredible and the weather was perfect. Did you end up going to that new restaurant downtown? I've been wanting to try their pasta dishes but haven't had a chance yet. Oh, and I totally forgot to mention - my sister is visiting next week and she's super excited to meet you! Maybe we could all grab coffee together on Saturday? Let me know what you think. By the way, thanks again for helping me move last month - I still owe you dinner! Hope you're having a great week so far. Talk soon!",
+            
+            productDescription: "Introducing the UltraComfort Pro Gaming Chair - the ultimate seating solution for serious gamers and professionals. This premium ergonomic chair features high-density memory foam cushioning, 4D adjustable armrests, and lumbar support system designed to reduce fatigue during extended use. The breathable mesh backrest ensures optimal airflow while the smooth-rolling casters provide seamless mobility. Built with a sturdy steel frame supporting up to 300 pounds, this chair combines durability with style. Available in three colors: midnight black, racing red, and arctic white. Assembly takes less than 30 minutes with included tools. Backed by our 5-year warranty and 30-day money-back guarantee. Free shipping on orders over $200. Transform your workspace with professional-grade comfort and style.",
+            
+            literaryExcerpt: "The old lighthouse keeper gazed out across the turbulent waters, his weathered hands gripping the iron railing as waves crashed against the rocky shore below. For forty-three years, he had tended this beacon, guiding countless vessels safely through treacherous waters during the darkest nights and fiercest storms. Tonight felt different somehow - there was an electricity in the air, a sense of change approaching like the distant thunder that rumbled on the horizon. As he wound the clockwork mechanism that kept the great lens turning, he reflected on the stories these walls could tell: ships saved, lives preserved, families reunited. Soon, a younger keeper would take his place, armed with modern GPS technology and automated systems. Progress was inevitable, but something irreplaceable would be lost - the human touch, the watchful eye, the keeper's intuitive understanding of sea and sky.",
+            
+            scientificAbstract: "Background: Climate change impacts on marine ecosystems require comprehensive monitoring to understand species adaptation mechanisms. Methods: We conducted a longitudinal study (2019-2024) examining coral reef biodiversity across 15 sites in the Pacific Ocean, measuring temperature, pH, and species abundance quarterly. Results: Ocean temperature increased by 1.2°C (±0.3°C) during the study period, correlating with a 34% decline in coral coverage (p<0.001). However, certain species demonstrated remarkable resilience, with Acropora cervicornis showing adaptive bleaching recovery rates 40% higher than previously documented. Conclusions: While climate change poses significant threats to marine biodiversity, some species exhibit unexpected adaptive capacity. These findings suggest targeted conservation efforts focusing on resilient species could help preserve ecosystem functionality during transition periods. Further research is needed to identify genetic factors contributing to thermal tolerance.",
+            
+            motivationalSpeech: "Today, I stand before you not just as a speaker, but as someone who has faced incredible challenges and emerged stronger. Each of you possesses unlimited potential waiting to be unleashed. Success isn't about avoiding failure - it's about learning from every setback and refusing to surrender your dreams. When obstacles seem insurmountable, remember that every great achievement began with a single step taken by someone who believed in themselves. You have the power to transform your life, to break through barriers, and to achieve greatness beyond your wildest imagination. The journey may be difficult, but you are stronger than you know, braver than you feel, and more capable than you've ever imagined. Today is not just another day - it's the first day of your extraordinary future. Believe in yourself, take action, and watch as you accomplish the impossible!",
+            
+            customerSupport: "Thank you for contacting TechSupport Solutions. We sincerely apologize for the inconvenience you've experienced with your recent purchase. I understand your frustration, and I want to assure you that we take all customer concerns seriously. After reviewing your account, I can see that you've been a loyal customer for over three years, and we truly value your business. To resolve this issue immediately, I'm authorizing a full refund plus a 20% credit toward your next purchase. Additionally, our technical team will investigate the root cause to prevent similar problems for other customers. A senior technician will contact you within 24 hours to discuss your experience and gather feedback for our quality improvement process. Is there anything else I can do to restore your confidence in our products and services?",
+            
+            cookingRecipe: "Grandma's Secret Chocolate Chip Cookies - A family recipe passed down for generations! These soft, chewy cookies are absolutely irresistible and perfect for any occasion. Ingredients: 2¼ cups all-purpose flour, 1 tsp baking soda, 1 tsp salt, 1 cup butter (softened), ¾ cup granulated sugar, ¾ cup brown sugar, 2 large eggs, 2 tsp vanilla extract, 2 cups chocolate chips. Instructions: Preheat oven to 375°F. Mix dry ingredients in a bowl. Cream butter and sugars until fluffy, add eggs and vanilla. Gradually blend in flour mixture, then fold in chocolate chips. Drop rounded tablespoons onto ungreased cookie sheets. Bake 9-11 minutes until golden brown. Cool on baking sheet for 2 minutes before transferring to wire rack. Pro tip: slightly underbake for extra chewiness! Makes about 5 dozen cookies. Store in airtight container for up to one week.",
+            
+            travelBlog: "Day 3 in Tokyo: What an absolutely incredible adventure! Started the morning at Tsukiji Fish Market - the energy was infectious and the fresh sushi was mind-blowing. The vendors were so friendly, even with the language barrier, and I learned how to properly eat wasabi (much spicier than expected!). Afternoon exploration of Shibuya crossing was surreal - thousands of people moving in perfect harmony like a choreographed dance. Found this tiny ramen shop hidden in an alley where a sweet elderly couple served the most delicious tonkotsu ramen I've ever tasted. The cherry blossoms in Ueno Park were absolutely breathtaking - pink petals falling like snow while families picnicked beneath the trees. Tomorrow: temple visits and a traditional tea ceremony. This city has completely captured my heart with its perfect blend of ancient tradition and cutting-edge modernity. Can't wait to return someday!",
+
+            philosophical: "What defines the essence of human existence in our modern digital age? We find ourselves perpetually connected yet increasingly isolated, surrounded by information yet often lacking wisdom. The ancient philosophers pondered the meaning of life through contemplation and discourse, while we seek answers through algorithms and data. Perhaps true understanding emerges not from the accumulation of facts, but from the quality of our relationships and the depth of our experiences. In our pursuit of efficiency and productivity, have we lost touch with the fundamental questions that make us human? The challenge of our time is to navigate technological advancement while preserving our humanity, to embrace innovation while honoring timeless values of compassion, creativity, and authentic connection. The future depends not on what we can build, but on who we choose to become in the process.",
+
+            economicAnalysis: "The Federal Reserve's recent interest rate adjustments have created significant ripple effects throughout global financial markets. Quantitative easing policies implemented during the pandemic era are now being gradually reversed, leading to increased volatility in both equity and bond markets. Consumer spending patterns indicate a shift toward essential goods as discretionary income decreases due to inflationary pressures. Corporate earnings reports reveal divergent performance across sectors, with technology companies experiencing margin compression while energy sector profits surge. Housing market dynamics show regional variations, with metropolitan areas experiencing price corrections while rural markets remain relatively stable. Supply chain disruptions continue to impact manufacturing costs, though recent improvements in logistics networks suggest gradual normalization. Economic indicators point toward a potential soft landing scenario, though geopolitical tensions and climate-related disruptions pose ongoing risks to sustained growth.",
+
+            historicalNarrative: "The year 1969 marked a pivotal moment in human history when Neil Armstrong became the first person to set foot on the lunar surface. This extraordinary achievement represented the culmination of nearly a decade of intensive scientific research, engineering innovation, and international competition known as the Space Race. President Kennedy's bold 1961 declaration to land humans on the moon before the decade's end had galvanized an entire nation around a common goal. The Apollo 11 mission required the collaboration of over 400,000 individuals working across government agencies, universities, and private corporations. When Armstrong uttered those famous words, 'That's one small step for man, one giant leap for mankind,' approximately 650 million people worldwide watched in awe. This moment transcended national boundaries and political differences, uniting humanity in wonder and pride at our collective capability to achieve the seemingly impossible through determination, ingenuity, and cooperation."
+        };
+
+        async function apiCall(endpoint, options = {}) {
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('API call failed:', error);
+                throw error;
+            }
+        }
+
+        function showResult(elementId, content, type = 'info') {
+            const element = document.getElementById(elementId);
+            const className = type === 'error' ? 'error-box' : type === 'success' ? 'success-box' : 'result-box';
+            element.innerHTML = `<div class="${className}">${content}</div>`;
+        }
+
+        function showLoading(elementId) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = '<div class="loading"></div> Analyzing text...';
+        }
+
+        function showSampleTexts() {
+            const section = document.getElementById('sampleTextsSection');
+            section.style.display = section.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function loadSampleText(type) {
+            document.getElementById('textInput').value = sampleTexts[type];
+            document.getElementById('sampleTextsSection').style.display = 'none';
+        }
+
+        async function analyzeText() {
+            const text = document.getElementById('textInput').value.trim();
+            const analysisType = document.getElementById('analysisType').value;
+            const wordsPerMinute = parseInt(document.getElementById('wordsPerMinute').value);
+            const maxKeywords = parseInt(document.getElementById('maxKeywords').value);
+            const minKeywordLength = parseInt(document.getElementById('minKeywordLength').value);
+
+            if (!text) {
+                showResult('analysisResult', 'Please enter some text to analyze.', 'error');
+                return;
+            }
+
+            showLoading('analysisResult');
+
+            try {
+                const options = {
+                    wordsPerMinute,
+                    maxKeywords,
+                    minLength: minKeywordLength,
+                    excludeCommon: true
+                };
+
+                const result = await apiCall(`/api/${analysisType}`, {
+                    method: 'POST',
+                    body: JSON.stringify({ text, options })
+                });
+
+                displayAnalysisResult(result, analysisType);
+            } catch (error) {
+                showResult('analysisResult', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function displayAnalysisResult(result, analysisType) {
+            let html = '<div class="analysis-grid">';
+
+            // Text info
+            html += `
+                <div class="analysis-section">
+                    <h3>📄 Text Information</h3>
+                    <p><strong>Length:</strong> ${result.text.length} characters</p>
+                    <p><strong>Preview:</strong> ${result.text.preview}</p>
+                    <p><strong>Analyzed:</strong> ${new Date(result.analyzedAt).toLocaleString()}</p>
+                </div>
+            `;
+
+            // Basic statistics
+            if (result.basic) {
+                html += `
+                    <div class="analysis-section">
+                        <h3>📊 Basic Statistics</h3>
+                        <div class="stats-grid">
+                            <div class="stats-card">
+                                <h3>Characters</h3>
+                                <div class="value">${result.basic.characters}</div>
+                            </div>
+                            <div class="stats-card">
+                                <h3>Words</h3>
+                                <div class="value">${result.basic.words}</div>
+                            </div>
+                            <div class="stats-card">
+                                <h3>Sentences</h3>
+                                <div class="value">${result.basic.sentences}</div>
+                            </div>
+                            <div class="stats-card">
+                                <h3>Paragraphs</h3>
+                                <div class="value">${result.basic.paragraphs}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Advanced statistics
+            if (result.advanced) {
+                html += `
+                    <div class="analysis-section">
+                        <h3>📈 Advanced Statistics</h3>
+                        <p><strong>Average Word Length:</strong> ${result.advanced.averageWordLength} characters</p>
+                        <p><strong>Average Sentence Length:</strong> ${result.advanced.averageSentenceLength} words</p>
+                        <p><strong>Longest Word:</strong> "${result.advanced.longestWord}"</p>
+                        <p><strong>Shortest Word:</strong> "${result.advanced.shortestWord}"</p>
+                        <p><strong>Unique Words:</strong> ${result.advanced.uniqueWords}</p>
+                    </div>
+                `;
+            }
+
+            // Reading time
+            if (result.readingTime) {
+                html += `
+                    <div class="analysis-section">
+                        <h3>⏰ Reading Time</h3>
+                        <div class="stats-card">
+                            <div class="value">${result.readingTime.minutes}m ${result.readingTime.seconds}s</div>
+                        </div>
+                        <p><strong>Based on:</strong> ${result.readingTime.wordsPerMinute} WPM</p>
+                        <p><strong>Total seconds:</strong> ${result.readingTime.totalSeconds}</p>
+                    </div>
+                `;
+            }
+
+            // Sentiment analysis
+            if (result.sentiment) {
+                const sentiment = result.sentiment;
+                html += `
+                    <div class="analysis-section">
+                        <h3>😊 Sentiment Analysis</h3>
+                        <p><strong>Overall:</strong> ${sentiment.label.toUpperCase()} (${sentiment.score})</p>
+                        <p><strong>Confidence:</strong> ${sentiment.confidence}%</p>
+                        <div class="sentiment-bar">
+                            <div class="sentiment-positive" style="width: ${sentiment.positive}%"></div>
+                            <div class="sentiment-negative" style="width: ${sentiment.negative}%"></div>
+                            <div class="sentiment-neutral" style="width: ${sentiment.neutral}%"></div>
+                        </div>
+                        <p><strong>Positive:</strong> ${sentiment.positive}%</p>
+                        <p><strong>Negative:</strong> ${sentiment.negative}%</p>
+                        <p><strong>Neutral:</strong> ${sentiment.neutral}%</p>
+                        ${sentiment.details ? `
+                            <p><strong>Sentiment Words:</strong> ${sentiment.details.positiveWords} positive, ${sentiment.details.negativeWords} negative</p>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
+            // Keywords
+            if (result.keywords) {
+                const keywords = result.keywords.keywords || result.keywords.top10 || [];
+                html += `
+                    <div class="analysis-section">
+                        <h3>🔑 Keywords</h3>
+                        <p><strong>Total Unique:</strong> ${result.keywords.totalUniqueWords || result.keywords.total}</p>
+                        <p><strong>Showing Top:</strong> ${keywords.length}</p>
+                        <div class="keywords-list">
+                `;
+                
+                keywords.forEach((keyword, index) => {
+                    const isFrequent = index < 5;
+                    const word = keyword.word || keyword;
+                    const count = keyword.count || '';
+                    const frequency = keyword.frequency || '';
+                    
+                    html += `
+                        <span class="keyword-tag ${isFrequent ? 'frequent' : ''}" 
+                              title="${count ? `Count: ${count}, Frequency: ${frequency}%` : ''}">
+                            ${word}${count ? ` (${count})` : ''}
+                        </span>
+                    `;
+                });
+                
+                html += '</div></div>';
+            }
+
+            html += '</div>';
+            document.getElementById('analysisResult').innerHTML = html;
+        }
+
+        async function refreshStatus(showLoadingIndicator = true) {
+            if (showLoadingIndicator) {
+                showLoading('statusResult');
+            }
+
+            try {
+                const status = await apiCall('/api/status');
+                
+                const statusHtml = `
+                    <div class="stats-grid">
+                        <div class="stats-card">
+                            <h3>Service Status</h3>
+                            <div class="value">${status.status}</div>
+                        </div>
+                        <div class="stats-card">
+                            <h3>Uptime</h3>
+                            <div class="value">${status.uptime.human}</div>
+                        </div>
+                        <div class="stats-card">
+                            <h3>Total Requests</h3>
+                            <div class="value">${status.metrics.requestCount}</div>
+                        </div>
+                        <div class="stats-card">
+                            <h3>Analyzed Texts</h3>
+                            <div class="value">${status.metrics.analyzedTexts}</div>
+                        </div>
+                        <div class="stats-card">
+                            <h3>Total Words</h3>
+                            <div class="value">${status.metrics.totalWords.toLocaleString()}</div>
+                        </div>
+                        <div class="stats-card">
+                            <h3>Avg Words/Text</h3>
+                            <div class="value">${status.metrics.averageWordsPerText}</div>
+                        </div>
+                    </div>
+                    ${Object.keys(status.metrics.analysisStats).length > 0 ? `
+                        <div class="result-box">
+                            <strong>Analysis Statistics:</strong>
+                            ${Object.entries(status.metrics.analysisStats).map(([type, count]) => 
+                                `${type}: ${count} requests`
+                            ).join('\n')}
+                        </div>
+                    ` : ''}
+                `;
+
+                document.getElementById('statusResult').innerHTML = statusHtml;
+            } catch (error) {
+                if (showLoadingIndicator) {
+                    showResult('statusResult', `Error: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        async function updateConfig() {
+            const maxTextLength = parseInt(document.getElementById('configMaxTextLength').value);
+            const wordsPerMinute = parseInt(document.getElementById('configWordsPerMinute').value);
+
+            if (maxTextLength < 1000 || maxTextLength > 1000000) {
+                showResult('configResult', 'Max text length must be between 1,000 and 1,000,000', 'error');
+                return;
+            }
+
+            if (wordsPerMinute < 50 || wordsPerMinute > 1000) {
+                showResult('configResult', 'Words per minute must be between 50 and 1000', 'error');
+                return;
+            }
+
+            showLoading('configResult');
+
+            try {
+                const result = await apiCall('/api/config', {
+                    method: 'POST',
+                    body: JSON.stringify({ maxTextLength, wordsPerMinute })
+                });
+
+                showResult('configResult', `Configuration updated:\nMax Text Length: ${result.config.maxTextLength}\nWords Per Minute: ${result.config.wordsPerMinute}`, 'success');
+            } catch (error) {
+                showResult('configResult', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function getConfig() {
+            showLoading('configResult');
+
+            try {
+                const config = await apiCall('/api/config');
+                
+                document.getElementById('configMaxTextLength').value = config.config.maxTextLength;
+                document.getElementById('configWordsPerMinute').value = config.config.wordsPerMinute;
+                
+                showResult('configResult', `Current configuration:\nMax Text Length: ${config.config.maxTextLength}\nWords Per Minute: ${config.config.wordsPerMinute}\nMax Keywords: ${config.config.maxKeywords}\nMin Keyword Length: ${config.config.minKeywordLength}`);
+            } catch (error) {
+                showResult('configResult', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function clearResults() {
+            document.getElementById('analysisResult').innerHTML = '';
+            document.getElementById('textInput').value = '';
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load initial status
+            refreshStatus(true);
+            getConfig();
+
+            // Auto-refresh status every 10 seconds
+            setInterval(() => {
+                refreshStatus(false);
+            }, 10000);
+        });
+    </script>
+</body>
+</html>

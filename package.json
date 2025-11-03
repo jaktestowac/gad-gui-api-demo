@@ -1,7 +1,7 @@
 {
   "name": "gad-gui-api-demo-v2",
-  "version": "2.8.6",
-  "description": "Simple application with GUI and API to deploy to Heroku, Glitch, Railway, Vercel etc.",
+  "version": "2.8.7",
+  "description": "Simple application with GUI and API to practice test automation and to deploy to Railway, Render etc.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -20,10 +20,35 @@
     "version:minor": "node tools/release/update-version.js minor",
     "version:major": "node tools/release/update-version.js major",
     "version:custom": "node tools/release/update-version.js custom",
-    "version:help": "node tools/release/update-version.js"
+    "version:help": "node tools/release/update-version.js",
+    "EXTERNAL": "------",
+    "ex:template": "node external/_template/server.js",
+    "ex:hasher": "node external/hasher/server.js",
+    "ex:mini": "node external/miniTemplate/server.js",
+    "ex:uuid": "node external/uuid-generator/server.js",
+    "ex:text": "node external/text-analytics/server.js",
+    "ex:qr": "node external/qr-generator/server.js",
+    "ex:url": "node external/url-shortener/server.js",
+    "ex:password": "node external/password-generator/server.js",
+    "ex:meta": "node external/web-metadata/server.js",
+    "ex:apimock": "node external/api-mock-generator/server.js",
+    "ex:locationService": "node external/location-service/server.js",
+    "ex:todoList": "node external/todo-list-graphql/server.js"
   },
   "keywords": [
-    "json-server, node, REST API"
+    "testautomation",
+    "automationpractice",
+    "gui",
+    "api",
+    "demo",
+    "sampleapp",
+    "railway",
+    "render",
+    "playwright",
+    "testers",
+    "practice testing",
+    "jaktestowac",
+    "practice automation"
   ],
   "author": "jaktestowac.pl",
   "license": "ISC",

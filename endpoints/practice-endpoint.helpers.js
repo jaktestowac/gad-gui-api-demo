@@ -15,7 +15,7 @@ const { verifyToken, hasPermission } = require("./practice/employee-management-s
 const twoFactor = require("./practice/2fa-handlers");
 const twoFactorV2 = require("./practice/2fa-handlers-v2");
 const weatherAppV1 = require("./practice/weather-app-handlers-v1");
-const { handleGraphQLRequest } = require("./practice/weather-graphql-handlers");
+const { handleGraphQLRequest, schemaRaw } = require("./practice/weather-graphql-handlers");
 const { handleBooksGraphQLRequest } = require("./practice/books-graphql-handlers");
 const aiChat = require("./practice/nova/nova-chat-handlers");
 const testagram = require("./practice/testagram/testagram-handlers");
@@ -32,6 +32,7 @@ const hotelHandlers = require("./practice/hotel-handlers");
 const { orderV1, restaurantV1, itemV1, reviewV1 } = require("./practice/order-handlers");
 const { loanProcessingV1 } = require("./practice/loan-processing-handlers");
 const chibi = require("./practice/chibi/chibi-handlers");
+const { handleSimpleDownload } = require("./downloads/simple-download");
 
 function isIdValid(id) {
   return id !== undefined && id !== "";
@@ -825,6 +826,11 @@ function handlePractice(req, res) {
         return res.status(HTTP_NOT_FOUND).json({ error: "Translations not found" });
       }
     }
+
+    if (req.url.includes("/api/practice/weather/v1/schema/graphql")) {
+      return res.status(HTTP_OK).json({ schema: schemaRaw });
+    }
+    // GraphQL endpoints
     if (req.url.includes("/api/practice/weather/v1/graphql")) {
       // Handle Weather GraphQL requests
       return handleGraphQLRequest(req, res);
@@ -1097,6 +1103,12 @@ function handlePractice(req, res) {
           return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
       }
     }
+
+    // --- Download endpoints ---
+    if (req.url.includes("/api/practice/download/")) {
+      return handleSimpleDownload(req, res);
+    }
+
     return res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Not Found!"));
   }
 }

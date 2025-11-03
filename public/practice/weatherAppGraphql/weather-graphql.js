@@ -276,10 +276,15 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
 
       // Parse id to integer to fix the GraphQL error      const parsedId = parseInt(id, 10);
+      // Parse id to integer to fix the GraphQL error
+      const parsedId = parseInt(id, 10);
       const data = await executeGraphQL(query, { id: parsedId, event }, true);
       const index = events.findIndex((e) => e.id === parsedId);
       if (index !== -1) {
-        events[index] = data.updateWeatherEvent;
+        events[index] = {
+          ...events[index],
+          ...data.updateWeatherEvent,
+        };
       }
       updateEventsUI();
       showSuccess("Note updated successfully");

@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Service</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .service-info {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-info h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .status-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .status-card h3 {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .status-card p {
+            font-size: 1.3em;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px 20px;
+            background: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab:hover {
+            background: #f8f9fa;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .content {
+            background: white;
+            border-radius: 0 0 10px 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group small {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .result-box {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .result-box pre {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 0.9em;
+        }
+
+        .error {
+            background: #fee;
+            border-left-color: #f44336;
+            color: #c62828;
+        }
+
+        .success {
+            background: #e8f5e9;
+            border-left-color: #4caf50;
+            color: #2e7d32;
+        }
+
+        .location-presets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .preset-btn {
+            padding: 8px 15px;
+            background: #e0e0e0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .preset-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .examples {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .examples h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .examples pre {
+            background: #fff;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+            font-size: 0.85em;
+        }
+
+        .current-time-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .current-time-display h2 {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .current-time-display p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🕐 Location Service</h1>
+            <p>Calculate dates, timezones, and astronomical data for any location</p>
+        </div>
+
+        <div class="service-info">
+            <h2>Service Status</h2>
+            <div class="status-grid">
+                <div class="status-card">
+                    <h3>Status</h3>
+                    <p id="service-status">Loading...</p>
+                </div>
+                <div class="status-card">
+                    <h3>Calculations</h3>
+                    <p id="calculations-count">-</p>
+                </div>
+                <div class="status-card">
+                    <h3>Sunrise Calcs</h3>
+                    <p id="sunrise-count">-</p>
+                </div>
+                <div class="status-card">
+                    <h3>Uptime</h3>
+                    <p id="uptime">-</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="current-time-display">
+            <h2 id="current-time">--:--:--</h2>
+            <p id="current-date">Loading...</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('current-time')">Current Time</button>
+            <button class="tab" onclick="switchTab('sunrise-sunset')">Sunrise/Sunset</button>
+            <button class="tab" onclick="switchTab('date-calc')">Date Calculator</button>
+            <button class="tab" onclick="switchTab('timezone')">Timezone Converter</button>
+            <button class="tab" onclick="switchTab('business-days')">Business Days</button>
+        </div>
+
+        <div class="content">
+            <!-- Current Time Tab -->
+            <div id="current-time" class="tab-content active">
+                <h2>Get Current Time in Any Timezone</h2>
+                <div class="examples">
+                    <h4>💡 Example Usage</h4>
+                    <pre>GET /api/current-time?timezone=Europe/Warsaw</pre>
+                </div>
+
+                <div class="form-group">
+                    <label>Timezone</label>
+                    <select id="current-time-tz">
+                        <option value="UTC">UTC</option>
+                        <option value="America/New_York">America/New_York</option>
+                        <option value="America/Chicago">America/Chicago</option>
+                        <option value="America/Los_Angeles">America/Los_Angeles</option>
+                        <option value="Europe/London">Europe/London</option>
+                        <option value="Europe/Paris">Europe/Paris</option>
+                        <option value="Europe/Warsaw">Europe/Warsaw</option>
+                        <option value="Asia/Tokyo">Asia/Tokyo</option>
+                        <option value="Asia/Shanghai">Asia/Shanghai</option>
+                        <option value="Australia/Sydney">Australia/Sydney</option>
+                    </select>
+                </div>
+
+                <button class="btn" onclick="getCurrentTime()">Get Current Time</button>
+                <button class="btn btn-secondary" onclick="getMultipleTimezones()">Get Multiple Timezones</button>
+
+                <div id="current-time-result"></div>
+            </div>
+
+            <!-- Sunrise/Sunset Tab -->
+            <div id="sunrise-sunset" class="tab-content">
+                <h2>Calculate Sunrise & Sunset</h2>
+                <div class="examples">
+                    <h4>💡 Example Usage</h4>
+                    <pre>POST /api/sunrise-sunset
+{
+  "date": "2025-09-29",
+  "latitude": 52.2297,
+  "longitude": 21.0122,
+  "timezone": "Europe/Warsaw"
+}</pre>
+                </div>
+
+                <div class="location-presets">
+                    <button class="preset-btn" onclick="setLocation(52.2297, 21.0122, 'Europe/Warsaw', 'Warsaw')">Warsaw 🇵🇱</button>
+                    <button class="preset-btn" onclick="setLocation(40.7128, -74.0060, 'America/New_York', 'New York')">New York 🇺🇸</button>
+                    <button class="preset-btn" onclick="setLocation(51.5074, -0.1278, 'Europe/London', 'London')">London 🇬🇧</button>
+                    <button class="preset-btn" onclick="setLocation(35.6762, 139.6503, 'Asia/Tokyo', 'Tokyo')">Tokyo 🇯🇵</button>
+                    <button class="preset-btn" onclick="setLocation(-33.8688, 151.2093, 'Australia/Sydney', 'Sydney')">Sydney 🇦🇺</button>
+                    <button class="preset-btn" onclick="setLocation(66.5039, 25.7294, 'Europe/Helsinki', 'Rovaniemi')">Rovaniemi (Arctic) ❄️</button>
+                </div>
+
+                <div class="form-row" style="margin-top: 20px;">
+                    <div class="form-group">
+                        <label>Latitude (-90 to 90)</label>
+                        <input type="number" id="sunrise-lat" step="0.0001" placeholder="52.2297" value="52.2297">
+                    </div>
+                    <div class="form-group">
+                        <label>Longitude (-180 to 180)</label>
+                        <input type="number" id="sunrise-lon" step="0.0001" placeholder="21.0122" value="21.0122">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="sunrise-date">
+                    </div>
+                    <div class="form-group">
+                        <label>Timezone</label>
+                        <select id="sunrise-tz">
+                            <option value="UTC">UTC</option>
+                            <option value="America/New_York">America/New_York</option>
+                            <option value="Europe/London">Europe/London</option>
+                            <option value="Europe/Warsaw" selected>Europe/Warsaw</option>
+                            <option value="Asia/Tokyo">Asia/Tokyo</option>
+                            <option value="Australia/Sydney">Australia/Sydney</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="calculateSunrise()">Calculate Sunrise/Sunset</button>
+                <button class="btn btn-secondary" onclick="calculateBatchSunrise()">Batch Calculate (Multiple Locations)</button>
+
+                <div id="sunrise-result"></div>
+            </div>
+
+            <!-- Date Calculator Tab -->
+            <div id="date-calc" class="tab-content">
+                <h2>Date Arithmetic & Difference Calculator</h2>
+                <div class="examples">
+                    <h4>💡 Example Usage</h4>
+                    <pre>POST /api/date-arithmetic
+{
+  "date": "2025-09-29",
+  "operation": "add",
+  "amount": 7,
+  "unit": "days"
+}</pre>
+                </div>
+
+                <h3>Date Arithmetic</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" id="arith-date">
+                    </div>
+                    <div class="form-group">
+                        <label>Operation</label>
+                        <select id="arith-operation">
+                            <option value="add">Add</option>
+                            <option value="subtract">Subtract</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="number" id="arith-amount" value="7">
+                    </div>
+                    <div class="form-group">
+                        <label>Unit</label>
+                        <select id="arith-unit">
+                            <option value="days" selected>Days</option>
+                            <option value="weeks">Weeks</option>
+                            <option value="months">Months</option>
+                            <option value="years">Years</option>
+                            <option value="hours">Hours</option>
+                            <option value="minutes">Minutes</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="calculateDateArithmetic()">Calculate</button>
+
+                <h3 style="margin-top: 30px;">Date Difference</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date 1</label>
+                        <input type="date" id="diff-date1">
+                    </div>
+                    <div class="form-group">
+                        <label>Date 2</label>
+                        <input type="date" id="diff-date2">
+                    </div>
+                </div>
+
+                <button class="btn" onclick="calculateDateDifference()">Calculate Difference</button>
+
+                <div id="date-calc-result"></div>
+            </div>
+
+            <!-- Timezone Converter Tab -->
+            <div id="timezone" class="tab-content">
+                <h2>Timezone Converter</h2>
+                <div class="examples">
+                    <h4>💡 Example Usage</h4>
+                    <pre>POST /api/time-in-location
+{
+  "date": "2025-09-29T12:00:00Z",
+  "timezone": "Asia/Tokyo"
+}</pre>
+                </div>
+
+                <div class="form-group">
+                    <label>Date & Time (or leave empty for current)</label>
+                    <input type="datetime-local" id="tz-datetime">
+                    <small>Leave empty to use current date/time</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Target Timezone</label>
+                    <select id="tz-target">
+                        <option value="UTC">UTC</option>
+                        <option value="America/New_York">America/New_York (EST/EDT)</option>
+                        <option value="America/Chicago">America/Chicago (CST/CDT)</option>
+                        <option value="America/Los_Angeles">America/Los_Angeles (PST/PDT)</option>
+                        <option value="Europe/London">Europe/London (GMT/BST)</option>
+                        <option value="Europe/Paris">Europe/Paris (CET/CEST)</option>
+                        <option value="Europe/Warsaw">Europe/Warsaw</option>
+                        <option value="Asia/Dubai">Asia/Dubai</option>
+                        <option value="Asia/Tokyo">Asia/Tokyo</option>
+                        <option value="Australia/Sydney">Australia/Sydney</option>
+                    </select>
+                </div>
+
+                <button class="btn" onclick="convertTimezone()">Convert</button>
+                <button class="btn btn-secondary" onclick="showAllTimezones()">Show All Timezones</button>
+
+                <div id="timezone-result"></div>
+            </div>
+
+            <!-- Business Days Tab -->
+            <div id="business-days" class="tab-content">
+                <h2>Business Days Calculator</h2>
+                <div class="examples">
+                    <h4>💡 Example Usage</h4>
+                    <pre>POST /api/business-days
+{
+  "startDate": "2025-09-29",
+  "endDate": "2025-10-10",
+  "holidays": ["2025-10-03", "2025-10-05"]
+}</pre>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" id="biz-start">
+                    </div>
+                    <div class="form-group">
+                        <label>End Date</label>
+                        <input type="date" id="biz-end">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Holidays (optional, one per line: YYYY-MM-DD)</label>
+                    <textarea id="biz-holidays" rows="4" placeholder="2025-12-25&#10;2025-12-26&#10;2026-01-01"></textarea>
+                    <small>Enter holidays in YYYY-MM-DD format, one per line</small>
+                </div>
+
+                <button class="btn" onclick="calculateBusinessDays()">Calculate Business Days</button>
+
+                <div id="business-days-result"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update clock
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour12: false });
+            const dateStr = now.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            document.getElementById('current-time').textContent = timeStr;
+            document.getElementById('current-date').textContent = dateStr;
+        }
+
+        // Update service status
+        async function updateStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+
+                document.getElementById('service-status').textContent = data.status || 'Unknown';
+                document.getElementById('calculations-count').textContent = data.metrics?.calculationsPerformed || '0';
+                document.getElementById('sunrise-count').textContent = data.metrics?.sunriseCalculations || '0';
+                document.getElementById('uptime').textContent = data.uptime?.human || '-';
+            } catch (error) {
+                console.error('Failed to fetch status:', error);
+            }
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Set location preset
+        function setLocation(lat, lon, tz, name) {
+            document.getElementById('sunrise-lat').value = lat;
+            document.getElementById('sunrise-lon').value = lon;
+            document.getElementById('sunrise-tz').value = tz;
+        }
+
+        // Get current time
+        async function getCurrentTime() {
+            const timezone = document.getElementById('current-time-tz').value;
+
+            try {
+                const response = await fetch(`/api/current-time?timezone=${timezone}`);
+                const data = await response.json();
+
+                showResult('current-time-result', data, false);
+            } catch (error) {
+                showResult('current-time-result', { error: error.message }, true);
+            }
+        }
+
+        // Get multiple timezones
+        async function getMultipleTimezones() {
+            const timezones = 'UTC,America/New_York,Europe/London,Asia/Tokyo,Australia/Sydney';
+
+            try {
+                const response = await fetch(`/api/current-time?timezones=${timezones}`);
+                const data = await response.json();
+
+                showResult('current-time-result', data, false);
+            } catch (error) {
+                showResult('current-time-result', { error: error.message }, true);
+            }
+        }
+
+        // Calculate sunrise/sunset
+        async function calculateSunrise() {
+            const lat = parseFloat(document.getElementById('sunrise-lat').value);
+            const lon = parseFloat(document.getElementById('sunrise-lon').value);
+            const date = document.getElementById('sunrise-date').value;
+            const timezone = document.getElementById('sunrise-tz').value;
+
+            try {
+                const response = await fetch('/api/sunrise-sunset', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ date, latitude: lat, longitude: lon, timezone })
+                });
+                const data = await response.json();
+
+                showResult('sunrise-result', data, !response.ok);
+            } catch (error) {
+                showResult('sunrise-result', { error: error.message }, true);
+            }
+        }
+
+        // Batch sunrise calculation
+        async function calculateBatchSunrise() {
+            const date = document.getElementById('sunrise-date').value;
+
+            const locations = [
+                { name: "Warsaw", latitude: 52.2297, longitude: 21.0122, timezone: "Europe/Warsaw" },
+                { name: "New York", latitude: 40.7128, longitude: -74.0060, timezone: "America/New_York" },
+                { name: "London", latitude: 51.5074, longitude: -0.1278, timezone: "Europe/London" },
+                { name: "Tokyo", latitude: 35.6762, longitude: 139.6503, timezone: "Asia/Tokyo" },
+                { name: "Sydney", latitude: -33.8688, longitude: 151.2093, timezone: "Australia/Sydney" }
+            ];
+
+            try {
+                const response = await fetch('/api/sunrise-sunset/batch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ date, locations })
+                });
+                const data = await response.json();
+
+                showResult('sunrise-result', data, !response.ok);
+            } catch (error) {
+                showResult('sunrise-result', { error: error.message }, true);
+            }
+        }
+
+        // Date arithmetic
+        async function calculateDateArithmetic() {
+            const date = document.getElementById('arith-date').value;
+            const operation = document.getElementById('arith-operation').value;
+            const amount = parseInt(document.getElementById('arith-amount').value);
+            const unit = document.getElementById('arith-unit').value;
+
+            try {
+                const response = await fetch('/api/date-arithmetic', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ date, operation, amount, unit })
+                });
+                const data = await response.json();
+
+                showResult('date-calc-result', data, !response.ok);
+            } catch (error) {
+                showResult('date-calc-result', { error: error.message }, true);
+            }
+        }
+
+        // Date difference
+        async function calculateDateDifference() {
+            const date1 = document.getElementById('diff-date1').value;
+            const date2 = document.getElementById('diff-date2').value;
+
+            try {
+                const response = await fetch('/api/date-difference', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ date1, date2 })
+                });
+                const data = await response.json();
+
+                showResult('date-calc-result', data, !response.ok);
+            } catch (error) {
+                showResult('date-calc-result', { error: error.message }, true);
+            }
+        }
+
+        // Convert timezone
+        async function convertTimezone() {
+            const datetime = document.getElementById('tz-datetime').value;
+            const timezone = document.getElementById('tz-target').value;
+
+            const body = { timezone };
+            if (datetime) {
+                body.date = new Date(datetime).toISOString();
+            }
+
+            try {
+                const response = await fetch('/api/time-in-location', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await response.json();
+
+                showResult('timezone-result', data, !response.ok);
+            } catch (error) {
+                showResult('timezone-result', { error: error.message }, true);
+            }
+        }
+
+        // Show all timezones
+        async function showAllTimezones() {
+            try {
+                const response = await fetch('/api/timezones');
+                const data = await response.json();
+
+                showResult('timezone-result', data, false);
+            } catch (error) {
+                showResult('timezone-result', { error: error.message }, true);
+            }
+        }
+
+        // Calculate business days
+        async function calculateBusinessDays() {
+            const startDate = document.getElementById('biz-start').value;
+            const endDate = document.getElementById('biz-end').value;
+            const holidaysText = document.getElementById('biz-holidays').value;
+
+            const holidays = holidaysText
+                .split('\n')
+                .map(h => h.trim())
+                .filter(h => h.length > 0);
+
+            try {
+                const response = await fetch('/api/business-days', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ startDate, endDate, holidays })
+                });
+                const data = await response.json();
+
+                showResult('business-days-result', data, !response.ok);
+            } catch (error) {
+                showResult('business-days-result', { error: error.message }, true);
+            }
+        }
+
+        // Show result
+        function showResult(elementId, data, isError) {
+            const element = document.getElementById(elementId);
+            const className = isError ? 'result-box error' : 'result-box success';
+            const title = isError ? '❌ Error' : '✅ Result';
+
+            element.innerHTML = `
+                <div class="${className}">
+                    <h3>${title}</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                </div>
+            `;
+        }
+
+        // Initialize
+        updateClock();
+        setInterval(updateClock, 1000);
+        updateStatus();
+        setInterval(updateStatus, 30000);
+
+        // Set today's date as default
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('sunrise-date').value = today;
+        document.getElementById('arith-date').value = today;
+        document.getElementById('diff-date1').value = today;
+
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 7);
+        document.getElementById('diff-date2').value = tomorrow.toISOString().split('T')[0];
+        document.getElementById('biz-start').value = today;
+        document.getElementById('biz-end').value = tomorrow.toISOString().split('T')[0];
+    </script>
+</body>
+
+</html>

@@ -1,7 +1,7 @@
 # Introduction
 
 <p align="center">
-  <img src="https://github.com/jaktestowac/gad-gui-api-demo/assets/72373858/eadec2e8-229c-414f-81da-9ec4601b0972" alt="GAD" width="300" height="300">
+  <img src="./assets/gad-header.png" alt="GAD" width="300" height="300">
 </p>
 
 > [!TIP]
@@ -286,7 +286,7 @@ Feel free to reach out to us:
 - 💼 **LinkedIn**: [jaktestowac.pl](https://www.linkedin.com/company/jaktestowac/)
 - 💬 **Discord**: [Polish Playwright Community](https://discord.gg/mUAqQ7FUaZ)
 - 📧 **Support**: Check our website for contact details
-- 🐛 **Issues**: [GitHub Issues](https://github.com/jaktestowac/playwright-tools/issues)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/jaktestowac/gad-gui-api-demo/issues)
 
 ---
 
@@ -306,6 +306,20 @@ We have gathered a collection of resources to help you learn and master Playwrig
 - [Playwright MCP](https://www.youtube.com/playlist?list=PLfKhn9AcZ-cCqD34AG5YRejujaBqCBgl4) - MCP course (Polish)
 - [Discord Community](https://discord.gg/mUAqQ7FUaZ) - First Polish Playwright community!
 - [Playwright Info](https://playwright.info/) - first and only Polish Playwright blog
+
+### AI_Testers
+
+<div align="center">
+<a href="https://aitesters.pl">
+<img src="./assets/aitesters-header-photo.jpg" alt="AI Testers Logo" height="400"/>
+</a>
+</div>
+
+Gain an edge by combining AI knowledge with the most popular tools in the IT market.  
+We'll show you how to accelerate with AI and build a professional test automation framework. 😉
+
+- [AI_Testers](https://aitesters.pl) - Main page about AI_Testers Program
+- [AI_Testers LinkedIn](https://www.linkedin.com/company/aitesters) - Follow us on LinkedIn
 
 ## 🇬🇧 English Resources
 

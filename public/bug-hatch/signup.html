@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up - BugHatch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/bug-hatch/css/bh-fallback.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-neutral-950 text-neutral-100">
+    <nav class="bh-navbar px-4 py-3 sticky top-0 z-20 border-b border-neutral-800 bg-neutral-950/70 backdrop-blur">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="/" class="gad-link">🦎 GAD</a>
+            <a href="/bug-hatch/" class="bh-navbar-brand bh-brand-badge inline-flex items-center gap-2 text-lg font-semibold">
+                <span class="bh-logo-icon text-2xl">🐛</span><span>BugHatch</span>
+            </a>
+            <div class="flex gap-2">
+                <!-- Existing navigation items can go here -->
+            </div>
+        </div>
+    </nav>
+
+    <div class="mx-auto max-w-md px-4 py-12">
+        <div class="bh-card bh-card-glow">
+            <div class="text-center">
+                <a href="/bug-hatch/" class="inline-flex items-center gap-2 justify-center mb-2">
+                    <span class="bh-logo-icon">🐛</span><span class="text-base font-semibold">BugHatch</span>
+                </a>
+                <p class="text-sm text-neutral-400">Create your account</p>
+            </div>
+
+            <div id="error-message" class="bh-alert bh-alert-error bh-hidden mt-4"></div>
+            <div id="success-message" class="bh-alert bh-alert-info bh-hidden mt-2"></div>
+
+            <form id="signup-form" class="mt-6 space-y-4">
+                <div class="bh-field">
+                    <label for="name" class="bh-label">Full Name</label>
+                    <input type="text" id="name" name="name" data-testid="name-input" required autocomplete="name" placeholder="John Doe" class="bh-input" />
+                </div>
+
+                <div class="bh-field">
+                    <label for="email" class="bh-label">Email</label>
+                    <input type="email" id="email" name="email" data-testid="email-input" required autocomplete="email" placeholder="your@email.com" class="bh-input" />
+                </div>
+
+                <div class="bh-field">
+                    <label for="password" class="bh-label">Password</label>
+                    <input type="password" id="password" name="password" data-testid="password-input" required autocomplete="new-password" minlength="2" maxlength="100" placeholder="••••••••" class="bh-input" />
+                    <small class="text-neutral-500 text-[10px] tracking-wide">At least 2 characters</small>
+                </div>
+
+                <div class="bh-field">
+                    <label for="confirmPassword" class="bh-label">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" data-testid="confirm-password-input" required autocomplete="new-password" minlength="2" maxlength="100" placeholder="••••••••" class="bh-input" />
+                </div>
+
+                <button type="submit" data-testid="signup-button" class="bh-btn bh-btn-primary bh-btn-block bh-btn-md">Create Account</button>
+            </form>
+
+            <div class="text-center mt-8 pt-6 border-t border-neutral-800 text-sm">
+                <span class="text-xs text-neutral-400">Already have an account?</span>
+                <a class="text-emerald-400 hover:underline font-medium" href="/bug-hatch/login.html" data-testid="login-link">Sign in</a>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="/bug-hatch/js/auth.js"></script>
+    <script>
+        // Check if user is already logged in and redirect to dashboard
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const user = await window.bugHatchAuth.checkAuth();
+                if (user) {
+                    // User is already logged in, redirect to dashboard
+                    const url = new URL(window.location.href);
+                    const demo = url.searchParams.get('demo') === 'true';
+                    window.location.href = `/bug-hatch/dashboard.html${demo ? '?demo=true' : ''}`;
+                    return;
+                }
+            } catch (error) {
+                // Continue to show signup form if auth check fails
+            }
+        });
+    </script>
+</body>
+
+</html>

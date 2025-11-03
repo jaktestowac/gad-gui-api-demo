@@ -13,7 +13,7 @@ class DataProxy {
 
     this.setMockDataSource(mockDataSource);
     this.dbPath = path.join(__dirname, "..", "..", "db", dbName);
-    
+
     // Keep data in memory
     this.memoryData = null;
     this.isInitialized = false;
@@ -33,7 +33,7 @@ class DataProxy {
       // Try to load from saved file first
       if (fs.existsSync(this.dbPath)) {
         const fileContent = fs.readFileSync(this.dbPath, "utf8");
-        if (fileContent && fileContent.trim() !== '') {
+        if (fileContent && fileContent.trim() !== "") {
           const savedData = JSON.parse(fileContent);
           this.memoryData = this.mergeWithMockData(savedData);
         } else {
@@ -71,8 +71,14 @@ class DataProxy {
         }
 
         // Set the value in memory
-        current[property] = value;
-        
+        try {
+          current[property] = value;
+        } catch (error) {
+          // TODO: workaround for Proxy set errors
+          // TODO: concurrent modification detected, handle appropriately
+          return false;
+        }
+
         // Persist to file
         this.persistToFile();
         return true;
@@ -87,7 +93,7 @@ class DataProxy {
         }
 
         delete current[property];
-        
+
         // Persist to file
         this.persistToFile();
         return true;
@@ -110,7 +116,7 @@ class DataProxy {
           const data = this.getMemoryData();
           data[property] = value;
           this.memoryData = data;
-          
+
           // Persist to file
           this.persistToFile();
           return true;
@@ -119,7 +125,7 @@ class DataProxy {
           const data = this.getMemoryData();
           delete data[property];
           this.memoryData = data;
-          
+
           // Persist to file
           this.persistToFile();
           return true;
@@ -143,17 +149,17 @@ class DataProxy {
     }
 
     DataProxy.saveLock = true;
-    
+
     try {
       const jsonString = JSON.stringify(this.memoryData, null, 2);
-      fs.writeFileSync(this.dbPath, jsonString, 'utf8');
+      fs.writeFileSync(this.dbPath, jsonString, "utf8");
     } catch (error) {
       console.error("Error persisting data to file:", error);
-      
+
       // Try to save to a backup file
       try {
-        const backupPath = this.dbPath + '.backup';
-        fs.writeFileSync(backupPath, JSON.stringify(this.memoryData, null, 2), 'utf8');
+        const backupPath = this.dbPath + ".backup";
+        fs.writeFileSync(backupPath, JSON.stringify(this.memoryData, null, 2), "utf8");
         console.log("Saved backup to:", backupPath);
       } catch (backupError) {
         console.error("Failed to save backup:", backupError);
@@ -196,10 +202,10 @@ class DataProxy {
       // Reset memory data to mock data
       this.memoryData = { ...this.mockDataSource };
       this.isInitialized = true;
-      
+
       // Persist to file
       this.persistToFile();
-      
+
       // create { key: number } object where key is root key and number is number of items in the collection
       const collections = Object.keys(this.mockDataSource).reduce((acc, key) => {
         if (Array.isArray(this.mockDataSource[key])) {

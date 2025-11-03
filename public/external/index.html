@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD | External Services</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <style>
+        .ex-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .section {
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.3em;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 2px;
+            cursor: pointer;
+            margin: 2px;
+            font-size: 0.8em;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 4px;
+            margin: 2px 0;
+            border: 1px solid #ddd;
+            border-radius: 2px;
+            font-size: 0.8em;
+        }
+
+        textarea {
+            height: 60px;
+            resize: vertical;
+        }
+
+        #response {
+            height: 200px;
+            background: #f8f9fa;
+            font-family: monospace;
+            font-size: 0.8em;
+        }
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 6px;
+        }
+
+        .service-card {
+            border: 1px solid #ddd;
+            border-radius: 2px;
+            padding: 6px;
+            background: #f9f9f9;
+            position: relative;
+        }
+
+        .service-status {
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: none;
+        }
+
+        .status-ok {
+            background-color: #28a745;
+        }
+
+        .status-error {
+            background-color: #dc3545;
+        }
+
+        .status-timeout {
+            background-color: #ffc107;
+        }
+
+        .status-unknown {
+            background-color: #6c757d;
+        }
+
+        .status-checking {
+            background-color: #17a2b8;
+        }
+
+        .service-name {
+            font-weight: bold;
+            margin-bottom: 2px;
+            font-size: 0.8em;
+        }
+
+        .service-url {
+            font-size: 0.7em;
+            color: #666;
+            margin-bottom: 6px;
+            word-break: break-all;
+        }
+
+        .service-buttons {
+            display: flex;
+            gap: 2px;
+        }
+
+        .service-buttons button {
+            padding: 3px 6px;
+            font-size: 0.7em;
+        }
+
+        .loading {
+            display: none;
+            color: #666;
+            font-style: italic;
+            font-size: 0.8em;
+        }
+
+        .top-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        /* Endpoints Modal specific */
+        .endpoint-list {
+            max-height: 260px;
+            overflow: auto;
+            background: #f8f9fa;
+            border: 1px solid #eee;
+            padding: 8px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 0.8em;
+        }
+
+        .endpoint-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            margin-right: 6px;
+            border-radius: 3px;
+            color: #fff;
+            font-size: 0.7em;
+        }
+
+        .method-get {
+            background: #28a745;
+        }
+
+        .method-post {
+            background: #007bff;
+        }
+
+        .method-put {
+            background: #6f42c1;
+        }
+
+        .method-patch {
+            background: #17a2b8;
+        }
+
+        .method-delete {
+            background: #dc3545;
+        }
+
+        .endpoint-row {
+            cursor: pointer;
+            padding: 2px 0;
+        }
+
+        .endpoint-row:hover {
+            background: #e9ecef;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-gui" class="nav-menu"></h1>
+        </div>
+    </header>
+    <div id="container"></div>
+    <div id="containerComments"></div>
+    <br />
+    <br />
+    <br />
+    <div class="ex-container">
+        <h1>External Services Health & Requests</h1>
+
+        <div class="section">
+            <h2>Available Services</h2>
+            <div class="top-controls">
+                <button onclick="loadServices()">Load</button>
+                <button onclick="checkAllHealth()" id="checkAllBtn">Check All</button>
+                <button onclick="openAddServiceModal()">+ Add</button>
+                <div id="loading" class="loading">Loading services...</div>
+            </div>
+            <div id="services-container" class="service-grid"></div>
+        </div>
+
+        <div class="section">
+            <h2>Custom Request</h2>
+            <div style="display: flex; gap: 5px; align-items: center; margin-bottom: 5px;">
+                <select id="method" style="width: 80px;">
+                    <option>GET</option>
+                    <option>POST</option>
+                    <option>PUT</option>
+                    <option>PATCH</option>
+                    <option>DELETE</option>
+                </select>
+                <input id="endpoint" placeholder="/api/external/serviceName/endpoint" value="/api/external/" style="flex: 1;">
+                <button onclick="performRequest()">Send</button>
+            </div>
+            <textarea id="body" placeholder="Request body (JSON for POST/PUT/PATCH)"></textarea>
+        </div>
+
+        <div class="section">
+            <h2>Response</h2>
+            <textarea id="response" readonly></textarea>
+        </div>
+
+        <!-- Add Service Modal -->
+        <div id="addServiceModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Register New Service</h3>
+                    <span class="close" onclick="closeAddServiceModal()">&times;</span>
+                </div>
+                <input id="new-service-name" placeholder="Service Name (e.g., myapi)">
+                <input id="new-service-display-name" placeholder="Display Name (e.g., My API Service)">
+                <input id="new-service-url" placeholder="Service URL (e.g., https://api.example.com)">
+                <button onclick="addService()" style="width: 100%; margin-top: 10px;">Add Service</button>
+                <div style="margin-top: 8px; font-size: 0.7em; color: #666;">
+                    Services are stored locally and only available in this browser session.<br>
+                    Service will be accessible at /api/external/{service-name}/
+                </div>
+            </div>
+        </div>
+
+        <!-- Endpoints Modal -->
+        <div id="endpointsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="endpointsModalTitle">Available Endpoints</h3>
+                    <span class="close" onclick="closeEndpointsModal()">&times;</span>
+                </div>
+                <div id="endpointsModalBody">
+                    <div class="loading" id="endpointsLoading">Loading endpoints...</div>
+                    <div id="endpointsList" class="endpoint-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const baseUrl = 'http://localhost:3000';
+
+        // Common health endpoints to probe
+        const HEALTH_ENDPOINTS = ['health'];
+
+        // Fetch and merge services (server + locally stored), removing duplicates by name
+        async function getAllServices() {
+            const res = await fetch(baseUrl + '/api/external/list');
+            const data = await res.json();
+
+            let allServices = [];
+            if (data.services) {
+                allServices = allServices.concat(data.services);
+            }
+
+            const storedServices = getStoredServices();
+            allServices = allServices.concat(storedServices);
+
+            // Remove duplicates (prefer first occurrence)
+            const uniqueServices = allServices.filter((service, index, self) =>
+                index === self.findIndex(s => s.name === service.name)
+            );
+
+            return uniqueServices;
+        }
+
+        // Map probe status to UI indicator class
+        function statusToUi(status) {
+            return status === 'OK' ? 'ok' : (status === 'TIMEOUT' ? 'timeout' : 'error');
+        }
+
+        // Probe a service's health by trying common endpoints; returns a concise result
+        async function probeServiceHealth(serviceName, endpoints = HEALTH_ENDPOINTS, timeoutMs = 5000) {
+            let lastStatus = 'UNKNOWN';
+            let responseTime = 0;
+
+            for (const endpoint of endpoints) {
+                try {
+                    const start = Date.now();
+                    const res = await fetch(baseUrl + `/api/external/${serviceName}/${endpoint}`, {
+                        method: 'GET',
+                        signal: AbortSignal.timeout(timeoutMs)
+                    });
+                    responseTime = Date.now() - start;
+
+                    if (res.ok) {
+                        return { status: 'OK', responseTime, endpoint };
+                    } else {
+                        lastStatus = `HTTP ${res.status}`;
+                    }
+                } catch (err) {
+                    if (err.name === 'TimeoutError') {
+                        lastStatus = 'TIMEOUT';
+                    } else {
+                        lastStatus = 'ERROR';
+                    }
+                }
+            }
+
+            return { status: lastStatus, responseTime, endpoint: undefined };
+        }
+
+        async function loadServices() {
+            const loading = document.getElementById('loading');
+            const container = document.getElementById('services-container');
+
+            loading.style.display = 'block';
+            container.innerHTML = '';
+
+            try {
+                const res = await fetch(baseUrl + '/api/external/list');
+                const data = await res.json();
+
+                let allServices = [];
+
+                // Add server-configured services
+                if (data.services) {
+                    allServices = allServices.concat(data.services);
+                }
+
+                // Add locally stored custom services
+                const storedServices = getStoredServices();
+                allServices = allServices.concat(storedServices);
+
+                // Remove duplicates (prefer server services over local ones)
+                const uniqueServices = allServices.filter((service, index, self) =>
+                    index === self.findIndex(s => s.name === service.name)
+                );
+
+                // Render services
+                uniqueServices.forEach(service => {
+                    const card = document.createElement('div');
+                    card.className = 'service-card';
+
+                    const isCustom = storedServices.some(s => s.name === service.name);
+                    const removeButton = isCustom ? `<button onclick="removeService('${service.name}')" style="background: #dc3545;" title="Remove this custom service">×</button>` : '';
+
+                    card.innerHTML = `
+                        <div class="service-status" id="status-${service.name}"></div>
+                        <div class="service-name">${service.displayName || service.name} ${isCustom ? '<small style="color: #17a2b8;">(custom)</small>' : ''}</div>
+                        <div class="service-url">${service.url}</div>
+                        <div class="service-resource" style="font-size: 0.7em; color: #666; margin-bottom: 6px;">Available at:<br>/api/external/${service.name}/</div>
+                        <div class="service-buttons">
+                            <button onclick="checkServiceHealth('${service.name}')" title="Check health">Health</button>
+                            <button onclick="showEndpoints('${service.name}', '${service.displayName || service.name}')" title="Show endpoints">Endpoints</button>
+                            ${removeButton}
+                        </div>
+                    `;
+                    container.appendChild(card);
+                    updateServiceStatus(service.name, 'unknown');
+                });
+
+                document.getElementById('response').value = JSON.stringify(data, null, 2);
+            } catch (err) {
+                document.getElementById('response').value = 'Error loading services: ' + err.message;
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+        // Endpoints Modal logic
+        function closeEndpointsModal() {
+            document.getElementById('endpointsModal').style.display = 'none';
+            document.getElementById('endpointsList').innerHTML = '';
+        }
+
+        async function showEndpoints(serviceName, displayName) {
+            const modal = document.getElementById('endpointsModal');
+            const title = document.getElementById('endpointsModalTitle');
+            const list = document.getElementById('endpointsList');
+            const loading = document.getElementById('endpointsLoading');
+
+            title.textContent = `Available Endpoints — ${displayName}`;
+            list.innerHTML = '';
+            loading.style.display = 'block';
+            modal.style.display = 'block';
+
+            try {
+                const res = await fetch(baseUrl + `/api/external/${serviceName}/openapi`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+
+                const endpoints = Array.isArray(data.endpoints) ? data.endpoints : [];
+                if (endpoints.length === 0) {
+                    list.innerHTML = '<div style="color:#666">No endpoints returned.</div>';
+                } else {
+                    const frag = document.createDocumentFragment();
+                    endpoints.sort((a, b) => (a.path.localeCompare(b.path)) || (a.method.localeCompare(b.method)));
+                    endpoints.forEach(ep => {
+                        const row = document.createElement('div');
+                        const methodClass = `method-${(ep.method || '').toLowerCase()}`;
+                        row.className = 'endpoint-row';
+                        const hasBody = ep.exampleBody ? ' (has body)' : '';
+                        row.innerHTML = `<span class="endpoint-badge ${methodClass}">${ep.method}</span><code>${ep.path}</code><small style="color:#666">${hasBody}</small>`;
+                        row.onclick = () => {
+                            document.getElementById('method').value = ep.method;
+                            document.getElementById('endpoint').value = `/api/external/${serviceName}${ep.path}`;
+                            if (ep.exampleBody) {
+                                document.getElementById('body').value = JSON.stringify(ep.exampleBody, null, 2);
+                            }
+                            closeEndpointsModal();
+                        };
+                        frag.appendChild(row);
+                    });
+                    list.appendChild(frag);
+                }
+            } catch (err) {
+                list.innerHTML = `<div style="color:#dc3545">Failed to load endpoints: ${err.message}</div>`;
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        async function checkServiceHealth(serviceName) {
+            updateServiceStatus(serviceName, 'checking');
+
+            const result = await probeServiceHealth(serviceName);
+            updateServiceStatus(serviceName, statusToUi(result.status));
+
+            if (result.status === 'OK' && result.endpoint) {
+                await makeRequest('GET', `/api/external/${serviceName}/${result.endpoint}`, null, `Checking ${serviceName} health via /${result.endpoint}`);
+            } else if (result.status === 'UNKNOWN' || !result.endpoint) {
+                document.getElementById('response').value = `No health endpoint found for ${serviceName}. Try manual testing.`;
+            }
+        }
+
+        async function performRequest() {
+            const method = document.getElementById('method').value;
+            const endpoint = document.getElementById('endpoint').value;
+            const body = document.getElementById('body').value;
+
+            await makeRequest(method, endpoint, body);
+        }
+
+        function updateServiceStatus(serviceName, status) {
+            const statusElement = document.getElementById(`status-${serviceName}`);
+            if (statusElement) {
+                statusElement.className = 'service-status';
+                statusElement.style.display = 'block';
+                statusElement.classList.add(`status-${status}`);
+            }
+        }
+
+        async function makeRequest(method, endpoint, body = null, description = '') {
+            const options = {
+                method: method,
+                headers: { 'Content-Type': 'application/json' }
+            };
+
+            if (['POST', 'PUT', 'PATCH'].includes(method) && body && body.trim()) {
+                options.body = body;
+            }
+
+            try {
+                const res = await fetch(baseUrl + endpoint, options);
+                const text = await res.text();
+
+                let displayText = description ? `${description}\n\n` : '';
+                displayText += `URL: ${baseUrl + endpoint}\n`;
+                displayText += `Status: ${res.status} ${res.statusText}\n\n`;
+
+                try {
+                    const data = JSON.parse(text);
+                    displayText += JSON.stringify(data, null, 2);
+                } catch {
+                    displayText += text;
+                }
+
+                document.getElementById('response').value = displayText;
+            } catch (err) {
+                document.getElementById('response').value = `Error: ${err.message}`;
+            }
+        }
+
+        async function checkAllHealth() {
+            const btn = document.getElementById('checkAllBtn');
+            btn.disabled = true;
+            btn.textContent = 'Checking...';
+
+            try {
+                // Get all services (server + custom, deduped)
+                const uniqueServices = await getAllServices();
+
+                if (uniqueServices.length === 0) {
+                    document.getElementById('response').value = 'No services available to check.';
+                    return;
+                }
+
+                const results = [];
+
+                for (const service of uniqueServices) {
+                    updateServiceStatus(service.name, 'checking');
+                    const { status, responseTime } = await probeServiceHealth(service.name);
+                    // Update UI indicator
+                    updateServiceStatus(service.name, statusToUi(status));
+
+                    results.push({
+                        name: service.displayName || service.name,
+                        status: status,
+                        responseTime: responseTime,
+                        url: service.url
+                    });
+                }
+
+                // Display summary
+                let summary = `Health Check Summary (${new Date().toLocaleString()})\n\n`;
+                summary += '='.repeat(50) + '\n';
+
+                results.forEach(result => {
+                    const statusIcon = result.status === 'OK' ? '✓' :
+                        result.status === 'TIMEOUT' ? '⏱' : '✗';
+                    summary += `${statusIcon} ${result.name}: ${result.status}`;
+                    if (result.responseTime > 0) {
+                        summary += ` (${result.responseTime}ms)`;
+                    }
+                    summary += '\n';
+                });
+
+                summary += '\n' + '='.repeat(50) + '\n';
+                summary += `Total services checked: ${results.length}\n`;
+                summary += `Healthy: ${results.filter(r => r.status === 'OK').length}\n`;
+                summary += `Issues: ${results.filter(r => r.status !== 'OK').length}`;
+
+                document.getElementById('response').value = summary;
+
+            } catch (err) {
+                document.getElementById('response').value = `Error checking all services: ${err.message}`;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Check All Health';
+            }
+        }
+
+        // Load services on page load
+        window.onload = loadServices;
+
+        function openAddServiceModal() {
+            document.getElementById('addServiceModal').style.display = 'block';
+            document.getElementById('new-service-name').focus();
+        }
+
+        function closeAddServiceModal() {
+            document.getElementById('addServiceModal').style.display = 'none';
+            // Clear inputs
+            document.getElementById('new-service-name').value = '';
+            document.getElementById('new-service-display-name').value = '';
+            document.getElementById('new-service-url').value = '';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function (event) {
+            const modal = document.getElementById('addServiceModal');
+            if (event.target === modal) {
+                closeAddServiceModal();
+            }
+            const endpointsModal = document.getElementById('endpointsModal');
+            if (event.target === endpointsModal) {
+                closeEndpointsModal();
+            }
+        }
+
+        function addService() {
+            const nameInput = document.getElementById('new-service-name');
+            const displayNameInput = document.getElementById('new-service-display-name');
+            const urlInput = document.getElementById('new-service-url');
+
+            const name = nameInput.value.trim();
+            const displayName = displayNameInput.value.trim();
+            const url = urlInput.value.trim();
+
+            if (!name || !displayName || !url) {
+                alert('Please enter service name, display name, and URL');
+                return;
+            }
+
+            // Validate URL format
+            try {
+                new URL(url);
+            } catch {
+                alert('Please enter a valid URL');
+                return;
+            }
+
+            // Check if service already exists
+            const storedServices = getStoredServices();
+            if (storedServices.some(s => s.name === name)) {
+                alert('Service with this name already exists');
+                return;
+            }
+
+            // Add new service
+            storedServices.push({
+                name: name,
+                displayName: displayName,
+                url: url,
+                type: 'custom',
+                configured: true
+            });
+
+            saveStoredServices(storedServices);
+
+            // Clear inputs
+            nameInput.value = '';
+            displayNameInput.value = '';
+            urlInput.value = '';
+
+            // Reload services
+            loadServices();
+
+            // Close modal
+            closeAddServiceModal();
+        }
+
+        function removeService(serviceName) {
+            if (!confirm(`Remove service "${serviceName}"?`)) {
+                return;
+            }
+
+            const storedServices = getStoredServices();
+            const filteredServices = storedServices.filter(s => s.name !== serviceName);
+            saveStoredServices(filteredServices);
+
+            // Reload services
+            loadServices();
+        }
+
+        function getStoredServices() {
+            try {
+                const stored = localStorage.getItem('customExternalServices');
+                return stored ? JSON.parse(stored) : [];
+            } catch {
+                return [];
+            }
+        }
+
+        function saveStoredServices(services) {
+            try {
+                localStorage.setItem('customExternalServices', JSON.stringify(services));
+            } catch (err) {
+                // Failed to save services to localStorage
+            }
+        }
+    </script>
+</body>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script type="text/javascript" src="/username.js"></script>
+
+</html>

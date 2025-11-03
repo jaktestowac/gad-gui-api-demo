@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniTemplate</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.8em;
+            font-weight: 300;
+        }
+
+        .header p {
+            margin: 5px 0 0;
+            opacity: 0.8;
+            font-size: 0.9em;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section h2 {
+            margin: 0 0 15px;
+            font-size: 1.2em;
+            font-weight: 500;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        select,
+        input,
+        textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        select:focus,
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .sample-params {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 10px 0;
+            display: none;
+        }
+
+        .sample-params pre {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 8px 0 0;
+            font-size: 12px;
+            overflow-x: auto;
+        }
+
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+            margin-right: 8px;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+        }
+
+        .btn.secondary {
+            background: #95a5a6;
+        }
+
+        .btn.secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .btn-group {
+            margin-top: 10px;
+        }
+
+        .result {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 20px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .result:empty {
+            display: none;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #27ae60;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                margin: 0;
+            }
+
+            .content {
+                padding: 15px;
+            }
+        }
+
+        /* Tab styles */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e1e8ed;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: #3498db;
+        }
+
+        .tab.active {
+            color: #3498db;
+            border-bottom-color: #3498db;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .template-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .template-item h3 {
+            margin: 0 0 8px;
+            font-size: 1em;
+            color: #2c3e50;
+        }
+
+        .template-item p {
+            margin: 5px 0;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .config-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .config-form .form-group {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 600px) {
+            .config-form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>MiniTemplate</h1>
+            <p><span class="status-indicator"></span>API Server Interface</p>
+        </div>
+        <div class="content">
+            <div class="tabs">
+                <button class="tab active" data-tab="jobs">📝 Jobs</button>
+                <button class="tab" data-tab="templates">📋 Templates</button>
+                <button class="tab" data-tab="config">⚙️ Configuration</button>
+            </div>
+
+            <div id="jobs" class="tab-content active">
+                <div class="section">
+                    <h2>📝 Create Job</h2>
+                    <form id="jobForm">
+                        <div class="form-group">
+                            <label for="templateId">Template</label>
+                            <select id="templateId" required>
+                                <option value="">Choose a template...</option>
+                            </select>
+                        </div>
+
+                        <div id="sampleParams" class="sample-params">
+                            <strong>💡 Sample Parameters</strong>
+                            <pre id="sampleParamsText"></pre>
+                            <div class="btn-group">
+                                <button type="button" id="useSampleBtn" class="btn secondary">Use Sample</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="params">Parameters (JSON)</label>
+                            <textarea id="params" rows="3" placeholder='{"key": "value"}'></textarea>
+                        </div>
+
+                        <button type="submit" class="btn">🚀 Submit Job</button>
+                    </form>
+                </div>
+
+                <div class="section">
+                    <h2>🔍 Check Status</h2>
+                    <form id="statusForm">
+                        <div class="form-group">
+                            <label for="jobId">Job ID</label>
+                            <input type="text" id="jobId" placeholder="Enter job ID...">
+                        </div>
+                        <button type="submit" class="btn">🔍 Check Status</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="templates" class="tab-content">
+                <div class="section">
+                    <h2>📋 Template Management</h2>
+                    <div class="form-group">
+                        <label for="templateSelect">Select Template</label>
+                        <select id="templateSelect">
+                            <option value="">Choose template to edit...</option>
+                        </select>
+                        <div class="btn-group" style="margin-top: 10px;">
+                            <button type="button" id="newTemplateBtn" class="btn secondary">➕ New Template</button>
+                            <button type="button" id="loadTemplatesBtn" class="btn secondary">🔄 Refresh</button>
+                        </div>
+                    </div>
+
+                    <form id="templateForm" style="display: none;">
+                        <div class="form-group">
+                            <label for="templateIdInput">Template ID</label>
+                            <input type="text" id="templateIdInput" placeholder="unique-template-id">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="templateDesc">Description</label>
+                            <input type="text" id="templateDesc" placeholder="Brief description">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="templateContent">Template Content</label>
+                            <textarea id="templateContent" rows="4" placeholder="Hello {{user.name|Friend}}!"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="templateSample">Sample Parameters (JSON)</label>
+                            <textarea id="templateSample" rows="3" placeholder='{"user": {"name": "John"}}'></textarea>
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="submit" class="btn">💾 Save Template</button>
+                            <button type="button" id="deleteTemplateBtn" class="btn" style="background: #e74c3c;">🗑️ Delete</button>
+                        </div>
+                    </form>
+
+                    <div id="templatesList"></div>
+                </div>
+            </div>
+
+            <div id="config" class="tab-content">
+                <div class="section">
+                    <h2>⚙️ Server Configuration</h2>
+                    <form id="configForm" class="config-form">
+                        <div class="form-group">
+                            <label for="minDelay">Min Processing Delay (ms)</label>
+                            <input type="number" id="minDelay" min="100" max="10000">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="maxDelay">Max Processing Delay (ms)</label>
+                            <input type="number" id="maxDelay" min="100" max="10000">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="maxQueueSize">Max Queue Size</label>
+                            <input type="number" id="maxQueueSize" min="1" max="1000">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="maxHistorySize">Max History Size</label>
+                            <input type="number" id="maxHistorySize" min="1" max="10000">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="maxTemplateLength">Max Template Length</label>
+                            <input type="number" id="maxTemplateLength" min="100" max="1000000">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="enableDiagnostics">Enable Diagnostics</label>
+                            <select id="enableDiagnostics">
+                                <option value="false">No</option>
+                                <option value="true">Yes</option>
+                            </select>
+                        </div>
+                    </form>
+
+                    <div class="btn-group" style="margin-top: 20px;">
+                        <button type="button" id="loadConfigBtn" class="btn secondary">📥 Load Config</button>
+                        <button type="button" id="saveConfigBtn" class="btn">💾 Save Config</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="result" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const baseUrl = window.location.origin;
+        let templatesData = [];
+        let currentTemplateId = null;
+
+        // Job status enum - matches server-side JOB_STATUSES
+        const JOB_STATUSES = {
+            QUEUED: "queued",
+            PROCESSING: "processing",
+            SUCCEEDED: "succeeded",
+            FAILED: "failed",
+        };
+
+        // Load templates on page load
+        window.onload = async () => {
+            await loadTemplates();
+        };
+
+        // Tab functionality
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const target = tab.dataset.tab;
+
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(tc => tc.classList.remove('active'));
+
+                tab.classList.add('active');
+                document.getElementById(target).classList.add('active');
+
+                // Load data when switching to tabs
+                if (target === 'templates') {
+                    loadTemplatesList();
+                } else if (target === 'config') {
+                    loadConfig();
+                }
+            });
+        });
+
+        // ===== JOBS TAB =====
+        async function loadTemplates() {
+            try {
+                const response = await fetch(`${baseUrl}/templates`);
+                templatesData = await response.json();
+                const select = document.getElementById('templateId');
+                select.innerHTML = '<option value="">Choose a template...</option>';
+                templatesData.forEach(template => {
+                    const option = document.createElement('option');
+                    option.value = template.id;
+                    option.textContent = `${template.id} - ${template.description}`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                showResult('❌ Error loading templates: ' + error.message, 'error');
+            }
+        }
+
+        document.getElementById('templateId').addEventListener('change', (e) => {
+            const selectedId = e.target.value;
+            const sampleDiv = document.getElementById('sampleParams');
+            const sampleText = document.getElementById('sampleParamsText');
+            if (selectedId) {
+                const template = templatesData.find(t => t.id === selectedId);
+                if (template?.sampleParams) {
+                    sampleText.textContent = JSON.stringify(template.sampleParams, null, 2);
+                    sampleDiv.style.display = 'block';
+                } else {
+                    sampleDiv.style.display = 'none';
+                }
+            } else {
+                sampleDiv.style.display = 'none';
+            }
+        });
+
+        document.getElementById('useSampleBtn').addEventListener('click', () => {
+            const selectedId = document.getElementById('templateId').value;
+            const template = templatesData.find(t => t.id === selectedId);
+            if (template?.sampleParams) {
+                document.getElementById('params').value = JSON.stringify(template.sampleParams, null, 2);
+            }
+        });
+
+        document.getElementById('jobForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const templateId = document.getElementById('templateId').value;
+            const paramsText = document.getElementById('params').value;
+
+            if (!templateId) {
+                showResult('❌ Please select a template', 'error');
+                return;
+            }
+
+            let params;
+            try {
+                params = JSON.parse(paramsText || '{}');
+            } catch (error) {
+                showResult('❌ Invalid JSON in parameters', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${baseUrl}/jobs`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ templateId, params })
+                });
+                const result = await response.json();
+                showResult(`✅ Job created: ${JSON.stringify(result, null, 2)}`, 'success');
+            } catch (error) {
+                showResult('❌ Error: ' + error.message, 'error');
+            }
+        });
+
+        document.getElementById('statusForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const jobId = document.getElementById('jobId').value.trim();
+
+            if (!jobId) {
+                showResult('❌ Please enter a job ID', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${baseUrl}/jobs/${jobId}`);
+                const result = await response.json();
+                showResult(`📊 Job Status: ${JSON.stringify(result, null, 2)}`, 'info');
+            } catch (error) {
+                showResult('❌ Error: ' + error.message, 'error');
+            }
+        });
+
+        // ===== TEMPLATES TAB =====
+        async function loadTemplatesList() {
+            try {
+                const response = await fetch(`${baseUrl}/templates`);
+                const templates = await response.json();
+                const select = document.getElementById('templateSelect');
+                select.innerHTML = '<option value="">Choose template to edit...</option>';
+                templates.forEach(template => {
+                    const option = document.createElement('option');
+                    option.value = template.id;
+                    option.textContent = `${template.id} - ${template.description}`;
+                    select.appendChild(option);
+                });
+
+                // Update templates list display
+                const listDiv = document.getElementById('templatesList');
+                listDiv.innerHTML = '';
+                templates.forEach(template => {
+                    const item = document.createElement('div');
+                    item.className = 'template-item';
+                    item.innerHTML = `
+                        <h3>${template.id}</h3>
+                        <p><strong>Description:</strong> ${template.description}</p>
+                        <p><strong>Template:</strong> ${template.template?.substring(0, 100)}${template.template?.length > 100 ? '...' : ''}</p>
+                        ${template.sampleParams ? `<p><strong>Has Sample:</strong> Yes</p>` : ''}
+                    `;
+                    listDiv.appendChild(item);
+                });
+            } catch (error) {
+                showResult('❌ Error loading templates: ' + error.message, 'error');
+            }
+        }
+
+        document.getElementById('templateSelect').addEventListener('change', async (e) => {
+            const templateId = e.target.value;
+            if (!templateId) {
+                document.getElementById('templateForm').style.display = 'none';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${baseUrl}/templates/${templateId}`);
+                const template = await response.json();
+
+                document.getElementById('templateIdInput').value = template.id;
+                document.getElementById('templateDesc').value = template.description || '';
+                document.getElementById('templateContent').value = template.template || '';
+                document.getElementById('templateSample').value = template.sampleParams ?
+                    JSON.stringify(template.sampleParams, null, 2) : '';
+
+                document.getElementById('templateForm').style.display = 'block';
+                currentTemplateId = template.id;
+            } catch (error) {
+                showResult('❌ Error loading template: ' + error.message, 'error');
+            }
+        });
+
+        document.getElementById('newTemplateBtn').addEventListener('click', () => {
+            document.getElementById('templateIdInput').value = '';
+            document.getElementById('templateDesc').value = '';
+            document.getElementById('templateContent').value = '';
+            document.getElementById('templateSample').value = '';
+            document.getElementById('templateForm').style.display = 'block';
+            document.getElementById('templateSelect').value = '';
+            currentTemplateId = null;
+        });
+
+        document.getElementById('loadTemplatesBtn').addEventListener('click', () => {
+            loadTemplatesList();
+            loadTemplates(); // Also refresh the jobs tab templates
+        });
+
+        document.getElementById('templateForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const templateId = document.getElementById('templateIdInput').value.trim();
+            const description = document.getElementById('templateDesc').value.trim();
+            const template = document.getElementById('templateContent').value.trim();
+            const sampleParamsText = document.getElementById('templateSample').value.trim();
+
+            if (!templateId || !template) {
+                showResult('❌ Template ID and content are required', 'error');
+                return;
+            }
+
+            let sampleParams;
+            if (sampleParamsText) {
+                try {
+                    sampleParams = JSON.parse(sampleParamsText);
+                } catch (error) {
+                    showResult('❌ Invalid JSON in sample parameters', 'error');
+                    return;
+                }
+            }
+
+            const templateData = { id: templateId, description, template };
+            if (sampleParams) templateData.sampleParams = sampleParams;
+
+            try {
+                const method = currentTemplateId ? 'PUT' : 'POST';
+                const url = currentTemplateId ? `${baseUrl}/templates/${currentTemplateId}` : `${baseUrl}/templates`;
+
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(templateData)
+                });
+
+                if (response.ok) {
+                    showResult(`✅ Template ${currentTemplateId ? 'updated' : 'created'} successfully`, 'success');
+                    loadTemplatesList();
+                    loadTemplates();
+                    document.getElementById('templateForm').style.display = 'none';
+                } else {
+                    const error = await response.json();
+                    showResult(`❌ Error: ${error.reason || error.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('❌ Error saving template: ' + error.message, 'error');
+            }
+        });
+
+        document.getElementById('deleteTemplateBtn').addEventListener('click', async () => {
+            if (!currentTemplateId) {
+                showResult('❌ No template selected', 'error');
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete template "${currentTemplateId}"?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${baseUrl}/templates/${currentTemplateId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showResult('✅ Template deleted successfully', 'success');
+                    loadTemplatesList();
+                    loadTemplates();
+                    document.getElementById('templateForm').style.display = 'none';
+                } else {
+                    showResult('❌ Error deleting template', 'error');
+                }
+            } catch (error) {
+                showResult('❌ Error deleting template: ' + error.message, 'error');
+            }
+        });
+
+        // ===== CONFIG TAB =====
+        async function loadConfig() {
+            try {
+                const response = await fetch(`${baseUrl}/config`);
+                const config = await response.json();
+
+                document.getElementById('minDelay').value = config.processingDelay.min;
+                document.getElementById('maxDelay').value = config.processingDelay.max;
+                document.getElementById('maxQueueSize').value = config.maxQueue;
+                document.getElementById('maxHistorySize').value = config.maxHistory;
+                document.getElementById('maxTemplateLength').value = config.maxTemplateLength;
+                document.getElementById('enableDiagnostics').value = config.enableDiagnostics.toString();
+            } catch (error) {
+                showResult('❌ Error loading config: ' + error.message, 'error');
+            }
+        }
+
+        document.getElementById('loadConfigBtn').addEventListener('click', loadConfig);
+
+        document.getElementById('saveConfigBtn').addEventListener('click', async () => {
+            const config = {
+                processingDelay: {
+                    min: parseInt(document.getElementById('minDelay').value),
+                    max: parseInt(document.getElementById('maxDelay').value)
+                },
+                maxQueue: parseInt(document.getElementById('maxQueueSize').value),
+                maxHistory: parseInt(document.getElementById('maxHistorySize').value),
+                maxTemplateLength: parseInt(document.getElementById('maxTemplateLength').value),
+                enableDiagnostics: document.getElementById('enableDiagnostics').value === 'true'
+            };
+
+            // Validate
+            if (config.processingDelay.min >= config.processingDelay.max) {
+                showResult('❌ Min delay must be less than max delay', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${baseUrl}/config`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(config)
+                });
+
+                if (response.ok) {
+                    showResult('✅ Configuration saved successfully', 'success');
+                } else {
+                    const error = await response.json();
+                    showResult(`❌ Error: ${error.reason || error.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('❌ Error saving config: ' + error.message, 'error');
+            }
+        });
+
+        function showResult(message, type = 'info') {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = message;
+            resultDiv.style.borderLeft = `4px solid ${type === 'error' ? '#e74c3c' :
+                type === 'success' ? '#27ae60' : '#3498db'
+                }`;
+        }
+    </script>
+</body>
+
+</html>

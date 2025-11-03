@@ -113,7 +113,9 @@ function handleUsers(req, res, { isAdmin }) {
 
     const areStrings = areFieldsInStringFormat(req.body, mandatory_non_empty_fields_user);
     if (!areStrings) {
-      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatNonStringFieldErrorResponse(areStrings, mandatory_non_empty_fields_user));
+      res
+        .status(HTTP_UNPROCESSABLE_ENTITY)
+        .send(formatNonStringFieldErrorResponse(areStrings, mandatory_non_empty_fields_user));
       return;
     }
 
@@ -153,7 +155,7 @@ function handleUsers(req, res, { isAdmin }) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatInvalidFieldErrorResponse(isValid, all_fields_user));
       return;
     }
-    
+
     // validate email:
     if (!isEmailValid(req.body["email"])) {
       res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse("Invalid email"));
@@ -162,7 +164,9 @@ function handleUsers(req, res, { isAdmin }) {
 
     const areStrings = areFieldsInStringFormat(req.body, mandatory_non_empty_fields_user);
     if (!areStrings) {
-      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatNonStringFieldErrorResponse(areStrings, mandatory_non_empty_fields_user));
+      res
+        .status(HTTP_UNPROCESSABLE_ENTITY)
+        .send(formatNonStringFieldErrorResponse(areStrings, mandatory_non_empty_fields_user));
       return;
     }
 

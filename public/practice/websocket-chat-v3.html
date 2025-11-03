@@ -354,6 +354,7 @@
         let username = '';
         let selectedUser = null;
         let weatherInterval;
+        let joined = false;
 
         function requestWeatherUpdate() {
             socket.send(JSON.stringify({
@@ -428,6 +429,7 @@
             switch (data.type) {
                 case 'practiceChatMessage':
                 case 'practiceChatPrivate': {
+                    if (!joined) break;
                     let className = 'message-content';
                     if (data.username?.toLowerCase().includes('[system]')) {
                         className += ' system-message';
@@ -448,12 +450,16 @@
                 }
                 case 'practiceChatUserList':
                     updateUserList(data.users);
-                    document.getElementById('loginScreen').classList.add('hidden');
+                    if (username && Array.isArray(data.users) && data.users.includes(username)) {
+                        joined = true;
+                        document.getElementById('loginScreen').classList.add('hidden');
+                    }
                     break;
                 case 'error':
                     if (data.message.toLowerCase().includes('username')) {
                         showError(data.message);
                     } else {
+                        if (!joined) break;
                         messagesDiv.innerHTML += `
                             <p>
                                 <span class="message-time">${time}</span>
@@ -479,7 +485,7 @@
             const messageInput = document.getElementById('messageInput');
             const message = messageInput.value.trim();
 
-            if (message && username) {
+            if (message && username && joined) {
                 socket.send(JSON.stringify({
                     type: selectedUser ? 'practiceChatPrivate' : 'practiceChatMessage',
                     username: username,

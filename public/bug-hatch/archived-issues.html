@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BugHatch – Archived Issues</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <script src="/bug-hatch/js/common.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/bug-hatch/css/bh-fallback.css">
+</head>
+
+<body class="bh-bg-dark bh-text-light bg-neutral-950 text-neutral-100">
+    <div class="bh-demo-banner hidden flex items-center justify-between gap-3 px-4 py-2 text-sm border border-amber-500/30 bg-amber-500/10 text-amber-100" id="demo-banner">
+        <span class="demo-banner-icon">🎯</span>
+        <div class="demo-banner-text">
+            <strong>Demo Mode:</strong> Read-only preview. Create/edit actions are disabled.
+        </div>
+        <a href="/bug-hatch/signup.html" class="bh-demo-cta inline-flex items-center rounded-md border border-amber-500/40 px-3 py-1.5 text-amber-100 hover:bg-amber-500/10">Sign Up Free</a>
+    </div>
+    <nav class="bh-navbar px-4 py-3 sticky top-0 z-20 border-b border-neutral-800 bg-neutral-950/70 backdrop-blur">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="/" class="gad-link">🦎 GAD</a>
+            <a href="/bug-hatch/dashboard.html" class="bh-navbar-brand bh-brand-badge inline-flex items-center gap-2 text-lg font-semibold"><span class="bh-logo-icon text-2xl">🐛</span><span>BugHatch</span></a>
+            <div class="flex gap-2">
+                <a href="/bug-hatch/dashboard.html" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">Dashboard</a>
+                <button id="logoutBtn" class="bh-btn bh-btn-danger bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium bg-red-600 hover:bg-red-500 text-white px-2.5 py-1.5">Logout</button>
+            </div>
+        </div>
+    </nav>
+    <main class="bh-max-w-screen bh-mx-auto bh-p-lg bh-flex bh-gap-lg bh-flex-wrap max-w-7xl mx-auto px-4 py-6 flex gap-6 flex-wrap">
+        <!-- Filters Panel -->
+        <aside class="bh-card bh-card-glow bh-flex-grow-0 bh-flex-shrink-0 min-w-[260px] max-w-[300px] rounded-xl border border-neutral-800 bg-neutral-900/40 p-4">
+            <h2 class="bh-heading-section bh-mb-sm bh-text-sm text-lg font-semibold mb-2">Filters</h2>
+            <form id="filtersForm" class="bh-stack bh-gap-sm bh-text-xs flex flex-col space-y-2 text-xs">
+                <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Project (ID or Key)</span><input id="filterProject" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" placeholder="proj-demo-core or CORE" /></label>
+                <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Search</span><input id="filterSearch" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" placeholder="text..." /></label>
+                <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Status</span>
+                    <select id="filterStatus" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none">
+                        <option value="">Any</option>
+                    </select>
+                </label>
+                <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Type</span>
+                    <select id="filterType" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none">
+                        <option value="">Any</option>
+                        <option value="task">Task</option>
+                        <option value="bug">Bug</option>
+                        <option value="story">Story</option>
+                    </select>
+                </label>
+                <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Assignee</span><input id="filterAssignee" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" placeholder="user id" /></label>
+                <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Labels (comma)</span><input id="filterLabels" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" placeholder="ui,api" /></label>
+                <div class="bh-flex bh-gap-xs flex gap-1">
+                    <button type="submit" class="bh-btn bh-btn-primary bh-btn-xs bh-flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium bg-emerald-500 text-neutral-900 hover:bg-emerald-600 px-2 py-1">Apply</button>
+                    <button type="button" id="resetFilters" class="bh-btn bh-btn-secondary bh-btn-xs inline-flex items-center justify-center rounded-md text-xs font-medium border border-neutral-700/70 bg-neutral-900 hover:bg-neutral-800 text-neutral-100 px-2 py-1">Reset</button>
+                </div>
+            </form>
+            <div id="filtersInfo" class="bh-text-dim bh-text-2xs bh-mt-sm text-neutral-400 text-[11px] mt-2"></div>
+        </aside>
+
+        <!-- Main Archived Issues Content -->
+        <section class="bh-flex-1 bh-min-w-0 flex-1 min-w-0">
+            <div class="bh-card bh-card-glow bh-mb-md rounded-xl border border-neutral-800 bg-neutral-900/40 p-4 mb-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="bh-heading-section bh-mb-xs bh-text-md text-lg font-semibold mb-1">Archived Issues</h1>
+                        <div id="issuesMeta" class="bh-text-dim bh-text-2xs text-neutral-400 text-[11px]"></div>
+                    </div>
+                    <a href="/bug-hatch/project.html?id=" id="backToProject" class="bh-btn bh-btn-secondary bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium border border-neutral-700/70 bg-neutral-900 hover:bg-neutral-800 text-neutral-100 px-3 py-1.5">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        Back to Project
+                    </a>
+                </div>
+            </div>
+            <div class="bh-card bh-card-glow overflow-auto rounded-xl border border-neutral-800 bg-neutral-900/40 p-0">
+                <table class="bh-table bh-text-xs min-w-full divide-y divide-neutral-800 text-xs" id="issuesTable">
+                    <thead class="bg-neutral-900">
+                        <tr>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-neutral-400">Key</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-neutral-400">Title</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-neutral-400">Status</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-neutral-400">Type</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-neutral-400">Priority</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-neutral-400">Assignee</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-neutral-400">Archived</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-neutral-400">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="issuesTbody" class="divide-y divide-neutral-800">
+                        <tr>
+                            <td colspan="8" class="bh-text-center bh-text-dim px-4 py-2 text-center text-neutral-400">Enter a project above and apply filters</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="/bug-hatch/js/auth.js"></script>
+    <script src="/bug-hatch/js/demo-propagate.js"></script>
+    <script src="/bug-hatch/js/archived-issues.js"></script>
+</body>
+
+</html>

@@ -1,12 +1,11 @@
-const { formatErrorResponse, getIdFromUrl, formatInvalidTokenErrorResponse, sleep } = require("../helpers/helpers");
-const { logDebug, logError, logTrace, logWarn, logInsane } = require("../helpers/logger-api");
-const { getConfigValue, isBugEnabled } = require("../config/config-manager");
-const { ConfigKeys, BugConfigKeys } = require("../config/enums");
+const { formatErrorResponse, getIdFromUrl, sleep } = require("../helpers/helpers");
+const { logDebug, logError, logTrace, logInsane } = require("../helpers/logger-api");
+const { getConfigValue, isBugEnabled, getFeatureFlagConfigValue } = require("../config/config-manager");
+const { ConfigKeys, BugConfigKeys, FeatureFlagConfigKeys } = require("../config/enums");
 
 const { verifyAccessToken } = require("../helpers/validation.helpers");
 const { searchForUser, searchForUserWithOnlyToken } = require("../helpers/db-operation.helpers");
 const {
-  HTTP_UNAUTHORIZED,
   HTTP_INTERNAL_SERVER_ERROR,
   HTTP_BAD_REQUEST,
   HTTP_METHOD_NOT_ALLOWED,
@@ -61,6 +60,8 @@ const { handleBookShopPaymentHistory } = require("../endpoints/book-shop/book-sh
 const { handleMaze } = require("../endpoints/maze-endpoint.helpers");
 const { handleLearning } = require("../endpoints/learning/learning-endpoint.helpers");
 const { handlePractice } = require("../endpoints/practice-endpoint.helpers");
+const { handleBugHatchAuth } = require("../endpoints/bug-hatch/auth-endpoint.helpers");
+const { handleBugHatchAdmin } = require("../endpoints/bug-hatch/admin-endpoint.helpers");
 
 const validationsRoutes = (req, res, next) => {
   let userAuth = userBaseAuth;
@@ -290,6 +291,164 @@ const validationsRoutes = (req, res, next) => {
     }
     if (req.url.includes("/api/book-shop-payment-history")) {
       handleBookShopPaymentHistory(req, res);
+    }
+
+    const isBugHatchEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_BUG_HATCH_MODULE);
+    // bug-hatch endpoints
+    if (req.url.includes("/api/bug-hatch/") && isBugHatchEnabled === true) {
+      // Centralize demo forcing: allow ?demo=true or ?forceDemo=true to emulate demo mode for read-only exploration
+      try {
+        if (req.method === "GET") {
+          const q = req.query || {};
+          if (q.demo === "true" || q.forceDemo === "true") {
+            // store flag so downstream handlers/services can treat user as demo (without mutating token payload)
+            req.bugHatchForceDemo = true;
+          }
+        }
+      } catch (e) {
+        // ignore query parsing issues
+      }
+
+      // run only once:
+
+      // BugHatch admin endpoints
+      if (req.url.includes("/api/bug-hatch/admin")) {
+        handleBugHatchAdmin(req, res);
+        return;
+      }
+
+      // BugHatch auth endpoints
+      if (req.url.includes("/api/bug-hatch/auth")) {
+        handleBugHatchAuth(req, res);
+        return;
+      }
+
+      // BugHatch comments endpoints (check before issues to avoid conflicts)
+      if (req.url.includes("/api/bug-hatch/comments") || /\/api\/bug-hatch\/issues\/[^/]+\/comments/.test(req.url)) {
+        const { handleBugHatchComments } = require("../endpoints/bug-hatch/comments-endpoint.helpers");
+        handleBugHatchComments(req, res);
+        return;
+      }
+
+      // BugHatch attachments endpoints (check before issues to avoid conflicts)
+      if (
+        req.url.includes("/api/bug-hatch/attachments") ||
+        /\/api\/bug-hatch\/issues\/[^/]+\/attachments/.test(req.url)
+      ) {
+        const { handleBugHatchAttachments } = require("../endpoints/bug-hatch/attachments-endpoint.helpers");
+        handleBugHatchAttachments(req, res);
+        return;
+      }
+
+      // BugHatch activity endpoint (check before issues to avoid conflicts)
+      if (/\/api\/bug-hatch\/issues\/[^/]+\/activity/.test(req.url)) {
+        const { handleBugHatchActivity } = require("../endpoints/bug-hatch/activity-endpoint.helpers");
+        handleBugHatchActivity(req, res);
+        return;
+      }
+      // BugHatch issue endpoints (check after specific sub-endpoints)
+      if (req.url.includes("/api/bug-hatch/issues") || /\/api\/bug-hatch\/projects\/[^/]+\/issues/.test(req.url)) {
+        const { handleBugHatchIssues } = require("../endpoints/bug-hatch/issues-endpoint.helpers");
+        handleBugHatchIssues(req, res);
+        return;
+      }
+
+      // BugHatch project endpoints
+      if (req.url.includes("/api/bug-hatch/projects")) {
+        const { handleBugHatchProjects } = require("../endpoints/bug-hatch/projects-endpoint.helpers");
+        handleBugHatchProjects(req, res);
+        return;
+      }
+
+      // BugHatch user endpoints
+      if (req.url.includes("/api/bug-hatch/users")) {
+        const {
+          handleGetUserProfile,
+          handleUpdateUserProfile,
+          handleChangeUserPassword,
+          handleSearchUsers,
+          handleSearchUsersPost,
+        } = require("../endpoints/bug-hatch/users-endpoint.helpers");
+
+        if (req.method === "GET" && req.url.includes("/api/bug-hatch/users/profile")) {
+          handleGetUserProfile(req, res);
+          return;
+        }
+
+        if (req.method === "GET" && req.url.match(/^\/api\/bug-hatch\/users(\?.*)?$/)) {
+          handleSearchUsers(req, res);
+          return;
+        }
+
+        if (req.method === "PATCH" && req.url.includes("/api/bug-hatch/users/profile")) {
+          handleUpdateUserProfile(req, res);
+          return;
+        }
+
+        if (req.method === "POST" && req.url.includes("/api/bug-hatch/users/change-password")) {
+          handleChangeUserPassword(req, res);
+          return;
+        }
+
+        if (req.method === "POST" && req.url === "/api/bug-hatch/users/search") {
+          handleSearchUsersPost(req, res);
+          return;
+        }
+
+        return; // End of user endpoints
+      }
+
+      // BugHatch invitations endpoints
+      if (req.url.includes("/api/bug-hatch/invitations")) {
+        const {
+          handleCreateInvitation,
+          handleGetProjectInvitations,
+          handleAcceptInvitation,
+          handleRejectInvitation,
+          handleCancelInvitation,
+        } = require("../endpoints/bug-hatch/invitations-endpoint.helpers");
+
+        if (req.method === "POST" && req.url === "/api/bug-hatch/invitations") {
+          handleCreateInvitation(req, res);
+          return;
+        }
+
+        if (req.method === "GET" && /\/api\/bug-hatch\/projects\/[^/]+\/invitations/.test(req.url)) {
+          const projectId = req.url.match(/\/api\/bug-hatch\/projects\/([^/]+)\/invitations/)?.[1];
+          if (projectId) {
+            req.params = { projectId };
+            handleGetProjectInvitations(req, res);
+            return;
+          }
+        }
+
+        if (req.method === "POST" && /\/api\/bug-hatch\/invitations\/[^/]+\/accept/.test(req.url)) {
+          const token = req.url.match(/\/api\/bug-hatch\/invitations\/([^/]+)\/accept/)?.[1];
+          if (token) {
+            req.params = { token };
+            handleAcceptInvitation(req, res);
+            return;
+          }
+        }
+
+        if (req.method === "POST" && /\/api\/bug-hatch\/invitations\/[^/]+\/reject/.test(req.url)) {
+          const token = req.url.match(/\/api\/bug-hatch\/invitations\/([^/]+)\/reject/)?.[1];
+          if (token) {
+            req.params = { token };
+            handleRejectInvitation(req, res);
+            return;
+          }
+        }
+
+        if (req.method === "DELETE" && /\/api\/bug-hatch\/invitations\/[^/]+/.test(req.url)) {
+          const invitationId = req.url.match(/\/api\/bug-hatch\/invitations\/([^/]+)/)?.[1];
+          if (invitationId) {
+            req.params = { invitationId };
+            handleCancelInvitation(req, res);
+            return;
+          }
+        }
+      }
     }
 
     logTrace("validationsRoutes: Returning:", {

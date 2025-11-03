@@ -133,11 +133,18 @@ async function clearDB() {
   expect(response.status).to.equal(201);
 }
 
+const getRandomInt = (min, max) => {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+};
+
 module.exports = {
   sleep,
   gracefulQuit,
   setupEnv,
   getCurrentDate,
+  getRandomInt,
   toggle404Bug,
   getISODateWithTimezoneOffset,
   addOffsetToDateString,

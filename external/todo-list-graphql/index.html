@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Todo List</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .task {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .task:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .task.completed {
+            text-decoration: line-through;
+            opacity: 0.7;
+            background: #f7fafc;
+            border-color: #9ae6b4;
+        }
+
+        .task input[type="checkbox"] {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+            accent-color: #667eea;
+        }
+
+        .task span {
+            flex: 1;
+            font-size: 16px;
+        }
+
+        .task button {
+            background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-left: auto;
+        }
+
+        .task button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+        }
+
+        form {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .form-row {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button[type="submit"] {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        #loading {
+            display: none;
+            text-align: center;
+            color: #718096;
+            font-size: 16px;
+            margin: 20px 0;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #e2e8f0;
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .form-row {
+                flex-direction: column;
+            }
+
+            input[type="text"] {
+                margin-bottom: 10px;
+            }
+
+            .task {
+                padding: 15px;
+            }
+
+            .task span {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>📝 Todo List</h1>
+        <p class="subtitle">Manage your tasks with GraphQL</p>
+
+        <form id="addTaskForm">
+            <div class="form-row">
+                <input type="text" id="taskTitle" placeholder="Enter task title" required>
+                <button type="submit">Add Task</button>
+            </div>
+        </form>
+
+        <div id="loading">
+            <div class="spinner"></div>
+            Loading tasks...
+        </div>
+
+        <div id="taskList"></div>
+    </div>
+
+    <script>
+        const GRAPHQL_URL = 'http://localhost:3122/api/graphql';
+
+        async function queryGraphQL(query, variables = {}) {
+            const response = await fetch(GRAPHQL_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query, variables })
+            });
+            const result = await response.json();
+            if (result.errors) {
+                console.error('GraphQL errors:', result.errors);
+                throw new Error(result.errors[0].message);
+            }
+            return result.data;
+        }
+
+        async function loadTasks() {
+            const loading = document.getElementById('loading');
+            loading.classList.add('show');
+            try {
+                const data = await queryGraphQL(`{ getTasks { id title completed } }`);
+                renderTasks(data.getTasks);
+            } catch (error) {
+                alert('Error loading tasks: ' + error.message);
+            } finally {
+                loading.classList.remove('show');
+            }
+        }
+
+        function renderTasks(tasks) {
+            const taskList = document.getElementById('taskList');
+            taskList.innerHTML = '';
+            tasks.forEach(task => {
+                const taskDiv = document.createElement('div');
+                taskDiv.className = 'task' + (task.completed ? ' completed' : '');
+                taskDiv.innerHTML = `
+                    <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${task.id})">
+                    <span>${task.title}</span>
+                    <button onclick="deleteTask(${task.id})">Delete</button>
+                `;
+                taskList.appendChild(taskDiv);
+            });
+        }
+
+        async function addTask(event) {
+            event.preventDefault();
+            const title = document.getElementById('taskTitle').value.trim();
+            if (!title) return;
+            try {
+                await queryGraphQL(`mutation($title: String!) { addTask(title: $title) { id } }`, { title });
+                document.getElementById('taskTitle').value = '';
+                loadTasks();
+            } catch (error) {
+                alert('Error adding task: ' + error.message);
+            }
+        }
+
+        async function toggleTask(id) {
+            try {
+                await queryGraphQL(`mutation($id: ID!) { toggleTask(id: $id) { id } }`, { id });
+                loadTasks();
+            } catch (error) {
+                alert('Error toggling task: ' + error.message);
+            }
+        }
+
+        async function deleteTask(id) {
+            try {
+                await queryGraphQL(`mutation($id: ID!) { deleteTask(id: $id) { id } }`, { id });
+                loadTasks();
+            } catch (error) {
+                alert('Error deleting task: ' + error.message);
+            }
+        }
+
+        document.getElementById('addTaskForm').addEventListener('submit', addTask);
+        loadTasks();
+    </script>
+</body>
+
+</html>

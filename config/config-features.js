@@ -14,6 +14,7 @@ const featureFlagConfig = {
   feature_validate_article_title: false,
   feature_soft_delete_users: false,
   strict_surname_validation: false,
+  feature_bug_hatch_module: false,
 };
 
 module.exports = {

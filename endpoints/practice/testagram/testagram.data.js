@@ -55,7 +55,7 @@ const samplePosts = [
   {
     id: generateUuid(),
     userId: sampleUsers[0].id,
-    imageUrl: "https://picsum.photos/600/600?random=1",
+    imageUrl: "https://picsum.photos/id/100/600/600",
     caption: "Beautiful sunset!",
     createdAt: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(),
     likes: [],
@@ -73,7 +73,7 @@ const samplePosts = [
   {
     id: generateUuid(),
     userId: sampleUsers[0].id,
-    imageUrl: "https://picsum.photos/600/600?random=3",
+    imageUrl: "https://picsum.photos/id/866/536/354",
     caption: "Amazing landscape!",
     createdAt: new Date(Date.now() - 28 * 60 * 60 * 1000).toISOString(),
     likes: [],
@@ -82,7 +82,7 @@ const samplePosts = [
   {
     id: generateUuid(),
     userId: sampleUsers[1].id,
-    imageUrl: "https://picsum.photos/600/600?random=4",
+    imageUrl: "https://picsum.photos/id/237/536/354",
     caption: "Cute puppy!",
     createdAt: new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString(),
     likes: [],
@@ -91,7 +91,7 @@ const samplePosts = [
   {
     id: generateUuid(),
     userId: sampleUsers[0].id,
-    imageUrl: "https://picsum.photos/600/600?random=5",
+    imageUrl: "https://picsum.photos/id/116/600/600",
     caption: "Beautiful flowers!",
     createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
     likes: [],
@@ -100,7 +100,7 @@ const samplePosts = [
   {
     id: generateUuid(),
     userId: sampleUsers[2].id,
-    imageUrl: "https://picsum.photos/600/600?random=6",
+    imageUrl: "https://picsum.photos/id/630/600/600",
     caption: "Stunning mountain view!",
     createdAt: new Date(Date.now() - 23 * 60 * 60 * 1000).toISOString(),
     likes: [],
@@ -109,7 +109,7 @@ const samplePosts = [
   {
     id: generateUuid(),
     userId: sampleUsers[3].id,
-    imageUrl: "https://picsum.photos/600/600?random=7",
+    imageUrl: "https://picsum.photos/id/92/600/600",
     caption: "Serene beach!",
     createdAt: new Date(Date.now() - 22 * 60 * 60 * 1000).toISOString(),
     likes: [],
@@ -118,7 +118,7 @@ const samplePosts = [
   {
     id: generateUuid(),
     userId: sampleUsers[2].id,
-    imageUrl: "https://picsum.photos/600/600?random=8",
+    imageUrl: "https://picsum.photos/id/43/600/600",
     caption: "Gorgeous city skyline!",
     createdAt: new Date(Date.now() - 21 * 60 * 60 * 1000).toISOString(),
     likes: [],
@@ -127,7 +127,7 @@ const samplePosts = [
   {
     id: generateUuid(),
     userId: sampleUsers[3].id,
-    imageUrl: "https://picsum.photos/600/600?random=9",
+    imageUrl: "https://picsum.photos/id/923/600/600",
     caption: "Charming village!",
     createdAt: new Date(Date.now() - 20 * 60 * 60 * 1000).toISOString(),
     likes: [],
@@ -136,7 +136,7 @@ const samplePosts = [
   {
     id: generateUuid(),
     userId: sampleUsers[1].id,
-    imageUrl: "https://picsum.photos/600/600?random=10",
+    imageUrl: "https://picsum.photos/id/1006/600/600",
     caption: "Adventurous hiking trip! I love nature and exploring new places with my friends.",
     createdAt: new Date(Date.now() - 19 * 60 * 60 * 1000).toISOString(),
     likes: [],
@@ -145,7 +145,7 @@ const samplePosts = [
   {
     id: generateUuid(),
     userId: sampleUsers[0].id,
-    imageUrl: "https://picsum.photos/600/600?random=11",
+    imageUrl: "https://picsum.photos/id/390/600/600",
     caption: "Relaxing at the beach. Nothing beats a day in the sun with good company.",
     createdAt: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(),
     likes: [],
@@ -154,7 +154,7 @@ const samplePosts = [
   {
     id: generateUuid(),
     userId: sampleUsers[2].id,
-    imageUrl: "https://picsum.photos/600/600?random=12",
+    imageUrl: "https://picsum.photos/id/1048/600/600",
     caption: "Exploring the city. I love discovering new places and cultures.",
     createdAt: new Date(Date.now() - 17 * 60 * 60 * 1000).toISOString(),
     likes: [],
@@ -163,9 +163,18 @@ const samplePosts = [
   {
     id: generateUuid(),
     userId: sampleUsers[3].id,
-    imageUrl: "https://picsum.photos/600/600?random=13",
+    imageUrl: "https://picsum.photos/id/44/600/600",
     caption: "A day in the mountains. The fresh air and stunning views are unbeatable.",
     createdAt: new Date(Date.now() - 16 * 60 * 60 * 1000).toISOString(),
+    likes: [],
+    comments: [],
+  },
+  {
+    id: generateUuid(),
+    userId: sampleUsers[1].id,
+    imageUrl: "https://picsum.photos/id/809/600/600",
+    caption: "Mountain adventures with friends. There's nothing like the thrill of reaching the summit together.",
+    createdAt: new Date(Date.now() - 15 * 60 * 60 * 1000).toISOString(),
     likes: [],
     comments: [],
   },
