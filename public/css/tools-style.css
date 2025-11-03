@@ -16,3 +16,7 @@
 .anchorWithStickyNavbar:hover .hash-link {
   opacity: 1;
 }
+
+.headerColumn {
+  width: 300px;
+}
