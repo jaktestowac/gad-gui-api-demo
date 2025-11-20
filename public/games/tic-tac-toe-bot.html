@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>🦎 GAD | Game: Tic Tac Toe (Hot Seat)</title>
+  <link rel="icon" href="/data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+  <link href="/css/fonts/fonts.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/controls.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/infoBoxes.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+      <h1 id="menu-main-gui" class="nav-menu"></h1>
+    </div>
+
+    <style>
+      .board {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 20px;
+        width: 350px;
+      }
+
+      .cell {
+        width: 100px;
+        height: 100px;
+        border: 1px solid black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      .score {
+        justify-content: space-between;
+        font-size: 18px;
+        width: 150px;
+      }
+    </style>
+  </header>
+  <div align="center" style="justify-content: center !important; display: flex; align-items: center">
+    <div class="alert" role="alert" data-testid="alert-popup" id="alertPopup" style="position: unset !important; margin: 60px 0px 0px 0px"></div>
+  </div>
+  <div id="container"></div>
+  <div align="center">
+    <div style="margin-bottom: 15px; width: 300px;">
+      <label for="difficulty" style="font-size: 18px; margin-right: 10px;">Difficulty:</label>
+      <select id="difficulty" style="font-size: 16px; padding: 5px;">
+        <option value="chaotic">Chaotic</option>
+        <option value="easy">Easy</option>
+        <option value="difficult">Difficult</option>
+      </select>
+    </div>
+    <span style="margin-bottom: 15px; display: block;">
+      (You play as 'X' and the bot plays as 'O')
+    </span>
+    <button id="start-button" class="button-primary">Start New Game</button>
+    <button id="stop-button" class="button-primary" disabled>Stop Game</button><br /><br />
+    <label id="messageLbl" style="width: 50px">...</label>
+    <br />
+    <br />
+    <div class="board">
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+      <div class="cell"></div>
+    </div>
+    <div class="score">
+      <span>Player X: <span id="player-x-score">0</span></span><br />
+      <span>Player O: <span id="player-o-score">0</span></span>
+    </div>
+    <br />
+    <a href="./games.html">
+      <button class="button-primary button-mobile" translateId="btnReturnToGames" style="margin: 10; font-size: 16px">
+        Return to Games
+      </button>
+    </a>
+  </div>
+  <script type="text/javascript" src="/js/common.js"></script>
+  <script type="text/javascript" src="/js/header.js"></script>
+  <script type="text/javascript" src="./js/tic-tac-toe-bot.js"></script>
+  <script type="text/javascript" src="/version.js"></script>
+  <script type="text/javascript" src="/username.js"></script>
+  <link rel="stylesheet" href="/css/banner-cookie.css" />
+  <script type="text/javascript" src="/js/banner-cookie.js"></script>
+  <script type="text/javascript" src="/js/darkmode.js"></script>
+  <script type="text/javascript" src="/js/message-notifier.js"></script>
+</body>
+
+</html>
