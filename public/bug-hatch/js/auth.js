@@ -13,10 +13,14 @@ function showError(message) {
   const errorEl = document.getElementById("error-message");
   if (errorEl) {
     errorEl.textContent = message;
+    // remove hidden class if present and ensure visibility
+    errorEl.classList.remove("bh-hidden");
     errorEl.style.display = "block";
 
     // Auto-hide after 5 seconds
     setTimeout(() => {
+      // hide again
+      errorEl.classList.add("bh-hidden");
       errorEl.style.display = "none";
     }, 5000);
   }
@@ -30,10 +34,12 @@ function showSuccess(message) {
   const successEl = document.getElementById("success-message");
   if (successEl) {
     successEl.textContent = message;
+    successEl.classList.remove("bh-hidden");
     successEl.style.display = "block";
 
     // Auto-hide after 3 seconds
     setTimeout(() => {
+      successEl.classList.add("bh-hidden");
       successEl.style.display = "none";
     }, 3000);
   }
@@ -46,8 +52,14 @@ function hideMessages() {
   const errorEl = document.getElementById("error-message");
   const successEl = document.getElementById("success-message");
 
-  if (errorEl) errorEl.style.display = "none";
-  if (successEl) successEl.style.display = "none";
+  if (errorEl) {
+    errorEl.classList.add("bh-hidden");
+    errorEl.style.display = "none";
+  }
+  if (successEl) {
+    successEl.classList.add("bh-hidden");
+    successEl.style.display = "none";
+  }
 }
 
 /**
@@ -67,10 +79,24 @@ async function apiRequest(url, options = {}) {
       credentials: "include",
     });
 
-    const data = await response.json();
+    // try to parse JSON when possible, otherwise fall back to text
+    let data;
+    const contentType = response.headers.get("content-type") || "";
+    if (contentType.includes("application/json")) {
+      data = await response.json();
+    } else {
+      // parse as text (useful for HTML error pages or plain text)
+      const text = await response.text();
+      data = { text };
+    }
 
     if (!response.ok) {
-      throw new Error(data.error?.message || "Request failed");
+      // create an Error with attached status and server provided message
+      const message = (data && (data.error?.message || data.message)) || data.text || "Request failed";
+      const err = new Error(message);
+      err.status = response.status;
+      err.serverData = data;
+      throw err;
     }
 
     return data;
@@ -91,7 +117,21 @@ async function checkAuth() {
     const data = await apiRequest(`${API_BASE}/auth/me`);
     return data.data;
   } catch (error) {
-    console.log("Not authenticated:", error.message);
+    // If API responds with 401/403, it's normal for not-logged-in users.
+    // If it responds with 404 or a network/server error, show an error to the user.
+    const status = error && error.status;
+    console.log("Not authenticated:", error.message, "status:", status);
+
+    if (!status) {
+      // Network error or non-HTTP error
+      showError("Network error: unable to check authentication. See console for details.");
+    } else if (status === 404) {
+      showError("Authentication service not found (404). Contact the administrator.");
+    } else if (status >= 500) {
+      showError("Server error while checking authentication. Try again later.");
+    }
+
+    // For 401/403 or after showing a toast for other errors, return null (not authenticated)
     return null;
   }
 }

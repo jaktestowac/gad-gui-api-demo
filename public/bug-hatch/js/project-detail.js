@@ -41,7 +41,8 @@
     const resp = await fetch(url, { credentials: "include" });
     const data = await resp.json().catch(() => ({}));
     if (!resp.ok) {
-      qs("#projectName").textContent = data.error || "Project not found";
+      const msg = (data && (data.error?.message || data.error)) || "Project not found";
+      qs("#projectName").textContent = msg;
       return null;
     }
 
@@ -272,7 +273,7 @@
           );
           const data = await resp.json().catch(() => ({}));
           if (!resp.ok) {
-            showBoardError(data.error || "Transition failed");
+            showBoardError((data && (data.error?.message || data.error)) || "Transition failed");
             return;
           }
           // update issue cache entry
@@ -460,7 +461,7 @@
           );
           const data = await resp.json().catch(() => ({}));
           if (!resp.ok) {
-            showBoardError(data.error || "Transition failed");
+            showBoardError((data && (data.error?.message || data.error)) || "Transition failed");
             return;
           }
           const idx = issuesCache.findIndex((i) => i.id === issue.id);
@@ -648,7 +649,7 @@
         });
         const data = await resp.json().catch(() => ({}));
         if (!resp.ok) {
-          qcToast(data.error || "Create failed");
+          qcToast((data && (data.error?.message || data.error)) || "Create failed");
           return;
         }
         document.getElementById("qcTitle").value = "";
@@ -706,7 +707,7 @@
       });
       const data = await resp.json().catch(() => ({}));
       if (!resp.ok) {
-        showBoardError(data.error || "Failed to archive issue");
+        showBoardError((data && (data.error?.message || data.error)) || "Failed to archive issue");
         return;
       }
       // Remove from cache and re-render
@@ -750,7 +751,7 @@
       });
       const data = await resp.json().catch(() => ({}));
       if (!resp.ok) {
-        alert(data.error || "Failed to unarchive issue");
+        alert((data && (data.error?.message || data.error)) || "Failed to unarchive issue");
         return;
       }
       // Add to cache and re-render
@@ -781,7 +782,7 @@
       const data = await resp.json().catch(() => ({}));
 
       if (!resp.ok) {
-        throw new Error(data.error || "Failed to load project");
+        throw new Error((data && (data.error?.message || data.error)) || "Failed to load project");
       }
 
       const project = data.data;
@@ -879,7 +880,7 @@
       const addData = await addResp.json().catch(() => ({}));
 
       if (!addResp.ok) {
-        throw new Error(addData.error || "Failed to add member");
+        throw new Error((addData && (addData.error?.message || addData.error)) || "Failed to add member");
       }
 
       // Reload members list
@@ -953,7 +954,7 @@
       const data = await resp.json().catch(() => ({}));
 
       if (!resp.ok) {
-        throw new Error(data.error || "Failed to remove member");
+        throw new Error((data && (data.error?.message || data.error)) || "Failed to remove member");
       }
 
       // Reload members list
@@ -1074,7 +1075,7 @@
       const data = await resp.json().catch(() => ({}));
 
       if (!resp.ok) {
-        console.error("Failed to load invitations:", data.error);
+        console.error("Failed to load invitations:", (data && (data.error?.message || data.error)) || data);
         return;
       }
 
@@ -1132,7 +1133,7 @@
 
       const data = await resp.json().catch(() => ({}));
       if (!resp.ok) {
-        const errorMessage = data.error?.message || data.error || "Failed to send invitation";
+        const errorMessage = (data && (data.error?.message || data.error)) || "Failed to send invitation";
         throw new Error(errorMessage);
       }
 
@@ -1173,7 +1174,7 @@
       const data = await resp.json().catch(() => ({}));
 
       if (!resp.ok) {
-        throw new Error(data.error || "Failed to cancel invitation");
+        throw new Error((data && (data.error?.message || data.error)) || "Failed to cancel invitation");
       }
 
       // Reload invitations

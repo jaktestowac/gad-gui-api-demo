@@ -253,14 +253,18 @@
                 const projectName = document.getElementById('createProjectName').value.trim();
                 const description = document.getElementById('createProjectDescription').value.trim();
                 if (!projectKey || !projectName) { showCreateProjectError('Project key and name are required'); return; }
-                if (!/^[A-Z0-9]{1,10}$/.test(projectKey)) { showCreateProjectError('Project key must be 1-10 uppercase letters/numbers'); return; }
+                if (!/^[A-Z][A-Z0-9]{1,7}$/.test(projectKey)) { showCreateProjectError('Project key must be 2-8 chars, start with a letter and include only uppercase letters or numbers'); return; }
                 try {
                     const response = await fetch('/api/bug-hatch/projects', {
                         method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
                         body: JSON.stringify({ key: projectKey, name: projectName, description: description || null })
                     });
-                    const data = await response.json();
-                    if (!response.ok) { showCreateProjectError(data.error || 'Failed to create project'); return; }
+                    const data = await response.json().catch(() => ({}));
+                    if (!response.ok) {
+                        const msg = (data && (data.error?.message || data.error)) || 'Failed to create project';
+                        showCreateProjectError(msg);
+                        return;
+                    }
                     closeModal(document.getElementById('createProjectModal'));
                     createProjectForm.reset();
                     const projName = data?.data?.name || data?.data?.project?.name || 'Project';
@@ -271,7 +275,9 @@
 
             function showCreateProjectError(message) {
                 const errorEl = document.getElementById('createProjectError');
-                errorEl.textContent = message;
+                if (!errorEl) return;
+                const msg = (message && message.message) || message || 'Error';
+                errorEl.textContent = typeof msg === 'object' ? JSON.stringify(msg) : msg;
                 errorEl.classList.remove('bh-hidden');
             }
 
@@ -312,7 +318,12 @@
                         method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
                     });
                     const data = await resp.json().catch(() => ({}));
-                    if (!resp.ok) { errorEl.textContent = data.error || 'Create failed'; errorEl.classList.remove('bh-hidden'); return; }
+                    if (!resp.ok) {
+                        const msg = (data && (data.error?.message || data.error)) || 'Create failed';
+                        errorEl.textContent = msg;
+                        errorEl.classList.remove('bh-hidden');
+                        return;
+                    }
                     closeModal(document.getElementById('createIssueModal'));
                     createIssueForm.reset();
                     showToast(`Issue ${data.data?.key || data.data?.id || ''} created`, 'info');

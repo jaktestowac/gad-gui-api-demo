@@ -57,7 +57,7 @@ async function loadUserProfile() {
     const data = await response.json();
 
     if (!data.ok) {
-      throw new Error(data.error || "Failed to load profile");
+      throw new Error((data && (data.error?.message || data.error)) || "Failed to load profile");
     }
 
     const user = data.data;
@@ -141,7 +141,7 @@ async function handleProfileUpdate(event) {
     const data = await response.json();
 
     if (!data.ok) {
-      throw new Error(data.error || "Failed to update profile");
+      throw new Error((data && (data.error?.message || data.error)) || "Failed to update profile");
     }
 
     // Update original data
@@ -212,7 +212,7 @@ async function handlePasswordChange(event) {
     const data = await response.json();
 
     if (!data.ok) {
-      throw new Error(data.error || "Failed to change password");
+      throw new Error((data && (data.error?.message || data.error)) || "Failed to change password");
     }
 
     // Clear form

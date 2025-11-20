@@ -58,7 +58,8 @@
     });
     const data = await resp.json().catch(() => ({}));
     if (!resp.ok) {
-      showError("#editError", data.error || "Failed to load");
+      const msg = (data && (data.error?.message || data.error)) || "Failed to load";
+      showError("#editError", msg);
       return;
     }
     issueData = data.data;
@@ -247,7 +248,8 @@
     });
     const data = await resp.json().catch(() => ({}));
     if (!resp.ok) {
-      showError("#transitionError", data.error || "Transition failed");
+      const msg = (data && (data.error?.message || data.error)) || "Transition failed";
+      showError("#transitionError", msg);
       return;
     }
     issueData = data.data;
@@ -286,7 +288,8 @@
     });
     const data = await resp.json().catch(() => ({}));
     if (!resp.ok) {
-      showError("#editError", data.error || "Save failed");
+      const msg = (data && (data.error?.message || data.error)) || "Save failed";
+      showError("#editError", msg);
       return;
     }
     issueData = data.data;
@@ -389,7 +392,8 @@
             });
             const data = await resp.json().catch(() => ({}));
             if (!resp.ok) {
-              showError("#editError", data.error || "Failed to unarchive issue");
+              const msg = (data && (data.error?.message || data.error)) || "Failed to unarchive issue";
+              showError("#editError", msg);
               return;
             }
             issueData = data.data;
@@ -408,7 +412,8 @@
             });
             const data = await resp.json().catch(() => ({}));
             if (!resp.ok) {
-              showError("#editError", data.error || "Failed to archive issue");
+              const msg = (data && (data.error?.message || data.error)) || "Failed to archive issue";
+              showError("#editError", msg);
               return;
             }
             // After archiving, redirect to project issues list

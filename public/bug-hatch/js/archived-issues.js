@@ -93,7 +93,8 @@
       });
       const data = await resp.json().catch(() => ({}));
       if (!resp.ok) {
-        alert(data.error || "Failed to unarchive issue");
+        const msg = (data && (data.error?.message || data.error)) || "Failed to unarchive issue";
+        alert(msg);
         return;
       }
       // Reload issues
@@ -180,7 +181,8 @@
     );
     const data = await resp.json().catch(() => ({}));
     if (!resp.ok) {
-      qs("#issuesMeta").textContent = data.error || "Failed to load archived issues";
+      const msg = (data && (data.error?.message || data.error)) || "Failed to load archived issues";
+      qs("#issuesMeta").textContent = msg;
       renderIssuesTable([]);
       return;
     }
