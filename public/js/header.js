@@ -209,9 +209,11 @@ const footerHTML = (date) => {
   return `
     <footer >
     <div class="container" id="footer-container">
-    Version: <span id="version"></span>
+    Version: <span id="version" aria-label="Version number"></span>
     <span id="copyright-sign">&copy;</span> Copyright ${date}
-    <a href="https://jaktestowac.pl" target="_blank" rel="noopener">jaktestowac.pl</a>
+    <a href="https://jaktestowac.pl" target="_blank" rel="noopener" aria-label="Visit jaktestowac.pl (opens in a new tab)">jaktestowac.pl</a>
+    |
+    <a href="https://github.com/jaktestowac/gad-gui-api-demo" target="_blank" rel="noopener" aria-label="Visit GitHub Repository (opens in a new tab)"><i class="fab fa-github"></i> GitHub Repository</a>
     </div>
   </footer>
   `;
