@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>🦎 GAD | Game: Tic Tac Toe ULTIMATE COLLECTION</title>
+  <link rel="icon" href="/data/icons/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+  <link href="/css/fonts/fonts.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/controls.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/infoBoxes.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+      <h1 id="menu-main-gui" class="nav-menu"></h1>
+    </div>
+
+    <style>
+      .game-collection {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        padding: 20px;
+        margin-top: 20px;
+      }
+
+      .game-cell {
+        width: 230px;
+        height: 180px;
+        background-color: var(--bg-secondary, #f0f0f0);
+        border: 2px solid var(--border-color, #ccc);
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        text-decoration: none;
+        color: var(--text-primary, #333);
+      }
+
+      .game-cell:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        background-color: var(--bg-hover, #e0e0e0);
+      }
+
+      .game-cell i {
+        font-size: 3em;
+        margin-bottom: 10px;
+        color: var(--accent-color, #555);
+      }
+
+      .game-cell span {
+        font-size: 1.2em;
+        font-weight: bold;
+      }
+
+      .page-description {
+        max-width: 900px;
+        margin: 0 auto;
+        color: var(--text-secondary, #666);
+        font-size: 1rem;
+        text-align: center;
+        padding: 10px 20px;
+      }
+
+      .cell-desc {
+        display: block;
+        font-size: 0.9rem;
+        color: var(--text-secondary, #666);
+        margin-top: 6px;
+        text-align: center;
+        line-height: 1.2;
+        padding: 0 8px;
+      }
+    </style>
+  </header>
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+  <div align="center" style="justify-content: center !important; display: flex; align-items: center">
+
+    <div class="page-description" id="pageDescription">
+      <h1>Tic Tac Toe ULTIMATE COLLECTION</h1>
+      <p>Choose your Tic Tac Toe mode!</p>
+      <p>Play against a bot, take turns on the same device, or challenge other players online.</p>
+    </div>
+  </div>
+  <div id="container">
+    <div class="game-collection">
+      <a href="tic-tac-toe-bot.html" class="game-cell" title="Play vs Bot" aria-label="Play Tic Tac Toe vs Bot" data-testid="game-bot">
+        <i class="fas fa-robot"></i>
+        <span>Vs Bot</span>
+        <small class="cell-desc">Play against an AI opponent - choose difficulty and test your strategy.</small>
+      </a>
+      <a href="tic-tac-toe-hot-seat.html" class="game-cell" title="Hot Seat" aria-label="Play local Hot Seat Tic Tac Toe" data-testid="game-hot-seat">
+        <i class="fas fa-user-friends"></i>
+        <span>Hot Seat</span>
+        <small class="cell-desc">Two players take turns on the same device for local head-to-head fun.</small>
+      </a>
+      <a href="tic-tac-toe.html" class="game-cell" title="Online Multiplayer" aria-label="Play Tic Tac Toe online multiplayer" data-testid="game-online-multiplayer">
+        <i class="fas fa-hashtag"></i>
+        <span>Online Multiplayer</span>
+        <small class="cell-desc">Play against friends and other players online!</small>
+      </a>
+    </div>
+  </div>
+  <div align="center">
+
+  </div>
+  <script type="text/javascript" src="/js/common.js"></script>
+  <script type="text/javascript" src="/js/header.js"></script>
+  <script type="text/javascript" src="/version.js"></script>
+  <script type="text/javascript" src="/username.js"></script>
+  <script type="text/javascript" src="/js/darkmode.js"></script>
+  <script type="text/javascript" src="/js/message-notifier.js"></script>
+</body>
+
+</html>

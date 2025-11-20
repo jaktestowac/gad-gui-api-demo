@@ -43,16 +43,16 @@ const userAdditionalMenu = `
 const mainGUIMenuHTML = (path = "") => {
   return `
   <a href="${path}/articles.html" class="menu-link">
-    <button id="btnArticles" data-testid="open-articles" class="button-primary">Articles</button>
+    <button id="btnArticles" data-testid="open-articles" class="button-primary" aria-label="Go to Articles" title="Go to Articles">Articles</button>
   </a>
   <a href="${path}/comments.html" class="menu-link">
-    <button id="btnComments" data-testid="open-comments" class="button-primary">Comments</button>
+    <button id="btnComments" data-testid="open-comments" class="button-primary" aria-label="Go to Comments" title="Go to Comments">Comments</button>
   </a>
   <a href="${path}/flashposts.html" class="menu-link">
-    <button id="btnFlashposts" data-testid="open-flashposts" class="button-primary">Flashposts</button>
+    <button id="btnFlashposts" data-testid="open-flashposts" class="button-primary" aria-label="Go to Flashposts" title="Go to Flashposts">Flashposts</button>
   </a>
   <a href="${path}/games/games.html" class="menu-link">
-    <button id="btnGames" data-testid="open-games" class="button-primary">&nbsp;<i class="fa-solid fa-table-tennis-paddle-ball"></i>&nbsp;</button>
+    <button id="btnGames" data-testid="open-games" class="button-primary" aria-label="Go to Game List" title="Go to Game List">&nbsp;<i class="fa-solid fa-table-tennis-paddle-ball"></i>&nbsp;</button>
   </a>
   `;
 };
