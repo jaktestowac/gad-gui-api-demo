@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <title>🦎 GAD | Game: Tic Tac Toe (Hot Seat)</title>
@@ -16,7 +16,7 @@
 
 <body>
   <header>
-    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu" role="navigation" aria-label="Games navigation">
       <h1 id="menu-main-gui" class="nav-menu"></h1>
     </div>
 
@@ -51,7 +51,7 @@
     <div class="alert" role="alert" data-testid="alert-popup" id="alertPopup" style="position: unset !important; margin: 60px 0px 0px 0px"></div>
   </div>
   <div id="container"></div>
-  <div align="center">
+  <div align="center" role="main" aria-labelledby="menu-main-gui">
     <div style="margin-bottom: 15px; width: 300px;">
       <label for="difficulty" style="font-size: 18px; margin-right: 10px;">Difficulty:</label>
       <select id="difficulty" style="font-size: 16px; padding: 5px;">
@@ -63,25 +63,25 @@
     <span style="margin-bottom: 15px; display: block;">
       (You play as 'X' and the bot plays as 'O')
     </span>
-    <button id="start-button" class="button-primary">Start New Game</button>
-    <button id="stop-button" class="button-primary" disabled>Stop Game</button><br /><br />
-    <label id="messageLbl" style="width: 50px">...</label>
+    <button id="start-button" class="button-primary" aria-controls="board">Start New Game</button>
+    <button id="stop-button" class="button-primary" disabled aria-controls="board">Stop Game</button><br /><br />
+    <label id="messageLbl" style="width: 50px" role="status" aria-live="polite">...</label>
     <br />
     <br />
-    <div class="board">
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
+    <div class="board" role="grid" aria-label="Tic Tac Toe board" aria-describedby="messageLbl">
+      <div class="cell" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 1, column 1" aria-rowindex="1" aria-colindex="1"></div>
+      <div class="cell" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 1, column 2" aria-rowindex="1" aria-colindex="2"></div>
+      <div class="cell" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 1, column 3" aria-rowindex="1" aria-colindex="3"></div>
+      <div class="cell" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 2, column 1" aria-rowindex="2" aria-colindex="1"></div>
+      <div class="cell" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 2, column 2" aria-rowindex="2" aria-colindex="2"></div>
+      <div class="cell" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 2, column 3" aria-rowindex="2" aria-colindex="3"></div>
+      <div class="cell" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 3, column 1" aria-rowindex="3" aria-colindex="1"></div>
+      <div class="cell" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 3, column 2" aria-rowindex="3" aria-colindex="2"></div>
+      <div class="cell" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 3, column 3" aria-rowindex="3" aria-colindex="3"></div>
     </div>
     <div class="score">
-      <span>Player X: <span id="player-x-score">0</span></span><br />
-      <span>Player O: <span id="player-o-score">0</span></span>
+      <span>Player X: <span id="player-x-score" aria-live="polite" aria-label="Player X score">0</span></span><br />
+      <span>Player O: <span id="player-o-score" aria-live="polite" aria-label="Player O score">0</span></span>
     </div>
     <br />
     <a href="./games.html">
