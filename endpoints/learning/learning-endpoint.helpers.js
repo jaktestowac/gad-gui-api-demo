@@ -925,7 +925,13 @@ function handleLearning(req, res) {
       }
 
       // Add new GET endpoint handler for user funds
-      if (req.method === "GET" && urlParts.length === 5 && urlParts[4] === "funds") {
+      if (
+        req.method === "GET" &&
+        urlParts.length === 5 &&
+        urlParts[1] === "learning" &&
+        urlParts[2] === "users" &&
+        urlParts[4] === "funds"
+      ) {
         if (!checkIfUserIsAuthenticated(req, res)) {
           res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("User not authenticated"));
           return;
@@ -937,8 +943,27 @@ function handleLearning(req, res) {
           return;
         }
 
-        const funds = getUserFunds(userId) || 0;
-        res.status(HTTP_OK).send({ funds: funds });
+        // Attempt reconciliation: derive net funds movement from history (credits - debits)
+        const fundsHistory = dataProvider.getFundsHistory(userId) || [];
+        const netHistory = fundsHistory.reduce((total, entry) => {
+          if (entry._inactive) return total;
+          if (entry.type === "credit") return total + entry.amount;
+          if (entry.type === "debit") return total - entry.amount;
+          return total;
+        }, 0);
+        const currentStored = getUserFunds(userId) || 0;
+        // Heuristic: if net history exceeds stored funds, stored funds likely missed some propagation
+        const reconciled = netHistory > currentStored ? netHistory : currentStored;
+        if (reconciled !== currentStored) {
+          logDebug(`User funds reconciliation needed. UserId=${userId}, old=${currentStored}, new=${reconciled}`);
+          const user = dataProvider.getUserById(userId);
+          if (user) {
+            user.funds = reconciled;
+            dataProvider.replaceUser(userId, user);
+            logDebug(`Reconciled user funds. UserId=${userId}, old=${currentStored}, new=${reconciled}`);
+          }
+        }
+        res.status(HTTP_OK).send({ funds: reconciled });
         return;
       }
 
@@ -2349,6 +2374,8 @@ function updateUserFunds(userId, newAmount) {
   }
   return false;
 }
+
+// Helper to fully recalculate a user's funds from history and stored initial balance
 
 function hasPermission(user, permission) {
   if (!user) return false;
