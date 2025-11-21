@@ -824,7 +824,7 @@ function checkIfAuthenticated(
   elementID,
   successCallback,
   failureCallback,
-  { defaultRedirect = false, redirectUrl = "" } = {}
+  { defaultRedirect = false, redirectUrl = "", customMessage = "" } = {}
 ) {
   if (!isAuthenticated()) {
     if (defaultRedirect) {
@@ -838,12 +838,11 @@ function checkIfAuthenticated(
     const loginUrl = "/login" + (redirectUrl ? `?redirectURL=${redirectUrl}` : "");
     const registerUrl = "/register.html" + (redirectUrl ? `?redirectURL=${redirectUrl}` : "");
 
-    setBoxMessage(
-      dashboardInfo,
-      `You are not authenticated<br/>
-                  Please <a href="${loginUrl}" class="btn btn-primary">login</a> or <a href="${registerUrl}" class="btn btn-primary">register</a> to see the content`,
-      simpleInfoBox
-    );
+    let msg = `You are not authenticated<br/>
+                  Please <a href="${loginUrl}" class="btn btn-primary">login</a> or <a href="${registerUrl}" class="btn btn-primary">register</a> to ${
+      customMessage || "see the content"
+    }.`;
+    setBoxMessage(dashboardInfo, msg, simpleInfoBox);
     if (failureCallback) {
       failureCallback();
     }
