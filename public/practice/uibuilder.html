@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦎 GAD - Pro UI Builder</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* Canvas Grid Pattern */
+        .canvas-bg {
+            background-color: #f3f4f6;
+            background-image:
+                linear-gradient(to right, #e5e7eb 1px, transparent 1px),
+                linear-gradient(to bottom, #e5e7eb 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* Selection & Handles */
+        .element-selected {
+            outline: 2px solid #3b82f6;
+            z-index: 1000 !important;
+        }
+
+        .resize-handle {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border: 1px solid #3b82f6;
+            position: absolute;
+            z-index: 1001;
+            display: none;
+        }
+
+        .element-selected .resize-handle {
+            display: block;
+        }
+
+        /* Cursor styles for handles */
+        .nw {
+            top: -4px;
+            left: -4px;
+            cursor: nw-resize;
+        }
+
+        .n {
+            top: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: n-resize;
+        }
+
+        .ne {
+            top: -4px;
+            right: -4px;
+            cursor: ne-resize;
+        }
+
+        .e {
+            top: 50%;
+            right: -4px;
+            transform: translateY(-50%);
+            cursor: e-resize;
+        }
+
+        .se {
+            bottom: -4px;
+            right: -4px;
+            cursor: se-resize;
+        }
+
+        .s {
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: s-resize;
+        }
+
+        .sw {
+            bottom: -4px;
+            left: -4px;
+            cursor: sw-resize;
+        }
+
+        .w {
+            top: 50%;
+            left: -4px;
+            transform: translateY(-50%);
+            cursor: w-resize;
+        }
+
+        /* Alignment Guides */
+        .guide-line {
+            position: absolute;
+            background-color: #ef4444;
+            pointer-events: none;
+            z-index: 9999;
+            display: none;
+        }
+
+        .guide-v {
+            width: 1px;
+            height: 100vh;
+            top: 0;
+        }
+
+        .guide-h {
+            height: 1px;
+            width: 100vw;
+            left: 0;
+        }
+
+        /* History Items */
+        .history-item {
+            font-size: 11px;
+            padding: 4px 8px;
+            cursor: pointer;
+            border-left: 2px solid transparent;
+        }
+
+        .history-item:hover {
+            background-color: #f3f4f6;
+        }
+
+        .history-item.active {
+            background-color: #eff6ff;
+            border-left-color: #3b82f6;
+            color: #1d4ed8;
+            font-weight: 500;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 h-screen flex flex-col text-gray-800">
+
+    <!-- TOP TOOLBAR -->
+    <header class="h-12 bg-white border-b border-gray-200 flex items-center justify-between px-4 shrink-0 z-20 shadow-sm">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white font-bold mr-2">
+                <i class="fa-solid fa-layer-group"></i>
+            </div>
+            <h1 class="font-semibold text-sm">UI Builder - <a href="/practice/" style="color: rgb(61, 61, 61); font-size: small; font-weight: normal;"><i class="fas fa-home"></i> Back to Practice</a></h1>
+        </div>
+
+        <div class="flex items-center gap-1 bg-gray-100 p-1 rounded-md">
+            <!-- Undo/Redo -->
+            <button onclick="undo()" class="p-1.5 w-8 rounded hover:bg-white text-xs text-gray-600" title="Undo (Ctrl+Z)"><i class="fa-solid fa-rotate-left"></i></button>
+            <button onclick="redo()" class="p-1.5 w-8 rounded hover:bg-white text-xs text-gray-600" title="Redo (Ctrl+Y)"><i class="fa-solid fa-rotate-right"></i></button>
+            <div class="w-px h-4 bg-gray-300 mx-1"></div>
+
+            <button onclick="toggleGrid()" id="btn-grid" class="p-1.5 px-3 rounded text-xs font-medium bg-white shadow-sm text-blue-600 transition hover:text-blue-700" title="Toggle Grid Snapping">
+                <i class="fa-solid fa-border-all mr-1"></i> Snap
+            </button>
+            <div class="w-px h-4 bg-gray-300 mx-1"></div>
+            <button onclick="zoomOut()" class="p-1.5 w-8 rounded hover:bg-white text-xs text-gray-600"><i class="fa-solid fa-minus"></i></button>
+            <span id="zoom-level" class="text-xs font-mono w-12 text-center text-gray-500">100%</span>
+            <button onclick="zoomIn()" class="p-1.5 w-8 rounded hover:bg-white text-xs text-gray-600"><i class="fa-solid fa-plus"></i></button>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button onclick="previewHTML()" class="flex items-center gap-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-3 py-1.5 rounded text-xs font-medium transition">
+                <i class="fa-solid fa-up-right-from-square"></i> Preview
+            </button>
+            <button onclick="exportHTML()" class="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-white px-3 py-1.5 rounded text-xs font-medium transition">
+                <i class="fa-solid fa-download"></i> Export HTML
+            </button>
+        </div>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+
+        <!-- LEFT SIDEBAR: COMPONENTS & HISTORY -->
+        <aside class="w-14 lg:w-64 bg-white border-r border-gray-200 flex flex-col shrink-0 z-10 transition-all duration-300">
+            <!-- Tools Section -->
+            <div class="flex-1 overflow-y-auto flex flex-col">
+                <div class="p-3 border-b border-gray-100 sticky top-0 bg-white z-10">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider hidden lg:block">Elements</span>
+                </div>
+
+                <div class="flex flex-col gap-1 p-2">
+                    <!-- Basic -->
+                    <div class="px-2 py-1 mt-1 mb-1 text-[10px] font-bold text-gray-400 uppercase hidden lg:block">Basic</div>
+
+                    <div draggable="true" ondragstart="handleDragStart(event, 'box')" class="group flex items-center gap-3 p-2 rounded cursor-grab hover:bg-blue-50 transition border border-transparent hover:border-blue-100">
+                        <div class="w-8 h-8 rounded bg-gray-200 flex items-center justify-center text-gray-500 group-hover:bg-white group-hover:text-blue-500 shadow-sm"><i class="fa-regular fa-square"></i></div>
+                        <div class="hidden lg:block">
+                            <div class="text-sm font-medium">Container</div>
+                        </div>
+                    </div>
+
+                    <div draggable="true" ondragstart="handleDragStart(event, 'text')" class="group flex items-center gap-3 p-2 rounded cursor-grab hover:bg-blue-50 transition border border-transparent hover:border-blue-100">
+                        <div class="w-8 h-8 rounded bg-gray-200 flex items-center justify-center text-gray-500 group-hover:bg-white group-hover:text-blue-500 shadow-sm"><i class="fa-solid fa-font"></i></div>
+                        <div class="hidden lg:block">
+                            <div class="text-sm font-medium">Text</div>
+                        </div>
+                    </div>
+
+                    <div draggable="true" ondragstart="handleDragStart(event, 'button')" class="group flex items-center gap-3 p-2 rounded cursor-grab hover:bg-blue-50 transition border border-transparent hover:border-blue-100">
+                        <div class="w-8 h-8 rounded bg-gray-200 flex items-center justify-center text-gray-500 group-hover:bg-white group-hover:text-blue-500 shadow-sm"><i class="fa-solid fa-mobile-button"></i></div>
+                        <div class="hidden lg:block">
+                            <div class="text-sm font-medium">Button</div>
+                        </div>
+                    </div>
+
+                    <div draggable="true" ondragstart="handleDragStart(event, 'image')" class="group flex items-center gap-3 p-2 rounded cursor-grab hover:bg-blue-50 transition border border-transparent hover:border-blue-100">
+                        <div class="w-8 h-8 rounded bg-gray-200 flex items-center justify-center text-gray-500 group-hover:bg-white group-hover:text-blue-500 shadow-sm"><i class="fa-regular fa-image"></i></div>
+                        <div class="hidden lg:block">
+                            <div class="text-sm font-medium">Image</div>
+                        </div>
+                    </div>
+
+                    <!-- Forms -->
+                    <div class="px-2 py-1 mt-2 mb-1 text-[10px] font-bold text-gray-400 uppercase hidden lg:block">Forms</div>
+
+                    <div draggable="true" ondragstart="handleDragStart(event, 'input')" class="group flex items-center gap-3 p-2 rounded cursor-grab hover:bg-blue-50 transition border border-transparent hover:border-blue-100">
+                        <div class="w-8 h-8 rounded bg-gray-200 flex items-center justify-center text-gray-500 group-hover:bg-white group-hover:text-blue-500 shadow-sm"><i class="fa-solid fa-keyboard"></i></div>
+                        <div class="hidden lg:block">
+                            <div class="text-sm font-medium">Input Field</div>
+                        </div>
+                    </div>
+
+                    <div draggable="true" ondragstart="handleDragStart(event, 'checkbox')" class="group flex items-center gap-3 p-2 rounded cursor-grab hover:bg-blue-50 transition border border-transparent hover:border-blue-100">
+                        <div class="w-8 h-8 rounded bg-gray-200 flex items-center justify-center text-gray-500 group-hover:bg-white group-hover:text-blue-500 shadow-sm"><i class="fa-regular fa-square-check"></i></div>
+                        <div class="hidden lg:block">
+                            <div class="text-sm font-medium">Checkbox</div>
+                        </div>
+                    </div>
+
+                    <div draggable="true" ondragstart="handleDragStart(event, 'radio')" class="group flex items-center gap-3 p-2 rounded cursor-grab hover:bg-blue-50 transition border border-transparent hover:border-blue-100">
+                        <div class="w-8 h-8 rounded bg-gray-200 flex items-center justify-center text-gray-500 group-hover:bg-white group-hover:text-blue-500 shadow-sm"><i class="fa-regular fa-circle-dot"></i></div>
+                        <div class="hidden lg:block">
+                            <div class="text-sm font-medium">Radio Button</div>
+                        </div>
+                    </div>
+
+                    <div draggable="true" ondragstart="handleDragStart(event, 'select')" class="group flex items-center gap-3 p-2 rounded cursor-grab hover:bg-blue-50 transition border border-transparent hover:border-blue-100">
+                        <div class="w-8 h-8 rounded bg-gray-200 flex items-center justify-center text-gray-500 group-hover:bg-white group-hover:text-blue-500 shadow-sm"><i class="fa-solid fa-list"></i></div>
+                        <div class="hidden lg:block">
+                            <div class="text-sm font-medium">Combobox</div>
+                        </div>
+                    </div>
+
+                    <div draggable="true" ondragstart="handleDragStart(event, 'toggle')" class="group flex items-center gap-3 p-2 rounded cursor-grab hover:bg-blue-50 transition border border-transparent hover:border-blue-100">
+                        <div class="w-8 h-8 rounded bg-gray-200 flex items-center justify-center text-gray-500 group-hover:bg-white group-hover:text-blue-500 shadow-sm"><i class="fa-solid fa-toggle-on"></i></div>
+                        <div class="hidden lg:block">
+                            <div class="text-sm font-medium">Switch</div>
+                        </div>
+                    </div>
+
+                    <div draggable="true" ondragstart="handleDragStart(event, 'slider')" class="group flex items-center gap-3 p-2 rounded cursor-grab hover:bg-blue-50 transition border border-transparent hover:border-blue-100">
+                        <div class="w-8 h-8 rounded bg-gray-200 flex items-center justify-center text-gray-500 group-hover:bg-white group-hover:text-blue-500 shadow-sm"><i class="fa-solid fa-sliders"></i></div>
+                        <div class="hidden lg:block">
+                            <div class="text-sm font-medium">Range Slider</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Section -->
+            <div class="h-1/3 border-t border-gray-200 flex flex-col bg-gray-50">
+                <div class="p-2 border-b border-gray-200 flex justify-between items-center bg-white">
+                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">History</span>
+                    <span id="history-count" class="text-[9px] text-gray-400">0/100</span>
+                </div>
+                <div id="history-list" class="flex-1 overflow-y-auto">
+                    <!-- History items injected here -->
+                    <div class="p-4 text-center text-gray-400 text-xs italic">No history yet</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- CENTER CANVAS AREA -->
+        <main class="flex-1 relative overflow-hidden canvas-bg cursor-default" id="canvas-container" ondrop="handleDrop(event)" ondragover="allowDrop(event)">
+            <div id="canvas-area" class="absolute top-0 left-0 w-[2000px] h-[2000px] transform origin-top-left">
+                <!-- Elements will be injected here -->
+
+                <!-- Guidelines -->
+                <div id="guide-v" class="guide-line guide-v"></div>
+                <div id="guide-h" class="guide-line guide-h"></div>
+            </div>
+        </main>
+
+        <!-- RIGHT SIDEBAR: PROPERTIES -->
+        <aside class="w-64 bg-white border-l border-gray-200 flex flex-col shrink-0 z-10 overflow-y-auto">
+            <div id="no-selection" class="flex flex-col items-center justify-center h-full text-gray-400 p-6 text-center">
+                <i class="fa-regular fa-object-group text-3xl mb-3 opacity-30"></i>
+                <span class="text-sm">Select an element to edit properties</span>
+            </div>
+
+            <div id="properties-panel" class="hidden">
+                <div class="p-3 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                    <span class="text-xs font-bold text-gray-500 uppercase">Properties</span>
+                    <button onclick="deleteSelected()" class="text-gray-400 hover:text-red-500 text-xs" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                </div>
+
+                <!-- Interactions (NEW) -->
+                <div class="p-4 border-b border-gray-100 bg-blue-50/50">
+                    <label class="text-xs font-semibold text-blue-800 mb-2 block"><i class="fa-solid fa-bolt mr-1"></i>Interaction (On Click)</label>
+                    <select id="prop-action-type" class="w-full bg-white border border-blue-100 text-xs p-2 rounded mb-2 focus:ring-1 focus:ring-blue-500 outline-none" onchange="updateElement(true)">
+                        <option value="none">None</option>
+                        <option value="alert">Show Alert</option>
+                        <option value="link">Open URL</option>
+                        <option value="console">Log to Console</option>
+                    </select>
+                    <input type="text" id="prop-action-value" class="w-full bg-white border border-blue-100 text-xs p-2 rounded focus:ring-1 focus:ring-blue-500 outline-none" placeholder="Value (e.g. Message or URL)" onchange="updateElement(true)">
+                </div>
+
+                <!-- Transform -->
+                <div class="p-4 border-b border-gray-100">
+                    <label class="text-xs font-semibold text-gray-500 mb-2 block">Layout</label>
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <div class="flex items-center bg-gray-100 rounded px-2">
+                            <span class="text-[10px] text-gray-500 w-4">X</span>
+                            <input type="number" id="prop-x" class="w-full bg-transparent border-none text-xs p-1 focus:ring-0" onchange="updateElement(true)">
+                        </div>
+                        <div class="flex items-center bg-gray-100 rounded px-2">
+                            <span class="text-[10px] text-gray-500 w-4">Y</span>
+                            <input type="number" id="prop-y" class="w-full bg-transparent border-none text-xs p-1 focus:ring-0" onchange="updateElement(true)">
+                        </div>
+                        <div class="flex items-center bg-gray-100 rounded px-2">
+                            <span class="text-[10px] text-gray-500 w-4">W</span>
+                            <input type="number" id="prop-w" class="w-full bg-transparent border-none text-xs p-1 focus:ring-0" onchange="updateElement(true)">
+                        </div>
+                        <div class="flex items-center bg-gray-100 rounded px-2">
+                            <span class="text-[10px] text-gray-500 w-4">H</span>
+                            <input type="number" id="prop-h" class="w-full bg-transparent border-none text-xs p-1 focus:ring-0" onchange="updateElement(true)">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appearance -->
+                <div class="p-4 border-b border-gray-100">
+                    <label class="text-xs font-semibold text-gray-500 mb-2 block">Appearance</label>
+
+                    <div class="mb-3">
+                        <div class="flex justify-between mb-1"><span class="text-xs text-gray-600">Background</span></div>
+                        <div class="flex gap-2">
+                            <input type="color" id="prop-bg-color" class="w-8 h-8 p-0 border-0 rounded cursor-pointer" onchange="updateElement(true)">
+                            <input type="text" id="prop-bg-text" class="flex-1 bg-gray-100 border-none rounded text-xs px-2 focus:ring-1 focus:ring-blue-500 uppercase" onchange="syncColorInput('bg')">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="flex justify-between mb-1"><span class="text-xs text-gray-600">Opacity</span> <span id="val-opacity" class="text-[10px] text-gray-400">100%</span></div>
+                        <!-- Update: oninput for preview, onchange for history save -->
+                        <input type="range" id="prop-opacity" min="0" max="100" class="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer" oninput="updateElement(false)" onchange="updateElement(true)">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <span class="text-xs text-gray-600 mb-1 block">Radius</span>
+                            <input type="number" id="prop-radius" class="w-full bg-gray-100 border-none text-xs p-1.5 rounded focus:ring-1 focus:ring-blue-500" placeholder="0" onchange="updateElement(true)">
+                        </div>
+                        <div>
+                            <span class="text-xs text-gray-600 mb-1 block">Z-Index</span>
+                            <input type="number" id="prop-z" class="w-full bg-gray-100 border-none text-xs p-1.5 rounded focus:ring-1 focus:ring-blue-500" placeholder="Auto" onchange="updateElement(true)">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Typography / Label -->
+                <div id="prop-group-text" class="p-4 border-b border-gray-100">
+                    <label class="text-xs font-semibold text-gray-500 mb-2 block">Content / Label</label>
+
+                    <div class="mb-2">
+                        <!-- Update: oninput for preview, onchange for history save -->
+                        <textarea id="prop-content" rows="3" class="w-full bg-gray-100 border-none text-xs p-2 rounded focus:ring-1 focus:ring-blue-500 resize-none" placeholder="Text Content" oninput="updateElement(false)" onchange="updateElement(true)"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <div>
+                            <span class="text-xs text-gray-600 mb-1 block">Color</span>
+                            <input type="color" id="prop-text-color" class="w-full h-6 p-0 border-0 rounded cursor-pointer" onchange="updateElement(true)">
+                        </div>
+                        <div>
+                            <span class="text-xs text-gray-600 mb-1 block">Size (px)</span>
+                            <input type="number" id="prop-font-size" class="w-full bg-gray-100 border-none text-xs p-1 rounded" onchange="updateElement(true)">
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button id="btn-bold" onclick="toggleStyle('bold')" class="flex-1 p-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-bold text-gray-600">B</button>
+                        <button id="btn-italic" onclick="toggleStyle('italic')" class="flex-1 p-1 bg-gray-100 hover:bg-gray-200 rounded text-xs italic text-gray-600">I</button>
+                        <button id="btn-center" onclick="toggleStyle('center')" class="flex-1 p-1 bg-gray-100 hover:bg-gray-200 rounded text-xs text-gray-600"><i class="fa-solid fa-align-center"></i></button>
+                    </div>
+                </div>
+
+                <!-- Border & Shadow -->
+                <div class="p-4 border-b border-gray-100">
+                    <label class="text-xs font-semibold text-gray-500 mb-2 block">Border</label>
+                    <div class="flex gap-2 mb-2">
+                        <input type="number" id="prop-border-width" class="w-12 bg-gray-100 border-none text-xs p-1.5 rounded" placeholder="Width" onchange="updateElement(true)">
+                        <input type="color" id="prop-border-color" class="w-8 h-8 p-0 border-0 rounded cursor-pointer" onchange="updateElement(true)">
+                        <select id="prop-border-style" class="flex-1 bg-gray-100 border-none text-xs p-1 rounded" onchange="updateElement(true)">
+                            <option value="solid">Solid</option>
+                            <option value="dashed">Dashed</option>
+                            <option value="dotted">Dotted</option>
+                            <option value="none">None</option>
+                        </select>
+                    </div>
+                    <label class="text-xs font-semibold text-gray-500 mb-2 mt-3 block">Shadow</label>
+                    <select id="prop-shadow" class="w-full bg-gray-100 border-none text-xs p-2 rounded" onchange="updateElement(true)">
+                        <option value="none">None</option>
+                        <option value="sm">Small</option>
+                        <option value="md">Medium</option>
+                        <option value="lg">Large</option>
+                        <option value="xl">Extra Large</option>
+                        <option value="inner">Inner</option>
+                    </select>
+                </div>
+
+                <div class="p-4">
+                    <button onclick="bringToFront()" class="w-full mb-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 py-1 rounded text-xs">Bring to Front</button>
+                    <button onclick="sendToBack()" class="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 py-1 rounded text-xs">Send to Back</button>
+                </div>
+
+            </div>
+        </aside>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="h-6 bg-white border-t border-gray-200 flex items-center justify-center px-4 shrink-0 z-20 text-[10px] text-gray-400">
+        <span><span id="version">v1.0.5</span>
+            <span id="copyright-sign">&copy;</span> Copyright 2025
+            <a href="https://jaktestowac.pl" target="_blank" rel="noopener" aria-label="Visit jaktestowac.pl (opens in a new tab)">jaktestowac.pl</a>
+            |
+            <a href="https://github.com/jaktestowac/gad-gui-api-demo" target="_blank" rel="noopener" aria-label="Visit GitHub Repository (opens in a new tab)"><i class="fab fa-github"></i> GitHub Repository</a></span>
+    </footer>
+
+    <script type="text/javascript" src="/version.js"></script>
+    <script>
+        // --- STATE ---
+        let elements = [];
+        let selectedId = null;
+        let nextId = 1;
+        let zoom = 1;
+        let isDragging = false;
+        let isResizing = false;
+        let dragOffset = { x: 0, y: 0, origX: 0, origY: 0, origW: 0, origH: 0 };
+        let resizeDir = '';
+        let snapToGrid = true;
+
+        // History State
+        let history = [];
+        let historyIndex = -1;
+        const MAX_HISTORY = 100;
+
+        const GRID_SIZE = 10;
+        const SNAP_THRESHOLD = 5;
+
+        // DOM Elements
+        const canvasArea = document.getElementById('canvas-area');
+        const propertiesPanel = document.getElementById('properties-panel');
+        const noSelectionPanel = document.getElementById('no-selection');
+        const guideV = document.getElementById('guide-v');
+        const guideH = document.getElementById('guide-h');
+        const historyList = document.getElementById('history-list');
+        const historyCount = document.getElementById('history-count');
+
+        // --- INIT ---
+        // Initialize with empty state
+        saveHistory('Initial State');
+
+        document.addEventListener('keydown', handleKeydown);
+        canvasArea.addEventListener('mousedown', handleMouseDown);
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mouseup', handleMouseUp);
+
+        // --- HISTORY SYSTEM ---
+        function saveHistory(actionName) {
+            // Remove any future states if we are in the middle of history
+            if (historyIndex < history.length - 1) {
+                history = history.slice(0, historyIndex + 1);
+            }
+
+            // Clone current state
+            const state = {
+                action: actionName,
+                elements: JSON.parse(JSON.stringify(elements)),
+                selectedId: selectedId,
+                nextId: nextId,
+                timestamp: new Date().toLocaleTimeString()
+            };
+
+            history.push(state);
+            if (history.length > MAX_HISTORY) history.shift();
+            else historyIndex++;
+
+            // Correct index if we shifted
+            if (history.length > MAX_HISTORY) historyIndex = MAX_HISTORY - 1;
+            else historyIndex = history.length - 1;
+
+            renderHistory();
+        }
+
+        function undo() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                restoreState(history[historyIndex]);
+            }
+        }
+
+        function redo() {
+            if (historyIndex < history.length - 1) {
+                historyIndex++;
+                restoreState(history[historyIndex]);
+            }
+        }
+
+        function restoreState(state) {
+            elements = JSON.parse(JSON.stringify(state.elements));
+            selectedId = state.selectedId;
+            nextId = state.nextId;
+            render();
+            updatePropertyPanel();
+            renderHistory();
+        }
+
+        function jumpToHistory(index) {
+            historyIndex = index;
+            restoreState(history[historyIndex]);
+        }
+
+        function renderHistory() {
+            historyList.innerHTML = '';
+            historyCount.innerText = `${historyIndex + 1}/${history.length}`;
+
+            // Show in reverse order (newest top)
+            for (let i = history.length - 1; i >= 0; i--) {
+                const step = history[i];
+                const div = document.createElement('div');
+                div.className = `history-item ${i === historyIndex ? 'active' : ''}`;
+                div.innerHTML = `<div class="flex justify-between"><span>${step.action}</span><span class="opacity-50 text-[9px]">${step.timestamp}</span></div>`;
+                div.onclick = () => jumpToHistory(i);
+                historyList.appendChild(div);
+            }
+        }
+
+        // --- DRAG & DROP FROM SIDEBAR ---
+        function handleDragStart(e, type) {
+            e.dataTransfer.setData('type', type);
+        }
+
+        function allowDrop(e) {
+            e.preventDefault();
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const type = e.dataTransfer.getData('type');
+            const rect = canvasArea.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / zoom;
+            const y = (e.clientY - rect.top) / zoom;
+
+            createElement(type, x, y);
+        }
+
+        // --- ELEMENT CREATION ---
+        function createElement(type, x, y) {
+            const id = nextId++;
+
+            let defaults = {
+                id, type,
+                x: Math.round(x / GRID_SIZE) * GRID_SIZE,
+                y: Math.round(y / GRID_SIZE) * GRID_SIZE,
+                w: 100, h: 40,
+                bgColor: '#ffffff',
+                textColor: '#1f2937',
+                fontSize: 14,
+                text: 'Text',
+                opacity: 100,
+                radius: 4,
+                zIndex: 1,
+                borderWidth: 0,
+                borderColor: '#000000',
+                borderStyle: 'solid',
+                shadow: 'none',
+                isBold: false, isItalic: false, isCenter: true,
+                // Interaction Props
+                actionType: 'none',
+                actionValue: ''
+            };
+
+            if (type === 'box') {
+                defaults.w = 150; defaults.h = 150; defaults.bgColor = '#e5e7eb'; defaults.text = '';
+            } else if (type === 'text') {
+                defaults.w = 200; defaults.h = 30; defaults.bgColor = 'transparent'; defaults.text = 'Double click to edit'; defaults.isCenter = false;
+            } else if (type === 'button') {
+                defaults.bgColor = '#3b82f6'; defaults.textColor = '#ffffff'; defaults.text = 'Button'; defaults.w = 100; defaults.h = 40; defaults.isCenter = true;
+            } else if (type === 'image') {
+                defaults.w = 200; defaults.h = 150; defaults.bgColor = '#d1d5db'; defaults.text = 'Image Placeholder';
+            } else if (type === 'input') {
+                defaults.w = 200; defaults.h = 40; defaults.bgColor = '#ffffff'; defaults.borderWidth = 1; defaults.borderColor = '#d1d5db'; defaults.text = 'Input field...'; defaults.isCenter = false;
+            } else if (type === 'checkbox') {
+                defaults.w = 120; defaults.h = 30; defaults.bgColor = 'transparent'; defaults.text = 'Checkbox'; defaults.isCenter = false;
+            } else if (type === 'radio') {
+                defaults.w = 120; defaults.h = 30; defaults.bgColor = 'transparent'; defaults.text = 'Radio Option'; defaults.isCenter = false;
+            } else if (type === 'select') {
+                defaults.w = 160; defaults.h = 40; defaults.bgColor = '#ffffff'; defaults.borderWidth = 1; defaults.borderColor = '#d1d5db'; defaults.text = 'Select Option'; defaults.isCenter = false;
+            } else if (type === 'toggle') {
+                defaults.w = 60; defaults.h = 30; defaults.bgColor = '#22c55e'; defaults.text = ''; defaults.radius = 20;
+            } else if (type === 'slider') {
+                defaults.w = 160; defaults.h = 20; defaults.bgColor = 'transparent'; defaults.text = '';
+            }
+
+            elements.push(defaults);
+            render();
+            selectElement(id);
+            saveHistory(`Created ${type}`);
+        }
+
+        // --- RENDER ENGINE ---
+        function render() {
+            // Clear canvas but keep guides
+            Array.from(canvasArea.children).forEach(child => {
+                if (!child.classList.contains('guide-line')) child.remove();
+            });
+
+            elements.forEach(el => {
+                const div = document.createElement('div');
+                div.style.position = 'absolute';
+                div.style.left = `${el.x}px`;
+                div.style.top = `${el.y}px`;
+                div.style.width = `${el.w}px`;
+                div.style.height = `${el.h}px`;
+                div.style.backgroundColor = el.bgColor;
+                div.style.color = el.textColor;
+                div.style.fontSize = `${el.fontSize}px`;
+                div.style.opacity = el.opacity / 100;
+                div.style.borderRadius = `${el.radius}px`;
+                div.style.zIndex = el.zIndex;
+                div.style.border = `${el.borderWidth}px ${el.borderStyle} ${el.borderColor}`;
+                div.style.overflow = 'hidden';
+                div.style.display = 'flex';
+                div.style.cursor = 'move';
+                div.style.boxSizing = 'border-box';
+
+                // Text Alignment
+                div.style.justifyContent = el.isCenter ? 'center' : 'flex-start';
+                div.style.alignItems = 'center';
+                div.style.fontWeight = el.isBold ? 'bold' : 'normal';
+                div.style.fontStyle = el.isItalic ? 'italic' : 'normal';
+                if (!el.isCenter) div.style.padding = '0 10px';
+
+                // Shadows
+                if (el.shadow === 'sm') div.style.boxShadow = '0 1px 2px 0 rgb(0 0 0 / 0.05)';
+                else if (el.shadow === 'md') div.style.boxShadow = '0 4px 6px -1px rgb(0 0 0 / 0.1)';
+                else if (el.shadow === 'lg') div.style.boxShadow = '0 10px 15px -3px rgb(0 0 0 / 0.1)';
+                else if (el.shadow === 'xl') div.style.boxShadow = '0 20px 25px -5px rgb(0 0 0 / 0.1)';
+                else if (el.shadow === 'inner') div.style.boxShadow = 'inset 0 2px 4px 0 rgb(0 0 0 / 0.05)';
+
+                // Content Rendering Logic
+                if (el.type === 'image') {
+                    div.innerHTML = `<div class="flex flex-col items-center justify-center w-full h-full text-gray-500"><i class="fa-regular fa-image text-2xl"></i><span class="text-xs mt-2">${el.text}</span></div>`;
+                } else if (el.type === 'checkbox') {
+                    div.innerHTML = `<div class="flex items-center gap-2 pointer-events-none"><div class="w-4 h-4 border border-gray-400 bg-white rounded flex items-center justify-center text-blue-500"><i class="fa-solid fa-check text-[10px] opacity-0"></i></div><span>${el.text}</span></div>`;
+                } else if (el.type === 'radio') {
+                    div.innerHTML = `<div class="flex items-center gap-2 pointer-events-none"><div class="w-4 h-4 border border-gray-400 bg-white rounded-full flex items-center justify-center"><div class="w-2 h-2 bg-blue-500 rounded-full opacity-0"></div></div><span>${el.text}</span></div>`;
+                } else if (el.type === 'select') {
+                    div.innerHTML = `<div class="flex items-center justify-between w-full pointer-events-none"><span class="truncate">${el.text}</span><i class="fa-solid fa-chevron-down text-[10px] text-gray-500"></i></div>`;
+                } else if (el.type === 'toggle') {
+                    div.innerHTML = `<div class="w-full h-full flex items-center p-1 pointer-events-none"><div class="w-5 h-5 bg-white rounded-full shadow-sm ml-auto"></div></div>`;
+                } else if (el.type === 'slider') {
+                    div.innerHTML = `<div class="w-full flex items-center px-1 pointer-events-none"><div class="flex-1 h-1 bg-gray-300 rounded"><div class="w-1/2 h-full bg-blue-500 rounded-l"></div></div><div class="w-3 h-3 bg-white border border-gray-300 rounded-full shadow-sm -ml-1.5"></div></div>`;
+                } else {
+                    div.innerText = el.text;
+                }
+
+                div.dataset.id = el.id;
+
+                // Selection Style
+                if (el.id === selectedId) {
+                    div.classList.add('element-selected');
+                    // Add Resize Handles
+                    ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'].forEach(dir => {
+                        const h = document.createElement('div');
+                        h.className = `resize-handle ${dir}`;
+                        h.dataset.dir = dir;
+                        div.appendChild(h);
+                    });
+                }
+
+                canvasArea.appendChild(div);
+            });
+        }
+
+        // --- SELECTION & PROPERTY PANEL ---
+        function selectElement(id) {
+            selectedId = id;
+            render();
+            updatePropertyPanel();
+        }
+
+        function updatePropertyPanel() {
+            if (!selectedId) {
+                propertiesPanel.classList.add('hidden');
+                noSelectionPanel.classList.remove('hidden');
+                return;
+            }
+
+            const el = elements.find(e => e.id === selectedId);
+            if (!el) return;
+
+            propertiesPanel.classList.remove('hidden');
+            noSelectionPanel.classList.add('hidden');
+
+            // Populate fields
+            document.getElementById('prop-x').value = el.x;
+            document.getElementById('prop-y').value = el.y;
+            document.getElementById('prop-w').value = el.w;
+            document.getElementById('prop-h').value = el.h;
+            document.getElementById('prop-bg-color').value = el.bgColor;
+            document.getElementById('prop-bg-text').value = el.bgColor;
+            document.getElementById('prop-opacity').value = el.opacity;
+            document.getElementById('val-opacity').innerText = el.opacity + '%';
+            document.getElementById('prop-radius').value = el.radius;
+            document.getElementById('prop-z').value = el.zIndex;
+            document.getElementById('prop-content').value = el.text;
+            document.getElementById('prop-text-color').value = el.textColor;
+            document.getElementById('prop-font-size').value = el.fontSize;
+
+            document.getElementById('prop-border-width').value = el.borderWidth;
+            document.getElementById('prop-border-color').value = el.borderColor;
+            document.getElementById('prop-border-style').value = el.borderStyle;
+            document.getElementById('prop-shadow').value = el.shadow;
+
+            // Interaction Populate
+            document.getElementById('prop-action-type').value = el.actionType || 'none';
+            document.getElementById('prop-action-value').value = el.actionValue || '';
+
+
+            // Toggle buttons state
+            updateToggleBtn('btn-bold', el.isBold);
+            updateToggleBtn('btn-italic', el.isItalic);
+            updateToggleBtn('btn-center', el.isCenter);
+        }
+
+        function updateToggleBtn(id, active) {
+            const btn = document.getElementById(id);
+            if (active) {
+                btn.classList.add('bg-blue-100', 'text-blue-700', 'border', 'border-blue-200');
+                btn.classList.remove('bg-gray-100', 'text-gray-600');
+            } else {
+                btn.classList.remove('bg-blue-100', 'text-blue-700', 'border', 'border-blue-200');
+                btn.classList.add('bg-gray-100', 'text-gray-600');
+            }
+        }
+
+        // shouldSave: boolean. If false, we just update UI (preview). If true, we save history.
+        function updateElement(shouldSave) {
+            if (!selectedId) return;
+            const el = elements.find(e => e.id === selectedId);
+
+            el.x = parseInt(document.getElementById('prop-x').value) || 0;
+            el.y = parseInt(document.getElementById('prop-y').value) || 0;
+            el.w = parseInt(document.getElementById('prop-w').value) || 0;
+            el.h = parseInt(document.getElementById('prop-h').value) || 0;
+            el.bgColor = document.getElementById('prop-bg-color').value;
+            el.opacity = document.getElementById('prop-opacity').value;
+            el.radius = parseInt(document.getElementById('prop-radius').value) || 0;
+            el.zIndex = parseInt(document.getElementById('prop-z').value) || 1;
+            el.text = document.getElementById('prop-content').value;
+            el.textColor = document.getElementById('prop-text-color').value;
+            el.fontSize = parseInt(document.getElementById('prop-font-size').value) || 14;
+
+            el.borderWidth = parseInt(document.getElementById('prop-border-width').value) || 0;
+            el.borderColor = document.getElementById('prop-border-color').value;
+            el.borderStyle = document.getElementById('prop-border-style').value;
+            el.shadow = document.getElementById('prop-shadow').value;
+
+            // Interaction Update
+            el.actionType = document.getElementById('prop-action-type').value;
+            el.actionValue = document.getElementById('prop-action-value').value;
+
+            render();
+
+            if (shouldSave) {
+                saveHistory('Update Property');
+            }
+        }
+
+        function syncColorInput(prefix) {
+            const text = document.getElementById(`prop-${prefix}-text`).value;
+            if (/^#[0-9A-F]{6}$/i.test(text)) {
+                document.getElementById(`prop-${prefix}-color`).value = text;
+                updateElement(true);
+            }
+        }
+
+        function toggleStyle(style) {
+            if (!selectedId) return;
+            const el = elements.find(e => e.id === selectedId);
+            if (style === 'bold') el.isBold = !el.isBold;
+            if (style === 'italic') el.isItalic = !el.isItalic;
+            if (style === 'center') el.isCenter = !el.isCenter;
+            updatePropertyPanel();
+            render();
+            saveHistory(`Toggle ${style}`);
+        }
+
+        // --- MOUSE INTERACTIONS (Move & Resize) ---
+        function handleMouseDown(e) {
+            if (e.target.classList.contains('resize-handle')) {
+                isResizing = true;
+                resizeDir = e.target.dataset.dir;
+                const el = elements.find(el => el.id === selectedId);
+                dragOffset = {
+                    x: e.clientX,
+                    y: e.clientY,
+                    origX: el.x, origY: el.y,
+                    origW: el.w, origH: el.h
+                };
+                e.stopPropagation();
+                return;
+            }
+
+            const elNode = e.target.closest('div[data-id]');
+            if (elNode) {
+                const id = parseInt(elNode.dataset.id);
+                selectElement(id);
+                const el = elements.find(e => e.id === id);
+                isDragging = true;
+                dragOffset = {
+                    x: e.clientX / zoom - el.x,
+                    y: e.clientY / zoom - el.y,
+                    origX: el.x, origY: el.y
+                };
+                e.stopPropagation();
+            } else {
+                selectedId = null;
+                render();
+                updatePropertyPanel();
+            }
+        }
+
+        function handleMouseMove(e) {
+            if (isDragging && selectedId) {
+                const el = elements.find(e => e.id === selectedId);
+                let rawX = (e.clientX / zoom) - dragOffset.x;
+                let rawY = (e.clientY / zoom) - dragOffset.y;
+
+                if (snapToGrid) {
+                    rawX = Math.round(rawX / GRID_SIZE) * GRID_SIZE;
+                    rawY = Math.round(rawY / GRID_SIZE) * GRID_SIZE;
+                }
+
+                const alignment = checkAlignment(el, rawX, rawY);
+                if (alignment.x !== null) rawX = alignment.x;
+                if (alignment.y !== null) rawY = alignment.y;
+
+                el.x = rawX;
+                el.y = rawY;
+
+                render();
+                updatePropertyPanel();
+                return;
+            }
+
+            if (isResizing && selectedId) {
+                const el = elements.find(e => e.id === selectedId);
+                const deltaX = (e.clientX - dragOffset.x) / zoom;
+                const deltaY = (e.clientY - dragOffset.y) / zoom;
+
+                if (resizeDir.includes('e')) el.w = Math.max(10, dragOffset.origW + deltaX);
+                if (resizeDir.includes('s')) el.h = Math.max(10, dragOffset.origH + deltaY);
+                if (resizeDir.includes('w')) {
+                    const newW = Math.max(10, dragOffset.origW - deltaX);
+                    el.x = dragOffset.origX + (dragOffset.origW - newW);
+                    el.w = newW;
+                }
+                if (resizeDir.includes('n')) {
+                    const newH = Math.max(10, dragOffset.origH - deltaY);
+                    el.y = dragOffset.origY + (dragOffset.origH - newH);
+                    el.h = newH;
+                }
+
+                if (snapToGrid) {
+                    el.w = Math.round(el.w / GRID_SIZE) * GRID_SIZE;
+                    el.h = Math.round(el.h / GRID_SIZE) * GRID_SIZE;
+                    el.x = Math.round(el.x / GRID_SIZE) * GRID_SIZE;
+                    el.y = Math.round(el.y / GRID_SIZE) * GRID_SIZE;
+                }
+
+                render();
+                updatePropertyPanel();
+            }
+        }
+
+        function handleMouseUp() {
+            if (isDragging && selectedId) {
+                const el = elements.find(e => e.id === selectedId);
+                // Only save if position actually changed
+                if (el.x !== dragOffset.origX || el.y !== dragOffset.origY) {
+                    saveHistory('Moved Element');
+                }
+            }
+            if (isResizing && selectedId) {
+                const el = elements.find(e => e.id === selectedId);
+                // Only save if dimension actually changed
+                if (el.w !== dragOffset.origW || el.h !== dragOffset.origH) {
+                    saveHistory('Resized Element');
+                }
+            }
+
+            isDragging = false;
+            isResizing = false;
+            guideV.style.display = 'none';
+            guideH.style.display = 'none';
+        }
+
+        // --- SMART GUIDES LOGIC ---
+        function checkAlignment(activeEl, x, y) {
+            let alignX = null;
+            let alignY = null;
+
+            guideV.style.display = 'none';
+            guideH.style.display = 'none';
+
+            const edgesX = [x, x + activeEl.w / 2, x + activeEl.w];
+            const edgesY = [y, y + activeEl.h / 2, y + activeEl.h];
+
+            elements.forEach(other => {
+                if (other.id === activeEl.id) return;
+
+                const otherX = [other.x, other.x + other.w / 2, other.x + other.w];
+                const otherY = [other.y, other.y + other.h / 2, other.y + other.h];
+
+                // Vertical Alignment
+                for (let i = 0; i < 3; i++) {
+                    for (let j = 0; j < 3; j++) {
+                        if (Math.abs(edgesX[i] - otherX[j]) < SNAP_THRESHOLD) {
+                            const diff = otherX[j] - edgesX[i];
+                            alignX = x + diff;
+                            guideV.style.left = `${otherX[j]}px`;
+                            guideV.style.display = 'block';
+                        }
+                    }
+                }
+
+                // Horizontal Alignment
+                for (let i = 0; i < 3; i++) {
+                    for (let j = 0; j < 3; j++) {
+                        if (Math.abs(edgesY[i] - otherY[j]) < SNAP_THRESHOLD) {
+                            const diff = otherY[j] - edgesY[i];
+                            alignY = y + diff;
+                            guideH.style.top = `${otherY[j]}px`;
+                            guideH.style.display = 'block';
+                        }
+                    }
+                }
+            });
+
+            return { x: alignX, y: alignY };
+        }
+
+        // --- ACTIONS ---
+        function deleteSelected() {
+            if (selectedId) {
+                elements = elements.filter(e => e.id !== selectedId);
+                selectedId = null;
+                render();
+                updatePropertyPanel();
+                saveHistory('Delete Element');
+            }
+        }
+
+        function handleKeydown(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+
+            if (e.key === 'Delete' || e.key === 'Backspace') deleteSelected();
+
+            // Undo/Redo Shortcuts
+            if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+                e.preventDefault();
+                undo();
+            }
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) {
+                e.preventDefault();
+                redo();
+            }
+
+            if (selectedId) {
+                const el = elements.find(e => e.id === selectedId);
+                const step = e.shiftKey ? 10 : 1;
+                let moved = false;
+                if (e.key === 'ArrowUp') { el.y -= step; moved = true; }
+                if (e.key === 'ArrowDown') { el.y += step; moved = true; }
+                if (e.key === 'ArrowLeft') { el.x -= step; moved = true; }
+                if (e.key === 'ArrowRight') { el.x += step; moved = true; }
+
+                if (moved) {
+                    e.preventDefault();
+                    render();
+                    updatePropertyPanel();
+                    // Simple Debounce for keyboard movement could be better, 
+                    // but for now let's just save on keyup or use a timeout.
+                    // Since keydown repeats, this might flood history. 
+                    // Let's rely on a debounce or manual trigger for now.
+                    // For simplicity in this robust version, we'll save on trailing edge.
+                    if (this.moveTimeout) clearTimeout(this.moveTimeout);
+                    this.moveTimeout = setTimeout(() => saveHistory('Nudge Element'), 500);
+                }
+            }
+        }
+
+        function toggleGrid() {
+            snapToGrid = !snapToGrid;
+            document.getElementById('btn-grid').classList.toggle('bg-blue-50');
+            document.getElementById('btn-grid').classList.toggle('text-blue-600');
+        }
+
+        function zoomIn() {
+            zoom += 0.1;
+            updateZoom();
+        }
+
+        function zoomOut() {
+            if (zoom > 0.2) zoom -= 0.1;
+            updateZoom();
+        }
+
+        function updateZoom() {
+            document.getElementById('zoom-level').innerText = Math.round(zoom * 100) + '%';
+            canvasArea.style.transform = `scale(${zoom})`;
+        }
+
+        function bringToFront() {
+            if (!selectedId) return;
+            const el = elements.find(e => e.id === selectedId);
+            elements = elements.filter(e => e.id !== selectedId);
+            elements.push(el);
+            const maxZ = Math.max(...elements.map(e => e.zIndex)) || 0;
+            el.zIndex = maxZ + 1;
+            render();
+            updatePropertyPanel();
+            saveHistory('Bring to Front');
+        }
+
+        function sendToBack() {
+            if (!selectedId) return;
+            const el = elements.find(e => e.id === selectedId);
+            elements = elements.filter(e => e.id !== selectedId);
+            elements.unshift(el);
+            el.zIndex = 0;
+            render();
+            updatePropertyPanel();
+            saveHistory('Send to Back');
+        }
+
+        // --- HTML GENERATION & EXPORT ---
+        function generateHTMLString() {
+            let htmlBody = '';
+            let scriptBody = '';
+
+            elements.forEach(el => {
+                const styles = [
+                    `position: absolute`,
+                    `left: ${el.x}px`,
+                    `top: ${el.y}px`,
+                    `width: ${el.w}px`,
+                    `height: ${el.h}px`,
+                    `background-color: ${el.bgColor}`,
+                    `color: ${el.textColor}`,
+                    `font-size: ${el.fontSize}px`,
+                    `opacity: ${el.opacity / 100}`,
+                    `border-radius: ${el.radius}px`,
+                    `z-index: ${el.zIndex}`,
+                    `border: ${el.borderWidth}px ${el.borderStyle} ${el.borderColor}`,
+                    `display: flex`,
+                    `justify-content: ${el.isCenter ? 'center' : 'flex-start'}`,
+                    `align-items: center`,
+                    `padding: ${el.isCenter ? '0' : '0 10px'}`,
+                    `font-weight: ${el.isBold ? 'bold' : 'normal'}`,
+                    `font-style: ${el.isItalic ? 'italic' : 'normal'}`,
+                    `box-sizing: border-box`,
+                    `overflow: hidden`
+                ];
+
+                if (el.shadow === 'sm') styles.push('box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05)');
+                if (el.shadow === 'md') styles.push('box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1)');
+                if (el.shadow === 'lg') styles.push('box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1)');
+                if (el.shadow === 'xl') styles.push('box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1)');
+                if (el.shadow === 'inner') styles.push('box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05)');
+
+                // Interactivity Styling
+                if (el.actionType && el.actionType !== 'none') {
+                    styles.push('cursor: pointer');
+                }
+
+                let content = el.text;
+
+                if (el.type === 'input') {
+                    content = `<input type="text" placeholder="${el.text}" style="width:100%; height:100%; background:transparent; border:none; outline:none; color:inherit;">`;
+                } else if (el.type === 'checkbox') {
+                    content = `<label style="display:flex; align-items:center; gap:8px; cursor:pointer;"><input type="checkbox" style="width:16px; height:16px;"> <span>${el.text}</span></label>`;
+                    styles.push('pointer-events: auto');
+                } else if (el.type === 'radio') {
+                    content = `<label style="display:flex; align-items:center; gap:8px; cursor:pointer;"><input type="radio" name="export-radio"> <span>${el.text}</span></label>`;
+                    styles.push('pointer-events: auto');
+                } else if (el.type === 'select') {
+                    content = `<select style="width:100%; height:100%; background:transparent; border:none; outline:none; color:inherit;"><option>${el.text}</option><option>Option 2</option><option>Option 3</option></select>`;
+                } else if (el.type === 'toggle') {
+                    content = `<div style="width:100%;height:100%;display:flex;align-items:center;padding:2px;"><div style="width:20px;height:20px;background:white;border-radius:50%;margin-left:auto;box-shadow:0 1px 2px rgba(0,0,0,0.2);"></div></div>`;
+                } else if (el.type === 'slider') {
+                    content = `<input type="range" style="width:100%;">`;
+                }
+
+                htmlBody += `<div id="el-${el.id}" style="${styles.join('; ')}">${content}</div>\n`;
+
+                // Interactivity Logic
+                if (el.actionType && el.actionType !== 'none') {
+                    if (el.actionType === 'alert') {
+                        scriptBody += `document.getElementById('el-${el.id}').addEventListener('click', function() { alert('${el.actionValue.replace(/'/g, "\\'")}'); });\n`;
+                    } else if (el.actionType === 'link') {
+                        scriptBody += `document.getElementById('el-${el.id}').addEventListener('click', function() { window.open('${el.actionValue}', '_blank'); });\n`;
+                    } else if (el.actionType === 'console') {
+                        scriptBody += `document.getElementById('el-${el.id}').addEventListener('click', function() { console.log('${el.actionValue.replace(/'/g, "\\'")}'); });\n`;
+                    }
+                }
+            });
+
+            return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exported Design</title>
+    <style>
+        body { margin: 0; padding: 0; font-family: sans-serif; overflow-x: hidden; }
+        .container { position: relative; width: 100%; min-height: 100vh; background-color: #ffffff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        ${htmlBody}
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            ${scriptBody}
+        });
+    <\/script>
+</body>
+</html>`;
+        }
+
+        function exportHTML() {
+            const fullHTML = generateHTMLString();
+            const blob = new Blob([fullHTML], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'design.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function previewHTML() {
+            const fullHTML = generateHTMLString();
+            const win = window.open('', '_blank');
+            if (win) {
+                win.document.write(fullHTML);
+                win.document.close();
+            } else {
+                alert('Popup blocked! Please allow popups for this site to view the preview.');
+            }
+        }
+    </script>
+</body>
+
+</html>
