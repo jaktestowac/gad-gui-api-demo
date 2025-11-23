@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦎 GAD - Low-Code Page Builder</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Builder Styles */
+        .builder-item {
+            cursor: grab;
+            transition: all 0.2s;
+        }
+
+        .builder-item:active {
+            cursor: grabbing;
+        }
+
+        /* The Canvas Item Wrapper */
+        .canvas-item {
+            position: relative;
+            border: 2px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .canvas-item:hover {
+            border-color: #3b82f6;
+            /* Blue border on hover */
+        }
+
+        /* Control Buttons (Delete, Move) */
+        .item-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: none;
+            gap: 5px;
+            z-index: 50;
+            background: white;
+            padding: 4px;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .canvas-item:hover .item-controls {
+            display: flex;
+        }
+
+        /* Editable Text Outline */
+        [contenteditable]:focus {
+            outline: 2px dashed #fbbf24;
+            background-color: rgba(251, 191, 36, 0.1);
+            padding: 2px;
+            border-radius: 2px;
+        }
+
+        /* Property Target Highlight */
+        .property-target:hover {
+            outline: 2px solid #10b981;
+            /* Green highlight for attribute targets */
+            cursor: pointer;
+        }
+
+        .property-target.active-target {
+            outline: 3px solid #f97316;
+            /* Orange highlight for active element */
+            z-index: 10;
+        }
+
+        /* Drag Over Effect */
+        .drag-over {
+            background-color: #eff6ff;
+            border: 2px dashed #3b82f6;
+        }
+
+        /* Settings Panel Positioning */
+        #property-editor {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            z-index: 60;
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 h-screen flex flex-col overflow-hidden font-sans text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6 shrink-0 z-10">
+        <div class="flex items-center gap-2">
+            <div class="bg-blue-600 text-white p-2 rounded-lg">
+                <i class="fa-solid fa-layer-group"></i>
+            </div>
+            <h1 class="text-xl font-bold text-gray-800">Page<span class="text-blue-600">Builder</span></h1>
+        </div>
+        <div class="flex gap-3">
+            <button onclick="toggleLivePreview()" id="toggle-preview-btn" class="px-4 py-2 text-sm text-gray-600 font-medium hover:bg-gray-100 rounded-md transition">
+                <i class="fa-solid fa-eye mr-2"></i><span id="preview-text">Show Live Preview</span>
+            </button>
+            <button onclick="clearCanvas()" class="px-4 py-2 text-sm text-red-600 font-medium hover:bg-red-50 rounded-md transition">
+                <i class="fa-solid fa-trash mr-2"></i>Clear
+            </button>
+            <button onclick="previewPage()" class="px-4 py-2 text-sm bg-blue-600 text-white font-medium hover:bg-blue-700 rounded-md shadow-sm transition">
+                <i class="fa-solid fa-external-link-alt mr-2"></i>Open in New Tab
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <div class="flex flex-1 overflow-hidden">
+
+        <!-- Sidebar (Component Library) -->
+        <aside class="w-72 bg-white border-r border-gray-200 flex flex-col overflow-y-auto shadow-sm shrink-0">
+            <div class="p-4 border-b border-gray-100">
+                <h2 class="font-semibold text-xs uppercase tracking-wider text-gray-500">Components</h2>
+                <p class="text-xs text-gray-400 mt-1">Drag elements to the canvas</p>
+            </div>
+
+            <div id="components-list" class="p-4 space-y-3">
+                <!-- Components are injected here via JS -->
+            </div>
+        </aside>
+
+        <!-- Editor and Preview Container -->
+        <main class="flex-1 flex overflow-hidden">
+
+            <!-- Canvas Area -->
+            <div id="editor-container" class="flex-1 bg-gray-100 overflow-y-auto p-8 flex justify-center relative transition-all duration-300">
+
+                <!-- Floating Property Editor Panel -->
+                <div id="property-editor" class="w-80 bg-white border border-gray-200 rounded-lg shadow-xl p-4 space-y-4">
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <h3 class="font-bold text-gray-700">Element Properties</h3>
+                        <button onclick="closeSettingsPanel()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div id="property-fields" class="space-y-3">
+                        <!-- Dynamic fields inserted here -->
+                    </div>
+                    <p class="text-xs text-gray-400">Click on any green-highlighted link or input to edit its properties.</p>
+                </div>
+
+                <!-- The Drop Zone / Page -->
+                <div id="canvas" class="bg-white shadow-xl min-h-[800px] w-full max-w-6xl transition-all duration-300" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+
+                    <!-- Empty State Message -->
+                    <div id="empty-state" class="h-full flex flex-col items-center justify-center text-gray-400 py-32 pointer-events-none">
+                        <i class="fa-solid fa-paintbrush text-4xl mb-4 opacity-50"></i>
+                        <p class="text-lg font-medium">Drag components here to build</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Collapsible Live Preview Panel -->
+            <div id="live-preview-panel" class="w-0 overflow-hidden transition-all duration-300 shrink-0">
+                <div class="h-full border-l border-gray-200 bg-gray-50 flex flex-col w-[400px]">
+                    <div class="p-3 border-b text-sm font-semibold flex justify-between items-center bg-white shadow-sm">
+                        Live Preview (Mobile View)
+                        <button onclick="toggleLivePreview()" class="text-gray-500 hover:text-gray-900"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <iframe id="live-preview-iframe" class="flex-1 w-full" frameborder="0"></iframe>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- TEMPLATES (Hidden) and Script Logic -->
+    <script>
+        // --- Component Definitions (Updated with data-property-editable targets) ---
+        const componentLibrary = [
+            {
+                id: 'navbar',
+                name: 'Navigation Bar',
+                icon: 'fa-compass',
+                html: `
+                    <nav class="bg-white border-b border-gray-200 px-6 py-4">
+                        <div class="max-w-7xl mx-auto flex justify-between items-center">
+                            <div class="text-2xl font-bold text-blue-600" contenteditable="true">BrandLogo</div>
+                            <div class="hidden md:flex space-x-8">
+                                <a href="#" class="text-gray-600 hover:text-blue-600 property-target" contenteditable="true">Home</a>
+                                <a href="#" class="text-gray-600 hover:text-blue-600 property-target" contenteditable="true">Features</a>
+                                <a href="#" class="text-gray-600 hover:text-blue-600 property-target" contenteditable="true">Pricing</a>
+                                <a href="#" class="text-gray-600 hover:text-blue-600 property-target" contenteditable="true">Contact</a>
+                            </div>
+                            <button class="bg-blue-600 text-white px-5 py-2 rounded-full hover:bg-blue-700 transition property-target" data-attribute="href" contenteditable="true">Get Started</button>
+                        </div>
+                    </nav>
+                `
+            },
+            {
+                id: 'hero',
+                name: 'Hero Section',
+                icon: 'fa-image',
+                html: `
+                    <section class="bg-gradient-to-r from-blue-50 to-indigo-50 py-20 px-6 text-center">
+                        <div class="max-w-4xl mx-auto">
+                            <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide" contenteditable="true">New Feature</span>
+                            <h1 class="text-5xl font-bold text-gray-900 mt-6 mb-6 leading-tight" contenteditable="true">Build Something Amazing Today</h1>
+                            <p class="text-xl text-gray-600 mb-10 max-w-2xl mx-auto" contenteditable="true">Create beautiful landing pages in minutes without writing a single line of code. Just drag, drop, and customize.</p>
+                            <div class="flex justify-center gap-4">
+                                <button class="bg-blue-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 shadow-lg transition property-target" contenteditable="true" data-attribute="href">Start Building</button>
+                                <button class="bg-white text-gray-700 border border-gray-300 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-50 transition property-target" contenteditable="true" data-attribute="href">Learn More</button>
+                            </div>
+                        </div>
+                    </section>
+                `
+            },
+            {
+                id: 'features',
+                name: 'Feature List',
+                icon: 'fa-list-check',
+                html: `
+                    <section class="py-20 bg-white px-6">
+                        <div class="max-w-6xl mx-auto">
+                            <div class="text-center mb-16">
+                                <h2 class="text-3xl font-bold text-gray-900" contenteditable="true">Why Choose Us?</h2>
+                                <p class="text-gray-600 mt-4" contenteditable="true">We provide the best tools for your growth.</p>
+                            </div>
+                            <div class="grid md:grid-cols-3 gap-10">
+                                <div class="p-6 bg-gray-50 rounded-xl hover:shadow-md transition">
+                                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mb-4 text-xl"><i class="fa-solid fa-bolt"></i></div>
+                                    <h3 class="text-xl font-bold mb-2" contenteditable="true">Lightning Fast</h3>
+                                    <p class="text-gray-600" contenteditable="true">Optimized for speed and performance to ensure your users stay engaged.</p>
+                                </div>
+                                <div class="p-6 bg-gray-50 rounded-xl hover:shadow-md transition">
+                                    <div class="w-12 h-12 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mb-4 text-xl"><i class="fa-solid fa-shield"></i></div>
+                                    <h3 class="text-xl font-bold mb-2" contenteditable="true">Secure by Design</h3>
+                                    <p class="text-gray-600" contenteditable="true">Enterprise-grade security protecting your data and your customers.</p>
+                                </div>
+                                <div class="p-6 bg-gray-50 rounded-xl hover:shadow-md transition">
+                                    <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center mb-4 text-xl"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                                    <h3 class="text-xl font-bold mb-2" contenteditable="true">Easy Customization</h3>
+                                    <p class="text-gray-600" contenteditable="true">Modify every aspect of your page with our intuitive visual editor.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                `
+            },
+            {
+                id: 'product',
+                name: 'Product Highlight',
+                icon: 'fa-box-open',
+                html: `
+                    <section class="py-20 px-6 bg-gray-50">
+                        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12">
+                            <div class="flex-1 w-full">
+                                <div class="aspect-video bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400">
+                                    <i class="fa-solid fa-image text-6xl"></i>
+                                </div>
+                            </div>
+                            <div class="flex-1 text-left">
+                                <div class="text-blue-600 font-bold mb-2" contenteditable="true">BEST SELLER</div>
+                                <h2 class="text-4xl font-bold text-gray-900 mb-6" contenteditable="true">Premium Wireless Headphones</h2>
+                                <p class="text-gray-600 text-lg mb-8" contenteditable="true">Experience sound like never before. Active noise cancellation, 30-hour battery life, and supreme comfort for long listening sessions.</p>
+                                <div class="flex items-center gap-6 mb-8">
+                                    <span class="text-3xl font-bold text-gray-900" contenteditable="true">$299</span>
+                                    <span class="text-lg text-gray-400 line-through" contenteditable="true">$399</span>
+                                </div>
+                                <button class="bg-gray-900 text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-800 transition w-full md:w-auto property-target" contenteditable="true" data-attribute="href">Add to Cart</button>
+                            </div>
+                        </div>
+                    </section>
+                `
+            },
+            {
+                id: 'pricing',
+                name: 'Pricing Table',
+                icon: 'fa-tags',
+                html: `
+                    <section class="py-20 px-6 bg-white">
+                        <div class="max-w-6xl mx-auto">
+                            <div class="text-center mb-16">
+                                <h2 class="text-3xl font-bold text-gray-900" contenteditable="true">Simple Pricing</h2>
+                            </div>
+                            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                                <!-- Basic -->
+                                <div class="border border-gray-200 rounded-2xl p-8 hover:border-blue-500 transition">
+                                    <h3 class="text-xl font-semibold text-gray-900" contenteditable="true">Starter</h3>
+                                    <div class="mt-4 mb-6"><span class="text-4xl font-bold">$0</span><span class="text-gray-500">/mo</span></div>
+                                    <ul class="space-y-4 mb-8 text-gray-600">
+                                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-500"></i> <span contenteditable="true">1 User</span></li>
+                                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-500"></i> <span contenteditable="true">Basic Features</span></li>
+                                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-500"></i> <span contenteditable="true">Community Support</span></li>
+                                    </ul>
+                                    <button class="w-full py-3 rounded-lg border border-gray-300 font-semibold hover:bg-gray-50 property-target" contenteditable="true" data-attribute="href">Select Plan</button>
+                                </div>
+                                <!-- Pro -->
+                                <div class="border-2 border-blue-600 rounded-2xl p-8 relative shadow-lg">
+                                    <div class="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">POPULAR</div>
+                                    <h3 class="text-xl font-semibold text-gray-900" contenteditable="true">Professional</h3>
+                                    <div class="mt-4 mb-6"><span class="text-4xl font-bold">$29</span><span class="text-gray-500">/mo</span></div>
+                                    <ul class="space-y-4 mb-8 text-gray-600">
+                                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-blue-600"></i> <span contenteditable="true">5 Users</span></li>
+                                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-blue-600"></i> <span contenteditable="true">Advanced Analytics</span></li>
+                                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-blue-600"></i> <span contenteditable="true">Priority Support</span></li>
+                                    </ul>
+                                    <button class="w-full py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 property-target" contenteditable="true" data-attribute="href">Select Plan</button>
+                                </div>
+                                <!-- Enterprise -->
+                                <div class="border border-gray-200 rounded-2xl p-8 hover:border-blue-500 transition">
+                                    <h3 class="text-xl font-semibold text-gray-900" contenteditable="true">Enterprise</h3>
+                                    <div class="mt-4 mb-6"><span class="text-4xl font-bold">$99</span><span class="text-gray-500">/mo</span></div>
+                                    <ul class="space-y-4 mb-8 text-gray-600">
+                                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-500"></i> <span contenteditable="true">Unlimited Users</span></li>
+                                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-500"></i> <span contenteditable="true">Custom Integrations</span></li>
+                                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-500"></i> <span contenteditable="true">24/7 Dedicated Support</span></li>
+                                    </ul>
+                                    <button class="w-full py-3 rounded-lg border border-gray-300 font-semibold hover:bg-gray-50 property-target" contenteditable="true" data-attribute="href">Contact Sales</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                `
+            },
+            {
+                id: 'subscribe',
+                name: 'Newsletter Box',
+                icon: 'fa-envelope',
+                html: `
+                    <section class="py-20 px-6 bg-gray-900 text-white">
+                        <div class="max-w-4xl mx-auto text-center">
+                            <i class="fa-regular fa-paper-plane text-4xl mb-6 text-blue-400"></i>
+                            <h2 class="text-3xl font-bold mb-4" contenteditable="true">Subscribe to our Newsletter</h2>
+                            <p class="text-gray-400 mb-8 max-w-lg mx-auto" contenteditable="true">Get the latest updates, tips, and exclusive offers sent directly to your inbox. No spam, we promise.</p>
+                            <div class="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
+                                <input type="email" placeholder="Enter your email" class="flex-1 px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 property-target" data-attribute="placeholder,type,name">
+                                <button class="bg-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-500 transition property-target" contenteditable="true" data-attribute="href">Subscribe</button>
+                            </div>
+                        </div>
+                    </section>
+                `
+            },
+            {
+                id: 'advert',
+                name: 'Promo Banner',
+                icon: 'fa-bullhorn',
+                html: `
+                    <div class="bg-yellow-400 text-yellow-900 px-6 py-4 text-center relative">
+                        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-center gap-4">
+                            <span class="font-bold text-lg" contenteditable="true">🎉 Black Friday Sale!</span>
+                            <span contenteditable="true">Get 50% off all products for a limited time.</span>
+                            <button class="bg-white text-yellow-900 px-4 py-1 rounded-md text-sm font-bold hover:bg-yellow-50 property-target" contenteditable="true" data-attribute="href">Shop Now</button>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 'alert',
+                name: 'Info Alert / Modal',
+                icon: 'fa-circle-info',
+                html: `
+                   <section class="p-6">
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 max-w-4xl mx-auto rounded-r-lg shadow-sm">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fa-solid fa-circle-info text-blue-500"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-blue-800" contenteditable="true">Important Information</h3>
+                                    <div class="mt-2 text-sm text-blue-700" contenteditable="true">
+                                        <p>This is an alert block. You can use this to highlight critical information, system status, or updates to your users.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                   </section>
+                `
+            },
+            {
+                id: 'footer',
+                name: 'Simple Footer',
+                icon: 'fa-shoe-prints',
+                html: `
+                    <footer class="bg-gray-50 border-t border-gray-200 pt-16 pb-8 px-6">
+                        <div class="max-w-6xl mx-auto grid md:grid-cols-4 gap-8 mb-12">
+                            <div>
+                                <div class="text-xl font-bold text-gray-900 mb-4" contenteditable="true">BrandLogo</div>
+                                <p class="text-gray-500 text-sm" contenteditable="true">Building the future with amazing tools for developers and designers.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 mb-4" contenteditable="true">Product</h4>
+                                <ul class="space-y-2 text-sm text-gray-600">
+                                    <li><a href="#" class="hover:text-blue-600 property-target" contenteditable="true">Features</a></li>
+                                    <li><a href="#" class="hover:text-blue-600 property-target" contenteditable="true">Pricing</a></li>
+                                    <li><a href="#" class="hover:text-blue-600 property-target" contenteditable="true">Documentation</a></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 mb-4" contenteditable="true">Company</h4>
+                                <ul class="space-y-2 text-sm text-gray-600">
+                                    <li><a href="#" class="hover:text-blue-600 property-target" contenteditable="true">About</a></li>
+                                    <li><a href="#" class="hover:text-blue-600 property-target" contenteditable="true">Careers</a></li>
+                                    <li><a href="#" class="hover:text-blue-600 property-target" contenteditable="true">Blog</a></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 mb-4" contenteditable="true">Legal</h4>
+                                <ul class="space-y-2 text-sm text-gray-600">
+                                    <li><a href="#" class="hover:text-blue-600 property-target" contenteditable="true">Privacy</a></li>
+                                    <li><a href="#" class="hover:text-blue-600 property-target" contenteditable="true">Terms</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="max-w-6xl mx-auto pt-8 border-t border-gray-200 text-center text-sm text-gray-500">
+                            <p contenteditable="true">&copy; 2023 Company Name. All rights reserved.</p>
+                        </div>
+                    </footer>
+                `
+            }
+        ];
+
+        // --- Core Application State & Elements ---
+        const sidebarList = document.getElementById('components-list');
+        const canvas = document.getElementById('canvas');
+        const emptyState = document.getElementById('empty-state');
+        const livePreviewPanel = document.getElementById('live-preview-panel');
+        const livePreviewIframe = document.getElementById('live-preview-iframe');
+        const previewText = document.getElementById('preview-text');
+        const propertyEditor = document.getElementById('property-editor');
+        const propertyFields = document.getElementById('property-fields');
+
+        let isPreviewOpen = false;
+        let activePropertyElement = null;
+
+        // --- Initialization ---
+
+        // Render Sidebar Items
+        componentLibrary.forEach(comp => {
+            const div = document.createElement('div');
+            div.className = 'builder-item bg-white p-3 rounded-lg border border-gray-200 shadow-sm hover:shadow-md hover:border-blue-400 flex items-center gap-3 select-none';
+            div.draggable = true;
+            div.setAttribute('data-id', comp.id);
+            div.innerHTML = `
+                <div class="w-8 h-8 bg-gray-100 rounded flex items-center justify-center text-gray-500">
+                    <i class="fa-solid ${comp.icon}"></i>
+                </div>
+                <span class="font-medium text-sm text-gray-700">${comp.name}</span>
+            `;
+
+            div.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', comp.id);
+                e.dataTransfer.effectAllowed = 'copy';
+                closeSettingsPanel(); // Close editor when starting drag
+            });
+
+            sidebarList.appendChild(div);
+        });
+
+        // Add event listener for contentEditable changes and property editing
+        canvas.addEventListener('input', updateLivePreview);
+        canvas.addEventListener('click', handleCanvasClick);
+
+        // --- Live Preview Logic ---
+
+        function toggleLivePreview() {
+            isPreviewOpen = !isPreviewOpen;
+
+            if (isPreviewOpen) {
+                // Open panel
+                livePreviewPanel.classList.remove('w-0');
+                livePreviewPanel.classList.add('w-[400px]');
+                previewText.textContent = 'Hide Live Preview';
+                updateLivePreview();
+            } else {
+                // Close panel
+                livePreviewPanel.classList.add('w-0');
+                livePreviewPanel.classList.remove('w-[400px]');
+                previewText.textContent = 'Show Live Preview';
+            }
+        }
+
+        function getCanvasHtml(isFullDocument = false) {
+            // 1. Clone the canvas content
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = canvas.innerHTML;
+
+            // 2. Remove editor controls and wrappers
+            tempDiv.querySelectorAll('#empty-state').forEach(el => el.remove());
+            tempDiv.querySelectorAll('.item-controls').forEach(el => el.remove());
+
+            const finalContentContainer = document.createElement('div');
+            tempDiv.querySelectorAll('.canvas-item').forEach(item => {
+                const contentDiv = item.lastElementChild;
+                finalContentContainer.innerHTML += contentDiv.innerHTML;
+            });
+
+            // 3. Cleanup: Remove editor-specific attributes and highlights
+            finalContentContainer.querySelectorAll('.property-target').forEach(el => el.classList.remove('property-target', 'active-target'));
+            finalContentContainer.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+            finalContentContainer.querySelectorAll('[data-attribute]').forEach(el => el.removeAttribute('data-attribute'));
+
+
+            const contentHtml = finalContentContainer.innerHTML;
+
+            if (isFullDocument) {
+                // Full HTML for export
+                return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Landing Page</title>
+    <script src="https://cdn.tailwindcss.com"><\/script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"><\/script>
+</head>
+<body class="font-sans antialiased text-gray-800 bg-white">
+    ${contentHtml}
+</body>
+</html>`;
+            } else {
+                // Content HTML for iframe srcdoc
+                // CRITICAL FIX: Escape the closing script tags to avoid premature termination of the main script block
+                const tailwindScript = '<script src="https://cdn.tailwindcss.com"><\/script>';
+                const fontAwesomeScript = '<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"><\/script>';
+                const bodyClasses = 'font-sans antialiased text-gray-800 bg-white';
+
+                return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Live Preview</title>${tailwindScript}${fontAwesomeScript}</head><body class="${bodyClasses}">${contentHtml}</body></html>`;
+            }
+        }
+
+        function updateLivePreview() {
+            if (isPreviewOpen) {
+                const previewHtml = getCanvasHtml(false);
+                // Use srcdoc to update iframe content instantly
+                livePreviewIframe.srcdoc = previewHtml;
+            }
+        }
+
+        function previewPage() {
+            const fullHtml = getCanvasHtml(true);
+            // Create a Blob and open in new tab
+            const blob = new Blob([fullHtml], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+        }
+
+        // --- Drag & Drop Handlers ---
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
+            canvas.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            canvas.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            canvas.classList.remove('drag-over');
+
+            if (emptyState && emptyState.parentNode) {
+                emptyState.remove();
+            }
+
+            const compId = e.dataTransfer.getData('text/plain');
+            const component = componentLibrary.find(c => c.id === compId);
+
+            if (component) {
+                addComponentToCanvas(component);
+            }
+        }
+
+        function addComponentToCanvas(component) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'canvas-item group';
+
+            // Controls (Move Up, Move Down, Delete)
+            const controls = document.createElement('div');
+            controls.className = 'item-controls';
+            controls.innerHTML = `
+                <button onclick="moveUp(this); updateLivePreview();" class="p-1.5 bg-gray-100 hover:bg-white text-gray-600 rounded border border-gray-200" title="Move Up"><i class="fa-solid fa-arrow-up text-xs"></i></button>
+                <button onclick="moveDown(this); updateLivePreview();" class="p-1.5 bg-gray-100 hover:bg-white text-gray-600 rounded border border-gray-200" title="Move Down"><i class="fa-solid fa-arrow-down text-xs"></i></button>
+                <button onclick="deleteItem(this)" class="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded border border-red-200" title="Delete"><i class="fa-solid fa-trash text-xs"></i></button>
+            `;
+
+            // Content Container
+            const content = document.createElement('div');
+            content.innerHTML = component.html;
+
+            wrapper.appendChild(controls);
+            wrapper.appendChild(content);
+            canvas.appendChild(wrapper);
+
+            canvas.scrollTop = canvas.scrollHeight;
+            updateLivePreview();
+        }
+
+        // --- Canvas Item Actions ---
+        function deleteItem(btn) {
+            // Note: updateLivePreview is called inside checkEmpty
+            const item = btn.closest('.canvas-item');
+            item.remove();
+            checkEmpty();
+            closeSettingsPanel();
+        }
+
+        function moveUp(btn) {
+            const item = btn.closest('.canvas-item');
+            if (item.previousElementSibling) {
+                item.parentNode.insertBefore(item, item.previousElementSibling);
+            }
+        }
+
+        function moveDown(btn) {
+            const item = btn.closest('.canvas-item');
+            if (item.nextElementSibling) {
+                item.parentNode.insertBefore(item.nextElementSibling, item);
+            }
+        }
+
+        function clearCanvas() {
+            if (confirm("Are you sure you want to clear the page?")) {
+                canvas.innerHTML = '';
+                canvas.appendChild(emptyState);
+                closeSettingsPanel();
+                updateLivePreview();
+            }
+        }
+
+        function checkEmpty() {
+            if (canvas.children.length === 0) {
+                canvas.appendChild(emptyState);
+            }
+            updateLivePreview();
+        }
+
+
+        // --- Property Editor Logic ---
+
+        function handleCanvasClick(e) {
+            // Check if the click was on an element we want to expose properties for
+            const target = e.target.closest('.property-target');
+
+            // If the user clicked inside the canvas but not a property target, and not contenteditable, do nothing
+            if (e.target.closest('#canvas') && !target && !e.target.hasAttribute('contenteditable')) {
+                return;
+            }
+
+            // Prevent default action (e.g., following a link)
+            if (target) {
+                e.preventDefault();
+                e.stopPropagation();
+                openSettingsPanel(target);
+            } else if (e.target.hasAttribute('contenteditable')) {
+                // If it's a text edit, close the property panel if it's open for a different element
+                if (activePropertyElement && activePropertyElement !== e.target) {
+                    closeSettingsPanel();
+                }
+            } else {
+                // Clicked elsewhere, close panel
+                closeSettingsPanel();
+            }
+        }
+
+        function openSettingsPanel(element) {
+            // 1. Clear previous active element highlight
+            if (activePropertyElement) {
+                activePropertyElement.classList.remove('active-target');
+            }
+
+            // 2. Set new active element and highlight it
+            activePropertyElement = element;
+            activePropertyElement.classList.add('active-target');
+
+            // 3. Determine which attributes to display
+            const tag = element.tagName.toLowerCase();
+            let attributes = [];
+
+            if (element.hasAttribute('data-attribute')) {
+                // Use custom list defined in the template (e.g., 'placeholder,name,type')
+                attributes = element.getAttribute('data-attribute').split(',');
+            } else if (tag === 'a' || tag === 'button') {
+                attributes = ['href', 'target'];
+            } else if (tag === 'input') {
+                attributes = ['placeholder', 'type', 'name'];
+            }
+
+            // 4. Build the form fields
+            propertyFields.innerHTML = '';
+
+            if (attributes.length === 0) {
+                propertyFields.innerHTML = '<p class="text-sm text-gray-500">No configurable properties found for this element.</p>';
+            } else {
+                attributes.forEach(attrName => {
+                    const cleanName = attrName.trim();
+                    const currentValue = element.getAttribute(cleanName) || '';
+
+                    const fieldDiv = document.createElement('div');
+                    fieldDiv.className = 'space-y-1';
+                    fieldDiv.innerHTML = `
+                        <label class="block text-xs font-medium text-gray-700">${cleanName.charAt(0).toUpperCase() + cleanName.slice(1)}</label>
+                        <input type="text" 
+                               data-attr-name="${cleanName}"
+                               value="${currentValue}" 
+                               oninput="updateProperty(this)"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
+                    `;
+                    propertyFields.appendChild(fieldDiv);
+                });
+            }
+
+            // 5. Show the panel
+            propertyEditor.style.display = 'block';
+        }
+
+        function closeSettingsPanel() {
+            if (activePropertyElement) {
+                activePropertyElement.classList.remove('active-target');
+            }
+            activePropertyElement = null;
+            propertyEditor.style.display = 'none';
+        }
+
+        function updateProperty(inputElement) {
+            if (!activePropertyElement) return;
+
+            const attrName = inputElement.getAttribute('data-attr-name');
+            const newValue = inputElement.value;
+
+            if (newValue.trim() === '') {
+                // If value is empty, remove the attribute to keep markup clean
+                activePropertyElement.removeAttribute(attrName);
+            } else {
+                activePropertyElement.setAttribute(attrName, newValue);
+            }
+
+            updateLivePreview();
+        }
+    </script>
+</body>
+
+</html>
