@@ -158,7 +158,7 @@
         <a href="/practice/" style=" font-size: small; font-weight: normal;"><i class="fas fa-home"></i> Back to Practice</a>
         <div class="flex items-center gap-2">
             <i class="fa-solid fa-layer-group text-blue-500 text-xl"></i>
-            <h1 class="font-bold text-lg tracking-wide">PageBuilder <span class="text-xs font-normal text-gray-400">v2.0</span> </h1>
+            <h1 class="font-bold text-lg tracking-wide">PageBuilder <span class="text-xs font-normal text-gray-400">v2.1</span></h1>
         </div>
 
         <div class="flex items-center gap-3">
@@ -334,12 +334,17 @@
                     ).join('');
 
                     const stickyClass = data.isSticky ? 'sticky top-0 z-40 shadow-md' : 'border-b border-gray-200';
+                    const ctaBtn = data.ctaText ? `
+                        <a href="${data.ctaLink || '#'}" class="ml-4 px-4 py-2 rounded text-sm font-bold transition hover:opacity-90" style="background-color: ${data.ctaColor || '#2563eb'}; color: white;">
+                            ${data.ctaText}
+                        </a>` : '';
 
                     return `
                         <nav class="${stickyClass} px-6 py-4 flex justify-between items-center" style="background-color: ${data.bgColor || '#ffffff'};">
                             <div class="font-bold text-xl" style="color: ${data.logoColor || '#1f2937'}">${data.logoText || 'MyBrand'}</div>
-                            <div class="flex gap-2">
+                            <div class="flex items-center gap-2">
                                 ${links}
+                                ${ctaBtn}
                             </div>
                         </nav>
                     `;
@@ -349,7 +354,10 @@
                     { key: 'bgColor', label: 'Background Color', type: 'color', default: '#ffffff' },
                     { key: 'logoColor', label: 'Logo Color', type: 'color', default: '#1f2937' },
                     { key: 'linkColor', label: 'Link Color', type: 'color', default: '#4b5563' },
-                    { key: 'isSticky', label: 'Sticky Navigation', type: 'checkbox', default: false }
+                    { key: 'isSticky', label: 'Sticky Navigation', type: 'checkbox', default: false },
+                    { key: 'ctaText', label: 'CTA Button Text (Optional)', type: 'text', default: '' },
+                    { key: 'ctaLink', label: 'CTA Link', type: 'text', default: '#' },
+                    { key: 'ctaColor', label: 'CTA Button Color', type: 'color', default: '#2563eb' }
                 ]
             },
             'hero': {
@@ -360,7 +368,7 @@
                         : `background-color: ${data.bgColor || '#f3f4f6'};`;
 
                     const overlay = data.bgImage
-                        ? `<div class="absolute inset-0 bg-black" style="opacity: ${data.overlayOpacity || 0.5}"></div>`
+                        ? `<div class="absolute inset-0" style="background-color: ${data.overlayColor || '#000000'}; opacity: ${data.overlayOpacity || 0.5}"></div>`
                         : '';
 
                     const relative = data.bgImage ? 'relative' : '';
@@ -390,6 +398,7 @@
                     { key: 'btnLink', label: 'Button Link (Page)', type: 'pageSelect' },
                     { key: 'bgColor', label: 'Background Color', type: 'color', default: '#f3f4f6' },
                     { key: 'bgImage', label: 'Background Image URL', type: 'text', default: '' },
+                    { key: 'overlayColor', label: 'Overlay Color', type: 'color', default: '#000000' },
                     { key: 'overlayOpacity', label: 'Overlay Opacity', type: 'range', min: '0', max: '0.9', step: '0.1', default: '0.5' },
                     { key: 'textColor', label: 'Text Color', type: 'color', default: '#1f2937' },
                     { key: 'btnColor', label: 'Button Color', type: 'color', default: '#2563eb' },
@@ -434,7 +443,6 @@
                         </div>
                     `;
 
-                    // Generate cards based on column count to allow preview of layout
                     let cardsHtml = '';
                     const count = parseInt(data.cols || 3);
                     for (let i = 1; i <= count; i++) {
@@ -456,7 +464,6 @@
                     { key: 'borderColor', label: 'Border Color', type: 'color', default: '#e5e7eb' },
                     { key: 'iconColor', label: 'Icon Color', type: 'color', default: '#3b82f6' },
                     { key: 'paddingY', label: 'Vertical Padding', type: 'select', options: ['2rem', '4rem', '6rem', '8rem'], default: '4rem' },
-                    // Simplified for 3 main editable ones, normally would dynamic gen props
                     { key: 'title1', label: 'Feat 1 Title', type: 'text', default: 'Fast' },
                     { key: 'desc1', label: 'Feat 1 Desc', type: 'text', default: 'Super fast.' },
                     { key: 'icon1', label: 'Feat 1 Icon (FontAwesome)', type: 'text', default: 'fa-solid fa-bolt' },
@@ -470,19 +477,27 @@
             },
             'subscribe': {
                 name: 'Subscribe Box',
-                html: (data) => `
+                html: (data) => {
+                    const actionScript = data.actionType === 'redirect'
+                        ? `window.location.href='${data.redirectUrl || '#'}'`
+                        : `alert('${data.successMessage || 'Thank you for subscribing!'}')`;
+
+                    return `
                     <div class="px-6 text-center" style="background: ${data.bg || '#1e3a8a'}; color: ${data.textColor || '#ffffff'}; padding-top: ${data.paddingY || '4rem'}; padding-bottom: ${data.paddingY || '4rem'};">
                         <h2 class="text-2xl font-bold mb-4">${data.headline || 'Join our Newsletter'}</h2>
                         <div class="flex flex-col sm:flex-row gap-2 justify-center max-w-md mx-auto">
                             <input type="email" placeholder="${data.placeholder || 'Enter your email'}" class="px-4 py-2 rounded text-gray-800 flex-1 outline-none">
-                            <button class="px-6 py-2 font-bold rounded transition hover:opacity-90" style="background-color: ${data.btnColor || '#eab308'}; color: ${data.btnTextColor || '#111827'}">${data.btnText || 'Subscribe'}</button>
+                            <button onclick="${actionScript}" class="px-6 py-2 font-bold rounded transition hover:opacity-90" style="background-color: ${data.btnColor || '#eab308'}; color: ${data.btnTextColor || '#111827'}">${data.btnText || 'Subscribe'}</button>
                         </div>
                     </div>
-                `,
+                `},
                 props: [
                     { key: 'headline', label: 'Headline', type: 'text', default: 'Join our Newsletter' },
                     { key: 'placeholder', label: 'Input Placeholder', type: 'text', default: 'Enter your email' },
                     { key: 'btnText', label: 'Button Text', type: 'text', default: 'Subscribe' },
+                    { key: 'actionType', label: 'Behavior on Click', type: 'select', options: ['message', 'redirect'], default: 'message' },
+                    { key: 'successMessage', label: 'Success Message (Alert)', type: 'text', default: 'Thanks for subscribing!' },
+                    { key: 'redirectUrl', label: 'Redirect URL (if selected)', type: 'text', default: '#' },
                     { key: 'bg', label: 'Background Color', type: 'color', default: '#1e3a8a' },
                     { key: 'textColor', label: 'Text Color', type: 'color', default: '#ffffff' },
                     { key: 'btnColor', label: 'Button Color', type: 'color', default: '#eab308' },
@@ -491,31 +506,28 @@
                 ]
             },
             'slider': {
-                name: 'Image Slider',
+                name: 'Image Slider (Max 8)',
                 html: (data) => {
                     const height = data.height || 'h-64';
-                    // Helper to generate slides
+
                     const getSlide = (img, txt) => {
                         if (!img) return '';
                         return `
                             <div class="flex-shrink-0 w-full h-full snap-center bg-cover bg-center flex items-end p-8" style="background-image: url('${img}')">
-                                <span class="bg-black/50 text-white px-4 py-2 rounded backdrop-blur-sm">${txt}</span>
+                                <span class="bg-black/50 text-white px-4 py-2 rounded backdrop-blur-sm shadow-lg">${txt}</span>
                             </div>
                         `;
                     };
 
-                    const slides = [
-                        getSlide(data.img1, data.caption1),
-                        getSlide(data.img2, data.caption2),
-                        getSlide(data.img3, data.caption3),
-                        getSlide(data.img4, data.caption4),
-                        getSlide(data.img5, data.caption5)
-                    ].join('');
+                    let slidesHtml = '';
+                    for (let i = 1; i <= 8; i++) {
+                        slidesHtml += getSlide(data[`img${i}`], data[`caption${i}`]);
+                    }
 
                     return `
                         <div class="w-full ${height} relative group bg-gray-100">
                             <div class="flex overflow-x-auto snap-x snap-mandatory h-full w-full scrollbar-hide">
-                                ${slides}
+                                ${slidesHtml || '<div class="w-full h-full flex items-center justify-center text-gray-400">Add images in properties</div>'}
                             </div>
                             <div class="absolute inset-x-0 bottom-4 flex justify-center gap-2 pointer-events-none">
                                 <div class="w-2 h-2 rounded-full bg-white shadow"></div>
@@ -529,7 +541,7 @@
                     `;
                 },
                 props: [
-                    { key: 'height', label: 'Height', type: 'select', options: ['h-48', 'h-64', 'h-80', 'h-96', 'h-[500px]'], default: 'h-64' },
+                    { key: 'height', label: 'Height', type: 'select', options: ['h-48', 'h-64', 'h-80', 'h-96', 'h-[500px]', 'h-[600px]'], default: 'h-64' },
                     { key: 'img1', label: 'Image 1 URL', type: 'text', default: 'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?auto=format&fit=crop&w=800' },
                     { key: 'caption1', label: 'Caption 1', type: 'text', default: 'Slide 1' },
                     { key: 'img2', label: 'Image 2 URL', type: 'text', default: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800' },
@@ -540,15 +552,26 @@
                     { key: 'caption4', label: 'Caption 4', type: 'text', default: 'Slide 4' },
                     { key: 'img5', label: 'Image 5 URL', type: 'text', default: '' },
                     { key: 'caption5', label: 'Caption 5', type: 'text', default: 'Slide 5' },
+                    { key: 'img6', label: 'Image 6 URL', type: 'text', default: '' },
+                    { key: 'caption6', label: 'Caption 6', type: 'text', default: 'Slide 6' },
+                    { key: 'img7', label: 'Image 7 URL', type: 'text', default: '' },
+                    { key: 'caption7', label: 'Caption 7', type: 'text', default: 'Slide 7' },
+                    { key: 'img8', label: 'Image 8 URL', type: 'text', default: '' },
+                    { key: 'caption8', label: 'Caption 8', type: 'text', default: 'Slide 8' },
                 ]
             },
             'testimonial': {
                 name: 'Testimonials',
                 html: (data) => {
-                    const renderTestimonial = (name, role, text) => `
+                    const renderTestimonial = (name, role, text, img) => {
+                        const avatar = img
+                            ? `<img src="${img}" class="w-12 h-12 rounded-full object-cover shadow-sm">`
+                            : `<div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-xl font-bold text-gray-600">${(name || 'User').substring(0, 2)}</div>`;
+
+                        return `
                         <div class="p-6 rounded-lg shadow border" style="background-color: ${data.cardBg || '#ffffff'}; border-color: ${data.cardBorder || '#f3f4f6'}">
                             <div class="flex items-center gap-4 mb-4">
-                                <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-xl font-bold text-gray-600">${(name || 'User').substring(0, 2)}</div>
+                                ${avatar}
                                 <div>
                                     <div class="font-bold" style="color: ${data.textColor || '#111827'}">${name || 'Name'}</div>
                                     <div class="text-sm" style="color: ${data.accentColor || '#2563eb'}">${role || 'Role'}</div>
@@ -556,12 +579,12 @@
                             </div>
                             <p class="italic" style="color: ${data.textColor || '#4b5563'}">"${text || 'Review'}"</p>
                         </div>
-                    `;
+                    `};
 
                     let cards = '';
                     const cols = parseInt(data.cols || 2);
                     for (let i = 1; i <= cols; i++) {
-                        cards += renderTestimonial(data[`name${i}`], data[`role${i}`], data[`text${i}`]);
+                        cards += renderTestimonial(data[`name${i}`], data[`role${i}`], data[`text${i}`], data[`img${i}`]);
                     }
 
                     return `
@@ -584,10 +607,20 @@
                     { key: 'paddingY', label: 'Vertical Padding', type: 'select', options: ['2rem', '4rem', '6rem'], default: '3rem' },
                     { key: 'name1', label: 'Person 1 Name', type: 'text', default: 'John Doe' },
                     { key: 'role1', label: 'Person 1 Role', type: 'text', default: 'CEO' },
+                    { key: 'img1', label: 'Person 1 Image URL (Opt)', type: 'text', default: '' },
                     { key: 'text1', label: 'Person 1 Review', type: 'textarea', default: 'Great service!' },
                     { key: 'name2', label: 'Person 2 Name', type: 'text', default: 'Jane Smith' },
                     { key: 'role2', label: 'Person 2 Role', type: 'text', default: 'Designer' },
-                    { key: 'text2', label: 'Person 2 Review', type: 'textarea', default: 'Loved it.' }
+                    { key: 'img2', label: 'Person 2 Image URL (Opt)', type: 'text', default: '' },
+                    { key: 'text2', label: 'Person 2 Review', type: 'textarea', default: 'Loved it.' },
+                    { key: 'name3', label: 'Person 3 Name', type: 'text', default: 'Bob Ross' },
+                    { key: 'role3', label: 'Person 3 Role', type: 'text', default: 'Artist' },
+                    { key: 'img3', label: 'Person 3 Image URL (Opt)', type: 'text', default: '' },
+                    { key: 'text3', label: 'Person 3 Review', type: 'textarea', default: 'Happy clouds.' },
+                    { key: 'name4', label: 'Person 4 Name', type: 'text', default: 'Alice' },
+                    { key: 'role4', label: 'Person 4 Role', type: 'text', default: 'Manager' },
+                    { key: 'img4', label: 'Person 4 Image URL (Opt)', type: 'text', default: '' },
+                    { key: 'text4', label: 'Person 4 Review', type: 'textarea', default: 'Excellent.' }
                 ]
             },
             'link': {
@@ -624,9 +657,13 @@
             },
             'product': {
                 name: 'Product Card',
-                html: (data) => `
+                html: (data) => {
+                    const badge = data.badgeText ? `<div class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shadow">${data.badgeText}</div>` : '';
+
+                    return `
                     <div class="px-4 flex justify-center" style="padding-top: ${data.paddingY || '3rem'}; padding-bottom: ${data.paddingY || '3rem'}; background-color: ${data.sectionBg || 'transparent'}">
-                        <div class="max-w-sm w-full rounded overflow-hidden shadow-lg border transition hover:shadow-xl" style="background-color: ${data.cardBg || '#ffffff'}; border-color: ${data.borderColor || '#e5e7eb'}">
+                        <div class="max-w-sm w-full rounded overflow-hidden shadow-lg border transition hover:shadow-xl relative" style="background-color: ${data.cardBg || '#ffffff'}; border-color: ${data.borderColor || '#e5e7eb'}">
+                            ${badge}
                             <div class="h-48 flex items-center justify-center text-gray-400 bg-gray-100" style="${data.image ? `background-image: url('${data.image}'); background-size: cover; background-position: center;` : ''}">
                                 ${!data.image ? '<i class="fa-solid fa-image text-4xl"></i>' : ''}
                             </div>
@@ -645,10 +682,11 @@
                             </div>
                         </div>
                     </div>
-                `,
+                `},
                 props: [
                     { key: 'name', label: 'Product Name', type: 'text', default: 'Awesome Product' },
                     { key: 'image', label: 'Image URL', type: 'text', default: '' },
+                    { key: 'badgeText', label: 'Badge (e.g. SALE)', type: 'text', default: '' },
                     { key: 'price', label: 'Price', type: 'number', default: '99' },
                     { key: 'desc', label: 'Description', type: 'textarea', default: 'Great product.' },
                     { key: 'btnText', label: 'Button Text', type: 'text', default: 'Buy Now' },
@@ -697,8 +735,21 @@
             },
             'footer': {
                 name: 'Footer',
-                html: (data) => `
+                html: (data) => {
+                    const makeLink = (text, url) => text ? `<a href="${url || '#'}" class="hover:text-white transition-colors mx-2">${text}</a>` : '';
+
+                    const customLinks = [
+                        makeLink(data.link1Text, data.link1Url),
+                        makeLink(data.link2Text, data.link2Url),
+                        makeLink(data.link3Text, data.link3Url),
+                        makeLink(data.link4Text, data.link4Url)
+                    ].join('');
+
+                    return `
                     <footer class="py-8 px-6 text-center" style="background-color: ${data.bgColor || '#1f2937'}; color: ${data.textColor || '#ffffff'};">
+                        <div class="mb-4 text-sm font-medium opacity-80 flex justify-center flex-wrap gap-4">
+                            ${customLinks}
+                        </div>
                         <p>&copy; ${new Date().getFullYear()} ${data.company || 'My Company'}. All rights reserved.</p>
                         ${data.showSocials !== false ? `
                         <div class="mt-4 flex justify-center gap-4" style="opacity: 0.8">
@@ -707,12 +758,20 @@
                             <a href="#" class="hover:opacity-100 transition"><i class="fa-brands fa-instagram"></i></a>
                         </div>` : ''}
                     </footer>
-                `,
+                `},
                 props: [
                     { key: 'company', label: 'Company Name', type: 'text', default: 'My Company' },
                     { key: 'bgColor', label: 'Background Color', type: 'color', default: '#1f2937' },
                     { key: 'textColor', label: 'Text Color', type: 'color', default: '#ffffff' },
-                    { key: 'showSocials', label: 'Show Icons', type: 'checkbox', default: true }
+                    { key: 'showSocials', label: 'Show Icons', type: 'checkbox', default: true },
+                    { key: 'link1Text', label: 'Link 1 Text', type: 'text', default: '' },
+                    { key: 'link1Url', label: 'Link 1 URL', type: 'text', default: '#' },
+                    { key: 'link2Text', label: 'Link 2 Text', type: 'text', default: '' },
+                    { key: 'link2Url', label: 'Link 2 URL', type: 'text', default: '#' },
+                    { key: 'link3Text', label: 'Link 3 Text', type: 'text', default: '' },
+                    { key: 'link3Url', label: 'Link 3 URL', type: 'text', default: '#' },
+                    { key: 'link4Text', label: 'Link 4 Text', type: 'text', default: '' },
+                    { key: 'link4Url', label: 'Link 4 URL', type: 'text', default: '#' },
                 ]
             }
         };
