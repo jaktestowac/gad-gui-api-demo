@@ -536,7 +536,6 @@
         makeLink("./testagram/", "Testagram", ["API", "session", "advanced"]),
         makeLink("./chirper/", "Chirper", ["API", "session", "advanced"]),
         makeLink("./gad-drawer.html", "Gad Drawer", ["advanced", "canvas"]),
-        // NOTE: Nova Chat and System CMD kept commented out as in original
       ],
     },
   ];
