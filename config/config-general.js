@@ -57,6 +57,7 @@ const configToModify = {
   minSecondsForResourceCreatedRecentlyBug: 3,
   commentsSoftDeleteDelayInSecondsBug: 3,
   diagnosticsEnabled: false,
+  metricsTrackingEnabled: false,
   captchaSolutionInResponse: false,
   maxNumberOfFlashposts: 100,
 };

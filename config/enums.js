@@ -71,6 +71,7 @@ const ConfigKeys = {
   MIN_SECONDS_FOR_RESOURCE_CREATED_RECENTLY_BUG: "minSecondsForResourceCreatedRecentlyBug",
   COMMENTS_SOFT_DELETE_DELAY_IN_SECONDS_BUG: "commentsSoftDeleteDelayInSecondsBug",
   DIAGNOSTICS_ENABLED: "diagnosticsEnabled",
+  METRICS_TRACKING_ENABLED: "metricsTrackingEnabled",
   CAPTCHA_SOLUTION_IN_RESPONSE: "captchaSolutionInResponse",
   MAX_NUMBER_OF_FLASHPOSTS: "maxNumberOfFlashposts",
   SSL_ENABLED: "sslEnabled",

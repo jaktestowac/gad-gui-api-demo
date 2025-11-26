@@ -4492,6 +4492,23 @@
         }
       }
     },
+    "/diagnostic/toggle-metrics": {
+      "get": {
+        "tags": ["diagnostic"],
+        "summary": "Toggle metrics on/off",
+        "operationId": "toggleMetrics",
+        "responses": {
+          "200": {
+            "description": "Metrics toggled",
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ToggleMetrics"
+              }
+            }
+          }
+        }
+      }
+    },
     "/diagnostic/toggle-diagnostics": {
       "get": {
         "tags": ["diagnostic"],
@@ -7397,6 +7414,14 @@
           }
         },
         "required": ["book_id", "mean", "numberOfReviews"]
+      },
+      "ToggleMetrics": {
+        "type": "object",
+        "properties": {
+          "metricsEnabled": {
+            "type": "boolean"
+          }
+        }
       },
       "ToggleDiagnostics": {
         "type": "object",
