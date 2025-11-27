@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>🦎 GAD | Game: Tic Tac Toe (vs Bot API)</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu" role="navigation" aria-label="Games navigation">
+            <h1 id="menu-main-gui" class="nav-menu"></h1>
+        </div>
+
+        <style>
+            .board {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                margin-bottom: 20px;
+                width: 250px;
+            }
+
+            .cell {
+                width: 75px;
+                height: 75px;
+                border: 1px solid black;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 24px;
+                cursor: pointer;
+                color: black !important;
+                font-weight: bold;
+            }
+
+            .cell:hover:not(.disabled) {
+                background-color: #f0f0f0;
+            }
+
+            .cell.disabled {
+                cursor: not-allowed;
+                opacity: 0.6;
+            }
+
+            .score {
+                justify-content: space-between;
+                font-size: 18px;
+                width: 150px;
+            }
+
+            .session-info {
+                margin-bottom: 10px;
+                padding: 8px 15px;
+                background-color: #f5f5f5;
+                border-radius: 5px;
+                font-size: 13px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .session-id {
+                font-family: monospace;
+                font-size: 11px;
+                max-width: 120px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                display: inline-block;
+                vertical-align: middle;
+            }
+
+            .session-info2 {
+                margin-bottom: 10px;
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+
+            .session-info2 select {
+                padding: 4px 8px;
+                font-size: 14px;
+                margin: 0 5px;
+            }
+
+            .button-danger-small {
+                background-color: #dc3545;
+                color: white;
+                border: none;
+                padding: 4px 8px;
+                border-radius: 3px;
+                cursor: pointer;
+                font-size: 12px;
+                margin-left: 5px;
+            }
+
+            .button-danger-small:hover {
+                background-color: #c82333;
+            }
+
+            .button-primary-small {
+                padding: 5px 12px;
+                font-size: 13px;
+                margin: 0 3px;
+                transition: opacity 0.15s ease, transform 0.1s ease;
+            }
+
+            /* Disabled visual state for buttons and selects */
+            .is-disabled {
+                opacity: 0.5;
+                pointer-events: none;
+                transform: translateY(0);
+                filter: grayscale(30%);
+            }
+
+            .button-primary-small.is-disabled,
+            .button-danger-small.is-disabled {
+                background-color: #cccccc !important;
+                color: #666666 !important;
+                cursor: not-allowed !important;
+            }
+
+            .difficulty-select.is-disabled {
+                background-color: #efefef;
+                color: #666;
+                cursor: not-allowed;
+                border-color: #ddd;
+            }
+
+            .button-danger {
+                background-color: #dc3545;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+            }
+
+            .button-danger:hover {
+                background-color: #c82333;
+            }
+
+            .loading {
+                opacity: 0.5;
+                pointer-events: none;
+            }
+
+            .user-logged-in {
+                color: #28a745;
+            }
+
+            .user-guest {
+                color: #6c757d;
+                font-style: italic;
+            }
+
+            .difficulty-select {
+                font-size: 14px;
+                width: 200px;
+            }
+
+            /* Modal styles */
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+            }
+
+            .modal-box {
+                background: #fff;
+                padding: 16px 18px;
+                border-radius: 6px;
+                max-width: 480px;
+                width: 90%;
+                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+                text-align: center;
+            }
+
+            .modal-box p {
+                margin: 0 0 16px;
+            }
+
+            .modal-actions {
+                display: flex;
+                gap: 8px;
+                justify-content: center;
+            }
+
+            .btn-confirm {
+                background: #007bff;
+                color: #fff;
+                border: none;
+                padding: 8px 12px;
+                border-radius: 4px;
+            }
+
+            .btn-confirm:hover {
+                background: #0069d9;
+            }
+
+            .btn-cancel {
+                background: #6c757d;
+                color: #fff;
+                border: none;
+                padding: 8px 12px;
+                border-radius: 4px;
+            }
+
+            .btn-cancel:hover {
+                background: #5a6268;
+            }
+        </style>
+    </header>
+    <div align="center" style="justify-content: center !important; display: flex; align-items: center">
+        <div class="alert" role="alert" data-testid="alert-popup" id="alertPopup" style="position: unset !important; margin: 60px 0px 0px 0px"></div>
+    </div>
+    <div id="container"></div>
+    <div align="center" role="main" aria-labelledby="menu-main-gui">
+        <div class="session-info" id="sessionInfo">
+            <span id="userInfo" style="display: none;">
+                <i class="fas fa-user"></i> <span id="userDisplay">Guest</span> |
+            </span>
+            <strong>Session:</strong> <span id="sessionIdDisplay" class="session-id">Loading...</span> |
+            <strong>Games:</strong> <span id="gamesPlayedDisplay">0</span>
+            <button id="clear-session-button" class="button-danger-small" title="Clear session and reset scores">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+
+        <div class="session-info2" id="sessionInfo2">
+            <label for="difficulty">Difficulty:</label>
+            <select id="difficulty" class="difficulty-select">
+                <option value="chaotic">Chaotic</option>
+                <option value="easy">Easy</option>
+                <option value="difficult">Difficult</option>
+            </select>
+            <button id="start-button" class="button-primary-small" aria-controls="board">Start</button>
+            <button id="stop-button" class="button-primary-small" disabled aria-controls="board">Stop</button>
+            <span style="display: block; font-size: 12px; color: #666; margin-top: 5px;">
+                You: X | Bot: O
+            </span>
+            <label id="messageLbl" style="display: block; margin-top: 5px;" role="status" aria-live="polite">Loading...</label>
+        </div>
+        <br />
+        <br />
+        <div class="board" id="t-board" role="grid" aria-label="Tic Tac Toe board" aria-describedby="messageLbl">
+            <div class="cell disabled" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 1, column 1" data-row="0" data-col="0"></div>
+            <div class="cell disabled" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 1, column 2" data-row="0" data-col="1"></div>
+            <div class="cell disabled" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 1, column 3" data-row="0" data-col="2"></div>
+            <div class="cell disabled" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 2, column 1" data-row="1" data-col="0"></div>
+            <div class="cell disabled" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 2, column 2" data-row="1" data-col="1"></div>
+            <div class="cell disabled" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 2, column 3" data-row="1" data-col="2"></div>
+            <div class="cell disabled" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 3, column 1" data-row="2" data-col="0"></div>
+            <div class="cell disabled" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 3, column 2" data-row="2" data-col="1"></div>
+            <div class="cell disabled" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 3, column 3" data-row="2" data-col="2"></div>
+        </div>
+        <div class="score">
+            <span>Player X: <span id="player-x-score" aria-live="polite" aria-label="Player X score">0</span></span><br />
+            <span>Player O: <span id="player-o-score" aria-live="polite" aria-label="Player O score">0</span></span>
+        </div>
+        <br />
+        <a href="./games.html">
+            <button class="button-primary button-mobile" translateId="btnReturnToGames" style="margin: 10; font-size: 16px">
+                Return to Games
+            </button>
+        </a>
+    </div>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="./js/tic-tac-toe-bot-api.js"></script>
+    <script type="text/javascript" src="/version.js"></script>
+    <script type="text/javascript" src="/username.js"></script>
+    <link rel="stylesheet" href="/css/banner-cookie.css" />
+    <script type="text/javascript" src="/js/banner-cookie.js"></script>
+    <script type="text/javascript" src="/js/darkmode.js"></script>
+    <script type="text/javascript" src="/js/message-notifier.js"></script>
+</body>
+
+</html>

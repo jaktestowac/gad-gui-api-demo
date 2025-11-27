@@ -62,6 +62,7 @@ const { handleLearning } = require("../endpoints/learning/learning-endpoint.help
 const { handlePractice } = require("../endpoints/practice-endpoint.helpers");
 const { handleBugHatchAuth } = require("../endpoints/bug-hatch/auth-endpoint.helpers");
 const { handleBugHatchAdmin } = require("../endpoints/bug-hatch/admin-endpoint.helpers");
+const { handleTicTacToeBot } = require("../endpoints/tic-tac-toe-bot-endpoint.helpers");
 
 const validationsRoutes = (req, res, next) => {
   let userAuth = userBaseAuth;
@@ -163,6 +164,12 @@ const validationsRoutes = (req, res, next) => {
     }
     handleCaptchaVerification(req, res);
     if (res.headersSent === true) {
+      return;
+    }
+
+    // Tic Tac Toe Bot API (must be before general /api/games handler)
+    if (req.url.includes("/api/games/tic-tac-toe-bot")) {
+      handleTicTacToeBot(req, res);
       return;
     }
 
