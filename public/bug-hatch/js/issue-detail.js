@@ -298,6 +298,9 @@
     issueData = data.data;
     renderIssue();
     await fetchActivity(); // refresh activity after update
+    if (window.bhToast) {
+      window.bhToast.show("Issue saved successfully", { type: "success", timeout: 3000 });
+    }
   }
 
   async function submitComment(e) {
