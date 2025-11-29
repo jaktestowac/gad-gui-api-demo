@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="/data/icons/favicon.png" />
     <title>BugHatch – Project</title>
+    <script src="/bug-hatch/js/common.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/bug-hatch/css/bh-fallback.css">
     <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
@@ -24,6 +25,7 @@
             <a href="/" class="gad-link">🦎 GAD</a>
             <a href="/bug-hatch/dashboard.html" class="bh-navbar-brand bh-brand-badge inline-flex items-center gap-2 text-lg font-semibold"><span class="bh-logo-icon text-2xl">🐛</span><span>BugHatch</span></a>
             <div class="flex gap-2">
+                <a href="/bug-hatch/dashboard.html" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">Dashboard</a>
                 <a id="issuesLink" href="/bug-hatch/issues.html" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">Issues</a>
                 <a id="archivedIssuesLink" href="#" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">
                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -31,6 +33,7 @@
                     </svg>
                     Archived
                 </a>
+                <a href="/bug-hatch/invitations.html" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">Invitations</a>
                 <a href="/bug-hatch/profile.html" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">Profile</a>
                 <button id="toggleMembersBtn" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5" title="Show members panel">
                     <i class="fa-solid fa-people-group"></i>&nbsp;

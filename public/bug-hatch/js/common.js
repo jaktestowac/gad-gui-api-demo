@@ -114,3 +114,71 @@ function showConfirmModal(options = {}) {
 }
 
 window.showConfirmModal = showConfirmModal;
+
+function initMobileMenu() {
+  const navbar = document.querySelector(".bh-navbar");
+  if (!navbar) return;
+
+  const navContainer = navbar.querySelector(".max-w-7xl") || navbar.querySelector(":scope > div");
+  if (!navContainer) return;
+
+  const navLinks =
+    navContainer.querySelector(".flex.gap-2") ||
+    navContainer.querySelector(".flex.gap-4") ||
+    navContainer.querySelector(".flex.items-center.gap-4") ||
+    navContainer.querySelector(".flex.items-center.gap-2");
+  if (!navLinks) return;
+
+  // Mark the nav links container for CSS targeting
+  navLinks.classList.add("bh-nav-links");
+
+  // Create hamburger button
+  const hamburger = document.createElement("button");
+  hamburger.type = "button";
+  hamburger.className = "bh-hamburger";
+  hamburger.setAttribute("aria-label", "Toggle navigation menu");
+  hamburger.innerHTML = `
+    <svg class="bh-hamburger-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+    <svg class="bh-hamburger-close" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  `;
+
+  // Insert hamburger before the nav links container
+  navLinks.parentNode.insertBefore(hamburger, navLinks);
+
+  // Toggle menu visibility
+  hamburger.addEventListener("click", () => {
+    navLinks.classList.toggle("bh-nav-open");
+    hamburger.classList.toggle("bh-hamburger-active");
+  });
+
+  // Close menu when clicking a link
+  navLinks.querySelectorAll("a, button").forEach((link) => {
+    link.addEventListener("click", () => {
+      if (window.innerWidth < 768) {
+        navLinks.classList.remove("bh-nav-open");
+        hamburger.classList.remove("bh-hamburger-active");
+      }
+    });
+  });
+
+  // Close menu on resize to desktop
+  window.addEventListener("resize", () => {
+    if (window.innerWidth >= 768) {
+      navLinks.classList.remove("bh-nav-open");
+      hamburger.classList.remove("bh-hamburger-active");
+    }
+  });
+}
+
+// Auto-initialize mobile menu on DOMContentLoaded
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initMobileMenu);
+} else {
+  initMobileMenu();
+}
+
+window.initMobileMenu = initMobileMenu;
