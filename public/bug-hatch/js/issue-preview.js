@@ -100,7 +100,13 @@
           return;
         }
         if (!currentIssueId) return;
-        const ok = confirm("Archive this issue? This can be undone from Archived view.");
+        const ok = await window.showConfirmModal({
+          title: "Archive Issue",
+          message: "Archive this issue? This can be undone from the Archived view.",
+          confirmText: "Archive",
+          cancelText: "Cancel",
+          confirmClass: "bg-amber-600 hover:bg-amber-500",
+        });
         if (!ok) return;
         try {
           const resp = await fetch(`/api/bug-hatch/issues/${encodeURIComponent(currentIssueId)}`, {

@@ -357,7 +357,14 @@
 
   async function deleteComment(commentId) {
     if (isDemo) return;
-    if (!confirm("Delete this comment?")) return;
+    const confirmed = await window.showConfirmModal({
+      title: "Delete Comment",
+      message: "Are you sure you want to delete this comment? This cannot be undone.",
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      confirmClass: "bg-red-600 hover:bg-red-500",
+    });
+    if (!confirmed) return;
     const resp = await fetch(`/api/bug-hatch/comments/${encodeURIComponent(commentId)}`, {
       method: "DELETE",
       credentials: "include",
@@ -407,7 +414,14 @@
           }
         } else {
           // Archive - ask confirmation
-          if (!confirm("Archive this issue? This can be undone later.")) return;
+          const confirmed = await window.showConfirmModal({
+            title: "Archive Issue",
+            message: "Archive this issue? This can be undone later.",
+            confirmText: "Archive",
+            cancelText: "Cancel",
+            confirmClass: "bg-amber-600 hover:bg-amber-500",
+          });
+          if (!confirmed) return;
           try {
             const resp = await fetch(`/api/bug-hatch/issues/${encodeURIComponent(issueId)}`, {
               method: "DELETE",

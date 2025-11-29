@@ -81,10 +81,19 @@
 
   async function unarchiveIssue(issueId) {
     if (isDemo || forceDemo) {
-      alert("Cannot unarchive issues in demo mode");
+      if (window.bhToast) {
+        window.bhToast.show("Cannot unarchive issues in demo mode", { type: "error" });
+      }
       return;
     }
-    if (!confirm("Are you sure you want to unarchive this issue?")) return;
+    const confirmed = await window.showConfirmModal({
+      title: "Unarchive Issue",
+      message: "Are you sure you want to unarchive this issue? It will be moved back to active issues.",
+      confirmText: "Unarchive",
+      cancelText: "Cancel",
+      confirmClass: "bg-emerald-600 hover:bg-emerald-500",
+    });
+    if (!confirmed) return;
 
     try {
       const resp = await fetch(`/api/bug-hatch/issues/${encodeURIComponent(issueId)}/unarchive`, {

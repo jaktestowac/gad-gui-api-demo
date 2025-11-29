@@ -216,7 +216,14 @@
             };
 
             window.rejectInvitation = async function (token) {
-                if (!confirm('Are you sure you want to decline this invitation?')) return;
+                const confirmed = await window.showConfirmModal({
+                    title: 'Decline Invitation',
+                    message: 'Are you sure you want to decline this invitation?',
+                    confirmText: 'Decline',
+                    cancelText: 'Cancel',
+                    confirmClass: 'bg-red-600 hover:bg-red-500'
+                });
+                if (!confirmed) return;
 
                 try {
                     const resp = await fetch(`/api/bug-hatch/invitations/${encodeURIComponent(token)}/reject`, {

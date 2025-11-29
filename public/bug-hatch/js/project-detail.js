@@ -1170,9 +1170,14 @@
   async function cancelInvitation(invitationId) {
     if (!invitationId) return;
 
-    if (!confirm("Are you sure you want to cancel this invitation?")) {
-      return;
-    }
+    const confirmed = await window.showConfirmModal({
+      title: "Cancel Invitation",
+      message: "Are you sure you want to cancel this invitation?",
+      confirmText: "Cancel Invitation",
+      cancelText: "Keep",
+      confirmClass: "bg-red-600 hover:bg-red-500",
+    });
+    if (!confirmed) return;
 
     try {
       const resp = await fetch(
