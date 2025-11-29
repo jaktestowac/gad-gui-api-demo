@@ -1041,6 +1041,18 @@
         }
       });
     }
+
+    // Add member form submit handler
+    const addMemberForm = qs("#addMemberForm");
+    if (addMemberForm) {
+      addMemberForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = qs("#memberEmail").value.trim();
+        if (email) {
+          await addMember(email);
+        }
+      });
+    }
   }
 
   function setupQuickCreateToggle() {

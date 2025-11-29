@@ -161,6 +161,7 @@
     qs("#fieldPriority").value = issueData.priority;
     qs("#fieldAssignee").value = issueData.assigneeId || "";
     qs("#fieldLabels").value = (issueData.labels || []).join(", ");
+    qs("#fieldStoryPoints").value = issueData.storyPoints || "";
     qs("#fieldDescription").value = issueData.description || "";
     const currentStatusEl = qs("#currentStatus");
     currentStatusEl.textContent = issueData.status;
@@ -259,6 +260,7 @@
   }
 
   function collectPatch() {
+    const storyPointsVal = qs("#fieldStoryPoints").value.trim();
     return {
       title: qs("#fieldTitle").value.trim(),
       type: qs("#fieldType").value,
@@ -268,6 +270,7 @@
         .value.split(",")
         .map((l) => l.trim())
         .filter(Boolean),
+      storyPoints: storyPointsVal ? parseInt(storyPointsVal, 10) : null,
       description: qs("#fieldDescription").value.trim(),
     };
   }

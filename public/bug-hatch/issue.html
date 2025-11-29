@@ -24,6 +24,7 @@
             <a href="/bug-hatch/dashboard.html" class="bh-navbar-brand bh-brand-badge inline-flex items-center gap-2 text-lg font-semibold"><span class="bh-logo-icon text-2xl">🐛</span><span>BugHatch</span></a>
             <div class="flex gap-2">
                 <a href="/bug-hatch/issues.html" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">Issues</a>
+                <a href="/bug-hatch/profile.html" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">Profile</a>
                 <button id="logoutBtn" class="bh-btn bh-btn-danger bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium bg-red-600 hover:bg-red-500 text-white px-2.5 py-1.5">Logout</button>
             </div>
         </div>
@@ -72,6 +73,7 @@
                         </select>
                     </label>
                     <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Labels (comma)</span><input id="fieldLabels" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" /></label>
+                    <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Story Points</span><input id="fieldStoryPoints" type="number" min="0" max="100" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" placeholder="0" /></label>
                     <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Description</span><textarea id="fieldDescription" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" rows="6"></textarea></label>
                     <div id="editError" class="bh-alert bh-alert-error bh-hidden rounded-md border border-red-500/40 bg-red-500/10 text-red-200 text-sm px-3 py-2" style="display:none;"></div>
                     <div class="bh-flex bh-gap-sm bh-justify-end flex items-center justify-end gap-2">

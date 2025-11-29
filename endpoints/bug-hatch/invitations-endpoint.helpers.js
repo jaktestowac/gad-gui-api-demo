@@ -13,6 +13,7 @@ const {
   acceptInvitationService,
   rejectInvitationService,
   cancelInvitationService,
+  getMyInvitationsService,
 } = require("./services/invitation.service");
 const { verifyToken } = require("../../helpers/jwtauth");
 
@@ -208,10 +209,40 @@ function getCurrentUserFromReq(req) {
   return base;
 }
 
+/**
+ * Get current user's pending invitations
+ * GET /api/bug-hatch/invitations/my
+ */
+async function handleGetMyInvitations(req, res) {
+  try {
+    const user = getCurrentUserFromReq(req);
+    if (!user) {
+      res.status(HTTP_UNAUTHORIZED).send(formatErrorResponse("Authentication required"));
+      return;
+    }
+
+    const result = await getMyInvitationsService(user);
+
+    if (!result.success) {
+      res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(result.error));
+      return;
+    }
+
+    res.status(HTTP_OK).send({
+      ok: true,
+      data: { invitations: result.invitations },
+    });
+  } catch (error) {
+    logError("BugHatch get my invitations error:", error);
+    res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to get invitations"));
+  }
+}
+
 module.exports = {
   handleCreateInvitation,
   handleGetProjectInvitations,
   handleAcceptInvitation,
   handleRejectInvitation,
   handleCancelInvitation,
+  handleGetMyInvitations,
 };

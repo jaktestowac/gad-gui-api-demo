@@ -261,10 +261,38 @@ async function cancelInvitationService(invitationId, currentUser) {
   }
 }
 
+/**
+ * Get current user's pending invitations
+ * @param {object} currentUser - Current user
+ * @returns {Promise<object>} { success: boolean, invitations?: array, error?: string }
+ */
+async function getMyInvitationsService(currentUser) {
+  try {
+    const invitations = findBugHatchInvitationsByEmail(currentUser.email);
+
+    // Enrich invitations with project info
+    const enriched = invitations.map((inv) => {
+      const project = findBugHatchProjectById(inv.projectId);
+      return {
+        ...inv,
+        projectName: project ? project.name : "Unknown Project",
+        projectKey: project ? project.key : "???",
+      };
+    });
+
+    logDebug("User invitations retrieved:", { email: currentUser.email, count: enriched.length });
+    return { success: true, invitations: enriched };
+  } catch (error) {
+    logDebug("Error getting user invitations:", error);
+    return { success: false, error: error.message || "Failed to get invitations" };
+  }
+}
+
 module.exports = {
   createInvitationService,
   getProjectInvitationsService,
   acceptInvitationService,
   rejectInvitationService,
   cancelInvitationService,
+  getMyInvitationsService,
 };
