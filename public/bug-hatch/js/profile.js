@@ -33,6 +33,9 @@ async function initProfilePage() {
       }
     }
 
+    // Setup user menu dropdown
+    if (window.setupUserMenu) window.setupUserMenu(currentUser);
+
     // Load user profile
     await loadUserProfile();
 

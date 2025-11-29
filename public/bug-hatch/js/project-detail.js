@@ -30,6 +30,10 @@
       window.location.href = "/bug-hatch/login.html";
       return false;
     }
+
+    // Setup user menu dropdown
+    if (window.setupUserMenu) window.setupUserMenu(currentUser);
+
     const logoutBtn = qs("#logoutBtn");
     if (logoutBtn) logoutBtn.addEventListener("click", window.bugHatchAuth.handleLogout);
     return true;

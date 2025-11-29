@@ -46,6 +46,10 @@
     }
     // If forced demo through query, treat as demo (read-only) even if user isn't a demo user
     isDemo = !!currentUser.isDemo || forceDemo;
+
+    // Setup user menu dropdown
+    if (window.setupUserMenu) window.setupUserMenu(currentUser);
+
     const logout = qs("#logoutBtn");
     if (logout) logout.addEventListener("click", window.bugHatchAuth.handleLogout);
     return true;

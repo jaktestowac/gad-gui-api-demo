@@ -182,3 +182,175 @@ if (document.readyState === "loading") {
 }
 
 window.initMobileMenu = initMobileMenu;
+
+// ==================== USER MENU DROPDOWN ====================
+
+/**
+ * Initialize the user menu dropdown with user info
+ * @param {Object} user - User object with name, email, role
+ * @param {Function} onLogout - Callback for logout action
+ */
+function initUserMenu(user, onLogout) {
+  const userMenu = document.getElementById("userMenu");
+  if (!userMenu) return;
+
+  const trigger = userMenu.querySelector(".bh-user-menu-trigger");
+  const nameEl = userMenu.querySelector(".bh-user-name");
+  const avatarEl = userMenu.querySelector(".bh-user-avatar");
+  const emailEl = userMenu.querySelector(".bh-user-dropdown-email");
+  const roleEl = userMenu.querySelector(".bh-user-dropdown-role");
+  const logoutBtn = userMenu.querySelector("[data-logout]");
+
+  if (user) {
+    // Set user info
+    const displayName = user.name || user.email?.split("@")[0] || "User";
+    const initials = displayName
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .substring(0, 2);
+
+    if (nameEl) nameEl.textContent = displayName;
+    if (avatarEl) avatarEl.textContent = initials;
+    if (emailEl) emailEl.textContent = user.email || "";
+    if (roleEl) {
+      const roleName = user.isDemo ? "Demo" : user.role || "member";
+      roleEl.textContent = roleName;
+      roleEl.classList.toggle("bh-role-admin", user.role === "admin");
+    }
+  }
+
+  // Toggle dropdown
+  if (trigger) {
+    trigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      userMenu.classList.toggle("bh-open");
+    });
+  }
+
+  // Close when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!userMenu.contains(e.target)) {
+      userMenu.classList.remove("bh-open");
+    }
+  });
+
+  // Close on escape
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      userMenu.classList.remove("bh-open");
+    }
+  });
+
+  // Logout handler
+  if (logoutBtn && onLogout) {
+    logoutBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      userMenu.classList.remove("bh-open");
+      onLogout();
+    });
+  }
+}
+
+/**
+ * Get user menu HTML template
+ * @returns {string} HTML for user menu
+ */
+function getUserMenuHTML() {
+  return `
+    <div class="bh-user-menu" id="userMenu">
+      <button type="button" class="bh-user-menu-trigger">
+        <span class="bh-user-avatar">U</span>
+        <span class="bh-user-name">User</span>
+        <svg class="bh-user-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      <div class="bh-user-dropdown">
+        <div class="bh-user-dropdown-header">
+          <div class="bh-user-dropdown-email">user@example.com</div>
+          <span class="bh-user-dropdown-role">member</span>
+        </div>
+        <a href="/bug-hatch/profile.html" class="bh-user-dropdown-item">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+          Profile
+        </a>
+        <div class="bh-user-dropdown-divider"></div>
+        <button type="button" class="bh-user-dropdown-item bh-logout" data-logout>
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          Logout
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+window.initUserMenu = initUserMenu;
+window.getUserMenuHTML = getUserMenuHTML;
+
+/**
+ * Setup user menu with user data - call after authentication
+ * Populates user avatar, name, email, role and sets up dropdown behavior
+ * @param {Object} user - User object from auth
+ */
+function setupUserMenu(user) {
+  const userMenu = document.getElementById("userMenu");
+  if (!userMenu || !user) return;
+
+  const displayName = user.name || user.email?.split("@")[0] || "User";
+  const initials = displayName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .substring(0, 2)
+    .toUpperCase();
+
+  // Update avatar
+  const avatar = userMenu.querySelector(".bh-user-avatar");
+  if (avatar) avatar.textContent = initials;
+
+  // Update name
+  const nameEl = userMenu.querySelector(".bh-user-name");
+  if (nameEl) nameEl.textContent = displayName;
+
+  // Update email in dropdown
+  const emailEl = userMenu.querySelector(".bh-user-dropdown-email");
+  if (emailEl) emailEl.textContent = user.email || "";
+
+  // Update role
+  const roleEl = userMenu.querySelector(".bh-user-dropdown-role");
+  if (roleEl) {
+    const isDemo = user.isDemo === true;
+    roleEl.textContent = isDemo ? "Demo" : user.role || "member";
+    roleEl.classList.toggle("bh-role-admin", user.role === "admin");
+  }
+
+  // Setup dropdown toggle
+  const trigger = userMenu.querySelector(".bh-user-menu-trigger");
+  if (trigger) {
+    trigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      userMenu.classList.toggle("bh-open");
+    });
+  }
+
+  // Close on outside click
+  document.addEventListener("click", (e) => {
+    if (!userMenu.contains(e.target)) {
+      userMenu.classList.remove("bh-open");
+    }
+  });
+
+  // Close on escape
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      userMenu.classList.remove("bh-open");
+    }
+  });
+}
+
+window.setupUserMenu = setupUserMenu;

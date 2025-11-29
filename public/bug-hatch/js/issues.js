@@ -66,6 +66,10 @@
     const u = new URL(window.location.href);
     forceDemo = u.searchParams.get("demo") === "true";
     isDemo = !!currentUser.isDemo || forceDemo;
+
+    // Setup user menu dropdown
+    if (window.setupUserMenu) window.setupUserMenu(currentUser);
+
     const logoutBtn = document.getElementById("logoutBtn");
     if (logoutBtn) logoutBtn.addEventListener("click", window.bugHatchAuth.handleLogout);
     return true;
