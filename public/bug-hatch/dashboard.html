@@ -25,6 +25,7 @@
             <a href="/bug-hatch/dashboard.html" class="bh-navbar-brand bh-brand-badge inline-flex items-center gap-2 text-lg font-semibold"><span class="bh-logo-icon text-2xl">🐛</span><span>BugHatch</span></a>
             <div class="flex gap-2">
                 <a href="/bug-hatch/issues.html" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">Issues</a>
+                <a href="/bug-hatch/analytics.html" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">Analytics</a>
                 <a href="/bug-hatch/invitations.html" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5" id="invitations-link">Invitations</a>
                 <a href="/bug-hatch/profile.html" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">Profile</a>
                 <span class="bh-badge" id="user-info" data-testid="user-info">Loading...</span>
@@ -69,6 +70,7 @@
                 <button class="bh-btn bh-btn-secondary" id="create-issue-btn" data-testid="create-issue-button">🐛 Create Issue</button>
                 <button class="bh-btn bh-btn-secondary" id="view-projects-btn" data-testid="view-projects-button">📋 View All Projects</button>
                 <button class="bh-btn bh-btn-secondary" id="view-issues-btn" data-testid="view-issues-button">🔍 View Issues</button>
+                <button class="bh-btn bh-btn-secondary" id="view-analytics-btn" data-testid="view-analytics-button">📊 View Analytics</button>
             </div>
             <div class="bh-alert bh-alert-info bh-hidden" id="quick-actions-info">
                 💡 <strong>Quick Actions:</strong> Use these buttons to quickly perform common tasks.
@@ -223,6 +225,7 @@
                 const createIssueBtn = document.getElementById('create-issue-btn');
                 const viewProjectsBtn = document.getElementById('view-projects-btn');
                 const viewIssuesBtn = document.getElementById('view-issues-btn');
+                const viewAnalyticsBtn = document.getElementById('view-analytics-btn');
                 const quickActionsInfo = document.getElementById('quick-actions-info');
 
                 quickActionsInfo.classList.remove('bh-hidden');
@@ -246,6 +249,9 @@
                 });
                 viewIssuesBtn.addEventListener('click', () => {
                     window.location.href = `/bug-hatch/issues.html${forceDemo ? '?demo=true' : ''}`;
+                });
+                viewAnalyticsBtn.addEventListener('click', () => {
+                    window.location.href = `/bug-hatch/analytics.html${forceDemo ? '?demo=true' : ''}`;
                 });
             }
             setupQuickActions();

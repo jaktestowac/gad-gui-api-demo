@@ -515,7 +515,7 @@ const validationsRoutes = (req, res, next) => {
       }
 
       // BugHatch metrics endpoint
-      if (req.method === "GET" && req.url === "/api/bug-hatch/metrics") {
+      if (req.method === "GET" && req.url.startsWith("/api/bug-hatch/metrics")) {
         const { handleGetMetrics } = require("../endpoints/bug-hatch/metrics-endpoint.helpers");
         handleGetMetrics(req, res);
         return;

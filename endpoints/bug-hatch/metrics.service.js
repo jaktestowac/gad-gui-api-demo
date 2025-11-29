@@ -1,34 +1,39 @@
 "use strict";
 
-const { readBugHatchDb } = require("./db-operations");
+const { readBugHatchDb } = require("./db-bug-hatch.operations");
 
 /**
- * Get metrics for all projects the user has access to
+ * Get metrics for all projects the user has access to, or a specific project
  * @param {object} currentUser - Authenticated user
+ * @param {string|null} projectId - Optional specific project ID to filter by
  * @returns {Promise<object>} Metrics data
  */
-async function getMetricsService(currentUser) {
+async function getMetricsService(currentUser, projectId = null) {
   const db = await readBugHatchDb();
   const projects = db.projects || [];
   const issues = db.issues || [];
-  const projectMembers = db.projectMembers || [];
 
   // Get projects user has access to
-  const userProjectIds = new Set();
-  for (const pm of projectMembers) {
-    if (pm.userId === currentUser.id) {
-      userProjectIds.add(pm.projectId);
-    }
-  }
-  // Also include projects the user owns
-  for (const p of projects) {
-    if (p.ownerId === currentUser.id) {
-      userProjectIds.add(p.id);
-    }
+  // Projects have a members array with user IDs, and also check if user is the creator
+  let accessibleProjects = projects.filter((p) => {
+    // Demo projects are accessible to all
+    if (p.demo) return true;
+    // Admins can see all projects
+    if (currentUser.role === "admin") return true;
+    // User is a member of the project
+    if (p.members && p.members.includes(currentUser.id)) return true;
+    // User is the creator of the project
+    if (p.createdBy === currentUser.id) return true;
+    return false;
+  });
+
+  // If projectId is provided, filter to just that project
+  if (projectId) {
+    accessibleProjects = accessibleProjects.filter((p) => p.id === projectId);
   }
 
-  const accessibleProjects = projects.filter((p) => userProjectIds.has(p.id));
-  const accessibleIssues = issues.filter((i) => userProjectIds.has(i.projectId));
+  const accessibleProjectIds = new Set(accessibleProjects.map((p) => p.id));
+  const accessibleIssues = issues.filter((i) => accessibleProjectIds.has(i.projectId));
 
   // Calculate global metrics
   const statusCounts = {};

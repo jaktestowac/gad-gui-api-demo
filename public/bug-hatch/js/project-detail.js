@@ -110,6 +110,12 @@
         forceDemo ? "&demo=true" : ""
       }`;
     }
+    const analyticsLink = qs("#analyticsLink");
+    if (analyticsLink) {
+      analyticsLink.href = `/bug-hatch/analytics.html?projectId=${encodeURIComponent(p.id)}${
+        forceDemo ? "&demo=true" : ""
+      }`;
+    }
   }
 
   function clearBoardError() {
