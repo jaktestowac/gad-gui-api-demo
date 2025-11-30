@@ -119,6 +119,42 @@ const gadTalkGads = (function () {
       `;
     }
 
+    // Image attachment
+    let imageHtml = "";
+    if (gad.imageUrl) {
+      imageHtml = `
+        <div class="gt-gad-image">
+          <img src="${gad.imageUrl}" alt="Gad image" loading="lazy" />
+        </div>
+      `;
+    }
+
+    // Quoted gad
+    let quotedGadHtml = "";
+    if (gad.quotedGad) {
+      const qg = gad.quotedGad;
+      const qgUser = qg.user || {};
+      const qgDisplayName = qgUser.displayName || qgUser.username || "Unknown";
+      const qgUsername = qgUser.username || "unknown";
+      const qgTimeAgo = formatRelativeTime(qg.createdAt);
+      const qgContent = parseContent(qg.content);
+
+      quotedGadHtml = `
+        <a href="/gad-talk/gad.html?id=${qg.id}" class="gt-quoted-gad" data-testid="quoted-gad-${qg.id}">
+          <div class="gt-quoted-gad-header">
+            <span class="gt-quoted-gad-author">
+              <span class="gt-gad-display-name">${qgDisplayName}</span>
+              <span class="gt-gad-username">@${qgUsername}</span>
+            </span>
+            <span class="gt-gad-separator">·</span>
+            <span class="gt-gad-time">${qgTimeAgo}</span>
+          </div>
+          <div class="gt-quoted-gad-content">${qgContent}</div>
+          ${qg.imageUrl ? `<div class="gt-quoted-gad-image"><img src="${qg.imageUrl}" alt="" /></div>` : ""}
+        </a>
+      `;
+    }
+
     return `
       <article class="gt-gad" data-gad-id="${gad.id}" data-testid="gad-${gad.id}">
         ${regadIndicator}
@@ -161,9 +197,9 @@ const gadTalkGads = (function () {
               }
             </div>
             ${replyIndicator}
-            <div class="gt-gad-text">
-              ${content}
-            </div>
+            <div class="gt-gad-text">${content}</div>
+            ${imageHtml}
+            ${quotedGadHtml}
             <div class="gt-gad-actions">
               <button class="gt-gad-action gt-gad-action-reply" data-action="reply" data-gad-id="${
                 gad.id
@@ -171,12 +207,22 @@ const gadTalkGads = (function () {
                 <span class="gt-action-icon"><i class="fa-solid fa-comment"></i></span>
                 <span class="gt-action-count">${formatCount(gad.replyCount || 0)}</span>
               </button>
-              <button class="gt-gad-action gt-gad-action-regad ${
-                isRegadded ? "gt-active" : ""
-              }" data-action="regad" data-gad-id="${gad.id}" data-testid="regad-${gad.id}">
-                <span class="gt-action-icon"><i class="fa-solid fa-retweet"></i></span>
-                <span class="gt-action-count">${formatCount(gad.regadCount || 0)}</span>
-              </button>
+              <div class="gt-gad-action-container gt-gad-action-regad-container">
+                <button class="gt-gad-action gt-gad-action-regad ${
+                  isRegadded ? "gt-active" : ""
+                }" data-action="regad-menu" data-gad-id="${gad.id}" data-testid="regad-${gad.id}">
+                  <span class="gt-action-icon"><i class="fa-solid fa-retweet"></i></span>
+                  <span class="gt-action-count">${formatCount(gad.regadCount || 0)}</span>
+                </button>
+                <div class="gt-dropdown gt-dropdown-up gt-hidden" data-regad-dropdown="${gad.id}">
+                  <button class="gt-dropdown-item" data-action="regad" data-gad-id="${gad.id}">
+                    <span><i class="fa-solid fa-retweet"></i></span> ${isRegadded ? "Undo Regad" : "Regad"}
+                  </button>
+                  <button class="gt-dropdown-item" data-action="quote" data-gad-id="${gad.id}">
+                    <span><i class="fa-solid fa-quote-left"></i></span> Quote
+                  </button>
+                </div>
+              </div>
               <button class="gt-gad-action gt-gad-action-like ${
                 isLiked ? "gt-active" : ""
               }" data-action="like" data-gad-id="${gad.id}" data-testid="like-${gad.id}">
@@ -229,18 +275,34 @@ const gadTalkGads = (function () {
       btn.addEventListener("click", handleGadAction);
     });
 
-    // Menu buttons
+    // Dropdown items (regad/quote menu, and delete menu)
+    container.querySelectorAll(".gt-dropdown-item").forEach((item) => {
+      item.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const action = item.dataset.action;
+
+        if (action === "delete") {
+          handleMenuAction(e);
+        } else if (action === "regad" || action === "quote") {
+          // Simulate action button click
+          handleGadAction({ preventDefault: () => {}, stopPropagation: () => {}, currentTarget: item });
+        }
+      });
+    });
+
+    // Menu buttons (three dots)
     container.querySelectorAll(".gt-gad-menu-btn").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
+        closeAllDropdowns();
         const dropdown = btn.nextElementSibling;
         dropdown.classList.toggle("gt-hidden");
       });
     });
 
-    // Menu actions
-    container.querySelectorAll(".gt-dropdown-item").forEach((item) => {
-      item.addEventListener("click", handleMenuAction);
+    // Close dropdowns when clicking outside
+    document.addEventListener("click", () => {
+      closeAllDropdowns();
     });
   }
 
@@ -249,6 +311,7 @@ const gadTalkGads = (function () {
    */
   async function handleGadAction(event) {
     event.preventDefault();
+    event.stopPropagation();
     const btn = event.currentTarget;
     const action = btn.dataset.action;
     const gadId = btn.dataset.gadId;
@@ -268,8 +331,16 @@ const gadTalkGads = (function () {
         case "like":
           await handleLike(btn, gadId);
           break;
+        case "regad-menu":
+          handleRegadMenu(btn, gadId);
+          break;
         case "regad":
           await handleRegad(btn, gadId);
+          closeAllDropdowns();
+          break;
+        case "quote":
+          closeAllDropdowns();
+          openQuoteModal(gadId);
           break;
         case "reply":
           handleReply(gadId);
@@ -284,6 +355,24 @@ const gadTalkGads = (function () {
     } catch (error) {
       console.error(`Error handling ${action}:`, error);
     }
+  }
+
+  /**
+   * Handle regad menu toggle
+   */
+  function handleRegadMenu(btn, gadId) {
+    closeAllDropdowns();
+    const dropdown = document.querySelector(`[data-regad-dropdown="${gadId}"]`);
+    if (dropdown) {
+      dropdown.classList.toggle("gt-hidden");
+    }
+  }
+
+  /**
+   * Close all dropdown menus
+   */
+  function closeAllDropdowns() {
+    document.querySelectorAll(".gt-dropdown").forEach((d) => d.classList.add("gt-hidden"));
   }
 
   /**
@@ -455,13 +544,19 @@ const gadTalkGads = (function () {
   /**
    * Initialize compose form
    */
-  function initComposeForm(formId, textareaId, charCountId, submitBtnId) {
+  function initComposeForm(formId, textareaId, charCountId, submitBtnId, options = {}) {
     const form = document.getElementById(formId);
     const textarea = document.getElementById(textareaId);
     const charCount = document.getElementById(charCountId);
     const submitBtn = document.getElementById(submitBtnId);
 
     if (!form || !textarea) return;
+
+    // Get optional elements based on options
+    const imageUrlInput = options.imageUrlInputId ? document.getElementById(options.imageUrlInputId) : null;
+    const imagePreview = options.imagePreviewId ? document.getElementById(options.imagePreviewId) : null;
+    const quotedGadIdInput = options.quotedGadIdInputId ? document.getElementById(options.quotedGadIdInputId) : null;
+    const quotePreview = options.quotePreviewId ? document.getElementById(options.quotePreviewId) : null;
 
     // Update character count
     textarea.addEventListener("input", () => {
@@ -476,6 +571,30 @@ const gadTalkGads = (function () {
       }
     });
 
+    // Handle image preview removal
+    if (imagePreview) {
+      const removeBtn = imagePreview.querySelector(".gt-remove-image");
+      if (removeBtn) {
+        removeBtn.addEventListener("click", () => {
+          if (imageUrlInput) imageUrlInput.value = "";
+          imagePreview.classList.add("gt-hidden");
+          const img = imagePreview.querySelector("img");
+          if (img) img.src = "";
+        });
+      }
+    }
+
+    // Handle quote preview removal
+    if (quotePreview) {
+      quotePreview.addEventListener("click", (e) => {
+        if (e.target.closest(".gt-remove-quote")) {
+          if (quotedGadIdInput) quotedGadIdInput.value = "";
+          quotePreview.classList.add("gt-hidden");
+          quotePreview.innerHTML = "";
+        }
+      });
+    }
+
     // Handle submit
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -484,15 +603,35 @@ const gadTalkGads = (function () {
       if (!content || content.length > MAX_GAD_LENGTH) return;
 
       submitBtn.disabled = true;
+      const originalBtnText = submitBtn.textContent;
       submitBtn.textContent = "Posting...";
 
+      // Gather optional data
+      const imageUrl = imageUrlInput?.value?.trim() || null;
+      const quotedGadId = quotedGadIdInput?.value?.trim() || null;
+
       try {
-        const gad = await window.GadTalkAPI.gads.create(content);
+        const gad = await window.GadTalkAPI.gads.create(content, null, imageUrl, quotedGadId);
 
         // Clear form
         textarea.value = "";
         if (charCount) charCount.textContent = MAX_GAD_LENGTH;
-        submitBtn.textContent = "Gad";
+        submitBtn.textContent = originalBtnText;
+
+        // Clear image
+        if (imageUrlInput) imageUrlInput.value = "";
+        if (imagePreview) {
+          imagePreview.classList.add("gt-hidden");
+          const img = imagePreview.querySelector("img");
+          if (img) img.src = "";
+        }
+
+        // Clear quote
+        if (quotedGadIdInput) quotedGadIdInput.value = "";
+        if (quotePreview) {
+          quotePreview.classList.add("gt-hidden");
+          quotePreview.innerHTML = "";
+        }
 
         // Add new gad to feed
         const gadsList = document.getElementById("gads-list");
@@ -507,15 +646,103 @@ const gadTalkGads = (function () {
         if (modal && !modal.classList.contains("gt-hidden")) {
           modal.classList.add("gt-hidden");
         }
+        const quoteModal = document.getElementById("quote-modal");
+        if (quoteModal && !quoteModal.classList.contains("gt-hidden")) {
+          quoteModal.classList.add("gt-hidden");
+        }
 
         showToast("Gad posted!");
       } catch (error) {
         console.error("Error posting gad:", error);
         showToast("Failed to post gad", "error");
         submitBtn.disabled = false;
-        submitBtn.textContent = "Gad";
+        submitBtn.textContent = originalBtnText;
       }
     });
+  }
+
+  /**
+   * Set image URL in compose form
+   */
+  function setComposeImage(imageUrl, previewId, inputId) {
+    const preview = document.getElementById(previewId);
+    const input = document.getElementById(inputId);
+
+    if (input) input.value = imageUrl;
+    if (preview) {
+      const img = preview.querySelector("img");
+      if (img) img.src = imageUrl;
+      preview.classList.remove("gt-hidden");
+    }
+  }
+
+  /**
+   * Set quoted gad in compose form
+   */
+  function setComposeQuote(gad, previewId, inputId) {
+    const preview = document.getElementById(previewId);
+    const input = document.getElementById(inputId);
+
+    if (!gad || !preview) return;
+
+    if (input) input.value = gad.id;
+
+    const user = gad.user || {};
+    const displayName = user.displayName || user.username || "Unknown";
+    const username = user.username || "unknown";
+    const timeAgo = formatRelativeTime(gad.createdAt);
+    const content = parseContent(gad.content);
+
+    preview.innerHTML = `
+      <div class="gt-quoted-gad">
+        <button type="button" class="gt-icon-btn gt-remove-quote" title="Remove quote">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="gt-quoted-gad-header">
+          <span class="gt-quoted-gad-author">
+            <span class="gt-gad-display-name">${displayName}</span>
+            <span class="gt-gad-username">@${username}</span>
+          </span>
+          <span class="gt-gad-separator">·</span>
+          <span class="gt-gad-time">${timeAgo}</span>
+        </div>
+        <div class="gt-quoted-gad-content">${content}</div>
+        ${gad.imageUrl ? `<div class="gt-quoted-gad-image"><img src="${gad.imageUrl}" alt="" /></div>` : ""}
+      </div>
+    `;
+    preview.classList.remove("gt-hidden");
+  }
+
+  /**
+   * Open quote modal for a gad
+   */
+  async function openQuoteModal(gadId) {
+    const modal = document.getElementById("quote-modal");
+    if (!modal) return;
+
+    try {
+      const gad = await window.GadTalkAPI.gads.getById(gadId);
+      setComposeQuote(gad, "quote-gad-preview", "quote-quoted-gad-id");
+
+      // Set user avatar
+      const currentUser = window.gadTalkAuth.getCurrentUser();
+      const avatarEl = document.getElementById("quote-compose-avatar");
+      if (avatarEl && currentUser) {
+        avatarEl.innerHTML = getAvatarHtml(currentUser, "md").replace(/<img|<div/, (match) =>
+          match === "<img" ? '<img style="width:100%;height:100%;object-fit:cover;border-radius:50%"' : match
+        );
+      }
+
+      // Show modal
+      modal.classList.remove("gt-hidden");
+
+      // Focus textarea
+      const textarea = document.getElementById("quote-compose-textarea");
+      if (textarea) textarea.focus();
+    } catch (error) {
+      console.error("Error loading gad for quote:", error);
+      showToast("Failed to load gad", "error");
+    }
   }
 
   // Public API
@@ -529,6 +756,9 @@ const gadTalkGads = (function () {
     initComposeForm,
     showToast,
     attachGadEventListeners,
+    setComposeImage,
+    setComposeQuote,
+    openQuoteModal,
     MAX_GAD_LENGTH,
   };
 })();

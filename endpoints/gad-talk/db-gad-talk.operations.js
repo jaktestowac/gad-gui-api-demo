@@ -99,31 +99,49 @@ function generateGadTalkId(prefix = "gt") {
 
 /**
  * Read the entire GadTalk database
+ * If DB doesn't exist or is empty, seed with demo data
  * @returns {Object} Database object
  */
 function readGadTalkDb() {
   try {
+    let shouldSeed = false;
+    let db;
+
     if (!fs.existsSync(DB_PATH)) {
-      logError("GadTalk DB file not found, creating new one");
-      const emptyDb = {
-        users: [],
-        gads: [],
-        follows: [],
-        likes: [],
-        notifications: [],
-        blocks: [],
-        mutes: [],
-        bookmarks: [],
-        hashtags: [],
+      logDebug("GadTalk DB file not found, will seed with demo data");
+      shouldSeed = true;
+    } else {
+      const data = fs.readFileSync(DB_PATH, "utf8");
+      db = JSON.parse(data);
+      // Check if DB is empty or missing core data
+      if (!Array.isArray(db.gads) || db.gads.length === 0) {
+        logDebug("GadTalk DB is empty, will seed with demo data");
+        shouldSeed = true;
+      }
+    }
+
+    if (shouldSeed) {
+      // Load demo data
+      const demoData = require("./gad-talk-demo-data.js");
+      db = {
+        users: demoData.users || [],
+        gads: demoData.gads || [],
+        follows: demoData.follows || [],
+        likes: demoData.likes || [],
+        notifications: demoData.notifications || [],
+        blocks: demoData.blocks || [],
+        mutes: demoData.mutes || [],
+        bookmarks: demoData.bookmarks || [],
+        hashtags: demoData.hashtags || [],
         outbox: [],
         missions: [],
         missionCompletions: [],
       };
-      fs.writeFileSync(DB_PATH, JSON.stringify(emptyDb, null, 2));
-      return emptyDb;
+      fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2));
+      logDebug("GadTalk DB seeded with demo data");
     }
-    const data = fs.readFileSync(DB_PATH, "utf8");
-    return JSON.parse(data);
+
+    return db;
   } catch (error) {
     logError("Error reading GadTalk DB:", error);
     throw error;
@@ -170,7 +188,12 @@ function readGadTalkDemoDb() {
       const data = fs.readFileSync(DEMO_DB_PATH, "utf8");
       demoDb = JSON.parse(data);
       // if empty or missing core arrays, re-seed
-      if (!Array.isArray(demoDb.users) || demoDb.users.length === 0) {
+      if (
+        !Array.isArray(demoDb.users) ||
+        demoDb.users.length === 0 ||
+        !Array.isArray(demoDb.gads) ||
+        demoDb.gads.length === 0
+      ) {
         demoDb = { ...seed };
         shouldWrite = true;
       }
@@ -340,6 +363,15 @@ function checkDbIntegrity(db) {
     }
   }
 
+  // Check if core collections have content (users and gads should have data for a valid DB)
+  // Note: Empty collections are warnings only - the seeding logic handles them separately
+  if (Array.isArray(db.users) && db.users.length === 0) {
+    warnings.push("Users collection is empty - consider re-seeding");
+  }
+  if (Array.isArray(db.gads) && db.gads.length === 0) {
+    warnings.push("Gads collection is empty - will be seeded from init/demo data");
+  }
+
   // Validate users collection
   if (Array.isArray(db.users)) {
     db.users.forEach((user, idx) => {
@@ -474,11 +506,67 @@ async function checkAndRepairGadTalkDb() {
     }
 
     logDebug("[GadTalk] Database integrity check passed");
+
+    // Even if integrity passes, check if gads collection is empty and needs seeding
+    if (!Array.isArray(db.gads) || db.gads.length === 0) {
+      logDebug("[GadTalk] Gads collection is empty, seeding from init/demo data...");
+      const seededDb = await seedGadsFromSource(db);
+      return { status: "seeded-gads", db: seededDb };
+    }
+
     return { status: "ok", db };
   } catch (error) {
     logError("[GadTalk] Error during database integrity check:", error);
     throw error;
   }
+}
+
+/**
+ * Seed gads collection from init or demo data source
+ * @param {Object} existingDb - Existing database object
+ * @returns {Promise<Object>} Database with seeded gads
+ */
+async function seedGadsFromSource(existingDb) {
+  // Try loading init dataset first
+  let seed;
+  try {
+    const initPath = require.resolve("./gad-talk-demo-data.js");
+    delete require.cache[initPath];
+    const initData = require("./gad-talk-demo-data.js");
+    if (initData && Array.isArray(initData.gads) && initData.gads.length > 0) {
+      seed = initData;
+      logTrace("> Using init dataset for gads seeding");
+    }
+  } catch (e) {
+    logTrace("Init dataset not available for gads seeding", { error: e.message });
+  }
+
+  // Fall back to demo data
+  if (!seed) {
+    const demoDb = readGadTalkDemoDb();
+    seed = demoDb;
+    logTrace("> Using demo dataset for gads seeding");
+  }
+
+  // Merge gads and related collections from seed into existing DB
+  const updatedDb = {
+    ...existingDb,
+    gads: (seed && seed.gads) || [],
+    hashtags: (seed && seed.hashtags) || existingDb.hashtags || [],
+    // Also seed likes, follows etc. if they're empty
+    likes: existingDb.likes && existingDb.likes.length > 0 ? existingDb.likes : (seed && seed.likes) || [],
+    follows: existingDb.follows && existingDb.follows.length > 0 ? existingDb.follows : (seed && seed.follows) || [],
+    notifications:
+      existingDb.notifications && existingDb.notifications.length > 0
+        ? existingDb.notifications
+        : (seed && seed.notifications) || [],
+    bookmarks:
+      existingDb.bookmarks && existingDb.bookmarks.length > 0 ? existingDb.bookmarks : (seed && seed.bookmarks) || [],
+  };
+
+  await writeGadTalkDb(updatedDb);
+  logDebug("[GadTalk] Gads collection seeded successfully");
+  return updatedDb;
 }
 
 // ==================== DATABASE INITIALIZATION ====================
@@ -489,13 +577,16 @@ async function checkAndRepairGadTalkDb() {
  */
 async function initializeGadTalkDb() {
   try {
-    // Check if database already exists with data
+    // Check if database already exists with data (must have both users AND gads)
     if (fs.existsSync(DB_PATH)) {
       const existingDb = readGadTalkDb();
-      if (existingDb.users && existingDb.users.length > 0) {
-        logTrace("> GadTalk DB already exists with data, skipping initialization");
+      const hasUsers = existingDb.users && existingDb.users.length > 0;
+      const hasGads = existingDb.gads && existingDb.gads.length > 0;
+      if (hasUsers && hasGads) {
+        logTrace("> GadTalk DB already exists with data (users and gads), skipping initialization");
         return existingDb;
       }
+      logTrace("> GadTalk DB exists but missing users or gads, will re-seed");
     }
 
     logTrace("Initializing GadTalk database...");
@@ -503,9 +594,9 @@ async function initializeGadTalkDb() {
     // Try loading init dataset
     let initData;
     try {
-      const initPath = require.resolve("./gad-talk-init-data.js");
+      const initPath = require.resolve("./gad-talk-demo-data.js");
       delete require.cache[initPath];
-      initData = require("./gad-talk-init-data.js");
+      initData = require("./gad-talk-demo-data.js");
     } catch (e) {
       logTrace("No explicit init dataset or failed to load, will fallback to demo dataset", { error: e.message });
       initData = null;
@@ -901,6 +992,14 @@ async function updateGad(gadId, updates) {
       db.gads[idx].mentions = extractMentions(updates.content);
       db.gads[idx].content = updates.content;
       db.gads[idx].editedAt = new Date().toISOString();
+    }
+
+    // Update image URL if provided
+    if (updates.imageUrl !== undefined) {
+      db.gads[idx].imageUrl = updates.imageUrl;
+      if (!updates.content) {
+        db.gads[idx].editedAt = new Date().toISOString();
+      }
     }
 
     updatedGad = db.gads[idx];
@@ -1511,10 +1610,23 @@ async function deleteRegad(userId, gadId) {
 
 /**
  * Get "For You" feed - all gads sorted by recency
+ * @param {number} page - Page number
+ * @param {number} limit - Items per page
+ * @param {Object} options - Filter options
+ * @param {string} options.currentUserId - Current user ID for visibility filtering
+ * @param {string[]} options.followingIds - IDs of users the current user follows
  */
-function getGadsForYou(page = 1, limit = 20) {
+function getGadsForYou(page = 1, limit = 20, options = {}) {
   const db = readGadTalkDb();
-  const allGads = db.gads.filter((g) => !g.deleted).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const { currentUserId, followingIds = [] } = options;
+
+  const allGads = db.gads
+    .filter((g) => {
+      if (g.deleted) return false;
+      // Apply visibility filtering
+      return isGadVisibleToUser(g, currentUserId, followingIds);
+    })
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   const total = allGads.length;
   const start = (page - 1) * limit;
@@ -1524,12 +1636,60 @@ function getGadsForYou(page = 1, limit = 20) {
 }
 
 /**
- * Get gads by multiple users
+ * Check if a gad is visible to a user based on visibility settings
+ * @param {Object} gad - The gad to check
+ * @param {string} currentUserId - Current user ID (null if not logged in)
+ * @param {string[]} followingIds - IDs of users the current user follows
+ * @returns {boolean} Whether the gad is visible
  */
-function getGadsByUsers(userIds, page = 1, limit = 20) {
+function isGadVisibleToUser(gad, currentUserId, followingIds = []) {
+  const visibility = gad.visibility || "public";
+
+  switch (visibility) {
+    case "public":
+      // Visible to everyone
+      return true;
+
+    case "private":
+      // Visible only to logged-in users
+      return !!currentUserId;
+
+    case "followers":
+      // Visible to author and their followers
+      if (!currentUserId) return false;
+      if (areIdsEqual(gad.userId, currentUserId)) return true;
+      return followingIds.some((id) => areIdsEqual(id, gad.userId));
+
+    case "self":
+      // Visible only to the author
+      if (!currentUserId) return false;
+      return areIdsEqual(gad.userId, currentUserId);
+
+    default:
+      // Unknown visibility, default to public behavior
+      return true;
+  }
+}
+
+/**
+ * Get gads by multiple users
+ * @param {string[]} userIds - User IDs to get gads from
+ * @param {number} page - Page number
+ * @param {number} limit - Items per page
+ * @param {Object} options - Filter options
+ * @param {string} options.currentUserId - Current user ID for visibility filtering
+ * @param {string[]} options.followingIds - IDs of users the current user follows
+ */
+function getGadsByUsers(userIds, page = 1, limit = 20, options = {}) {
   const db = readGadTalkDb();
+  const { currentUserId, followingIds = [] } = options;
+
   const allGads = db.gads
-    .filter((g) => !g.deleted && userIds.some((uid) => areIdsEqual(g.userId, uid)))
+    .filter((g) => {
+      if (g.deleted) return false;
+      if (!userIds.some((uid) => areIdsEqual(g.userId, uid))) return false;
+      return isGadVisibleToUser(g, currentUserId, followingIds);
+    })
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   const total = allGads.length;
@@ -1541,11 +1701,23 @@ function getGadsByUsers(userIds, page = 1, limit = 20) {
 
 /**
  * Get gads by a single user
+ * @param {string} userId - User ID to get gads from
+ * @param {number} page - Page number
+ * @param {number} limit - Items per page
+ * @param {Object} options - Filter options
+ * @param {string} options.currentUserId - Current user ID for visibility filtering
+ * @param {string[]} options.followingIds - IDs of users the current user follows
  */
-function getGadsByUser(userId, page = 1, limit = 20) {
+function getGadsByUser(userId, page = 1, limit = 20, options = {}) {
   const db = readGadTalkDb();
+  const { currentUserId, followingIds = [] } = options;
+
   const allGads = db.gads
-    .filter((g) => !g.deleted && areIdsEqual(g.userId, userId))
+    .filter((g) => {
+      if (g.deleted) return false;
+      if (!areIdsEqual(g.userId, userId)) return false;
+      return isGadVisibleToUser(g, currentUserId, followingIds);
+    })
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   const total = allGads.length;
@@ -1557,11 +1729,24 @@ function getGadsByUser(userId, page = 1, limit = 20) {
 
 /**
  * Get replies to a gad
+ * @param {string} gadId - ID of the gad to get replies for
+ * @param {number} page - Page number
+ * @param {number} limit - Items per page
+ * @param {Object} options - Filter options
+ * @param {string} options.currentUserId - Current user ID for visibility filtering
+ * @param {string[]} options.followingIds - IDs of users the current user follows
  */
-function getReplies(gadId, page = 1, limit = 20) {
+function getReplies(gadId, page = 1, limit = 20, options = {}) {
   const db = readGadTalkDb();
+  const { currentUserId, followingIds = [] } = options;
+
   const allReplies = db.gads
-    .filter((g) => !g.deleted && areIdsEqual(g.replyTo, gadId))
+    .filter((g) => {
+      if (g.deleted) return false;
+      // Check for both replyTo and replyToId (different field names in demo data)
+      if (!areIdsEqual(g.replyTo, gadId) && !areIdsEqual(g.replyToId, gadId)) return false;
+      return isGadVisibleToUser(g, currentUserId, followingIds);
+    })
     .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
   const total = allReplies.length;
@@ -1573,12 +1758,24 @@ function getReplies(gadId, page = 1, limit = 20) {
 
 /**
  * Search gads by content
+ * @param {string} query - Search query
+ * @param {number} page - Page number
+ * @param {number} limit - Items per page
+ * @param {Object} options - Filter options
+ * @param {string} options.currentUserId - Current user ID for visibility filtering
+ * @param {string[]} options.followingIds - IDs of users the current user follows
  */
-function searchGads(query, page = 1, limit = 20) {
+function searchGads(query, page = 1, limit = 20, options = {}) {
   const db = readGadTalkDb();
+  const { currentUserId, followingIds = [] } = options;
   const lowerQuery = query.toLowerCase();
+
   const allGads = db.gads
-    .filter((g) => !g.deleted && g.content.toLowerCase().includes(lowerQuery))
+    .filter((g) => {
+      if (g.deleted) return false;
+      if (!g.content || !g.content.toLowerCase().includes(lowerQuery)) return false;
+      return isGadVisibleToUser(g, currentUserId, followingIds);
+    })
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   const total = allGads.length;
@@ -1598,12 +1795,24 @@ function getTrendingHashtags(limit = 10) {
 
 /**
  * Get gads by hashtag
+ * @param {string} hashtag - Hashtag to search for
+ * @param {number} page - Page number
+ * @param {number} limit - Items per page
+ * @param {Object} options - Filter options
+ * @param {string} options.currentUserId - Current user ID for visibility filtering
+ * @param {string[]} options.followingIds - IDs of users the current user follows
  */
-function getGadsByHashtag(hashtag, page = 1, limit = 20) {
+function getGadsByHashtag(hashtag, page = 1, limit = 20, options = {}) {
   const db = readGadTalkDb();
+  const { currentUserId, followingIds = [] } = options;
   const lowerHashtag = hashtag.toLowerCase();
+
   const allGads = db.gads
-    .filter((g) => !g.deleted && g.hashtags && g.hashtags.includes(lowerHashtag))
+    .filter((g) => {
+      if (g.deleted) return false;
+      if (!g.hashtags || !g.hashtags.includes(lowerHashtag)) return false;
+      return isGadVisibleToUser(g, currentUserId, followingIds);
+    })
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   const total = allGads.length;
@@ -1646,6 +1855,88 @@ function getBookmarksPaginated(userId, page = 1, limit = 20) {
 }
 
 // ==================== DATABASE STATUS ====================
+
+/**
+ * Get real-time like counts for multiple gads (batch operation)
+ * @param {string[]} gadIds - Array of gad IDs
+ * @returns {Object} Map of gadId -> likeCount
+ */
+function getBatchLikeCounts(gadIds) {
+  const db = readGadTalkDb();
+  const counts = {};
+
+  // Initialize all to 0
+  for (const gadId of gadIds) {
+    counts[gadId] = 0;
+  }
+
+  // Count likes for each gad
+  for (const like of db.likes) {
+    if (Object.prototype.hasOwnProperty.call(counts, like.gadId)) {
+      counts[like.gadId]++;
+    }
+  }
+
+  return counts;
+}
+
+/**
+ * Get real-time reply counts for multiple gads (batch operation)
+ * @param {string[]} gadIds - Array of gad IDs
+ * @returns {Object} Map of gadId -> replyCount
+ */
+function getBatchReplyCounts(gadIds) {
+  const db = readGadTalkDb();
+  const counts = {};
+
+  // Initialize all to 0
+  for (const gadId of gadIds) {
+    counts[gadId] = 0;
+  }
+
+  // Count replies (gads that have replyToId or replyTo matching our gadIds)
+  for (const gad of db.gads) {
+    if (gad.deleted) continue;
+    const replyToId = gad.replyToId || gad.replyTo;
+    if (replyToId && Object.prototype.hasOwnProperty.call(counts, replyToId)) {
+      counts[replyToId]++;
+    }
+  }
+
+  return counts;
+}
+
+/**
+ * Get real-time repost/regad counts for multiple gads (batch operation)
+ * @param {string[]} gadIds - Array of gad IDs
+ * @returns {Object} Map of gadId -> repostCount
+ */
+function getBatchRepostCounts(gadIds) {
+  const db = readGadTalkDb();
+  const counts = {};
+
+  // Initialize all to 0
+  for (const gadId of gadIds) {
+    counts[gadId] = 0;
+  }
+
+  // Count from outbox (regads)
+  for (const entry of db.outbox) {
+    if (entry.type === "regad" && Object.prototype.hasOwnProperty.call(counts, entry.gadId)) {
+      counts[entry.gadId]++;
+    }
+  }
+
+  // Also count repost gads
+  for (const gad of db.gads) {
+    if (gad.deleted) continue;
+    if (gad.isRepost && gad.repostOfId && Object.prototype.hasOwnProperty.call(counts, gad.repostOfId)) {
+      counts[gad.repostOfId]++;
+    }
+  }
+
+  return counts;
+}
 
 /**
  * Get database status and statistics
@@ -1731,6 +2022,7 @@ module.exports = {
   getGadsByUser,
   getReplies,
   searchGads,
+  isGadVisibleToUser,
   incrementGadReplyCount,
   decrementGadReplyCount,
   incrementGadLikeCount,
@@ -1780,6 +2072,11 @@ module.exports = {
   incrementHashtagCount,
   getTrendingHashtags,
   getGadsByHashtag,
+
+  // Batch counts (real-time)
+  getBatchLikeCounts,
+  getBatchReplyCounts,
+  getBatchRepostCounts,
 
   // Status
   getGadTalkDbStatus,

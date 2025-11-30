@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gad - GadTalk</title>
+    <link rel="stylesheet" href="/gad-talk/css/gad-talk.css">
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+</head>
+
+<body class="gt-app-layout">
+    <!-- Navbar -->
+    <nav class="gt-navbar">
+        <div class="gt-container-wide gt-flex gt-justify-between gt-items-center">
+            <a href="/" class="gt-link-muted">🦎 GAD</a>
+            <a href="/gad-talk/" class="gt-navbar-brand">
+                <span class="gt-logo"><i class="fa-solid fa-comments"></i></span>
+                <span>GadTalk</span>
+            </a>
+            <div class="gt-flex gt-gap-sm gt-items-center" id="nav-user-section">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main layout -->
+    <div class="gt-main-container">
+        <!-- Left sidebar -->
+        <aside class="gt-sidebar gt-sidebar-left">
+            <nav class="gt-nav-menu" id="main-nav">
+                <a href="/gad-talk/index.html" class="gt-nav-item" data-testid="nav-home">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-house"></i></span>
+                    <span class="gt-nav-text">Home</span>
+                </a>
+                <a href="/gad-talk/explore.html" class="gt-nav-item" data-testid="nav-explore">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <span class="gt-nav-text">Explore</span>
+                </a>
+                <a href="/gad-talk/notifications.html" class="gt-nav-item" data-testid="nav-notifications">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-bell"></i></span>
+                    <span class="gt-nav-text">Notifications</span>
+                    <span class="gt-badge gt-badge-primary gt-hidden" id="notification-badge">0</span>
+                </a>
+                <a href="/gad-talk/bookmarks.html" class="gt-nav-item" data-testid="nav-bookmarks">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-bookmark"></i></span>
+                    <span class="gt-nav-text">Bookmarks</span>
+                </a>
+                <a href="#" class="gt-nav-item" id="nav-profile" data-testid="nav-profile">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-user"></i></span>
+                    <span class="gt-nav-text">Profile</span>
+                </a>
+                <button class="gt-btn gt-btn-primary gt-btn-block gt-mt-lg" id="compose-btn" data-testid="compose-button">
+                    Gad
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <main class="gt-content">
+            <!-- Header -->
+            <header class="gt-page-header gt-page-header-with-back">
+                <button class="gt-icon-btn gt-back-btn" id="back-btn" data-testid="back-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h1 class="gt-page-title">Gad</h1>
+            </header>
+
+            <!-- Loading state -->
+            <div class="gt-loading-spinner" id="gad-loading" data-testid="gad-loading">
+                <div class="gt-spinner"></div>
+                <p>Loading gad...</p>
+            </div>
+
+            <!-- Error state -->
+            <div class="gt-error-state gt-hidden" id="gad-error" data-testid="gad-error">
+                <div class="gt-error-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+                <p class="gt-text-lg">Something went wrong</p>
+                <p class="gt-text-secondary" id="error-message">Could not load this gad.</p>
+                <button class="gt-btn gt-btn-secondary" id="retry-btn">Try again</button>
+            </div>
+
+            <!-- Not found state -->
+            <div class="gt-empty-state gt-hidden" id="gad-not-found" data-testid="gad-not-found">
+                <div class="gt-empty-icon"><i class="fa-solid fa-comment-slash"></i></div>
+                <p class="gt-text-lg">Gad not found</p>
+                <p class="gt-text-secondary">This gad doesn't exist or has been deleted.</p>
+                <a href="/gad-talk/" class="gt-btn gt-btn-primary">Go to Home</a>
+            </div>
+
+            <!-- Gad detail container -->
+            <div class="gt-gad-detail gt-hidden" id="gad-detail-container" data-testid="gad-detail-container">
+                <!-- Parent gad (if this is a reply) -->
+                <div class="gt-thread-parent gt-hidden" id="parent-gad-container" data-testid="parent-gad-container">
+                    <!-- Parent gad will be inserted here -->
+                </div>
+
+                <!-- Main gad (expanded view) -->
+                <article class="gt-gad-expanded" id="main-gad" data-testid="main-gad">
+                    <div class="gt-gad-expanded-header">
+                        <div class="gt-gad-avatar" id="gad-avatar">
+                            <!-- Avatar will be inserted -->
+                        </div>
+                        <div class="gt-gad-author-info">
+                            <a href="#" class="gt-gad-display-name" id="gad-display-name"></a>
+                            <span class="gt-verified gt-hidden" id="gad-verified" title="Verified">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </span>
+                            <a href="#" class="gt-gad-username" id="gad-username"></a>
+                        </div>
+                        <div class="gt-gad-menu">
+                            <button class="gt-icon-btn gt-gad-menu-btn" id="gad-menu-btn" data-testid="gad-menu-button">
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </button>
+                            <div class="gt-dropdown gt-hidden" id="gad-menu-dropdown">
+                                <button class="gt-dropdown-item" id="copy-link-btn">
+                                    <span><i class="fa-solid fa-link"></i></span> Copy link
+                                </button>
+                                <button class="gt-dropdown-item gt-hidden" id="edit-gad-btn" data-testid="edit-gad-button">
+                                    <span><i class="fa-solid fa-pen"></i></span> Edit
+                                </button>
+                                <button class="gt-dropdown-item gt-dropdown-item-danger gt-hidden" id="delete-gad-btn" data-testid="delete-gad-button">
+                                    <span><i class="fa-solid fa-trash"></i></span> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reply indicator -->
+                    <div class="gt-gad-reply-indicator gt-hidden" id="reply-indicator">
+                        <span class="gt-text-secondary">Replying to </span>
+                        <a href="#" class="gt-link" id="reply-to-link">@username</a>
+                    </div>
+
+                    <!-- Main content -->
+                    <div class="gt-gad-expanded-content">
+                        <p class="gt-gad-text-expanded" id="gad-content" data-testid="gad-content"></p>
+
+                        <!-- Image attachment -->
+                        <div class="gt-gad-image gt-hidden" id="gad-image-container">
+                            <img src="" alt="Gad image" id="gad-image" class="gt-gad-image-full" data-testid="gad-image" />
+                        </div>
+
+                        <!-- Quoted gad -->
+                        <div class="gt-quoted-gad gt-hidden" id="quoted-gad-container" data-testid="quoted-gad-container">
+                            <!-- Quoted gad will be inserted here -->
+                        </div>
+                    </div>
+
+                    <!-- Timestamp and info -->
+                    <div class="gt-gad-meta">
+                        <time id="gad-timestamp" class="gt-gad-timestamp" data-testid="gad-timestamp"></time>
+                        <span class="gt-gad-edited gt-hidden" id="gad-edited">(edited)</span>
+                    </div>
+
+                    <!-- Engagement counts -->
+                    <div class="gt-gad-stats" id="gad-stats" data-testid="gad-stats">
+                        <a href="#" class="gt-stat" id="regad-count-link">
+                            <span class="gt-stat-count" id="regad-count">0</span>
+                            <span class="gt-stat-label">Regads</span>
+                        </a>
+                        <a href="#" class="gt-stat" id="quote-count-link">
+                            <span class="gt-stat-count" id="quote-count">0</span>
+                            <span class="gt-stat-label">Quotes</span>
+                        </a>
+                        <a href="#" class="gt-stat" id="like-count-link">
+                            <span class="gt-stat-count" id="like-count">0</span>
+                            <span class="gt-stat-label">Likes</span>
+                        </a>
+                        <a href="#" class="gt-stat" id="bookmark-count-link">
+                            <span class="gt-stat-count" id="bookmark-count">0</span>
+                            <span class="gt-stat-label">Bookmarks</span>
+                        </a>
+                    </div>
+
+                    <!-- Action buttons -->
+                    <div class="gt-gad-actions gt-gad-actions-expanded" id="gad-actions">
+                        <button class="gt-gad-action gt-gad-action-reply" data-action="reply" data-testid="reply-action">
+                            <span class="gt-action-icon"><i class="fa-solid fa-comment"></i></span>
+                        </button>
+                        <button class="gt-gad-action gt-gad-action-regad" data-action="regad" id="regad-btn" data-testid="regad-action">
+                            <span class="gt-action-icon"><i class="fa-solid fa-retweet"></i></span>
+                        </button>
+                        <button class="gt-gad-action gt-gad-action-like" data-action="like" id="like-btn" data-testid="like-action">
+                            <span class="gt-action-icon"><i class="fa-regular fa-heart"></i></span>
+                        </button>
+                        <button class="gt-gad-action gt-gad-action-bookmark" data-action="bookmark" id="bookmark-btn" data-testid="bookmark-action">
+                            <span class="gt-action-icon"><i class="fa-regular fa-bookmark"></i></span>
+                        </button>
+                        <button class="gt-gad-action gt-gad-action-share" data-action="share" data-testid="share-action">
+                            <span class="gt-action-icon"><i class="fa-solid fa-share-from-square"></i></span>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- Reply composer -->
+                <div class="gt-reply-composer" id="reply-composer" data-testid="reply-composer">
+                    <form id="reply-form" class="gt-compose-form">
+                        <div class="gt-compose-row">
+                            <div class="gt-avatar gt-avatar-md" id="reply-avatar">
+                                <!-- Avatar populated by JS -->
+                            </div>
+                            <div class="gt-compose-input-container">
+                                <div class="gt-reply-context gt-hidden" id="reply-context">
+                                    <span class="gt-text-secondary">Replying to </span>
+                                    <span class="gt-link" id="replying-to-username">@username</span>
+                                </div>
+                                <textarea id="reply-textarea" name="content" class="gt-compose-textarea" placeholder="Post your reply" maxlength="280" rows="2" data-testid="reply-textarea"></textarea>
+                            </div>
+                        </div>
+                        <div class="gt-compose-actions">
+                            <div class="gt-compose-tools">
+                                <button type="button" class="gt-icon-btn" title="Add image" id="add-image-btn" data-testid="add-image-btn">
+                                    <i class="fa-solid fa-image"></i>
+                                </button>
+                                <button type="button" class="gt-icon-btn" title="Add emoji">
+                                    <i class="fa-solid fa-face-smile"></i>
+                                </button>
+                            </div>
+                            <div class="gt-compose-submit">
+                                <span class="gt-char-count" id="reply-char-count">280</span>
+                                <button type="submit" class="gt-btn gt-btn-primary" id="reply-btn" data-testid="reply-button" disabled>
+                                    Reply
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Replies section -->
+                <section class="gt-replies-section" id="replies-section">
+                    <h2 class="gt-section-title gt-hidden" id="replies-title">Replies</h2>
+
+                    <!-- Loading replies -->
+                    <div class="gt-loading-spinner gt-loading-sm" id="replies-loading">
+                        <div class="gt-spinner gt-spinner-sm"></div>
+                    </div>
+
+                    <!-- No replies state -->
+                    <div class="gt-empty-state gt-empty-state-sm gt-hidden" id="no-replies">
+                        <p class="gt-text-secondary">No replies yet. Be the first to reply!</p>
+                    </div>
+
+                    <!-- Replies list -->
+                    <div id="replies-list" data-testid="replies-list">
+                        <!-- Replies will be inserted here -->
+                    </div>
+
+                    <!-- Load more replies -->
+                    <div class="gt-load-more gt-hidden" id="load-more-replies">
+                        <button class="gt-btn gt-btn-secondary gt-btn-block" id="load-more-replies-btn" data-testid="load-more-replies">
+                            Load more replies
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Right sidebar -->
+        <aside class="gt-sidebar gt-sidebar-right">
+            <!-- Search -->
+            <div class="gt-search-container">
+                <input type="search" class="gt-search-input" placeholder="Search GadTalk" id="search-input" data-testid="search-input" />
+            </div>
+
+            <!-- Related gads / Trending -->
+            <div class="gt-card gt-trending-card">
+                <h2 class="gt-card-title">Trending</h2>
+                <div id="trending-list">
+                    <div class="gt-loading-spinner gt-loading-sm">
+                        <div class="gt-spinner gt-spinner-sm"></div>
+                    </div>
+                </div>
+                <a href="/gad-talk/explore.html" class="gt-link gt-text-sm">Show more</a>
+            </div>
+
+            <!-- Footer -->
+            <footer class="gt-sidebar-footer">
+                <a href="/gad-talk/terms.html" class="gt-link-muted">Terms</a>
+                <a href="/gad-talk/privacy.html" class="gt-link-muted">Privacy</a>
+                <a href="/gad-talk/about.html" class="gt-link-muted">About</a>
+                <span class="gt-text-muted">© 2025 GadTalk</span>
+            </footer>
+        </aside>
+    </div>
+
+    <!-- Quote Modal -->
+    <div class="gt-modal gt-hidden" id="quote-modal" data-testid="quote-modal">
+        <div class="gt-modal-overlay" data-close-modal></div>
+        <div class="gt-modal-content gt-card">
+            <div class="gt-modal-header">
+                <button type="button" class="gt-icon-btn gt-modal-close" data-close-modal>
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <h2>Quote</h2>
+            </div>
+            <form id="quote-form" class="gt-compose-form" data-testid="quote-form">
+                <div class="gt-compose-row">
+                    <div class="gt-avatar gt-avatar-md" id="quote-avatar">
+                        <!-- Populated by JS -->
+                    </div>
+                    <div class="gt-compose-input-container">
+                        <textarea id="quote-textarea" name="content" class="gt-compose-textarea" placeholder="Add a comment" maxlength="280" rows="3" data-testid="quote-textarea"></textarea>
+                        <!-- Quoted gad preview -->
+                        <div class="gt-quoted-gad-preview" id="quote-preview">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+                <div class="gt-compose-actions">
+                    <div class="gt-compose-tools">
+                        <button type="button" class="gt-icon-btn" title="Add emoji">
+                            <i class="fa-solid fa-face-smile"></i>
+                        </button>
+                    </div>
+                    <div class="gt-compose-submit">
+                        <span class="gt-char-count" id="quote-char-count">280</span>
+                        <button type="submit" class="gt-btn gt-btn-primary" id="quote-submit-btn" data-testid="quote-submit">
+                            Quote
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Regad options menu -->
+    <div class="gt-modal gt-hidden" id="regad-modal" data-testid="regad-modal">
+        <div class="gt-modal-overlay" data-close-modal></div>
+        <div class="gt-modal-content gt-modal-sm gt-card">
+            <button class="gt-modal-option" id="regad-option" data-testid="regad-option">
+                <span class="gt-option-icon"><i class="fa-solid fa-retweet"></i></span>
+                <span>Regad</span>
+            </button>
+            <button class="gt-modal-option" id="quote-option" data-testid="quote-option">
+                <span class="gt-option-icon"><i class="fa-solid fa-pen-to-square"></i></span>
+                <span>Quote</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="gt-modal gt-hidden" id="edit-modal" data-testid="edit-modal">
+        <div class="gt-modal-overlay" data-close-modal></div>
+        <div class="gt-modal-content gt-card">
+            <div class="gt-modal-header">
+                <button type="button" class="gt-icon-btn gt-modal-close" data-close-modal>
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <h2>Edit Gad</h2>
+            </div>
+            <form id="edit-form" class="gt-compose-form" data-testid="edit-form">
+                <div class="gt-compose-row">
+                    <div class="gt-avatar gt-avatar-md" id="edit-avatar">
+                        <!-- Populated by JS -->
+                    </div>
+                    <div class="gt-compose-input-container">
+                        <textarea id="edit-textarea" name="content" class="gt-compose-textarea" placeholder="What's happening?" maxlength="280" rows="5" data-testid="edit-textarea"></textarea>
+                        <!-- Image URL input -->
+                        <div class="gt-image-url-input gt-hidden" id="edit-image-url-container">
+                            <input type="url" id="edit-image-url" class="gt-input" placeholder="Image URL (optional)" data-testid="edit-image-url" />
+                            <button type="button" class="gt-icon-btn" id="remove-edit-image" title="Remove image">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="gt-compose-actions">
+                    <div class="gt-compose-tools">
+                        <button type="button" class="gt-icon-btn" title="Add/change image" id="edit-add-image-btn">
+                            <i class="fa-solid fa-image"></i>
+                        </button>
+                        <button type="button" class="gt-icon-btn" title="Add emoji">
+                            <i class="fa-solid fa-face-smile"></i>
+                        </button>
+                    </div>
+                    <div class="gt-compose-submit">
+                        <span class="gt-char-count" id="edit-char-count">280</span>
+                        <button type="submit" class="gt-btn gt-btn-primary" id="edit-submit-btn" data-testid="edit-submit">
+                            Save
+                        </button>
+                    </div>
+                </div>
+                <p class="gt-edit-warning gt-text-secondary gt-text-sm" id="edit-warning">
+                    <i class="fa-solid fa-clock"></i> You can edit this gad for <span id="edit-time-remaining"></span>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Image URL input modal (for reply) -->
+    <div class="gt-modal gt-hidden" id="image-url-modal" data-testid="image-url-modal">
+        <div class="gt-modal-overlay" data-close-modal></div>
+        <div class="gt-modal-content gt-modal-sm gt-card">
+            <div class="gt-modal-header">
+                <button type="button" class="gt-icon-btn gt-modal-close" data-close-modal>
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <h2>Add Image</h2>
+            </div>
+            <div class="gt-modal-body">
+                <input type="url" id="image-url-input" class="gt-input gt-input-full" placeholder="Enter image URL" data-testid="image-url-input" />
+                <p class="gt-text-secondary gt-text-sm gt-mt-sm">Enter a URL to an image (JPEG, PNG, GIF, or WebP)</p>
+            </div>
+            <div class="gt-modal-footer">
+                <button type="button" class="gt-btn gt-btn-secondary" data-close-modal>Cancel</button>
+                <button type="button" class="gt-btn gt-btn-primary" id="add-image-confirm" data-testid="add-image-confirm">Add</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete confirmation modal -->
+    <div class="gt-modal gt-hidden" id="delete-modal" data-testid="delete-modal">
+        <div class="gt-modal-overlay" data-close-modal></div>
+        <div class="gt-modal-content gt-modal-sm gt-card">
+            <div class="gt-modal-header">
+                <h2>Delete Gad?</h2>
+            </div>
+            <div class="gt-modal-body">
+                <p>This can't be undone and it will be removed from your profile, the timeline of any accounts that follow you, and from search results.</p>
+            </div>
+            <div class="gt-modal-footer gt-modal-footer-stacked">
+                <button type="button" class="gt-btn gt-btn-danger gt-btn-block" id="confirm-delete-btn" data-testid="confirm-delete">
+                    Delete
+                </button>
+                <button type="button" class="gt-btn gt-btn-secondary gt-btn-block" data-close-modal>
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/gad-talk/js/api.js"></script>
+    <script src="/gad-talk/js/ui.js"></script>
+    <script src="/gad-talk/js/auth.js"></script>
+    <script src="/gad-talk/js/gads.js"></script>
+    <script src="/gad-talk/js/gad-detail.js"></script>
+</body>
+
+</html>

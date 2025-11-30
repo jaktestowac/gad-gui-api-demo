@@ -51,6 +51,7 @@ const {
 const {
   handleCreateGad,
   handleGetGad,
+  handleUpdateGad,
   handleDeleteGad,
   handleGetForYouFeed,
   handleGetTimeline,
@@ -364,9 +365,10 @@ async function handleGadsRoutes(req, res, method, segments) {
     req.params = { gadId };
     const subAction = segments[2];
 
-    // No sub-action: GET or DELETE /api/gad-talk/gads/:gadId
+    // No sub-action: GET, PUT, or DELETE /api/gad-talk/gads/:gadId
     if (!subAction) {
       if (method === "GET") return handleGetGad(req, res);
+      if (method === "PUT") return handleUpdateGad(req, res);
       if (method === "DELETE") return handleDeleteGad(req, res);
     }
 

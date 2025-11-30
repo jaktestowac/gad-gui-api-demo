@@ -36,7 +36,7 @@ async function handleCreateGad(req, res) {
     if (!requireAuth(req, res)) return;
 
     const userId = req.gadTalkUserId;
-    const { content, replyTo, quotedGadId } = req.body;
+    const { content, replyTo, quotedGadId, imageUrl } = req.body;
 
     // Validate content
     if (!content || typeof content !== "string") {
@@ -54,11 +54,28 @@ async function handleCreateGad(req, res) {
         .json(formatErrorResponse(`Content exceeds maximum length of ${config.maxGadLength} characters`));
     }
 
+    // Validate image URL if provided
+    if (imageUrl && typeof imageUrl === "string" && imageUrl.trim() !== "") {
+      try {
+        new URL(imageUrl);
+      } catch {
+        return res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Invalid image URL"));
+      }
+    }
+
     // If this is a reply, verify the parent gad exists
     if (replyTo) {
       const parentGad = await dbOps.getGadById(replyTo);
       if (!parentGad) {
         return res.status(HTTP_NOT_FOUND).json(formatErrorResponse("Parent gad not found"));
+      }
+    }
+
+    // If this is a quote, verify the quoted gad exists
+    if (quotedGadId) {
+      const quotedGad = await dbOps.getGadById(quotedGadId);
+      if (!quotedGad) {
+        return res.status(HTTP_NOT_FOUND).json(formatErrorResponse("Quoted gad not found"));
       }
     }
 
@@ -74,6 +91,7 @@ async function handleCreateGad(req, res) {
     const gadData = {
       userId,
       content: trimmedContent,
+      imageUrl: imageUrl && imageUrl.trim() !== "" ? imageUrl.trim() : null,
       replyTo: replyTo || null,
       quotedGadId: quotedGadId || null,
       hashtags,
@@ -117,6 +135,19 @@ async function handleCreateGad(req, res) {
       }
     }
 
+    // If this is a quote, notify the original gad author
+    if (quotedGadId) {
+      const quotedGad = await dbOps.getGadById(quotedGadId);
+      if (quotedGad && quotedGad.userId !== userId) {
+        await dbOps.createNotification({
+          userId: quotedGad.userId,
+          type: "quote",
+          actorId: userId,
+          gadId: gad.id,
+        });
+      }
+    }
+
     // Get user for response
     const user = await dbOps.getUserById(userId);
     gad.user = {
@@ -147,6 +178,25 @@ async function handleGetGad(req, res) {
       return res.status(HTTP_NOT_FOUND).json(formatErrorResponse("Gad not found"));
     }
 
+    // Check visibility
+    let followingIds = [];
+    if (userId) {
+      const following = await dbOps.getFollowing(userId);
+      followingIds = following.map((f) => f.followingId);
+    }
+
+    if (!dbOps.isGadVisibleToUser(gad, userId, followingIds)) {
+      return res.status(HTTP_NOT_FOUND).json(formatErrorResponse("Gad not found"));
+    }
+
+    // Calculate real-time counts
+    const likeCounts = dbOps.getBatchLikeCounts([gadId]);
+    const replyCounts = dbOps.getBatchReplyCounts([gadId]);
+    const repostCounts = dbOps.getBatchRepostCounts([gadId]);
+    gad.likeCount = likeCounts[gadId] || 0;
+    gad.replyCount = replyCounts[gadId] || 0;
+    gad.repostCount = repostCounts[gadId] || 0;
+
     // Get user
     const user = await dbOps.getUserById(gad.userId);
     gad.user = user
@@ -166,10 +216,137 @@ async function handleGetGad(req, res) {
       gad.isBookmarked = await dbOps.hasUserBookmarked(userId, gadId);
     }
 
+    // If this is a quote, get the quoted gad
+    if (gad.quotedGadId || gad.quoteOfId) {
+      const quotedGadId = gad.quotedGadId || gad.quoteOfId;
+      const quotedGad = await dbOps.getGadById(quotedGadId);
+      if (quotedGad && !quotedGad.deleted) {
+        const quotedUser = await dbOps.getUserById(quotedGad.userId);
+        gad.quotedGad = {
+          id: quotedGad.id,
+          content: quotedGad.content,
+          imageUrl: quotedGad.imageUrl,
+          createdAt: quotedGad.createdAt,
+          user: quotedUser
+            ? {
+                id: quotedUser.id,
+                username: quotedUser.username,
+                displayName: quotedUser.displayName,
+                avatar: quotedUser.avatar,
+                verified: quotedUser.verified,
+              }
+            : null,
+        };
+      }
+    }
+
+    // If this is a reply, get the parent gad user
+    if (gad.replyTo || gad.replyToId) {
+      const parentGadId = gad.replyTo || gad.replyToId;
+      const parentGad = await dbOps.getGadById(parentGadId);
+      if (parentGad) {
+        const parentUser = await dbOps.getUserById(parentGad.userId);
+        gad.replyToUser = parentUser ? { username: parentUser.username, displayName: parentUser.displayName } : null;
+      }
+    }
+
     res.status(HTTP_OK).json({ gad });
   } catch (error) {
     logError("[GadTalk] Error getting gad:", error);
     res.status(HTTP_INTERNAL_SERVER_ERROR).json(formatErrorResponse("Failed to get gad"));
+  }
+}
+
+/**
+ * Update/Edit a gad
+ */
+async function handleUpdateGad(req, res) {
+  try {
+    // Require authentication
+    if (!requireAuth(req, res)) return;
+
+    const { gadId } = req.params;
+    const userId = req.gadTalkUserId;
+    const { content, imageUrl } = req.body;
+
+    const gad = await dbOps.getGadById(gadId);
+    if (!gad) {
+      return res.status(HTTP_NOT_FOUND).json(formatErrorResponse("Gad not found"));
+    }
+
+    // Check ownership
+    if (gad.userId !== userId) {
+      return res.status(403).json(formatErrorResponse("You can only edit your own gads"));
+    }
+
+    // Check edit window (15 minutes)
+    const createdAt = new Date(gad.createdAt);
+    const now = new Date();
+    const diffMinutes = (now - createdAt) / (1000 * 60);
+
+    if (diffMinutes > config.gads.editWindowMinutes) {
+      return res
+        .status(HTTP_BAD_REQUEST)
+        .json(
+          formatErrorResponse(
+            `Edit window expired. Gads can only be edited within ${config.gads.editWindowMinutes} minutes of posting.`
+          )
+        );
+    }
+
+    // Validate content if provided
+    if (content !== undefined) {
+      if (!content || typeof content !== "string") {
+        return res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Content is required"));
+      }
+
+      const trimmedContent = content.trim();
+      if (trimmedContent.length === 0) {
+        return res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Content cannot be empty"));
+      }
+
+      if (trimmedContent.length > config.maxGadLength) {
+        return res
+          .status(HTTP_BAD_REQUEST)
+          .json(formatErrorResponse(`Content exceeds maximum length of ${config.maxGadLength} characters`));
+      }
+    }
+
+    // Validate image URL if provided
+    if (imageUrl !== undefined && imageUrl !== null && imageUrl !== "") {
+      try {
+        new URL(imageUrl);
+      } catch {
+        return res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Invalid image URL"));
+      }
+    }
+
+    // Build updates object
+    const updates = {};
+    if (content !== undefined) {
+      updates.content = content.trim();
+    }
+    if (imageUrl !== undefined) {
+      updates.imageUrl = imageUrl || null;
+    }
+
+    // Update the gad
+    const updatedGad = await dbOps.updateGad(gadId, updates);
+
+    // Get user for response
+    const user = await dbOps.getUserById(userId);
+    updatedGad.user = {
+      id: user.id,
+      username: user.username,
+      displayName: user.displayName,
+      avatar: user.avatar,
+      verified: user.verified,
+    };
+
+    res.status(HTTP_OK).json({ gad: updatedGad });
+  } catch (error) {
+    logError("[GadTalk] Error updating gad:", error);
+    res.status(HTTP_INTERNAL_SERVER_ERROR).json(formatErrorResponse("Failed to update gad"));
   }
 }
 
@@ -215,9 +392,22 @@ async function handleGetForYouFeed(req, res) {
   try {
     const userId = req.gadTalkUserId;
     const page = parseInt(req.query.page) || 1;
-    const limit = Math.min(parseInt(req.query.limit) || config.defaultPageSize, config.maxPageSize);
+    const limit = Math.min(
+      parseInt(req.query.limit) || config.pagination.defaultPageSize,
+      config.pagination.maxPageSize
+    );
 
-    const { gads, total } = await dbOps.getGadsForYou(page, limit);
+    // Get following IDs for visibility filtering
+    let followingIds = [];
+    if (userId) {
+      const following = await dbOps.getFollowing(userId);
+      followingIds = following.map((f) => f.followingId);
+    }
+
+    const { gads, total } = await dbOps.getGadsForYou(page, limit, {
+      currentUserId: userId,
+      followingIds,
+    });
 
     // Enrich gads with user data and interaction status
     const enrichedGads = await enrichGads(gads, userId);
@@ -245,16 +435,22 @@ async function handleGetTimeline(req, res) {
 
     const userId = req.gadTalkUserId;
     const page = parseInt(req.query.page) || 1;
-    const limit = Math.min(parseInt(req.query.limit) || config.defaultPageSize, config.maxPageSize);
+    const limit = Math.min(
+      parseInt(req.query.limit) || config.pagination.defaultPageSize,
+      config.pagination.maxPageSize
+    );
 
     // Get users the current user follows
     const following = await dbOps.getFollowing(userId);
     const followingIds = following.map((f) => f.followingId);
 
     // Include user's own gads in timeline
-    followingIds.push(userId);
+    const userIdsForTimeline = [...followingIds, userId];
 
-    const { gads, total } = await dbOps.getGadsByUsers(followingIds, page, limit);
+    const { gads, total } = await dbOps.getGadsByUsers(userIdsForTimeline, page, limit, {
+      currentUserId: userId,
+      followingIds,
+    });
 
     // Enrich gads
     const enrichedGads = await enrichGads(gads, userId);
@@ -280,7 +476,10 @@ async function handleGetUserGads(req, res) {
     const { userId: targetUserId } = req.params;
     const currentUserId = req.gadTalkUserId;
     const page = parseInt(req.query.page) || 1;
-    const limit = Math.min(parseInt(req.query.limit) || config.defaultPageSize, config.maxPageSize);
+    const limit = Math.min(
+      parseInt(req.query.limit) || config.pagination.defaultPageSize,
+      config.pagination.maxPageSize
+    );
 
     // Verify user exists
     const user = await dbOps.getUserById(targetUserId);
@@ -288,7 +487,17 @@ async function handleGetUserGads(req, res) {
       return res.status(HTTP_NOT_FOUND).json(formatErrorResponse("User not found"));
     }
 
-    const { gads, total } = await dbOps.getGadsByUser(targetUserId, page, limit);
+    // Get following IDs for visibility filtering
+    let followingIds = [];
+    if (currentUserId) {
+      const following = await dbOps.getFollowing(currentUserId);
+      followingIds = following.map((f) => f.followingId);
+    }
+
+    const { gads, total } = await dbOps.getGadsByUser(targetUserId, page, limit, {
+      currentUserId,
+      followingIds,
+    });
 
     // Enrich gads
     const enrichedGads = await enrichGads(gads, currentUserId);
@@ -516,7 +725,10 @@ async function handleGetBookmarks(req, res) {
 
     const userId = req.gadTalkUserId;
     const page = parseInt(req.query.page) || 1;
-    const limit = Math.min(parseInt(req.query.limit) || config.defaultPageSize, config.maxPageSize);
+    const limit = Math.min(
+      parseInt(req.query.limit) || config.pagination.defaultPageSize,
+      config.pagination.maxPageSize
+    );
 
     const { bookmarks, total } = await dbOps.getBookmarks(userId, page, limit);
 
@@ -554,14 +766,27 @@ async function handleGetReplies(req, res) {
     const { gadId } = req.params;
     const userId = req.gadTalkUserId;
     const page = parseInt(req.query.page) || 1;
-    const limit = Math.min(parseInt(req.query.limit) || config.defaultPageSize, config.maxPageSize);
+    const limit = Math.min(
+      parseInt(req.query.limit) || config.pagination.defaultPageSize,
+      config.pagination.maxPageSize
+    );
 
     const gad = await dbOps.getGadById(gadId);
     if (!gad) {
       return res.status(HTTP_NOT_FOUND).json(formatErrorResponse("Gad not found"));
     }
 
-    const { gads: replies, total } = await dbOps.getReplies(gadId, page, limit);
+    // Get following IDs for visibility filtering
+    let followingIds = [];
+    if (userId) {
+      const following = await dbOps.getFollowing(userId);
+      followingIds = following.map((f) => f.followingId);
+    }
+
+    const { gads: replies, total } = await dbOps.getReplies(gadId, page, limit, {
+      currentUserId: userId,
+      followingIds,
+    });
 
     // Enrich gads
     const enrichedReplies = await enrichGads(replies, userId);
@@ -587,13 +812,26 @@ async function handleSearchGads(req, res) {
     const userId = req.gadTalkUserId;
     const query = req.query.q || "";
     const page = parseInt(req.query.page) || 1;
-    const limit = Math.min(parseInt(req.query.limit) || config.defaultPageSize, config.maxPageSize);
+    const limit = Math.min(
+      parseInt(req.query.limit) || config.pagination.defaultPageSize,
+      config.pagination.maxPageSize
+    );
 
     if (!query.trim()) {
       return res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Search query is required"));
     }
 
-    const { gads, total } = await dbOps.searchGads(query.trim(), page, limit);
+    // Get following IDs for visibility filtering
+    let followingIds = [];
+    if (userId) {
+      const following = await dbOps.getFollowing(userId);
+      followingIds = following.map((f) => f.followingId);
+    }
+
+    const { gads, total } = await dbOps.searchGads(query.trim(), page, limit, {
+      currentUserId: userId,
+      followingIds,
+    });
 
     // Enrich gads
     const enrichedGads = await enrichGads(gads, userId);
@@ -636,9 +874,22 @@ async function handleGetGadsByHashtag(req, res) {
     const { hashtag } = req.params;
     const userId = req.gadTalkUserId;
     const page = parseInt(req.query.page) || 1;
-    const limit = Math.min(parseInt(req.query.limit) || config.defaultPageSize, config.maxPageSize);
+    const limit = Math.min(
+      parseInt(req.query.limit) || config.pagination.defaultPageSize,
+      config.pagination.maxPageSize
+    );
 
-    const { gads, total } = await dbOps.getGadsByHashtag(hashtag.toLowerCase(), page, limit);
+    // Get following IDs for visibility filtering
+    let followingIds = [];
+    if (userId) {
+      const following = await dbOps.getFollowing(userId);
+      followingIds = following.map((f) => f.followingId);
+    }
+
+    const { gads, total } = await dbOps.getGadsByHashtag(hashtag.toLowerCase(), page, limit, {
+      currentUserId: userId,
+      followingIds,
+    });
 
     // Enrich gads
     const enrichedGads = await enrichGads(gads, userId);
@@ -659,11 +910,25 @@ async function handleGetGadsByHashtag(req, res) {
 
 /**
  * Helper: Enrich gads with user data and interaction status
+ * Calculates real-time like/reply/repost counts from actual data
  */
 async function enrichGads(gads, currentUserId) {
   const enriched = [];
 
+  // Get all gad IDs for batch operations
+  const gadIds = gads.map((g) => g.id);
+
+  // Batch fetch real-time counts (single DB read per type)
+  const likeCounts = dbOps.getBatchLikeCounts(gadIds);
+  const replyCounts = dbOps.getBatchReplyCounts(gadIds);
+  const repostCounts = dbOps.getBatchRepostCounts(gadIds);
+
   for (const gad of gads) {
+    // Apply real-time counts
+    gad.likeCount = likeCounts[gad.id] || 0;
+    gad.replyCount = replyCounts[gad.id] || 0;
+    gad.repostCount = repostCounts[gad.id] || 0;
+
     // Get user
     const user = await dbOps.getUserById(gad.userId);
     gad.user = user
@@ -688,11 +953,36 @@ async function enrichGads(gads, currentUserId) {
     }
 
     // If this is a reply, get the parent user
-    if (gad.replyTo) {
-      const parentGad = await dbOps.getGadById(gad.replyTo);
+    if (gad.replyTo || gad.replyToId) {
+      const parentGadId = gad.replyTo || gad.replyToId;
+      const parentGad = await dbOps.getGadById(parentGadId);
       if (parentGad) {
         const parentUser = await dbOps.getUserById(parentGad.userId);
         gad.replyToUser = parentUser ? { username: parentUser.username, displayName: parentUser.displayName } : null;
+      }
+    }
+
+    // If this is a quote, get the quoted gad
+    if (gad.quotedGadId || gad.quoteOfId) {
+      const quotedGadId = gad.quotedGadId || gad.quoteOfId;
+      const quotedGad = await dbOps.getGadById(quotedGadId);
+      if (quotedGad && !quotedGad.deleted) {
+        const quotedUser = await dbOps.getUserById(quotedGad.userId);
+        gad.quotedGad = {
+          id: quotedGad.id,
+          content: quotedGad.content,
+          imageUrl: quotedGad.imageUrl,
+          createdAt: quotedGad.createdAt,
+          user: quotedUser
+            ? {
+                id: quotedUser.id,
+                username: quotedUser.username,
+                displayName: quotedUser.displayName,
+                avatar: quotedUser.avatar,
+                verified: quotedUser.verified,
+              }
+            : null,
+        };
       }
     }
 
@@ -705,6 +995,7 @@ async function enrichGads(gads, currentUserId) {
 module.exports = {
   handleCreateGad,
   handleGetGad,
+  handleUpdateGad,
   handleDeleteGad,
   handleGetForYouFeed,
   handleGetTimeline,

@@ -261,11 +261,20 @@ const GadTalkAPI = (function () {
   const gads = {
     /**
      * Create a new gad
+     * @param {string} content - The gad content
+     * @param {string|null} replyTo - ID of gad being replied to
+     * @param {string|null} imageUrl - URL of attached image
+     * @param {string|null} quotedGadId - ID of gad being quoted
      */
-    async create(content, options = {}) {
+    async create(content, replyTo = null, imageUrl = null, quotedGadId = null) {
+      const body = { content };
+      if (replyTo) body.replyTo = replyTo;
+      if (imageUrl) body.imageUrl = imageUrl;
+      if (quotedGadId) body.quotedGadId = quotedGadId;
+
       return request("/gads", {
         method: "POST",
-        body: { content, ...options },
+        body,
       });
     },
 
@@ -274,6 +283,23 @@ const GadTalkAPI = (function () {
      */
     async get(gadId) {
       return request(`/gads/${encodeURIComponent(gadId)}`);
+    },
+
+    /**
+     * Get a single gad by ID (alias)
+     */
+    async getById(gadId) {
+      return request(`/gads/${encodeURIComponent(gadId)}`);
+    },
+
+    /**
+     * Update a gad
+     */
+    async update(gadId, updates) {
+      return request(`/gads/${encodeURIComponent(gadId)}`, {
+        method: "PUT",
+        body: updates,
+      });
     },
 
     /**

@@ -113,10 +113,12 @@
     trendingList.innerHTML = hashtags
       .map(
         (tag, index) => `
-      <a href="#tag=${encodeURIComponent(tag.name)}" class="gt-hashtag-item" data-hashtag="${tag.name}">
+      <a href="#tag=${encodeURIComponent(tag.tag || tag.name)}" class="gt-hashtag-item" data-hashtag="${
+          tag.tag || tag.name
+        }">
         <span class="gt-hashtag-rank">${index + 1}</span>
         <div class="gt-hashtag-info">
-          <span class="gt-hashtag-name">#${tag.name}</span>
+          <span class="gt-hashtag-name">#${tag.tag || tag.name}</span>
           <span class="gt-hashtag-count">${formatCount(tag.count)} gads</span>
         </div>
       </a>

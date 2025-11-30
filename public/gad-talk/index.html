@@ -77,10 +77,24 @@
                         </div>
                         <div class="gt-compose-input-container">
                             <textarea id="compose-textarea" name="content" class="gt-compose-textarea" placeholder="What's happening?" maxlength="280" rows="3" data-testid="compose-textarea"></textarea>
+                            <!-- Image preview -->
+                            <div class="gt-compose-image-preview gt-hidden" id="compose-image-preview">
+                                <img src="" alt="Image preview" />
+                                <button type="button" class="gt-icon-btn gt-remove-image" data-testid="remove-image-btn">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                            <!-- Quote preview -->
+                            <div class="gt-compose-quote-preview gt-hidden" id="compose-quote-preview">
+                                <!-- Populated by JS -->
+                            </div>
                         </div>
                     </div>
                     <div class="gt-compose-actions">
                         <div class="gt-compose-tools">
+                            <button type="button" class="gt-icon-btn" title="Add image" id="add-image-btn" data-testid="add-image-btn">
+                                <i class="fa-solid fa-image"></i>
+                            </button>
                             <button type="button" class="gt-icon-btn" title="Add emoji" data-testid="add-emoji-btn">
                                 <i class="fa-solid fa-face-smile"></i>
                             </button>
@@ -95,6 +109,8 @@
                             </button>
                         </div>
                     </div>
+                    <input type="hidden" id="compose-image-url" name="imageUrl" value="" />
+                    <input type="hidden" id="compose-quoted-gad-id" name="quotedGadId" value="" />
                 </form>
             </div>
 
@@ -180,10 +196,24 @@
                     </div>
                     <div class="gt-compose-input-container">
                         <textarea id="modal-compose-textarea" name="content" class="gt-compose-textarea" placeholder="What's happening?" maxlength="280" rows="5" data-testid="modal-compose-textarea"></textarea>
+                        <!-- Image preview -->
+                        <div class="gt-compose-image-preview gt-hidden" id="modal-image-preview">
+                            <img src="" alt="Image preview" />
+                            <button type="button" class="gt-icon-btn gt-remove-image" data-testid="modal-remove-image-btn">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        <!-- Quote preview -->
+                        <div class="gt-compose-quote-preview gt-hidden" id="modal-quote-preview">
+                            <!-- Populated by JS -->
+                        </div>
                     </div>
                 </div>
                 <div class="gt-compose-actions">
                     <div class="gt-compose-tools">
+                        <button type="button" class="gt-icon-btn" title="Add image" id="modal-add-image-btn" data-testid="modal-add-image-btn">
+                            <i class="fa-solid fa-image"></i>
+                        </button>
                         <button type="button" class="gt-icon-btn" title="Add emoji"><i class="fa-solid fa-face-smile"></i></button>
                         <button type="button" class="gt-icon-btn" title="Add poll"><i class="fa-solid fa-chart-bar"></i></button>
                     </div>
@@ -194,6 +224,68 @@
                         </button>
                     </div>
                 </div>
+                <input type="hidden" id="modal-image-url" name="imageUrl" value="" />
+                <input type="hidden" id="modal-quoted-gad-id" name="quotedGadId" value="" />
+            </form>
+        </div>
+    </div>
+
+    <!-- Image URL Modal -->
+    <div class="gt-modal gt-hidden" id="image-url-modal">
+        <div class="gt-modal-overlay" data-close-modal></div>
+        <div class="gt-modal-content gt-card gt-modal-sm">
+            <div class="gt-modal-header">
+                <button type="button" class="gt-icon-btn gt-modal-close" data-close-modal><i class="fa-solid fa-xmark"></i></button>
+                <h2>Add Image</h2>
+            </div>
+            <div class="gt-modal-body">
+                <label for="image-url-input" class="gt-label">Image URL</label>
+                <input type="url" id="image-url-input" class="gt-input" placeholder="https://example.com/image.jpg" data-testid="image-url-input" />
+                <p class="gt-text-secondary gt-text-sm gt-mt-sm">Enter a direct link to an image (JPG, PNG, GIF)</p>
+            </div>
+            <div class="gt-modal-footer">
+                <button type="button" class="gt-btn gt-btn-secondary" data-close-modal>Cancel</button>
+                <button type="button" class="gt-btn gt-btn-primary" id="confirm-image-url-btn">Add Image</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quote Gad Modal -->
+    <div class="gt-modal gt-hidden" id="quote-modal">
+        <div class="gt-modal-overlay" data-close-modal></div>
+        <div class="gt-modal-content gt-card">
+            <div class="gt-modal-header">
+                <button type="button" class="gt-icon-btn gt-modal-close" data-close-modal><i class="fa-solid fa-xmark"></i></button>
+                <h2>Quote Gad</h2>
+            </div>
+            <form id="quote-compose-form" class="gt-compose-form" data-testid="quote-compose-form">
+                <div class="gt-compose-row">
+                    <div class="gt-avatar gt-avatar-md" id="quote-compose-avatar">
+                        <!-- Populated by JS -->
+                    </div>
+                    <div class="gt-compose-input-container">
+                        <textarea id="quote-compose-textarea" name="content" class="gt-compose-textarea" placeholder="Add your thoughts..." maxlength="280" rows="3" data-testid="quote-compose-textarea"></textarea>
+                        <!-- Quoted gad preview -->
+                        <div class="gt-quoted-gad-preview" id="quote-gad-preview">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+                <div class="gt-compose-actions">
+                    <div class="gt-compose-tools">
+                        <button type="button" class="gt-icon-btn" title="Add image" id="quote-add-image-btn">
+                            <i class="fa-solid fa-image"></i>
+                        </button>
+                        <button type="button" class="gt-icon-btn" title="Add emoji"><i class="fa-solid fa-face-smile"></i></button>
+                    </div>
+                    <div class="gt-compose-submit">
+                        <span class="gt-char-count" id="quote-char-count">280</span>
+                        <button type="submit" class="gt-btn gt-btn-primary" id="quote-post-btn" disabled>
+                            Quote
+                        </button>
+                    </div>
+                </div>
+                <input type="hidden" id="quote-quoted-gad-id" name="quotedGadId" value="" />
             </form>
         </div>
     </div>

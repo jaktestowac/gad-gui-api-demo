@@ -136,17 +136,46 @@ const gadTalkApp = (function () {
     // Update compose avatars
     updateComposeAvatars();
 
-    // Initialize compose forms
-    window.gadTalkGads.initComposeForm("compose-form", "compose-textarea", "char-count", "post-btn");
+    // Initialize compose forms with image and quote support
+    window.gadTalkGads.initComposeForm("compose-form", "compose-textarea", "char-count", "post-btn", {
+      imageUrlInputId: "compose-image-url",
+      imagePreviewId: "compose-image-preview",
+      quotedGadIdInputId: "compose-quoted-gad-id",
+      quotePreviewId: "compose-quote-preview",
+    });
     window.gadTalkGads.initComposeForm(
       "modal-compose-form",
       "modal-compose-textarea",
       "modal-char-count",
-      "modal-post-btn"
+      "modal-post-btn",
+      {
+        imageUrlInputId: "modal-image-url",
+        imagePreviewId: "modal-image-preview",
+        quotedGadIdInputId: "modal-quoted-gad-id",
+        quotePreviewId: "modal-quote-preview",
+      }
+    );
+
+    // Initialize quote compose form
+    window.gadTalkGads.initComposeForm(
+      "quote-compose-form",
+      "quote-compose-textarea",
+      "quote-char-count",
+      "quote-post-btn",
+      {
+        quotedGadIdInputId: "quote-quoted-gad-id",
+        quotePreviewId: "quote-gad-preview",
+      }
     );
 
     // Setup compose modal
     setupComposeModal();
+
+    // Setup image URL modal
+    setupImageUrlModal();
+
+    // Setup quote modal close handlers
+    setupQuoteModal();
 
     // Setup nav profile link
     const navProfile = document.getElementById("nav-profile");
@@ -341,6 +370,92 @@ const gadTalkApp = (function () {
   }
 
   /**
+   * Setup image URL modal
+   */
+  function setupImageUrlModal() {
+    const imageUrlModal = document.getElementById("image-url-modal");
+    if (!imageUrlModal) return;
+
+    let targetPreviewId = null;
+    let targetInputId = null;
+
+    // Handle add image buttons in compose forms
+    const addImageBtns = [
+      { btn: "add-image-btn", preview: "compose-image-preview", input: "compose-image-url" },
+      { btn: "modal-add-image-btn", preview: "modal-image-preview", input: "modal-image-url" },
+    ];
+
+    addImageBtns.forEach(({ btn, preview, input }) => {
+      const button = document.getElementById(btn);
+      if (button) {
+        button.addEventListener("click", () => {
+          targetPreviewId = preview;
+          targetInputId = input;
+          document.getElementById("image-url-input").value = "";
+          imageUrlModal.classList.remove("gt-hidden");
+        });
+      }
+    });
+
+    // Handle confirm button
+    const confirmBtn = document.getElementById("confirm-image-url-btn");
+    if (confirmBtn) {
+      confirmBtn.addEventListener("click", () => {
+        const imageUrl = document.getElementById("image-url-input").value.trim();
+        if (imageUrl && targetPreviewId && targetInputId) {
+          window.gadTalkGads.setComposeImage(imageUrl, targetPreviewId, targetInputId);
+        }
+        imageUrlModal.classList.add("gt-hidden");
+      });
+    }
+
+    // Close modal handlers
+    imageUrlModal.querySelectorAll("[data-close-modal]").forEach((el) => {
+      el.addEventListener("click", () => {
+        imageUrlModal.classList.add("gt-hidden");
+      });
+    });
+  }
+
+  /**
+   * Setup quote modal
+   */
+  function setupQuoteModal() {
+    const quoteModal = document.getElementById("quote-modal");
+    if (!quoteModal) return;
+
+    // Set quote compose avatar
+    const quoteAvatar = document.getElementById("quote-compose-avatar");
+    if (quoteAvatar && currentUser) {
+      quoteAvatar.innerHTML = window.gadTalkGads.getAvatarHtml(currentUser, "md");
+    }
+
+    // Close modal handlers
+    quoteModal.querySelectorAll("[data-close-modal]").forEach((el) => {
+      el.addEventListener("click", () => {
+        quoteModal.classList.add("gt-hidden");
+        // Clear the form
+        const textarea = document.getElementById("quote-compose-textarea");
+        const charCount = document.getElementById("quote-char-count");
+        const quotedGadIdInput = document.getElementById("quote-quoted-gad-id");
+        const quotePreview = document.getElementById("quote-gad-preview");
+
+        if (textarea) textarea.value = "";
+        if (charCount) charCount.textContent = "280";
+        if (quotedGadIdInput) quotedGadIdInput.value = "";
+        if (quotePreview) quotePreview.innerHTML = "";
+      });
+    });
+
+    // Close on escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !quoteModal.classList.contains("gt-hidden")) {
+        quoteModal.classList.add("gt-hidden");
+      }
+    });
+  }
+
+  /**
    * Setup feed tabs
    */
   function setupFeedTabs() {
@@ -512,8 +627,8 @@ const gadTalkApp = (function () {
       trendingList.innerHTML = hashtags
         .map(
           (tag) => `
-        <a href="/gad-talk/explore.html?hashtag=${tag.name}" class="gt-trending-item">
-          <span class="gt-trending-tag">#${tag.name}</span>
+        <a href="/gad-talk/explore.html?hashtag=${tag.tag || tag.name}" class="gt-trending-item">
+          <span class="gt-trending-tag">#${tag.tag || tag.name}</span>
           <span class="gt-trending-count">${window.gadTalkGads.formatCount(tag.count)} gads</span>
         </a>
       `
