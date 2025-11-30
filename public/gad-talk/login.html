@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - GadTalk</title>
+    <link rel="stylesheet" href="/gad-talk/css/gad-talk.css">
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+</head>
+
+<body class="gt-auth-layout">
+    <!-- Navbar -->
+    <nav class="gt-navbar">
+        <div class="gt-container-wide gt-flex gt-justify-between gt-items-center">
+            <a href="/" class="gt-link-muted">🦎 GAD</a>
+            <a href="/gad-talk/" class="gt-navbar-brand">
+                <span class="gt-logo"><i class="fa-solid fa-comments"></i></span>
+                <span>GadTalk</span>
+            </a>
+            <div class="gt-flex gt-gap-sm">
+                <a href="/gad-talk/login.html" data-testid="login-link" class="gt-btn gt-btn-secondary gt-btn-sm">
+                    Login
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="gt-auth-container">
+        <div class="gt-auth-card gt-card gt-card-glow">
+            <div class="gt-auth-header">
+                <a href="/gad-talk/" class="gt-navbar-brand">
+                    <span class="gt-logo"><i class="fa-solid fa-comments"></i></span>
+                    <span>GadTalk</span>
+                </a>
+                <p class="gt-auth-subtitle">Sign in to your account</p>
+            </div>
+
+            <!-- Error/Success messages -->
+            <div id="error-message" class="gt-alert gt-alert-error gt-hidden" data-testid="error-message"></div>
+            <div id="success-message" class="gt-alert gt-alert-success gt-hidden" data-testid="success-message"></div>
+
+            <!-- Login form -->
+            <form id="login-form" data-testid="login-form">
+                <div class="gt-field">
+                    <label for="email" class="gt-label">Email</label>
+                    <input type="email" id="email" name="email" data-testid="email-input" required autocomplete="email" class="gt-input" placeholder="your@email.com" />
+                </div>
+
+                <div class="gt-field">
+                    <label for="password" class="gt-label">Password</label>
+                    <input type="password" id="password" name="password" data-testid="password-input" required autocomplete="current-password" class="gt-input" placeholder="••••••••" />
+                </div>
+
+                <div class="gt-field">
+                    <label class="gt-checkbox">
+                        <input type="checkbox" id="keepSignIn" name="keepSignIn" data-testid="keep-signin-checkbox" />
+                        <span>Keep me signed in</span>
+                    </label>
+                </div>
+
+                <button type="submit" data-testid="login-button" class="gt-btn gt-btn-primary gt-btn-block gt-btn-lg">
+                    Sign In
+                </button>
+            </form>
+
+            <!-- Forgot password link -->
+            <div class="gt-text-center gt-mt-md">
+                <a href="/gad-talk/forgot-password.html" class="gt-link gt-text-sm" data-testid="forgot-password-link">
+                    Forgot password?
+                </a>
+            </div>
+
+            <!-- Sign up link -->
+            <div class="gt-auth-footer">
+                <span class="gt-text-secondary">Don't have an account?</span>
+                <a href="/gad-talk/signup.html" class="gt-link" data-testid="signup-link">Sign up</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/gad-talk/js/api.js"></script>
+    <script src="/gad-talk/js/ui.js"></script>
+    <script src="/gad-talk/js/auth.js"></script>
+    <script>
+        // Check if user is already logged in and redirect
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const user = await window.gadTalkAuth.checkAuth();
+                if (user) {
+                    window.location.href = '/gad-talk/index.html';
+                    return;
+                }
+            } catch (error) {
+                // Continue to show login form if auth check fails
+            }
+        });
+    </script>
+</body>
+
+</html>

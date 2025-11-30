@@ -142,6 +142,7 @@ const FeatureFlagConfigKeys = {
   FEATURE_SOFT_DELETE_USERS: "feature_soft_delete_users",
   STRICT_SURNAME_VALIDATION: "strict_surname_validation",
   FEATURE_BUG_HATCH_MODULE: "feature_bug_hatch_module",
+  FEATURE_GAD_TALK_MODULE: "feature_gad_talk_module",
 };
 
 module.exports = {

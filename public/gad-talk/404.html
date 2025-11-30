@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page Not Found - GadTalk</title>
+    <link rel="stylesheet" href="/gad-talk/css/gad-talk.css">
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+</head>
+
+<body class="gt-error-layout">
+    <!-- Navbar -->
+    <nav class="gt-navbar">
+        <div class="gt-container-wide gt-flex gt-justify-between gt-items-center">
+            <a href="/" class="gt-link-muted"><i class="fa-solid fa-frog"></i> GAD</a>
+            <a href="/gad-talk/" class="gt-navbar-brand">
+                <span class="gt-logo"><i class="fa-solid fa-comments"></i></span>
+                <span>GadTalk</span>
+            </a>
+            <div class="gt-flex gt-gap-sm" id="nav-user-section">
+                <a href="/gad-talk/login.html" data-testid="login-link" class="gt-btn gt-btn-secondary gt-btn-sm">
+                    Login
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Error content -->
+    <main class="gt-error-main">
+        <div class="gt-error-container">
+            <div class="gt-error-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+            <h1 class="gt-error-code" data-testid="error-code">404</h1>
+            <h2 class="gt-error-title" data-testid="error-title">Page not found</h2>
+            <p class="gt-error-message" data-testid="error-message">
+                Hmm... this page doesn't exist. The Gad you're looking for may have been deleted,
+                or the link might be broken.
+            </p>
+
+            <div class="gt-error-actions">
+                <a href="/gad-talk/" class="gt-btn gt-btn-primary gt-btn-lg" data-testid="go-home-btn">
+                    Go to Home
+                </a>
+                <button onclick="history.back()" class="gt-btn gt-btn-secondary gt-btn-lg" data-testid="go-back-btn">
+                    Go Back
+                </button>
+            </div>
+
+            <div class="gt-error-suggestions">
+                <h3>You might want to try:</h3>
+                <ul>
+                    <li><a href="/gad-talk/explore.html">Explore trending topics</a></li>
+                    <li><a href="/gad-talk/search.html">Search for users or Gads</a></li>
+                    <li><a href="/gad-talk/notifications.html">Check your notifications</a></li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="gt-welcome-footer">
+        <div class="gt-container">
+            <div class="gt-footer-links">
+                <a href="/" class="gt-link-muted"><i class="fa-solid fa-frog"></i> GAD Home</a>
+                <span class="gt-text-muted">•</span>
+                <a href="/tools.html" class="gt-link-muted">Tools</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/gad-talk/js/api.js"></script>
+    <script src="/gad-talk/js/auth.js"></script>
+    <script>
+        // Update nav if user is logged in
+        (async function () {
+            if (window.GadTalkAPI.auth.isAuthenticated()) {
+                try {
+                    const response = await window.GadTalkAPI.auth.me();
+                    const user = response.user;
+                    const navSection = document.getElementById('nav-user-section');
+                    if (navSection && user) {
+                        navSection.innerHTML = `
+                            <a href="/gad-talk/profile.html?id=${user.id}" class="gt-nav-avatar">
+                                <div class="gt-avatar gt-avatar-sm">${user.avatar || user.username.charAt(0).toUpperCase()}</div>
+                            </a>
+                        `;
+                    }
+                } catch (e) {
+                    // Token invalid, show login link
+                }
+            }
+        })();
+    </script>
+</body>
+
+</html>

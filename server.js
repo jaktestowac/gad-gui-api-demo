@@ -60,6 +60,7 @@ const { assertFreePorts } = require("./helpers/port.checker");
 const { externalRoutes } = require("./routes/external.route");
 const { initializeAllBugHatchDatabases } = require("./endpoints/bug-hatch/db-bug-hatch.operations");
 const { injectDemoContext, blockDemoMutations } = require("./endpoints/bug-hatch/bug-hatch-demo.middleware");
+const { initializeGadTalkModule } = require("./endpoints/gad-talk/gad-talk.route");
 
 const middlewares = jsonServer.defaults();
 
@@ -82,6 +83,15 @@ if (isBugHatchEnabled === true) {
   logDebug("> BugHatch Module is ENABLED");
   initializeAllBugHatchDatabases().catch((err) => {
     logError("Failed to initialize BugHatch Module databases:", err);
+  });
+}
+
+// Enable GadTalk module
+const isGadTalkEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_GAD_TALK_MODULE);
+if (isGadTalkEnabled === true) {
+  logDebug("> GadTalk Module is ENABLED");
+  initializeGadTalkModule().catch((err) => {
+    logError("Failed to initialize GadTalk Module:", err);
   });
 }
 
@@ -303,6 +313,19 @@ server.use("/api", router);
 // (BugHatch enable block moved earlier)
 
 router.render = renderResponse;
+
+// GadTalk 404 handler - serve gad-talk/404.html for non-existent gad-talk pages
+server.use("/gad-talk", function (req, res, next) {
+  // Only handle HTML requests for pages that don't exist
+  if (req.accepts("html") && req.method === "GET") {
+    const gadTalk404Path = path.join(__dirname, "public", "gad-talk", "404.html");
+    if (fs.existsSync(gadTalk404Path)) {
+      res.status(404).sendFile(gadTalk404Path);
+      return;
+    }
+  }
+  next();
+});
 
 server.use(function (req, res, next) {
   logTrace("Hit 404:", { url: req.url });

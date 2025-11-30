@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Explore - GadTalk</title>
+    <link rel="stylesheet" href="/gad-talk/css/gad-talk.css">
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+</head>
+
+<body class="gt-app-layout">
+    <!-- Navbar -->
+    <nav class="gt-navbar">
+        <div class="gt-container-wide gt-flex gt-justify-between gt-items-center">
+            <a href="/" class="gt-link-muted">🦎 GAD</a>
+            <a href="/gad-talk/" class="gt-navbar-brand">
+                <span class="gt-logo"><i class="fa-solid fa-comments"></i></span>
+                <span>GadTalk</span>
+            </a>
+            <div class="gt-flex gt-gap-sm gt-items-center" id="nav-user-section">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main layout -->
+    <div class="gt-main-container">
+        <!-- Left sidebar -->
+        <aside class="gt-sidebar gt-sidebar-left">
+            <nav class="gt-nav-menu" id="main-nav">
+                <a href="/gad-talk/index.html" class="gt-nav-item" data-testid="nav-home">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-house"></i></span>
+                    <span class="gt-nav-text">Home</span>
+                </a>
+                <a href="/gad-talk/explore.html" class="gt-nav-item gt-nav-item-active" data-testid="nav-explore">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <span class="gt-nav-text">Explore</span>
+                </a>
+                <a href="/gad-talk/notifications.html" class="gt-nav-item" data-testid="nav-notifications">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-bell"></i></span>
+                    <span class="gt-nav-text">Notifications</span>
+                    <span class="gt-badge gt-badge-primary gt-hidden" id="notification-badge">0</span>
+                </a>
+                <a href="/gad-talk/bookmarks.html" class="gt-nav-item" data-testid="nav-bookmarks">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-bookmark"></i></span>
+                    <span class="gt-nav-text">Bookmarks</span>
+                </a>
+                <a href="#" class="gt-nav-item" id="nav-profile" data-testid="nav-profile">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-user"></i></span>
+                    <span class="gt-nav-text">Profile</span>
+                </a>
+                <button class="gt-btn gt-btn-primary gt-btn-block gt-mt-lg" id="compose-btn" data-testid="compose-button">
+                    Gad
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <main class="gt-content">
+            <!-- Header -->
+            <header class="gt-page-header">
+                <h1 class="gt-page-title">Explore</h1>
+            </header>
+
+            <!-- Search section -->
+            <div class="gt-card gt-mb-md">
+                <form id="search-form" class="gt-search-form" data-testid="search-form">
+                    <div class="gt-search-input-wrapper">
+                        <span class="gt-search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <input type="search" id="search-input" class="gt-search-input" placeholder="Search GadTalk" data-testid="search-input" />
+                    </div>
+                </form>
+            </div>
+
+            <!-- Trending section -->
+            <section class="gt-card">
+                <h2 class="gt-section-title">Trending Hashtags</h2>
+                <div id="trending-list" class="gt-trending-list" data-testid="trending-list">
+                    <!-- Loading -->
+                    <div class="gt-loading-section" id="trending-loading">
+                        <div class="gt-spinner"></div>
+                        <span>Loading trends...</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Popular Gads section -->
+            <section class="gt-card gt-mt-md">
+                <h2 class="gt-section-title">Popular Gads</h2>
+                <div id="popular-gads" class="gt-gads-list" data-testid="popular-gads">
+                    <!-- Loading -->
+                    <div class="gt-loading-section" id="popular-loading">
+                        <div class="gt-spinner"></div>
+                        <span>Loading popular gads...</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Right sidebar -->
+        <aside class="gt-sidebar gt-sidebar-right">
+            <div class="gt-card">
+                <h3 class="gt-card-title">Who to follow</h3>
+                <div id="suggestions-list" class="gt-suggestions-list" data-testid="suggestions-list">
+                    <!-- Loading -->
+                    <div class="gt-loading-section" id="suggestions-loading">
+                        <span class="gt-text-secondary">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/gad-talk/js/api.js"></script>
+    <script src="/gad-talk/js/ui.js"></script>
+    <script src="/gad-talk/js/auth.js"></script>
+    <script src="/gad-talk/js/gads.js"></script>
+    <script>
+        (async function () {
+            // Require authentication
+            const currentUser = await window.gadTalkAuth.requireAuth();
+            if (!currentUser) return;
+
+            // Update nav profile link
+            const navProfile = document.getElementById("nav-profile");
+            if (navProfile) {
+                navProfile.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+            }
+
+            // Update nav user section
+            const navUserSection = document.getElementById("nav-user-section");
+            if (navUserSection) {
+                navUserSection.innerHTML = `
+                    <a href="/gad-talk/profile.html?user=${currentUser.username}" class="gt-nav-avatar">
+                        <div class="gt-avatar gt-avatar-sm">${currentUser.avatar || currentUser.username.charAt(0).toUpperCase()}</div>
+                    </a>
+                `;
+            }
+
+            // Load trending hashtags
+            loadTrending();
+
+            // Handle search
+            const searchForm = document.getElementById('search-form');
+            const searchInput = document.getElementById('search-input');
+
+            searchForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const query = searchInput.value.trim();
+                if (query) {
+                    window.location.href = `/gad-talk/search.html?q=${encodeURIComponent(query)}`;
+                }
+            });
+
+            // Check URL for hashtag param
+            const urlParams = new URLSearchParams(window.location.search);
+            const hashtag = urlParams.get('hashtag');
+            if (hashtag) {
+                loadHashtagGads(hashtag);
+            }
+
+            async function loadTrending() {
+                const trendingList = document.getElementById('trending-list');
+                const trendingLoading = document.getElementById('trending-loading');
+
+                try {
+                    const response = await window.GadTalkAPI.gads.getTrending();
+                    const hashtags = response.hashtags || [];
+
+                    trendingLoading.classList.add('gt-hidden');
+
+                    if (hashtags.length === 0) {
+                        trendingList.innerHTML = `
+                            <div class="gt-empty-state-sm">
+                                <p class="gt-text-secondary">No trending hashtags yet</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    trendingList.innerHTML = hashtags.map((tag, idx) => `
+                        <a href="/gad-talk/explore.html?hashtag=${tag.tag}" class="gt-trending-item" data-testid="trending-item-${idx}">
+                            <span class="gt-trending-rank">${idx + 1}</span>
+                            <div class="gt-trending-info">
+                                <span class="gt-trending-tag">#${tag.tag}</span>
+                                <span class="gt-trending-count">${tag.count} Gads</span>
+                            </div>
+                        </a>
+                    `).join('');
+                } catch (error) {
+                    trendingLoading.innerHTML = '<span class="gt-text-error">Failed to load trends</span>';
+                }
+            }
+
+            async function loadHashtagGads(hashtag) {
+                const popularSection = document.querySelector('.gt-card.gt-mt-md');
+                const popularGads = document.getElementById('popular-gads');
+
+                popularSection.querySelector('h2').textContent = `#${hashtag}`;
+
+                try {
+                    const response = await window.GadTalkAPI.gads.getByHashtag(hashtag);
+                    const gads = response.gads || [];
+
+                    document.getElementById('popular-loading').classList.add('gt-hidden');
+
+                    if (gads.length === 0) {
+                        popularGads.innerHTML = `
+                            <div class="gt-empty-state">
+                                <div class="gt-empty-icon"><i class="fa-solid fa-inbox"></i></div>
+                                <h3 class="gt-empty-title">No Gads yet</h3>
+                                <p class="gt-empty-message">Be the first to post with #${hashtag}</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    window.gadTalkGads.renderGads(gads, popularGads, currentUser.id);
+                } catch (error) {
+                    document.getElementById('popular-loading').innerHTML = '<span class="gt-text-error">Failed to load gads</span>';
+                }
+            }
+        })();
+    </script>
+</body>
+
+</html>

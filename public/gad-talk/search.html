@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search - GadTalk</title>
+    <link rel="stylesheet" href="/gad-talk/css/gad-talk.css">
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+</head>
+
+<body class="gt-app-layout">
+    <!-- Navbar -->
+    <nav class="gt-navbar">
+        <div class="gt-container-wide gt-flex gt-justify-between gt-items-center">
+            <a href="/" class="gt-link-muted">🦎 GAD</a>
+            <a href="/gad-talk/" class="gt-navbar-brand">
+                <span class="gt-logo"><i class="fa-solid fa-comments"></i></span>
+                <span>GadTalk</span>
+            </a>
+            <div class="gt-flex gt-gap-sm gt-items-center" id="nav-user-section">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main layout -->
+    <div class="gt-main-container">
+        <!-- Left sidebar -->
+        <aside class="gt-sidebar gt-sidebar-left">
+            <nav class="gt-nav-menu" id="main-nav">
+                <a href="/gad-talk/index.html" class="gt-nav-item" data-testid="nav-home">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-house"></i></span>
+                    <span class="gt-nav-text">Home</span>
+                </a>
+                <a href="/gad-talk/explore.html" class="gt-nav-item" data-testid="nav-explore">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <span class="gt-nav-text">Explore</span>
+                </a>
+                <a href="/gad-talk/notifications.html" class="gt-nav-item" data-testid="nav-notifications">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-bell"></i></span>
+                    <span class="gt-nav-text">Notifications</span>
+                    <span class="gt-badge gt-badge-primary gt-hidden" id="notification-badge">0</span>
+                </a>
+                <a href="/gad-talk/bookmarks.html" class="gt-nav-item" data-testid="nav-bookmarks">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-bookmark"></i></span>
+                    <span class="gt-nav-text">Bookmarks</span>
+                </a>
+                <a href="#" class="gt-nav-item" id="nav-profile" data-testid="nav-profile">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-user"></i></span>
+                    <span class="gt-nav-text">Profile</span>
+                </a>
+                <button class="gt-btn gt-btn-primary gt-btn-block gt-mt-lg" id="compose-btn" data-testid="compose-button">
+                    Gad
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <main class="gt-content">
+            <!-- Search header -->
+            <header class="gt-page-header">
+                <form id="search-form" class="gt-search-form gt-search-form-lg" data-testid="search-form">
+                    <div class="gt-search-input-wrapper">
+                        <span class="gt-search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <input type="search" id="search-input" class="gt-search-input" placeholder="Search GadTalk" data-testid="search-input" autofocus />
+                        <button type="submit" class="gt-btn gt-btn-primary gt-btn-sm" data-testid="search-btn">
+                            Search
+                        </button>
+                    </div>
+                </form>
+            </header>
+
+            <!-- Search filters -->
+            <div class="gt-tabs gt-tabs-secondary">
+                <button class="gt-tab gt-tab-active" data-filter="gads" data-testid="filter-gads">Gads</button>
+                <button class="gt-tab" data-filter="users" data-testid="filter-users">Users</button>
+            </div>
+
+            <!-- Search results -->
+            <div class="gt-search-results">
+                <div id="search-prompt" class="gt-search-prompt">
+                    <div class="gt-empty-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                    <h3>Search GadTalk</h3>
+                    <p class="gt-text-secondary">Find Gads, people, and more.</p>
+                </div>
+
+                <div id="search-loading" class="gt-loading-section gt-hidden">
+                    <div class="gt-spinner"></div>
+                    <span>Searching...</span>
+                </div>
+
+                <div id="search-empty" class="gt-hidden">
+                    <div class="gt-empty-state">
+                        <div class="gt-empty-icon"><i class="fa-solid fa-face-meh"></i></div>
+                        <h3 class="gt-empty-title">No results found</h3>
+                        <p class="gt-empty-message" id="empty-message">Try searching for something else.</p>
+                    </div>
+                </div>
+
+                <div id="results-list" class="gt-results-list" data-testid="results-list">
+                    <!-- Search results will be rendered here -->
+                </div>
+
+                <div id="load-more-section" class="gt-load-more gt-hidden">
+                    <button id="load-more-btn" class="gt-btn gt-btn-secondary" data-testid="load-more-btn">
+                        Load more
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right sidebar -->
+        <aside class="gt-sidebar gt-sidebar-right">
+            <div class="gt-card">
+                <h3 class="gt-card-title">Search tips</h3>
+                <ul class="gt-tips-list">
+                    <li>Search for <code>@username</code> to find users</li>
+                    <li>Search for <code>#hashtag</code> to find topics</li>
+                    <li>Use keywords to find specific Gads</li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/gad-talk/js/api.js"></script>
+    <script src="/gad-talk/js/ui.js"></script>
+    <script src="/gad-talk/js/auth.js"></script>
+    <script src="/gad-talk/js/gads.js"></script>
+    <script>
+        (async function () {
+            let currentUser = null;
+            let currentQuery = '';
+            let currentFilter = 'gads';
+            let currentPage = 1;
+            let isLoading = false;
+            let hasMore = true;
+
+            // Require authentication
+            currentUser = await window.gadTalkAuth.requireAuth();
+            if (!currentUser) return;
+
+            // Update nav profile link
+            const navProfile = document.getElementById("nav-profile");
+            if (navProfile) {
+                navProfile.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+            }
+
+            // Update nav user section
+            const navUserSection = document.getElementById("nav-user-section");
+            if (navUserSection) {
+                navUserSection.innerHTML = `
+                    <a href="/gad-talk/profile.html?user=${currentUser.username}" class="gt-nav-avatar">
+                        <div class="gt-avatar gt-avatar-sm">${currentUser.avatar || currentUser.username.charAt(0).toUpperCase()}</div>
+                    </a>
+                `;
+            }
+
+            // Get search query from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const initialQuery = urlParams.get('q');
+            if (initialQuery) {
+                document.getElementById('search-input').value = initialQuery;
+                currentQuery = initialQuery;
+                performSearch();
+            }
+
+            // Search form
+            const searchForm = document.getElementById('search-form');
+            const searchInput = document.getElementById('search-input');
+
+            searchForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const query = searchInput.value.trim();
+                if (query) {
+                    currentQuery = query;
+                    currentPage = 1;
+                    // Update URL
+                    window.history.pushState({}, '', `/gad-talk/search.html?q=${encodeURIComponent(query)}`);
+                    performSearch();
+                }
+            });
+
+            // Filter tabs
+            document.querySelectorAll('.gt-tabs-secondary .gt-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.gt-tabs-secondary .gt-tab').forEach(t => t.classList.remove('gt-tab-active'));
+                    tab.classList.add('gt-tab-active');
+                    currentFilter = tab.dataset.filter;
+                    currentPage = 1;
+                    if (currentQuery) {
+                        performSearch();
+                    }
+                });
+            });
+
+            // Load more button
+            document.getElementById('load-more-btn').addEventListener('click', () => {
+                if (!isLoading && hasMore) {
+                    currentPage++;
+                    performSearch(true);
+                }
+            });
+
+            async function performSearch(append = false) {
+                if (isLoading || !currentQuery) return;
+                isLoading = true;
+
+                const promptEl = document.getElementById('search-prompt');
+                const loadingEl = document.getElementById('search-loading');
+                const emptyEl = document.getElementById('search-empty');
+                const resultsEl = document.getElementById('results-list');
+                const loadMoreSection = document.getElementById('load-more-section');
+
+                promptEl.classList.add('gt-hidden');
+
+                if (!append) {
+                    loadingEl.classList.remove('gt-hidden');
+                    emptyEl.classList.add('gt-hidden');
+                    resultsEl.innerHTML = '';
+                }
+
+                try {
+                    let results = [];
+
+                    if (currentFilter === 'gads') {
+                        const response = await window.GadTalkAPI.gads.search(currentQuery, currentPage);
+                        results = response.gads || [];
+                    } else {
+                        const response = await window.GadTalkAPI.users.search(currentQuery, currentPage);
+                        results = response.users || [];
+                    }
+
+                    loadingEl.classList.add('gt-hidden');
+
+                    if (results.length === 0 && currentPage === 1) {
+                        emptyEl.classList.remove('gt-hidden');
+                        document.getElementById('empty-message').textContent =
+                            `No ${currentFilter} found for "${currentQuery}"`;
+                        loadMoreSection.classList.add('gt-hidden');
+                    } else {
+                        emptyEl.classList.add('gt-hidden');
+
+                        if (currentFilter === 'gads') {
+                            window.gadTalkGads.renderGads(results, resultsEl, currentUser.id, append);
+                        } else {
+                            renderUsers(results, append);
+                        }
+
+                        hasMore = results.length >= 20;
+                        if (hasMore) {
+                            loadMoreSection.classList.remove('gt-hidden');
+                        } else {
+                            loadMoreSection.classList.add('gt-hidden');
+                        }
+                    }
+                } catch (error) {
+                    loadingEl.innerHTML = '<span class="gt-text-error">Search failed. Please try again.</span>';
+                } finally {
+                    isLoading = false;
+                }
+            }
+
+            function renderUsers(users, append) {
+                const resultsEl = document.getElementById('results-list');
+
+                const html = users.map(user => `
+                    <a href="/gad-talk/profile.html?user=${user.username}" class="gt-user-result" data-testid="user-result-${user.id}">
+                        <div class="gt-avatar gt-avatar-md">
+                            ${user.avatar || user.username.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="gt-user-info">
+                            <span class="gt-user-displayname">${user.displayName || user.username}</span>
+                            <span class="gt-user-username">@${user.username}</span>
+                            ${user.bio ? `<p class="gt-user-bio">${user.bio}</p>` : ''}
+                        </div>
+                    </a>
+                `).join('');
+
+                if (append) {
+                    resultsEl.insertAdjacentHTML('beforeend', html);
+                } else {
+                    resultsEl.innerHTML = html;
+                }
+            }
+        })();
+    </script>
+</body>
+
+</html>

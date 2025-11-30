@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GadTalk - What's happening?</title>
+    <link rel="stylesheet" href="/gad-talk/css/gad-talk.css">
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+</head>
+
+<body class="gt-app-layout">
+    <!-- Navbar -->
+    <nav class="gt-navbar">
+        <div class="gt-container-wide gt-flex gt-justify-between gt-items-center">
+            <a href="/" class="gt-link-muted">🦎 GAD</a>
+            <a href="/gad-talk/" class="gt-navbar-brand">
+                <span class="gt-logo"><i class="fa-solid fa-comments"></i></span>
+                <span>GadTalk</span>
+            </a>
+            <div class="gt-flex gt-gap-sm gt-items-center" id="nav-user-section">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main layout -->
+    <div class="gt-main-container">
+        <!-- Left sidebar -->
+        <aside class="gt-sidebar gt-sidebar-left">
+            <nav class="gt-nav-menu" id="main-nav">
+                <a href="/gad-talk/index.html" class="gt-nav-item gt-nav-item-active" data-testid="nav-home">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-house"></i></span>
+                    <span class="gt-nav-text">Home</span>
+                </a>
+                <a href="/gad-talk/explore.html" class="gt-nav-item" data-testid="nav-explore">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <span class="gt-nav-text">Explore</span>
+                </a>
+                <a href="/gad-talk/notifications.html" class="gt-nav-item" data-testid="nav-notifications">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-bell"></i></span>
+                    <span class="gt-nav-text">Notifications</span>
+                    <span class="gt-badge gt-badge-primary gt-hidden" id="notification-badge">0</span>
+                </a>
+                <a href="/gad-talk/bookmarks.html" class="gt-nav-item" data-testid="nav-bookmarks">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-bookmark"></i></span>
+                    <span class="gt-nav-text">Bookmarks</span>
+                </a>
+                <a href="#" class="gt-nav-item" id="nav-profile" data-testid="nav-profile">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-user"></i></span>
+                    <span class="gt-nav-text">Profile</span>
+                </a>
+                <button class="gt-btn gt-btn-primary gt-btn-block gt-mt-lg" id="compose-btn" data-testid="compose-button">
+                    Gad
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <main class="gt-content">
+            <!-- Header -->
+            <header class="gt-page-header">
+                <h1 class="gt-page-title">Home</h1>
+                <div class="gt-tabs">
+                    <button class="gt-tab gt-tab-active" data-feed="for-you" data-testid="tab-for-you">For You</button>
+                    <button class="gt-tab" data-feed="following" data-testid="tab-following">Following</button>
+                </div>
+            </header>
+
+            <!-- Compose gad section -->
+            <div class="gt-compose-card gt-card" id="compose-section">
+                <form id="compose-form" class="gt-compose-form" data-testid="compose-form">
+                    <div class="gt-compose-row">
+                        <div class="gt-avatar gt-avatar-md" id="compose-avatar">
+                            <!-- Populated by JS -->
+                        </div>
+                        <div class="gt-compose-input-container">
+                            <textarea id="compose-textarea" name="content" class="gt-compose-textarea" placeholder="What's happening?" maxlength="280" rows="3" data-testid="compose-textarea"></textarea>
+                        </div>
+                    </div>
+                    <div class="gt-compose-actions">
+                        <div class="gt-compose-tools">
+                            <button type="button" class="gt-icon-btn" title="Add emoji" data-testid="add-emoji-btn">
+                                <i class="fa-solid fa-face-smile"></i>
+                            </button>
+                            <button type="button" class="gt-icon-btn" title="Add poll" data-testid="add-poll-btn">
+                                <i class="fa-solid fa-chart-bar"></i>
+                            </button>
+                        </div>
+                        <div class="gt-compose-submit">
+                            <span class="gt-char-count" id="char-count">280</span>
+                            <button type="submit" class="gt-btn gt-btn-primary" id="post-btn" data-testid="post-button" disabled>
+                                Gad
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Feed -->
+            <div class="gt-feed" id="feed-container" data-testid="feed-container">
+                <!-- Loading state -->
+                <div class="gt-loading-spinner" id="feed-loading">
+                    <div class="gt-spinner"></div>
+                    <p>Loading gads...</p>
+                </div>
+
+                <!-- Empty state (hidden by default) -->
+                <div class="gt-empty-state gt-hidden" id="feed-empty">
+                    <p class="gt-text-lg">No gads yet</p>
+                    <p class="gt-text-secondary">When you follow people, their gads will show up here.</p>
+                </div>
+
+                <!-- Gads will be inserted here -->
+                <div id="gads-list"></div>
+
+                <!-- Load more -->
+                <div class="gt-load-more gt-hidden" id="load-more-section">
+                    <button class="gt-btn gt-btn-secondary gt-btn-block" id="load-more-btn" data-testid="load-more-button">
+                        Load more
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right sidebar -->
+        <aside class="gt-sidebar gt-sidebar-right">
+            <!-- Search -->
+            <div class="gt-search-container">
+                <input type="search" class="gt-search-input" placeholder="Search GadTalk" id="search-input" data-testid="search-input" />
+            </div>
+
+            <!-- Trending section -->
+            <div class="gt-card gt-trending-card">
+                <h2 class="gt-card-title">Trending</h2>
+                <div id="trending-list">
+                    <!-- Populated by JS -->
+                    <div class="gt-loading-spinner gt-loading-sm">
+                        <div class="gt-spinner gt-spinner-sm"></div>
+                    </div>
+                </div>
+                <a href="/gad-talk/explore.html" class="gt-link gt-text-sm">Show more</a>
+            </div>
+
+            <!-- Who to follow -->
+            <div class="gt-card gt-suggestions-card">
+                <h2 class="gt-card-title">Who to follow</h2>
+                <div id="suggestions-list">
+                    <!-- Populated by JS -->
+                    <div class="gt-loading-spinner gt-loading-sm">
+                        <div class="gt-spinner gt-spinner-sm"></div>
+                    </div>
+                </div>
+                <a href="/gad-talk/explore.html?tab=people" class="gt-link gt-text-sm">Show more</a>
+            </div>
+
+            <!-- Footer -->
+            <footer class="gt-sidebar-footer">
+                <a href="/gad-talk/terms.html" class="gt-link-muted">Terms</a>
+                <a href="/gad-talk/privacy.html" class="gt-link-muted">Privacy</a>
+                <a href="/gad-talk/about.html" class="gt-link-muted">About</a>
+                <span class="gt-text-muted">© 2025 GadTalk</span>
+            </footer>
+        </aside>
+    </div>
+
+    <!-- Compose Modal -->
+    <div class="gt-modal gt-hidden" id="compose-modal">
+        <div class="gt-modal-overlay" data-close-modal></div>
+        <div class="gt-modal-content gt-card">
+            <div class="gt-modal-header">
+                <button type="button" class="gt-icon-btn gt-modal-close" data-close-modal><i class="fa-solid fa-xmark"></i></button>
+                <h2>Compose Gad</h2>
+            </div>
+            <form id="modal-compose-form" class="gt-compose-form" data-testid="modal-compose-form">
+                <div class="gt-compose-row">
+                    <div class="gt-avatar gt-avatar-md" id="modal-compose-avatar">
+                        <!-- Populated by JS -->
+                    </div>
+                    <div class="gt-compose-input-container">
+                        <textarea id="modal-compose-textarea" name="content" class="gt-compose-textarea" placeholder="What's happening?" maxlength="280" rows="5" data-testid="modal-compose-textarea"></textarea>
+                    </div>
+                </div>
+                <div class="gt-compose-actions">
+                    <div class="gt-compose-tools">
+                        <button type="button" class="gt-icon-btn" title="Add emoji"><i class="fa-solid fa-face-smile"></i></button>
+                        <button type="button" class="gt-icon-btn" title="Add poll"><i class="fa-solid fa-chart-bar"></i></button>
+                    </div>
+                    <div class="gt-compose-submit">
+                        <span class="gt-char-count" id="modal-char-count">280</span>
+                        <button type="submit" class="gt-btn gt-btn-primary" id="modal-post-btn" disabled>
+                            Gad
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/gad-talk/js/api.js"></script>
+    <script src="/gad-talk/js/ui.js"></script>
+    <script src="/gad-talk/js/auth.js"></script>
+    <script src="/gad-talk/js/gads.js"></script>
+    <script src="/gad-talk/js/app.js"></script>
+</body>
+
+</html>

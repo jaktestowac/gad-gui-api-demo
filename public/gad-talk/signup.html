@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up - GadTalk</title>
+    <link rel="stylesheet" href="/gad-talk/css/gad-talk.css">
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+</head>
+
+<body class="gt-auth-layout">
+    <!-- Navbar -->
+    <nav class="gt-navbar">
+        <div class="gt-container-wide gt-flex gt-justify-between gt-items-center">
+            <a href="/" class="gt-link-muted">🦎 GAD</a>
+            <a href="/gad-talk/" class="gt-navbar-brand">
+                <span class="gt-logo\"><i class=\"fa-solid fa-comments\"></i></span>
+                <span>GadTalk</span>
+            </a>
+            <div class="gt-flex gt-gap-sm">
+                <a href="/gad-talk/login.html" data-testid="login-link" class="gt-btn gt-btn-secondary gt-btn-sm">
+                    Login
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="gt-auth-container">
+        <div class="gt-auth-card gt-card gt-card-glow">
+            <div class="gt-auth-header">
+                <a href="/gad-talk/" class="gt-navbar-brand">
+                    <span class="gt-logo"><i class="fa-solid fa-comments"></i></span>
+                    <span>GadTalk</span>
+                </a>
+                <p class="gt-auth-subtitle">Create your account</p>
+            </div>
+
+            <!-- Error/Success messages -->
+            <div id="error-message" class="gt-alert gt-alert-error gt-hidden" data-testid="error-message"></div>
+            <div id="success-message" class="gt-alert gt-alert-success gt-hidden" data-testid="success-message"></div>
+
+            <!-- Signup form -->
+            <form id="signup-form" data-testid="signup-form">
+                <div class="gt-field">
+                    <label for="username" class="gt-label">Username</label>
+                    <input type="text" id="username" name="username" data-testid="username-input" required autocomplete="username" class="gt-input" placeholder="your_username" minlength="3" maxlength="30" />
+                    <span class="gt-hint">3-30 characters, letters, numbers, underscores only</span>
+                </div>
+
+                <div class="gt-field">
+                    <label for="email" class="gt-label">Email</label>
+                    <input type="email" id="email" name="email" data-testid="email-input" required autocomplete="email" class="gt-input" placeholder="your@email.com" />
+                </div>
+
+                <div class="gt-field">
+                    <label for="displayName" class="gt-label">Display Name <span class="gt-text-secondary">(optional)</span></label>
+                    <input type="text" id="displayName" name="displayName" data-testid="display-name-input" autocomplete="name" class="gt-input" placeholder="Your Name" maxlength="50" />
+                </div>
+
+                <div class="gt-field">
+                    <label for="password" class="gt-label">Password</label>
+                    <input type="password" id="password" name="password" data-testid="password-input" required autocomplete="new-password" class="gt-input" placeholder="••••••••" minlength="6" />
+                    <span class="gt-hint">At least 6 characters</span>
+                </div>
+
+                <div class="gt-field">
+                    <label for="confirmPassword" class="gt-label">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" data-testid="confirm-password-input" required autocomplete="new-password" class="gt-input" placeholder="••••••••" minlength="6" />
+                </div>
+
+                <div class="gt-field">
+                    <label class="gt-checkbox">
+                        <input type="checkbox" id="acceptTerms" name="acceptTerms" data-testid="accept-terms-checkbox" required />
+                        <span>I agree to the <a href="/gad-talk/terms.html" class="gt-link">Terms of Service</a> and <a href="/gad-talk/privacy.html" class="gt-link">Privacy Policy</a></span>
+                    </label>
+                </div>
+
+                <button type="submit" data-testid="signup-button" class="gt-btn gt-btn-primary gt-btn-block gt-btn-lg">
+                    Create Account
+                </button>
+            </form>
+
+            <!-- Sign in link -->
+            <div class="gt-auth-footer">
+                <span class="gt-text-secondary">Already have an account?</span>
+                <a href="/gad-talk/login.html" class="gt-link" data-testid="login-link">Sign in</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/gad-talk/js/api.js"></script>
+    <script src="/gad-talk/js/ui.js"></script>
+    <script src="/gad-talk/js/auth.js"></script>
+    <script>
+        // Check if user is already logged in and redirect
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const user = await window.gadTalkAuth.checkAuth();
+                if (user) {
+                    window.location.href = '/gad-talk/index.html';
+                    return;
+                }
+            } catch (error) {
+                // Continue to show signup form if auth check fails
+            }
+        });
+    </script>
+</body>
+
+</html>

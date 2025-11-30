@@ -63,6 +63,7 @@ const { handlePractice } = require("../endpoints/practice-endpoint.helpers");
 const { handleBugHatchAuth } = require("../endpoints/bug-hatch/auth-endpoint.helpers");
 const { handleBugHatchAdmin } = require("../endpoints/bug-hatch/admin-endpoint.helpers");
 const { handleTicTacToeBot } = require("../endpoints/tic-tac-toe-bot-endpoint.helpers");
+const { handleGadTalk, initializeGadTalkModule } = require("../endpoints/gad-talk/gad-talk.route");
 
 const validationsRoutes = (req, res, next) => {
   let userAuth = userBaseAuth;
@@ -520,6 +521,13 @@ const validationsRoutes = (req, res, next) => {
         handleGetMetrics(req, res);
         return;
       }
+    }
+
+    // GadTalk module endpoints
+    const isGadTalkEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_GAD_TALK_MODULE);
+    if (req.url.includes("/api/gad-talk/") && isGadTalkEnabled === true) {
+      handleGadTalk(req, res);
+      return;
     }
 
     logTrace("validationsRoutes: Returning:", {
