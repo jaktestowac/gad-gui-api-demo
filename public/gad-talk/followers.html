@@ -138,6 +138,8 @@
     <script src="/gad-talk/js/ui.js"></script>
     <script src="/gad-talk/js/auth.js"></script>
     <script src="/gad-talk/js/gads.js"></script>
+    <script src="/gad-talk/js/nav.js"></script>
+    <script src="/gad-talk/js/gads.js"></script>
     <script>
         (async function () {
             let currentUser = null;
@@ -165,15 +167,7 @@
                 navProfile.href = `/gad-talk/profile.html?user=${currentUser.username}`;
             }
 
-            // Update nav user section
-            const navUserSection = document.getElementById("nav-user-section");
-            if (navUserSection) {
-                navUserSection.innerHTML = `
-                    <a href="/gad-talk/profile.html?user=${currentUser.username}" class="gt-nav-avatar">
-                        ${window.gadTalkGads.getAvatarHtml(currentUser, "sm")}
-                    </a>
-                `;
-            }
+            // nav.js populates nav-user-section and dropdown
 
             // Load profile user
             try {

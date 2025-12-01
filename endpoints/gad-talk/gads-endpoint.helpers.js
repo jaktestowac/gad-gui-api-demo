@@ -7,7 +7,6 @@ const dbOps = require("./db-gad-talk.operations");
 const config = require("./gad-talk-config");
 const { logError } = require("../../helpers/logger-api");
 const {
-  formatErrorResponse,
   HTTP_OK,
   HTTP_CREATED,
   HTTP_BAD_REQUEST,
@@ -15,6 +14,7 @@ const {
   HTTP_NOT_FOUND,
   HTTP_INTERNAL_SERVER_ERROR,
 } = require("../../helpers/response.helpers");
+const { formatErrorResponse } = require("../../helpers/helpers");
 
 /**
  * Require authentication - return 401 if not authenticated

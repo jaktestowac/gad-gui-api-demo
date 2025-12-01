@@ -118,6 +118,7 @@
     <script src="/gad-talk/js/ui.js"></script>
     <script src="/gad-talk/js/auth.js"></script>
     <script src="/gad-talk/js/gads.js"></script>
+    <script src="/gad-talk/js/nav.js"></script>
     <script>
         (async function () {
             // Require authentication
@@ -130,15 +131,7 @@
                 navProfile.href = `/gad-talk/profile.html?user=${currentUser.username}`;
             }
 
-            // Update nav user section
-            const navUserSection = document.getElementById("nav-user-section");
-            if (navUserSection) {
-                navUserSection.innerHTML = `
-                    <a href="/gad-talk/profile.html?user=${currentUser.username}" class="gt-nav-avatar">
-                        <div class="gt-avatar gt-avatar-sm">${currentUser.avatar || currentUser.username.charAt(0).toUpperCase()}</div>
-                    </a>
-                `;
-            }
+            // nav.js populates nav-user-section and dropdown
 
             // Load trending hashtags
             loadTrending();

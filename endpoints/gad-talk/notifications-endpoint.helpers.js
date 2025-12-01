@@ -5,13 +5,9 @@
 
 const dbOps = require("./db-gad-talk.operations");
 const config = require("./gad-talk-config");
-const {
-  formatErrorResponse,
-  HTTP_OK,
-  HTTP_NOT_FOUND,
-  HTTP_INTERNAL_SERVER_ERROR,
-} = require("../../helpers/response.helpers");
+const { HTTP_OK, HTTP_NOT_FOUND, HTTP_INTERNAL_SERVER_ERROR } = require("../../helpers/response.helpers");
 const { logError } = require("../../helpers/logger-api");
+const { formatErrorResponse } = require("../../helpers/helpers");
 
 /**
  * Get user's notifications
