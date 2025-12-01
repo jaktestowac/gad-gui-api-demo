@@ -806,11 +806,35 @@ function findGadTalkUserByUsername(username) {
   return users.find((user) => areStringsEqualIgnoringCase(user.username, username));
 }
 
-/**
- * Create a new GadTalk user
- * @param {Object} userData - User data
- * @returns {Promise<Object>} Created user
- */
+
+const PUBLIC_DATA_USERS_DIR = path.join(__dirname, "..", "..", "public", "data", "users");
+
+function normalizeAvatarPath(avatar) {
+  if (!avatar) return null;
+
+  // Convert backslashes to slashes and extract basename
+  const normalized = avatar.replace(/\\/g, "/");
+  const baseName = path.basename(normalized);
+  if (!baseName) return null;
+
+  // Construct public avatar path
+  const avatarPublicPath = `/data/users/${baseName}`;
+
+  // Check if the file exists in the public data users folder
+  const absolutePath = path.join(PUBLIC_DATA_USERS_DIR, baseName);
+  try {
+    if (fs.existsSync(absolutePath)) {
+      return avatarPublicPath;
+    }
+  } catch (e) {
+    // If checking filesystem fails, still return avatar path
+    return avatarPublicPath;
+  }
+
+  // File not found — do not allow external avatars
+  return null;
+}
+
 async function createGadTalkUser(userData) {
   const db = readGadTalkDb();
 
@@ -833,7 +857,7 @@ async function createGadTalkUser(userData) {
     displayName: userData.displayName || userData.username,
     password: userData.password,
     bio: userData.bio || "",
-    avatar: userData.avatar || null,
+    avatar: normalizeAvatarPath(userData.avatar) || null,
     header: userData.header || null,
     website: userData.website || null,
     location: userData.location || null,
@@ -881,7 +905,11 @@ async function updateGadTalkUserProfile(userId, updates) {
     const allowedFields = ["displayName", "bio", "avatar", "header", "website", "location"];
     for (const field of allowedFields) {
       if (updates[field] !== undefined) {
-        db.users[idx][field] = updates[field];
+        if (field === "avatar") {
+          db.users[idx][field] = normalizeAvatarPath(updates[field]) || null;
+        } else {
+          db.users[idx][field] = updates[field];
+        }
       }
     }
     updatedUser = db.users[idx];

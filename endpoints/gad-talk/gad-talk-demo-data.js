@@ -2,20 +2,20 @@
 // Provides read-only seed data for demo sessions
 // Keep IDs stable so front-end tests can rely on them.
 
-const now = '2025-11-30T12:00:00.000Z';
-const fiveMinutesAgo = '2025-11-30T11:55:00.000Z';
-const fifteenMinutesAgo = '2025-11-30T11:45:00.000Z';
-const thirtyMinutesAgo = '2025-11-30T11:30:00.000Z';
-const oneHourAgo = '2025-11-30T11:00:00.000Z';
-const twoHoursAgo = '2025-11-30T10:00:00.000Z';
-const threeHoursAgo = '2025-11-30T09:00:00.000Z';
-const fourHoursAgo = '2025-11-30T08:00:00.000Z';
-const sixHoursAgo = '2025-11-30T06:00:00.000Z';
-const twelveHoursAgo = '2025-11-30T00:00:00.000Z';
-const oneDayAgo = '2025-11-29T12:00:00.000Z';
-const twoDaysAgo = '2025-11-28T12:00:00.000Z';
-const threeDaysAgo = '2025-11-27T12:00:00.000Z';
-const oneWeekAgo = '2025-11-23T12:00:00.000Z';
+const now = "2025-11-30T12:00:00.000Z";
+const fiveMinutesAgo = "2025-11-30T11:55:00.000Z";
+const fifteenMinutesAgo = "2025-11-30T11:45:00.000Z";
+const thirtyMinutesAgo = "2025-11-30T11:30:00.000Z";
+const oneHourAgo = "2025-11-30T11:00:00.000Z";
+const twoHoursAgo = "2025-11-30T10:00:00.000Z";
+const threeHoursAgo = "2025-11-30T09:00:00.000Z";
+const fourHoursAgo = "2025-11-30T08:00:00.000Z";
+const sixHoursAgo = "2025-11-30T06:00:00.000Z";
+const twelveHoursAgo = "2025-11-30T00:00:00.000Z";
+const oneDayAgo = "2025-11-29T12:00:00.000Z";
+const twoDaysAgo = "2025-11-28T12:00:00.000Z";
+const threeDaysAgo = "2025-11-27T12:00:00.000Z";
+const oneWeekAgo = "2025-11-23T12:00:00.000Z";
 
 module.exports = {
   users: [
@@ -26,7 +26,7 @@ module.exports = {
       displayName: "Demo User",
       password: "demo",
       bio: "Demo account for testing GadTalk features",
-      avatar: null,
+      avatar: "/data/users/_4a6468cc-232e-412d-965e-256bb5f199c8.jpg",
       header: null,
       website: "https://gadtalk.local",
       location: "Demo Land",
@@ -42,7 +42,7 @@ module.exports = {
       displayName: "Test Automator",
       password: "demo",
       bio: "🤖 Automation enthusiast | Selenium | Playwright | Cypress",
-      avatar: null,
+      avatar: "/data/users/_935c4b58-6cbc-4199-9d76-2997068bc8e2.jpg",
       header: null,
       website: "https://automation.example",
       location: "CI/CD Pipeline",
@@ -58,7 +58,7 @@ module.exports = {
       displayName: "QA Engineer",
       password: "demo",
       bio: "Quality is not an act, it is a habit. #QA #Testing",
-      avatar: null,
+      avatar: "/data/users/_f3300a81-af28-4af9-8440-4552be3ec2c9.jpg",
       header: null,
       website: null,
       location: "Test Environment",
@@ -74,7 +74,7 @@ module.exports = {
       displayName: "DevOps Dan",
       password: "demo",
       bio: "Infrastructure as Code | Docker | K8s | CI/CD",
-      avatar: null,
+      avatar: "/data/users/_abe8435f-3d0e-488f-ab99-82513fba3715_1.jpg",
       header: null,
       website: "https://devops.example",
       location: "The Cloud",
@@ -90,7 +90,7 @@ module.exports = {
       displayName: "Testing Instructor",
       password: "demo",
       bio: "Teaching software testing for 10+ years. Workshops & courses available.",
-      avatar: null,
+      avatar: "/data/users/_433a1e38-6798-4980-a421-83345e50e628_1.jpg",
       header: null,
       website: "https://testinginstructor.example",
       location: "Classroom",
@@ -106,7 +106,7 @@ module.exports = {
       displayName: "GadTalk Admin",
       password: "admin",
       bio: "GadTalk platform administrator",
-      avatar: null,
+      avatar: "/data/users/_e763868e-5f85-4718-91c3-e09f9d04910a.jpg",
       header: null,
       website: null,
       location: "HQ",
@@ -122,7 +122,7 @@ module.exports = {
       displayName: "Shadow Test User",
       password: "demo",
       bio: "This user is shadow banned for testing purposes",
-      avatar: null,
+      avatar: "/data/users/_bf9a06db-93f8-4667-9c44-5082515980d3.jpg",
       header: null,
       website: null,
       location: "Hidden",
@@ -138,7 +138,7 @@ module.exports = {
       displayName: "API Master",
       password: "demo",
       bio: "REST API testing specialist. Postman certified.",
-      avatar: null,
+      avatar: "/data/users/_8cff172a-1fb0-4888-a68c-3d7abd575315.jpg",
       header: null,
       website: null,
       location: "API Gateway",
@@ -1094,7 +1094,7 @@ module.exports = {
     {
       id: "demo-gad-054",
       userId: "demo-user-008",
-      content: null,
+      content: "Reposting this great thread on test automation best practices! 👇",
       imageUrl: null,
       replyToId: null,
       quoteOfId: null,
@@ -1110,7 +1110,7 @@ module.exports = {
     {
       id: "demo-gad-055",
       userId: "demo-user-001",
-      content: null,
+      content: "Sharing this insightful thread on test automation! Must read for all testers. 👇",
       imageUrl: null,
       replyToId: null,
       quoteOfId: null,

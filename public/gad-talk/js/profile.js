@@ -53,21 +53,62 @@ const gadTalkProfile = (function () {
     const navUserSection = document.getElementById("nav-user-section");
     if (!navUserSection || !currentUser) return;
 
+    // Render a modern dropdown button for the nav user area
     navUserSection.innerHTML = `
       <div class="gt-nav-user">
-        <a href="/gad-talk/profile.html?user=${currentUser.username}" class="gt-nav-user-link">
+        <button class="gt-nav-user-btn" id="nav-user-dropdown-btn" aria-haspopup="true" aria-expanded="false">
           ${window.gadTalkGads.getAvatarHtml(currentUser, "sm")}
-        </a>
-        <button class="gt-btn gt-btn-secondary gt-btn-sm" data-logout>
-          Logout
+          <span class="gt-nav-user-name">${currentUser.displayName || currentUser.username}</span>
+          <span class="gt-nav-user-chevron"><i class="fa-solid fa-chevron-down"></i></span>
         </button>
       </div>
     `;
 
-    navUserSection.querySelector("[data-logout]").addEventListener("click", (e) => {
-      e.preventDefault();
-      window.gadTalkAuth.handleLogout();
-    });
+    const dropdownBtn = navUserSection.querySelector("#nav-user-dropdown-btn");
+    if (dropdownBtn && window.GadTalkUI) {
+      dropdownBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        dropdownBtn.setAttribute("aria-expanded", "true");
+        window.GadTalkUI.showDropdown(
+          dropdownBtn,
+          [
+            {
+              text: "Profile",
+              icon: '<i class="fa-solid fa-user"></i>',
+              onClick: () => {
+                window.location.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+              },
+            },
+            {
+              text: "Bookmarks",
+              icon: '<i class="fa-solid fa-bookmark"></i>',
+              onClick: () => {
+                window.location.href = "/gad-talk/bookmarks.html";
+              },
+            },
+            { divider: true },
+            {
+              text: "Logout",
+              icon: '<i class="fa-solid fa-right-from-bracket"></i>',
+              danger: true,
+              onClick: () => window.gadTalkAuth.handleLogout(),
+            },
+          ],
+          { align: "right" }
+        );
+        setTimeout(() => {
+          const onDocClick = () => {
+            dropdownBtn.setAttribute("aria-expanded", "false");
+            document.removeEventListener("click", onDocClick);
+          };
+          document.addEventListener("click", onDocClick);
+        }, 0);
+      });
+    } else if (dropdownBtn) {
+      dropdownBtn.addEventListener("click", () => {
+        window.location.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+      });
+    }
   }
 
   /**

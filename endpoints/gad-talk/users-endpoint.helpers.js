@@ -1,5 +1,8 @@
 const { logError, logDebug } = require("../../helpers/logger-api");
 const { formatErrorResponse } = require("../../helpers/helpers");
+const fs = require("fs");
+const path = require("path");
+const PUBLIC_DATA_USERS_DIR = path.join(__dirname, "..", "..", "public", "data", "users");
 const {
   HTTP_OK,
   HTTP_NOT_FOUND,
@@ -63,6 +66,28 @@ function sanitizeUser(user) {
   if (!user) return null;
   // eslint-disable-next-line no-unused-vars
   const { password, ...sanitized } = user;
+
+  // Ensure avatar path is constrained to /data/users/
+  if (sanitized.avatar) {
+    try {
+      const normalized = sanitized.avatar.replace(/\\/g, "/");
+      const baseName = path.basename(normalized);
+      if (baseName) {
+        const publicPath = `/data/users/${baseName}`;
+        const filePath = path.join(PUBLIC_DATA_USERS_DIR, baseName);
+        if (fs.existsSync(filePath)) {
+          sanitized.avatar = publicPath;
+        } else {
+          // If file does not exist, strip avatar to avoid external references
+          sanitized.avatar = null;
+        }
+      } else {
+        sanitized.avatar = null;
+      }
+    } catch (e) {
+      sanitized.avatar = null;
+    }
+  }
   return sanitized;
 }
 
@@ -329,7 +354,7 @@ async function handleUploadAvatar(req, res) {
       ok: true,
       data: {
         message: "Avatar upload placeholder - file upload handling would be implemented here",
-        avatarUrl: `/uploads/avatars/${id}.jpg`,
+        avatarUrl: `/data/users/${id}.jpg`,
       },
     });
   } catch (error) {

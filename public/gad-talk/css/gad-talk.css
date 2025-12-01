@@ -1076,16 +1076,56 @@ a:hover {
   color: var(--gt-text-secondary);
 }
 
+/* Nav user button styles */
+.gt-nav-user {
+  display: flex;
+  align-items: center;
+}
+
+.gt-nav-user-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gt-spacing-xs);
+  background: transparent;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.15s, box-shadow 0.15s;
+}
+
+.gt-nav-user-btn:hover {
+  background-color: var(--gt-bg-hover);
+}
+
+.gt-nav-user-name {
+  color: var(--gt-text-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.gt-nav-user-chevron {
+  opacity: 0.8;
+  font-size: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .gt-nav-user-name {
+    display: none;
+  }
+}
+
 /* Tabs */
 .gt-tabs {
   display: flex;
-  border-bottom: 1px solid var(--gt-border);
-  gap: 0;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.25rem;
 }
 
 .gt-tab {
-  flex: 1;
-  padding: var(--gt-spacing-sm) var(--gt-spacing-md);
+  flex: none;
+  padding: 0.375rem 0.75rem;
   text-align: center;
   color: var(--gt-text-secondary);
   font-size: 0.875rem;
@@ -1095,6 +1135,27 @@ a:hover {
   background: transparent;
   position: relative;
   transition: color 0.15s, background-color 0.15s;
+}
+
+/* Full-width variant (for profile/follower tabs) */
+.gt-tabs-full .gt-tab {
+  flex: 1;
+  padding-top: var(--gt-spacing-sm);
+  padding-bottom: var(--gt-spacing-sm);
+}
+
+/* Hover and active styles */
+.gt-tab:hover {
+  background-color: var(--gt-bg-hover);
+  color: var(--gt-text-primary);
+}
+
+.gt-tab-active {
+  background-color: var(--gt-primary);
+  color: #fff;
+  border-radius: 999px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+  font-weight: 700;
 }
 
 .gt-tab:hover {
@@ -3005,4 +3066,9 @@ body.gt-modal-open {
 
 .gt-users-list {
   margin-top: 0;
+}
+
+.gt-card-title {
+  margin-top: 0px;
+  padding-top: 0px;
 }
