@@ -221,7 +221,9 @@
 
                 try {
                     const response = await window.GadTalkAPI.users.getFollowing(profileUser.id, currentPage);
-                    const users = response.following || [];
+                    const followingData = response.following || [];
+                    // Extract user objects from the following data (API returns { user: {...} } for each)
+                    const users = followingData.map(f => f.user).filter(u => u != null);
 
                     loadingEl.classList.add('gt-hidden');
 
