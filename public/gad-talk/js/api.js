@@ -157,10 +157,17 @@ const GadTalkAPI = (function () {
 
   const users = {
     /**
-     * Get user by username or ID
+     * Get user by ID
      */
-    async get(usernameOrId) {
-      return request(`/users/${encodeURIComponent(usernameOrId)}`);
+    async get(userId) {
+      return request(`/users/${encodeURIComponent(userId)}`);
+    },
+
+    /**
+     * Get user by username
+     */
+    async getByUsername(username) {
+      return request(`/users/username/${encodeURIComponent(username)}`);
     },
 
     /**

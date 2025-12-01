@@ -75,8 +75,8 @@ const gadTalkProfile = (function () {
    */
   async function loadProfile(username) {
     try {
-      const response = await window.GadTalkAPI.users.get(username);
-      profileUser = response.user;
+      const response = await window.GadTalkAPI.users.getByUsername(username);
+      profileUser = response.data;
 
       updateProfileUI();
       await loadProfileGads();
@@ -131,8 +131,26 @@ const gadTalkProfile = (function () {
         document.getElementById("edit-profile-btn").addEventListener("click", openEditModal);
       } else {
         const isFollowing = profileUser.isFollowing || false;
+        const isBlocked = profileUser.isBlocked || false;
+        const isMuted = profileUser.isMuted || false;
         profileActions.innerHTML = `
-          <button class="gt-btn gt-btn-icon" title="More options" data-testid="more-options-button"><i class="fa-solid fa-ellipsis"></i></button>
+          <div class="gt-profile-more-container">
+            <button class="gt-btn gt-btn-icon" id="more-options-btn" title="More options" data-testid="more-options-button">
+              <i class="fa-solid fa-ellipsis"></i>
+            </button>
+            <div class="gt-dropdown gt-hidden" id="more-options-menu">
+              <button class="gt-dropdown-item" id="mute-btn" data-testid="mute-button">
+                <span class="gt-dropdown-icon"><i class="fa-solid ${
+                  isMuted ? "fa-volume-high" : "fa-volume-xmark"
+                }"></i></span>
+                ${isMuted ? "Unmute" : "Mute"} @${profileUser.username}
+              </button>
+              <button class="gt-dropdown-item gt-dropdown-item-danger" id="block-btn" data-testid="block-button">
+                <span class="gt-dropdown-icon"><i class="fa-solid ${isBlocked ? "fa-user-check" : "fa-ban"}"></i></span>
+                ${isBlocked ? "Unblock" : "Block"} @${profileUser.username}
+              </button>
+            </div>
+          </div>
           <button class="gt-btn ${isFollowing ? "gt-btn-secondary" : "gt-btn-primary"}" 
                   id="follow-btn" 
                   data-testid="follow-button"
@@ -141,6 +159,7 @@ const gadTalkProfile = (function () {
           </button>
         `;
         document.getElementById("follow-btn").addEventListener("click", handleFollowToggle);
+        setupMoreOptionsMenu();
       }
     }
 
@@ -190,8 +209,8 @@ const gadTalkProfile = (function () {
 
     if (followingCount) followingCount.textContent = profileUser.followingCount || 0;
     if (followersCount) followersCount.textContent = profileUser.followersCount || 0;
-    if (followingLink) followingLink.href = `/gad-talk/profile.html?user=${profileUser.username}&tab=following`;
-    if (followersLink) followersLink.href = `/gad-talk/profile.html?user=${profileUser.username}&tab=followers`;
+    if (followingLink) followingLink.href = `/gad-talk/following.html?user=${profileUser.username}`;
+    if (followersLink) followersLink.href = `/gad-talk/followers.html?user=${profileUser.username}`;
   }
 
   /**
@@ -225,6 +244,92 @@ const gadTalkProfile = (function () {
     } catch (error) {
       console.error("Error toggling follow:", error);
       window.gadTalkGads.showToast("Failed to update follow status", "error");
+    }
+  }
+
+  /**
+   * Setup more options dropdown menu
+   */
+  function setupMoreOptionsMenu() {
+    const moreBtn = document.getElementById("more-options-btn");
+    const moreMenu = document.getElementById("more-options-menu");
+    const muteBtn = document.getElementById("mute-btn");
+    const blockBtn = document.getElementById("block-btn");
+
+    if (!moreBtn || !moreMenu) return;
+
+    // Toggle dropdown on button click
+    moreBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      moreMenu.classList.toggle("gt-hidden");
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", () => {
+      moreMenu.classList.add("gt-hidden");
+    });
+
+    // Prevent closing when clicking inside menu
+    moreMenu.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+
+    // Mute/Unmute handler
+    if (muteBtn) {
+      muteBtn.addEventListener("click", async () => {
+        try {
+          const isMuted = profileUser.isMuted || false;
+          if (isMuted) {
+            await window.GadTalkAPI.users.unmute(profileUser.id);
+            profileUser.isMuted = false;
+            muteBtn.innerHTML = `
+              <span class="gt-dropdown-icon"><i class="fa-solid fa-volume-xmark"></i></span>
+              Mute @${profileUser.username}
+            `;
+            window.gadTalkGads.showToast(`Unmuted @${profileUser.username}`, "success");
+          } else {
+            await window.GadTalkAPI.users.mute(profileUser.id);
+            profileUser.isMuted = true;
+            muteBtn.innerHTML = `
+              <span class="gt-dropdown-icon"><i class="fa-solid fa-volume-high"></i></span>
+              Unmute @${profileUser.username}
+            `;
+            window.gadTalkGads.showToast(`Muted @${profileUser.username}`, "success");
+          }
+          moreMenu.classList.add("gt-hidden");
+        } catch (error) {
+          window.gadTalkGads.showToast("Failed to update mute status", "error");
+        }
+      });
+    }
+
+    // Block/Unblock handler
+    if (blockBtn) {
+      blockBtn.addEventListener("click", async () => {
+        try {
+          const isBlocked = profileUser.isBlocked || false;
+          if (isBlocked) {
+            await window.GadTalkAPI.users.unblock(profileUser.id);
+            profileUser.isBlocked = false;
+            blockBtn.innerHTML = `
+              <span class="gt-dropdown-icon"><i class="fa-solid fa-ban"></i></span>
+              Block @${profileUser.username}
+            `;
+            window.gadTalkGads.showToast(`Unblocked @${profileUser.username}`, "success");
+          } else {
+            await window.GadTalkAPI.users.block(profileUser.id);
+            profileUser.isBlocked = true;
+            blockBtn.innerHTML = `
+              <span class="gt-dropdown-icon"><i class="fa-solid fa-user-check"></i></span>
+              Unblock @${profileUser.username}
+            `;
+            window.gadTalkGads.showToast(`Blocked @${profileUser.username}`, "success");
+          }
+          moreMenu.classList.add("gt-hidden");
+        } catch (error) {
+          window.gadTalkGads.showToast("Failed to update block status", "error");
+        }
+      });
     }
   }
 

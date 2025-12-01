@@ -33,6 +33,7 @@ const {
   handleUnblock,
   handleMute,
   handleUnmute,
+  handleSearchUsers,
 } = require("./users-endpoint.helpers");
 
 const {
@@ -252,6 +253,11 @@ async function handleUserRoutes(req, res, method, segments) {
   // GET /api/gad-talk/users/suggestions
   if (segments[1] === "suggestions" && method === "GET") {
     return handleGetSuggestions(req, res);
+  }
+
+  // GET /api/gad-talk/users/search?q=query
+  if (segments[1] === "search" && method === "GET") {
+    return handleSearchUsers(req, res);
   }
 
   // GET /api/gad-talk/users/username/:username

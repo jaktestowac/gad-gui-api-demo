@@ -20,8 +20,11 @@ const {
   isFollowing,
   createBlock,
   deleteBlock,
+  hasBlocked,
   createMute,
   deleteMute,
+  hasMuted,
+  searchUsers,
 } = require("./db-gad-talk.operations");
 const { verifyGadTalkToken } = require("./services/auth.service");
 const gadTalkConfig = require("./gad-talk-config");
@@ -103,13 +106,73 @@ async function handleGetUserByUsername(req, res) {
       return;
     }
 
+    // Get stats
+    const stats = getGadTalkUserStats(user.id);
+
+    // Check relationship status
+    const authUser = getAuthenticatedUser(req);
+    const isFollowingUser = authUser ? isFollowing(authUser.id, user.id) : false;
+    const isOwnProfile = authUser ? authUser.id === user.id : false;
+    const isBlockedUser = authUser && !isOwnProfile ? hasBlocked(authUser.id, user.id) : false;
+    const isMutedUser = authUser && !isOwnProfile ? hasMuted(authUser.id, user.id) : false;
+
     res.status(HTTP_OK).send({
       ok: true,
-      data: sanitizeUser(user),
+      data: {
+        ...sanitizeUser(user),
+        ...stats,
+        isFollowing: isFollowingUser,
+        isOwnProfile,
+        isBlocked: isBlockedUser,
+        isMuted: isMutedUser,
+      },
     });
   } catch (error) {
     logError("GadTalk get user by username error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to get user"));
+  }
+}
+
+/**
+ * Search users by username or display name
+ * GET /api/gad-talk/users/search?q=query&page=1&limit=20
+ */
+async function handleSearchUsers(req, res) {
+  try {
+    const { q: query, page = 1, limit = 20 } = req.query;
+
+    if (!query || query.trim().length < 2) {
+      res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Search query must be at least 2 characters"));
+      return;
+    }
+
+    // Get current user if authenticated (to exclude from results)
+    const authUser = getAuthenticatedUser(req);
+    const currentUserId = authUser ? authUser.id : null;
+
+    const { users, total } = searchUsers(query.trim(), parseInt(page), parseInt(limit), {
+      currentUserId,
+    });
+
+    // Sanitize user data and add isFollowing info
+    const sanitizedUsers = users.map((user) => {
+      const sanitized = sanitizeUser(user);
+      if (authUser) {
+        sanitized.isFollowing = isFollowing(authUser.id, user.id);
+      }
+      return sanitized;
+    });
+
+    res.status(HTTP_OK).json({
+      users: sanitizedUsers,
+      page: parseInt(page),
+      limit: parseInt(limit),
+      total,
+      hasMore: page * limit < total,
+    });
+  } catch (error) {
+    logError("GadTalk search users error:", error);
+    res.status(HTTP_BAD_REQUEST).json(formatErrorResponse(error.message || "Failed to search users"));
   }
 }
 
@@ -133,6 +196,8 @@ async function handleGetUserProfile(req, res) {
     const authUser = getAuthenticatedUser(req);
     const isFollowingUser = authUser ? isFollowing(authUser.id, id) : false;
     const isOwnProfile = authUser ? authUser.id === id : false;
+    const isBlockedUser = authUser && !isOwnProfile ? hasBlocked(authUser.id, id) : false;
+    const isMutedUser = authUser && !isOwnProfile ? hasMuted(authUser.id, id) : false;
 
     res.status(HTTP_OK).send({
       ok: true,
@@ -141,6 +206,8 @@ async function handleGetUserProfile(req, res) {
         stats,
         isFollowing: isFollowingUser,
         isOwnProfile,
+        isBlocked: isBlockedUser,
+        isMuted: isMutedUser,
       },
     });
   } catch (error) {
@@ -419,17 +486,14 @@ async function handleGetFollowers(req, res) {
       };
     });
 
-    res.status(HTTP_OK).send({
-      ok: true,
-      data: {
-        followers: followerUsers,
-        hasMore,
-        nextCursor: hasMore && followers.length > 0 ? followers[followers.length - 1].id : null,
-      },
+    res.status(HTTP_OK).json({
+      followers: followerUsers,
+      hasMore,
+      nextCursor: hasMore && followers.length > 0 ? followers[followers.length - 1].id : null,
     });
   } catch (error) {
     logError("GadTalk get followers error:", error);
-    res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to get followers"));
+    res.status(HTTP_BAD_REQUEST).json(formatErrorResponse(error.message || "Failed to get followers"));
   }
 }
 
@@ -475,17 +539,14 @@ async function handleGetFollowing(req, res) {
       };
     });
 
-    res.status(HTTP_OK).send({
-      ok: true,
-      data: {
-        following: followingUsers,
-        hasMore,
-        nextCursor: hasMore && following.length > 0 ? following[following.length - 1].id : null,
-      },
+    res.status(HTTP_OK).json({
+      following: followingUsers,
+      hasMore,
+      nextCursor: hasMore && following.length > 0 ? following[following.length - 1].id : null,
     });
   } catch (error) {
     logError("GadTalk get following error:", error);
-    res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to get following"));
+    res.status(HTTP_BAD_REQUEST).json(formatErrorResponse(error.message || "Failed to get following"));
   }
 }
 
@@ -514,13 +575,12 @@ async function handleGetSuggestions(req, res) {
     // Limit
     suggestions = suggestions.slice(0, parseInt(limit, 10));
 
-    res.status(HTTP_OK).send({
-      ok: true,
-      data: suggestions.map(sanitizeUser),
+    res.status(HTTP_OK).json({
+      users: suggestions.map(sanitizeUser),
     });
   } catch (error) {
     logError("GadTalk get suggestions error:", error);
-    res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to get suggestions"));
+    res.status(HTTP_BAD_REQUEST).json(formatErrorResponse(error.message || "Failed to get suggestions"));
   }
 }
 
@@ -655,6 +715,7 @@ module.exports = {
   handleGetUserStats,
   handleUploadAvatar,
   handleUploadHeader,
+  handleSearchUsers,
 
   // Follow handlers
   handleFollow,

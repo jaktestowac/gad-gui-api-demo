@@ -1379,6 +1379,28 @@ async function deleteMute(muterId, mutedId) {
   return deleted;
 }
 
+/**
+ * Check if a user has blocked another user
+ * @param {string} blockerId - User who might have blocked
+ * @param {string} blockedId - User who might be blocked
+ * @returns {boolean} True if blocked
+ */
+function hasBlocked(blockerId, blockedId) {
+  const db = readGadTalkDb();
+  return db.blocks.some((b) => areIdsEqual(b.blockerId, blockerId) && areIdsEqual(b.blockedId, blockedId));
+}
+
+/**
+ * Check if a user has muted another user
+ * @param {string} muterId - User who might have muted
+ * @param {string} mutedId - User who might be muted
+ * @returns {boolean} True if muted
+ */
+function hasMuted(muterId, mutedId) {
+  const db = readGadTalkDb();
+  return db.mutes.some((m) => areIdsEqual(m.muterId, muterId) && areIdsEqual(m.mutedId, mutedId));
+}
+
 // ==================== BOOKMARK OPERATIONS ====================
 
 /**
@@ -1786,6 +1808,46 @@ function searchGads(query, page = 1, limit = 20, options = {}) {
 }
 
 /**
+ * Search users by username or display name
+ * @param {string} query - Search query
+ * @param {number} page - Page number
+ * @param {number} limit - Items per page
+ * @param {Object} options - Filter options
+ * @param {string} options.currentUserId - Current user ID (to exclude from results)
+ */
+function searchUsers(query, page = 1, limit = 20, options = {}) {
+  const db = readGadTalkDb();
+  const { currentUserId } = options;
+  const lowerQuery = query.toLowerCase();
+
+  const allUsers = db.users
+    .filter((u) => {
+      // Exclude current user from search results
+      if (currentUserId && areIdsEqual(u.id, currentUserId)) return false;
+      // Match username or display name
+      const usernameMatch = u.username && u.username.toLowerCase().includes(lowerQuery);
+      const displayNameMatch = u.displayName && u.displayName.toLowerCase().includes(lowerQuery);
+      const bioMatch = u.bio && u.bio.toLowerCase().includes(lowerQuery);
+      return usernameMatch || displayNameMatch || bioMatch;
+    })
+    .sort((a, b) => {
+      // Prioritize exact username matches
+      const aExact = a.username && a.username.toLowerCase() === lowerQuery;
+      const bExact = b.username && b.username.toLowerCase() === lowerQuery;
+      if (aExact && !bExact) return -1;
+      if (!aExact && bExact) return 1;
+      // Then by followers count (popularity)
+      return (b.followersCount || 0) - (a.followersCount || 0);
+    });
+
+  const total = allUsers.length;
+  const start = (page - 1) * limit;
+  const users = allUsers.slice(start, start + limit);
+
+  return { users, total };
+}
+
+/**
  * Get trending hashtags
  */
 function getTrendingHashtags(limit = 10) {
@@ -2022,6 +2084,7 @@ module.exports = {
   getGadsByUser,
   getReplies,
   searchGads,
+  searchUsers,
   isGadVisibleToUser,
   incrementGadReplyCount,
   decrementGadReplyCount,
@@ -2058,8 +2121,10 @@ module.exports = {
   // Blocks/Mutes
   createBlock,
   deleteBlock,
+  hasBlocked,
   createMute,
   deleteMute,
+  hasMuted,
 
   // Bookmarks
   createBookmark,

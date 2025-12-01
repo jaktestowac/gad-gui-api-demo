@@ -1696,6 +1696,17 @@ body.gt-modal-open {
 
 /* ==================== DROPDOWN MENUS ==================== */
 
+.gt-profile-more-container {
+  position: relative;
+  display: inline-block;
+}
+
+.gt-profile-more-container .gt-dropdown {
+  right: 0;
+  top: 100%;
+  margin-top: var(--gt-spacing-xs);
+}
+
 .gt-dropdown {
   position: absolute;
   background-color: var(--gt-bg-secondary);
@@ -2936,4 +2947,62 @@ body.gt-modal-open {
 .gt-quoted-gad-preview .gt-quoted-gad {
   margin: 0;
   border: none;
+}
+
+/* ==================== USER CARD (Followers/Following Pages) ==================== */
+
+.gt-user-card {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-spacing-md);
+  padding: var(--gt-spacing-md);
+  border-bottom: 1px solid var(--gt-border);
+  transition: background-color 0.15s;
+}
+
+.gt-user-card:hover {
+  background-color: var(--gt-bg-hover);
+}
+
+.gt-user-card-link {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-spacing-md);
+  flex: 1;
+  text-decoration: none;
+  min-width: 0;
+}
+
+.gt-user-card .gt-user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.gt-user-card .gt-user-displayname {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gt-user-card .gt-user-username {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gt-user-card .gt-user-bio {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.gt-user-card .gt-follow-btn {
+  flex-shrink: 0;
+}
+
+.gt-users-list {
+  margin-top: 0;
 }
