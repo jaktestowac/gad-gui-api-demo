@@ -62,7 +62,13 @@ const GadTalkAPI = (function () {
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        const error = new Error(data.error || data.message || "Request failed");
+        // data.error may be an object returned by formatErrorResponse({ error: { message, details }})
+        // Prefer nested message if present and fall back to other string sources.
+        const errorMessage =
+          (data && data.error && (typeof data.error === "string" ? data.error : data.error.message)) ||
+          data.message ||
+          "Request failed";
+        const error = new Error(errorMessage);
         error.status = response.status;
         error.data = data;
         throw error;
