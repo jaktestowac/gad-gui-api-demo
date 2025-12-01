@@ -24,6 +24,7 @@ const {
   handleGetUserStats,
   handleUploadAvatar,
   handleUploadHeader,
+  handleGetAvatarGallery,
   handleFollow,
   handleUnfollow,
   handleGetFollowers,
@@ -253,6 +254,11 @@ async function handleUserRoutes(req, res, method, segments) {
   // GET /api/gad-talk/users/suggestions
   if (segments[1] === "suggestions" && method === "GET") {
     return handleGetSuggestions(req, res);
+  }
+
+  // GET /api/gad-talk/users/gallery
+  if (segments[1] === "gallery" && method === "GET") {
+    return handleGetAvatarGallery(req, res);
   }
 
   // GET /api/gad-talk/users/search?q=query

@@ -806,21 +806,29 @@ function findGadTalkUserByUsername(username) {
   return users.find((user) => areStringsEqualIgnoringCase(user.username, username));
 }
 
-
 const PUBLIC_DATA_USERS_DIR = path.join(__dirname, "..", "..", "public", "data", "users");
 
 function normalizeAvatarPath(avatar) {
   if (!avatar) return null;
+  // Accept external http(s) URLs as-is
+  try {
+    if (/^https?:\/\//i.test(avatar)) {
+      return avatar;
+    }
+  } catch (e) {
+    // salt
+  }
 
   // Convert backslashes to slashes and extract basename
   const normalized = avatar.replace(/\\/g, "/");
-  const baseName = path.basename(normalized);
+  // If the path already starts with /data/users/, take basename
+  let baseName = path.basename(normalized);
   if (!baseName) return null;
 
   // Construct public avatar path
   const avatarPublicPath = `/data/users/${baseName}`;
 
-  // Check if the file exists in the public data users folder
+  // If provided path was already /data/users/<name>, ensure file exists
   const absolutePath = path.join(PUBLIC_DATA_USERS_DIR, baseName);
   try {
     if (fs.existsSync(absolutePath)) {

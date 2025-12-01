@@ -71,18 +71,22 @@ function sanitizeUser(user) {
   if (sanitized.avatar) {
     try {
       const normalized = sanitized.avatar.replace(/\\/g, "/");
-      const baseName = path.basename(normalized);
-      if (baseName) {
-        const publicPath = `/data/users/${baseName}`;
-        const filePath = path.join(PUBLIC_DATA_USERS_DIR, baseName);
-        if (fs.existsSync(filePath)) {
-          sanitized.avatar = publicPath;
+      // Accept external http(s) links
+      if (/^https?:\/\//i.test(normalized)) {
+        sanitized.avatar = normalized;
+      } else {
+        const baseName = path.basename(normalized);
+        if (baseName) {
+          const publicPath = `/data/users/${baseName}`;
+          const filePath = path.join(PUBLIC_DATA_USERS_DIR, baseName);
+          if (fs.existsSync(filePath)) {
+            sanitized.avatar = publicPath;
+          } else {
+            sanitized.avatar = null;
+          }
         } else {
-          // If file does not exist, strip avatar to avoid external references
           sanitized.avatar = null;
         }
-      } else {
-        sanitized.avatar = null;
       }
     } catch (e) {
       sanitized.avatar = null;
@@ -393,6 +397,35 @@ async function handleUploadHeader(req, res) {
   } catch (error) {
     logError("GadTalk upload header error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to upload header"));
+  }
+}
+
+/**
+ * Get avatar gallery files from /public/data/users
+ * GET /api/gad-talk/users/gallery
+ */
+async function handleGetAvatarGallery(req, res) {
+  try {
+    const files = [];
+    try {
+      const names = fs.readdirSync(PUBLIC_DATA_USERS_DIR);
+      names.sort();
+      for (const name of names) {
+        if (typeof name !== "string") continue;
+        const lower = name.toLowerCase();
+        if (lower.endsWith(".jpg") || lower.endsWith(".jpeg") || lower.endsWith(".png") || lower.endsWith(".gif")) {
+          files.push(`/data/users/${name}`);
+        }
+      }
+    } catch (error) {
+      // ignore directory read errors and return empty list
+      logDebug("avatar gallery read error", { error });
+    }
+
+    res.status(HTTP_OK).json({ files });
+  } catch (error) {
+    logError("GadTalk avatar gallery error:", error);
+    res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to list avatar gallery"));
   }
 }
 
@@ -740,6 +773,7 @@ module.exports = {
   handleGetUserStats,
   handleUploadAvatar,
   handleUploadHeader,
+  handleGetAvatarGallery,
   handleSearchUsers,
 
   // Follow handlers

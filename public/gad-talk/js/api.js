@@ -179,9 +179,14 @@ const GadTalkAPI = (function () {
     /**
      * Update current user's profile
      */
-    async updateProfile(updates) {
-      return request("/users/me", {
-        method: "PATCH",
+    async updateProfile(updates, userId) {
+      // For GadTalk update profile, expect PUT /users/:id/profile
+      if (!userId) {
+        // Try to use 'me' as a fallback - but route doesn't support 'me/profile' so it's better to require userId
+        throw new Error("updateProfile requires a userId for gad-talk API");
+      }
+      return request(`/users/${encodeURIComponent(userId)}/profile`, {
+        method: "PUT",
         body: updates,
       });
     },

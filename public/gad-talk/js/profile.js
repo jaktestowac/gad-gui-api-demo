@@ -144,11 +144,11 @@ const gadTalkProfile = (function () {
     if (profileName) profileName.textContent = profileUser.displayName || profileUser.username;
     if (gadsCount) gadsCount.textContent = `${profileUser.gadsCount || 0} Gads`;
 
-    // Update banner
+    // Update banner (stored as header in backend)
     const profileBanner = document.getElementById("profile-banner");
     if (profileBanner) {
-      if (profileUser.banner) {
-        profileBanner.style.backgroundImage = `url(${profileUser.banner})`;
+      if (profileUser.header) {
+        profileBanner.style.backgroundImage = `url(${profileUser.header})`;
       } else {
         profileBanner.style.background = "linear-gradient(135deg, var(--gt-primary), var(--gt-secondary))";
       }
@@ -506,6 +506,137 @@ const gadTalkProfile = (function () {
     if (form) {
       form.addEventListener("submit", handleEditProfileSubmit);
     }
+
+    // Avatar and banner controls
+    const changeAvatarBtn = document.getElementById("change-avatar-btn");
+    const changeBannerBtn = document.getElementById("change-banner-btn");
+    const chooseAvatarBtn = document.getElementById("choose-avatar-gallery-btn");
+    const avatarGalleryModal = document.getElementById("avatar-gallery-modal");
+    const avatarGalleryList = document.getElementById("avatar-gallery-list");
+    const avatarHidden = document.getElementById("edit-avatar");
+    const bannerHidden = document.getElementById("edit-banner");
+    const avatarUrlInput = document.getElementById("edit-avatar-url");
+    const bannerUrlInput = document.getElementById("edit-banner-url");
+    const avatarPreview = document.getElementById("edit-avatar-preview");
+    const bannerPreview = document.getElementById("edit-banner-preview");
+    const avatarDropdown = document.getElementById("edit-avatar-dropdown");
+
+    // Load avatar dropdown options from API
+    async function loadAvatarDropdownOptions() {
+      if (!avatarDropdown) return;
+      try {
+        const res = await fetch("/api/images/user");
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          // Clear existing options except the first placeholder
+          avatarDropdown.innerHTML = '<option value="">-- Select from gallery --</option>';
+          data.forEach((filename) => {
+            const option = document.createElement("option");
+            option.value = `/data/users/${filename}`;
+            option.textContent = filename;
+            avatarDropdown.appendChild(option);
+          });
+        }
+      } catch (error) {
+        console.error("Failed to load avatar options:", error);
+      }
+    }
+
+    // Load dropdown options on page load
+    loadAvatarDropdownOptions();
+
+    // Handle avatar dropdown selection
+    if (avatarDropdown) {
+      avatarDropdown.addEventListener("change", (e) => {
+        const val = e.target.value;
+        if (val) {
+          if (avatarHidden) avatarHidden.value = val;
+          if (avatarUrlInput) avatarUrlInput.value = "";
+          if (avatarPreview) {
+            avatarPreview.innerHTML = `<img src='${val}' width='64' height='64' style='border-radius:50%; object-fit:cover;'/>`;
+          }
+        }
+      });
+    }
+
+    // Open avatar URL input when change avatar clicked
+    if (changeAvatarBtn && avatarUrlInput) {
+      changeAvatarBtn.addEventListener("click", () => {
+        avatarUrlInput.focus();
+      });
+    }
+
+    // Focus or open banner URL input when change banner clicked
+    if (changeBannerBtn && bannerUrlInput) {
+      changeBannerBtn.addEventListener("click", () => {
+        bannerUrlInput.focus();
+      });
+    }
+
+    // Open gallery modal
+    if (chooseAvatarBtn && avatarGalleryModal) {
+      chooseAvatarBtn.addEventListener("click", async () => {
+        avatarGalleryModal.classList.remove("gt-hidden");
+        // Load images if not loaded
+        if (avatarGalleryList && avatarGalleryList.children.length === 0) {
+          try {
+            const res = await fetch("/api/gad-talk/users/gallery");
+            const data = await res.json();
+            const files = data.files || [];
+            files.forEach((src) => {
+              const img = document.createElement("img");
+              img.src = src;
+              img.alt = "avatar";
+              img.style.width = "64px";
+              img.style.height = "64px";
+              img.style.objectFit = "cover";
+              img.style.borderRadius = "50%";
+              img.style.cursor = "pointer";
+              img.addEventListener("click", () => {
+                if (avatarHidden) avatarHidden.value = src;
+                if (avatarUrlInput) avatarUrlInput.value = src;
+                if (avatarPreview)
+                  avatarPreview.innerHTML = `<img src='${src}' width='64' height='64' style='border-radius:50%; object-fit:cover;'/>`;
+                avatarGalleryModal.classList.add("gt-hidden");
+              });
+              avatarGalleryList.appendChild(img);
+            });
+          } catch (error) {
+            console.error("Failed to load avatar gallery", error);
+          }
+        }
+      });
+    }
+
+    // Close gallery modal
+    if (avatarGalleryModal) {
+      avatarGalleryModal.querySelectorAll("[data-close-modal]").forEach((el) => {
+        el.addEventListener("click", () => avatarGalleryModal.classList.add("gt-hidden"));
+      });
+    }
+
+    // On avatar URL change update hidden input & preview
+    if (avatarUrlInput) {
+      avatarUrlInput.addEventListener("input", (e) => {
+        const val = e.target.value.trim();
+        if (avatarHidden) avatarHidden.value = val;
+        if (avatarPreview)
+          avatarPreview.innerHTML = val
+            ? `<img src='${val}' width='64' height='64' style='border-radius:50%; object-fit:cover;'/>`
+            : window.gadTalkGads.getAvatarHtml(profileUser, "lg");
+        // Clear dropdown selection when user types custom URL
+        if (avatarDropdown) avatarDropdown.value = "";
+      });
+    }
+
+    // On banner URL change update hidden input & preview
+    if (bannerUrlInput) {
+      bannerUrlInput.addEventListener("input", (e) => {
+        const val = e.target.value.trim();
+        if (bannerHidden) bannerHidden.value = val;
+        if (bannerPreview) bannerPreview.style.backgroundImage = val ? `url(${val})` : "";
+      });
+    }
   }
 
   /**
@@ -522,6 +653,10 @@ const gadTalkProfile = (function () {
     const websiteInput = document.getElementById("edit-website");
     const avatarPreview = document.getElementById("edit-avatar-preview");
     const bannerPreview = document.getElementById("edit-banner-preview");
+    const avatarHidden = document.getElementById("edit-avatar");
+    const bannerHidden = document.getElementById("edit-banner");
+    const avatarUrlInput = document.getElementById("edit-avatar-url");
+    const bannerUrlInput = document.getElementById("edit-banner-url");
 
     if (displayNameInput) displayNameInput.value = profileUser.displayName || "";
     if (bioInput) {
@@ -532,9 +667,28 @@ const gadTalkProfile = (function () {
     if (locationInput) locationInput.value = profileUser.location || "";
     if (websiteInput) websiteInput.value = profileUser.website || "";
     if (avatarPreview) avatarPreview.innerHTML = window.gadTalkGads.getAvatarHtml(profileUser, "lg");
-    if (bannerPreview && profileUser.banner) {
-      bannerPreview.style.backgroundImage = `url(${profileUser.banner})`;
+    if (avatarHidden) avatarHidden.value = profileUser.avatar || "";
+
+    // Check if avatar is from gallery (starts with /data/users/)
+    const avatarDropdown = document.getElementById("edit-avatar-dropdown");
+    const currentAvatar = profileUser.avatar || "";
+    const isGalleryAvatar = currentAvatar.startsWith("/data/users/");
+
+    if (isGalleryAvatar) {
+      // Avatar is from gallery - select in dropdown, clear URL input
+      if (avatarDropdown) avatarDropdown.value = currentAvatar;
+      if (avatarUrlInput) avatarUrlInput.value = "";
+    } else {
+      // Avatar is custom URL - fill URL input, clear dropdown
+      if (avatarUrlInput) avatarUrlInput.value = currentAvatar;
+      if (avatarDropdown) avatarDropdown.value = "";
     }
+
+    if (bannerPreview && profileUser.header) {
+      bannerPreview.style.backgroundImage = `url(${profileUser.header})`;
+    }
+    if (bannerHidden) bannerHidden.value = profileUser.header || "";
+    if (bannerUrlInput) bannerUrlInput.value = profileUser.header || "";
 
     modal.classList.remove("gt-hidden");
   }
@@ -553,10 +707,23 @@ const gadTalkProfile = (function () {
       website: form.website.value.trim(),
     };
 
+    // avatar and banner/header
+    const avatarVal = document.getElementById("edit-avatar")?.value?.trim();
+    const bannerVal = document.getElementById("edit-banner")?.value?.trim();
+    if (avatarVal !== undefined && avatarVal !== null) {
+      updates.avatar = avatarVal || null;
+    }
+    if (bannerVal !== undefined && bannerVal !== null) {
+      // GadTalk backend expects 'header' field
+      updates.header = bannerVal || null;
+    }
+
     try {
-      const response = await window.GadTalkAPI.users.updateProfile(updates);
-      profileUser = { ...profileUser, ...response.user };
-      currentUser = { ...currentUser, ...response.user };
+      const response = await window.GadTalkAPI.users.updateProfile(updates, profileUser.id);
+      // GadTalk API returns { ok: true, data: user }
+      const user = (response && (response.data || response.user)) || response;
+      profileUser = { ...profileUser, ...user };
+      currentUser = { ...currentUser, ...user };
 
       updateProfileUI();
       document.getElementById("edit-profile-modal").classList.add("gt-hidden");

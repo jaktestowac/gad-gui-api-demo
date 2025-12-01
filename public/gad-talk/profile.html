@@ -199,7 +199,11 @@
                             Change banner
                         </button>
                     </div>
-                    <input type="hidden" id="edit-banner" name="banner" />
+                    <input type="hidden" id="edit-banner" name="header" />
+                    <div class="gt-field gt-mt-sm">
+                        <label class="gt-label">Banner URL</label>
+                        <input type="url" id="edit-banner-url" class="gt-input" placeholder="https://example.com/banner.jpg" />
+                    </div>
                 </div>
 
                 <!-- Avatar upload -->
@@ -212,6 +216,17 @@
                         </button>
                     </div>
                     <input type="hidden" id="edit-avatar" name="avatar" />
+                    <div class="gt-field gt-mt-sm">
+                        <label class="gt-label">Avatar URL</label>
+                        <div class="gt-flex gt-items-center gt-gap-sm" style="flex-wrap: wrap;">
+                            <input type="url" id="edit-avatar-url" class="gt-input" placeholder="https://example.com/avatar.jpg" style="flex: 1; min-width: 200px;" />
+                            <span class="gt-text-secondary">or</span>
+                            <select id="edit-avatar-dropdown" class="gt-input" style="flex: 1; min-width: 200px;">
+                                <option value="">-- Select from gallery --</option>
+                            </select>
+                        </div>
+                        <button type="button" class="gt-btn gt-btn-secondary gt-btn-sm gt-mt-sm" id="choose-avatar-gallery-btn">Choose from gallery (visual)</button>
+                    </div>
                 </div>
 
                 <div class="gt-field">
@@ -235,6 +250,20 @@
                     <input type="url" id="edit-website" name="website" class="gt-input" placeholder="https://" data-testid="edit-website" />
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Avatar Gallery Modal -->
+    <div class="gt-modal gt-hidden" id="avatar-gallery-modal">
+        <div class="gt-modal-overlay" data-close-modal></div>
+        <div class="gt-modal-content gt-card gt-modal-lg">
+            <div class="gt-modal-header">
+                <button type="button" class="gt-icon-btn gt-modal-close" data-close-modal><i class="fa-solid fa-xmark"></i></button>
+                <h2>Choose Avatar</h2>
+            </div>
+            <div class="gt-card gt-flex gt-flex-wrap" id="avatar-gallery-list" style="gap: 8px; max-height: 60vh; overflow: auto;">
+                <!-- Images will be inserted here by JS -->
+            </div>
         </div>
     </div>
 
@@ -274,7 +303,6 @@
     <script src="/gad-talk/js/auth.js"></script>
     <script src="/gad-talk/js/gads.js"></script>
     <script src="/gad-talk/js/nav.js"></script>
-    <script src="/gad-talk/js/gads.js"></script>
     <script src="/gad-talk/js/profile.js"></script>
 </body>
 
