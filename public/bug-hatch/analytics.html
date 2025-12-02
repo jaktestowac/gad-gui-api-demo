@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <title>Analytics - BugHatch</title>
+    <script src="/bug-hatch/js/common.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/bug-hatch/css/bh-fallback.css">
+    <!-- Chart.js for charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+
+<body class="bh-bg-dark bh-text-light bg-neutral-950 text-neutral-100">
+    <!-- Demo Banner -->
+    <div class="bh-demo-banner hidden flex items-center justify-between gap-3 px-4 py-2 text-sm border border-amber-500/30 bg-amber-500/10 text-amber-100" id="demo-banner">
+        <span class="demo-banner-icon">🎯</span>
+        <div class="demo-banner-text">
+            <strong>Demo Mode:</strong> You're exploring BugHatch in read-only mode.
+        </div>
+        <a href="/bug-hatch/signup.html" class="bh-demo-cta">Sign Up Free</a>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="bh-navbar px-4 py-3 sticky top-0 z-20 border-b border-neutral-800 bg-neutral-950/70 backdrop-blur">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="/" class="gad-link">🦎 GAD</a>
+            <a href="/bug-hatch/dashboard.html" class="bh-navbar-brand bh-brand-badge inline-flex items-center gap-2 text-lg font-semibold">
+                <span class="bh-logo-icon text-2xl">🐛</span>
+                <span>BugHatch</span>
+            </a>
+            <div class="flex items-center gap-2 bh-nav-links">
+                <a href="/bug-hatch/dashboard.html" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">Dashboard</a>
+                <a href="/bug-hatch/issues.html" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">Issues</a>
+                <a href="/bug-hatch/invitations.html" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">Invitations</a>
+                <!-- User Menu -->
+                <div class="bh-user-menu" id="userMenu">
+                    <button type="button" class="bh-user-menu-trigger">
+                        <span class="bh-user-avatar">U</span>
+                        <span class="bh-user-name">User</span>
+                        <svg class="bh-user-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div class="bh-user-dropdown">
+                        <div class="bh-user-dropdown-header">
+                            <div class="bh-user-dropdown-email"></div>
+                            <span class="bh-user-dropdown-role">member</span>
+                        </div>
+                        <a href="/bug-hatch/profile.html" class="bh-user-dropdown-item">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            Profile
+                        </a>
+                        <div class="bh-user-dropdown-divider"></div>
+                        <button type="button" class="bh-user-dropdown-item bh-logout" id="logoutBtn">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex items-center gap-3 mb-2">
+                <a id="backToProject" href="/bug-hatch/dashboard.html" class="hidden text-neutral-400 hover:text-neutral-200">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </a>
+                <h1 class="text-3xl font-bold text-neutral-100">📊 <span id="pageTitle">Analytics</span></h1>
+            </div>
+            <p class="text-neutral-400" id="pageSubtitle">Visual insights into your projects and issues</p>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="bh-card bh-card-glow rounded-xl border border-neutral-800 bg-neutral-900/40 p-6">
+            <div class="flex items-center gap-3">
+                <div class="animate-spin h-5 w-5 border-2 border-emerald-500 border-t-transparent rounded-full"></div>
+                <span class="text-neutral-400">Loading analytics data...</span>
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div id="errorState" class="bh-card bh-card-glow rounded-xl border border-red-800 bg-red-900/20 p-6 hidden">
+            <p class="text-red-300" id="errorMessage">Failed to load analytics data</p>
+        </div>
+
+        <!-- Analytics Content -->
+        <div id="analyticsContent" class="hidden">
+            <!-- Summary Stats -->
+            <div id="summaryStatsGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div id="projectsStatCard" class="bh-card bh-card-glow rounded-xl border border-neutral-800 bg-neutral-900/40 p-4 text-center">
+                    <div class="text-3xl font-bold text-emerald-400" id="totalProjects">0</div>
+                    <div class="text-sm text-neutral-400" id="projectsStatLabel">Projects</div>
+                </div>
+                <div class="bh-card bh-card-glow rounded-xl border border-neutral-800 bg-neutral-900/40 p-4 text-center">
+                    <div class="text-3xl font-bold text-blue-400" id="totalIssues">0</div>
+                    <div class="text-sm text-neutral-400">Total Issues</div>
+                </div>
+                <div class="bh-card bh-card-glow rounded-xl border border-neutral-800 bg-neutral-900/40 p-4 text-center">
+                    <div class="text-3xl font-bold text-purple-400" id="totalStoryPoints">0</div>
+                    <div class="text-sm text-neutral-400">Story Points</div>
+                </div>
+                <div class="bh-card bh-card-glow rounded-xl border border-neutral-800 bg-neutral-900/40 p-4 text-center">
+                    <div class="text-3xl font-bold text-amber-400" id="completionRate">0%</div>
+                    <div class="text-sm text-neutral-400">Completion Rate</div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Issue Status Chart -->
+                <div class="bh-card bh-card-glow rounded-xl border border-neutral-800 bg-neutral-900/40 p-6">
+                    <h3 class="text-lg font-semibold text-neutral-100 mb-4">Issues by Status</h3>
+                    <div class="relative h-64">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Issue Priority Chart -->
+                <div class="bh-card bh-card-glow rounded-xl border border-neutral-800 bg-neutral-900/40 p-6">
+                    <h3 class="text-lg font-semibold text-neutral-100 mb-4">Issues by Priority</h3>
+                    <div class="relative h-64">
+                        <canvas id="priorityChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Issue Type Chart -->
+                <div class="bh-card bh-card-glow rounded-xl border border-neutral-800 bg-neutral-900/40 p-6">
+                    <h3 class="text-lg font-semibold text-neutral-100 mb-4">Issues by Type</h3>
+                    <div class="relative h-64">
+                        <canvas id="typeChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Story Points Progress -->
+                <div class="bh-card bh-card-glow rounded-xl border border-neutral-800 bg-neutral-900/40 p-6">
+                    <h3 class="text-lg font-semibold text-neutral-100 mb-4">Story Points Progress</h3>
+                    <div class="relative h-64">
+                        <canvas id="storyPointsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Breakdown -->
+            <div class="bh-card bh-card-glow rounded-xl border border-neutral-800 bg-neutral-900/40 p-6 mb-8">
+                <h3 class="text-lg font-semibold text-neutral-100 mb-4">Issues per Project</h3>
+                <div class="relative h-80">
+                    <canvas id="projectsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Project Details Table -->
+            <div class="bh-card bh-card-glow rounded-xl border border-neutral-800 bg-neutral-900/40 p-6">
+                <h3 class="text-lg font-semibold text-neutral-100 mb-4">Project Details</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b border-neutral-700">
+                                <th class="text-left py-3 px-4 text-neutral-400 font-medium">Project</th>
+                                <th class="text-center py-3 px-4 text-neutral-400 font-medium">Issues</th>
+                                <th class="text-center py-3 px-4 text-neutral-400 font-medium">Story Points</th>
+                                <th class="text-center py-3 px-4 text-neutral-400 font-medium">Completed</th>
+                                <th class="text-center py-3 px-4 text-neutral-400 font-medium">Progress</th>
+                            </tr>
+                        </thead>
+                        <tbody id="projectsTableBody">
+                            <!-- Filled dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/bug-hatch/js/auth.js"></script>
+    <script src="/bug-hatch/js/demo-propagate.js"></script>
+    <script>
+        // Chart.js default styling for dark theme
+        Chart.defaults.color = '#a3a3a3';
+        Chart.defaults.borderColor = '#404040';
+
+        const CHART_COLORS = {
+            emerald: 'rgb(52, 211, 153)',
+            blue: 'rgb(96, 165, 250)',
+            purple: 'rgb(167, 139, 250)',
+            amber: 'rgb(251, 191, 36)',
+            red: 'rgb(248, 113, 113)',
+            cyan: 'rgb(34, 211, 238)',
+            pink: 'rgb(244, 114, 182)',
+            lime: 'rgb(163, 230, 53)',
+        };
+
+        const STATUS_COLORS = {
+            'Open': CHART_COLORS.blue,
+            'In Progress': CHART_COLORS.amber,
+            'In Review': CHART_COLORS.purple,
+            'Done': CHART_COLORS.emerald,
+            'Closed': CHART_COLORS.cyan,
+            'Blocked': CHART_COLORS.red,
+        };
+
+        const PRIORITY_COLORS = {
+            'low': CHART_COLORS.emerald,
+            'medium': CHART_COLORS.amber,
+            'high': CHART_COLORS.red,
+            'critical': CHART_COLORS.pink,
+        };
+
+        const TYPE_COLORS = {
+            'task': CHART_COLORS.blue,
+            'bug': CHART_COLORS.red,
+            'story': CHART_COLORS.purple,
+            'epic': CHART_COLORS.amber,
+        };
+
+        let charts = {};
+        let currentProjectId = null;
+        let currentProjectName = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const loadingState = document.getElementById('loadingState');
+            const errorState = document.getElementById('errorState');
+            const analyticsContent = document.getElementById('analyticsContent');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const demoBanner = document.getElementById('demo-banner');
+
+            const urlObj = new URL(window.location.href);
+            const forceDemo = urlObj.searchParams.get('demo') === 'true';
+            currentProjectId = urlObj.searchParams.get('projectId');
+
+            // Auth check
+            const user = await window.bugHatchAuth.checkAuth();
+            if (!user && !forceDemo) {
+                window.location.href = '/bug-hatch/login.html';
+                return;
+            }
+
+            const isDemo = (user && user.isDemo) || forceDemo;
+            if (isDemo) {
+                demoBanner.classList.remove('hidden');
+            }
+
+            // Setup user menu dropdown
+            if (window.setupUserMenu && user) window.setupUserMenu(user);
+
+            logoutBtn.addEventListener('click', window.bugHatchAuth.handleLogout);
+
+            // If viewing project-specific analytics, update UI
+            if (currentProjectId) {
+                const backLink = document.getElementById('backToProject');
+                if (backLink) {
+                    backLink.href = `/bug-hatch/project.html?id=${encodeURIComponent(currentProjectId)}${forceDemo ? '&demo=true' : ''}`;
+                    backLink.classList.remove('hidden');
+                }
+                document.getElementById('pageSubtitle').textContent = 'Visual insights for this project';
+            }
+
+            try {
+                // Build API URL with optional project filter
+                let apiUrl = '/api/bug-hatch/metrics';
+                const params = new URLSearchParams();
+                if (forceDemo) params.set('demo', 'true');
+                if (currentProjectId) params.set('projectId', currentProjectId);
+                if (params.toString()) apiUrl += '?' + params.toString();
+
+                const response = await fetch(apiUrl, {
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch metrics');
+                }
+
+                const result = await response.json();
+                const data = result.data;
+
+                // If single project mode, get the project name
+                if (currentProjectId && data.projects && data.projects.length > 0) {
+                    currentProjectName = data.projects[0].projectName;
+                    document.getElementById('pageTitle').textContent = `${currentProjectName} Analytics`;
+                }
+
+                loadingState.classList.add('hidden');
+                analyticsContent.classList.remove('hidden');
+
+                renderSummaryStats(data.summary);
+                renderStatusChart(data.summary.statusBreakdown);
+                renderPriorityChart(data.summary.priorityBreakdown);
+                renderTypeChart(data.summary.typeBreakdown);
+                renderStoryPointsChart(data.summary.storyPoints);
+
+                // Only show projects chart/table if viewing all projects
+                if (!currentProjectId) {
+                    renderProjectsChart(data.projects);
+                    renderProjectsTable(data.projects);
+                } else {
+                    // Hide projects section in single project mode
+                    const projectsChartSection = document.querySelector('#projectsChart').closest('.bh-card');
+                    const projectsTableSection = document.querySelector('#projectsTableBody').closest('.bh-card');
+                    if (projectsChartSection) projectsChartSection.classList.add('hidden');
+                    if (projectsTableSection) projectsTableSection.classList.add('hidden');
+                }
+
+            } catch (error) {
+                console.error('Analytics error:', error);
+                loadingState.classList.add('hidden');
+                errorState.classList.remove('hidden');
+                document.getElementById('errorMessage').textContent = error.message || 'Failed to load analytics';
+            }
+        });
+
+        function renderSummaryStats(summary) {
+            // In single project mode, hide the projects card and adjust grid
+            if (currentProjectId) {
+                document.getElementById('projectsStatCard').classList.add('hidden');
+                document.getElementById('summaryStatsGrid').classList.remove('md:grid-cols-4');
+                document.getElementById('summaryStatsGrid').classList.add('md:grid-cols-3');
+            } else {
+                document.getElementById('totalProjects').textContent = summary.totalProjects;
+            }
+            document.getElementById('totalIssues').textContent = summary.totalIssues;
+            document.getElementById('totalStoryPoints').textContent = summary.storyPoints.total;
+
+            const completionRate = summary.storyPoints.total > 0
+                ? Math.round((summary.storyPoints.completed / summary.storyPoints.total) * 100)
+                : 0;
+            document.getElementById('completionRate').textContent = completionRate + '%';
+        }
+
+        function renderStatusChart(statusBreakdown) {
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            const labels = Object.keys(statusBreakdown);
+            const data = Object.values(statusBreakdown);
+            const colors = labels.map(l => STATUS_COLORS[l] || CHART_COLORS.blue);
+
+            charts.status = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors,
+                        borderColor: '#171717',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { padding: 15, usePointStyle: true }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderPriorityChart(priorityBreakdown) {
+            const ctx = document.getElementById('priorityChart').getContext('2d');
+            const labels = Object.keys(priorityBreakdown).map(l => l.charAt(0).toUpperCase() + l.slice(1));
+            const data = Object.values(priorityBreakdown);
+            const colors = Object.keys(priorityBreakdown).map(l => PRIORITY_COLORS[l] || CHART_COLORS.blue);
+
+            charts.priority = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors,
+                        borderColor: '#171717',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { padding: 15, usePointStyle: true }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderTypeChart(typeBreakdown) {
+            const ctx = document.getElementById('typeChart').getContext('2d');
+            const labels = Object.keys(typeBreakdown).map(l => l.charAt(0).toUpperCase() + l.slice(1));
+            const data = Object.values(typeBreakdown);
+            const colors = Object.keys(typeBreakdown).map(l => TYPE_COLORS[l] || CHART_COLORS.purple);
+
+            charts.type = new Chart(ctx, {
+                type: 'polarArea',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors.map(c => c.replace('rgb', 'rgba').replace(')', ', 0.7)')),
+                        borderColor: colors,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { padding: 15, usePointStyle: true }
+                        }
+                    },
+                    scales: {
+                        r: {
+                            grid: { color: '#404040' },
+                            ticks: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderStoryPointsChart(storyPoints) {
+            const ctx = document.getElementById('storyPointsChart').getContext('2d');
+
+            charts.storyPoints = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Story Points'],
+                    datasets: [
+                        {
+                            label: 'Completed',
+                            data: [storyPoints.completed],
+                            backgroundColor: CHART_COLORS.emerald,
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Remaining',
+                            data: [storyPoints.remaining],
+                            backgroundColor: CHART_COLORS.amber,
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            grid: { color: '#262626' }
+                        },
+                        y: {
+                            stacked: true,
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderProjectsChart(projects) {
+            if (!projects || projects.length === 0) return;
+
+            const ctx = document.getElementById('projectsChart').getContext('2d');
+            const labels = projects.map(p => p.projectName);
+            const issueData = projects.map(p => p.issueCount);
+            const pointsData = projects.map(p => p.storyPoints.total);
+
+            charts.projects = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Issues',
+                            data: issueData,
+                            backgroundColor: CHART_COLORS.blue,
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Story Points',
+                            data: pointsData,
+                            backgroundColor: CHART_COLORS.purple,
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false }
+                        },
+                        y: {
+                            grid: { color: '#262626' },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderProjectsTable(projects) {
+            const tbody = document.getElementById('projectsTableBody');
+            tbody.innerHTML = '';
+
+            if (!projects || projects.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="py-4 text-center text-neutral-500">No projects found</td></tr>';
+                return;
+            }
+
+            projects.forEach(project => {
+                const progress = project.storyPoints.total > 0
+                    ? Math.round((project.storyPoints.completed / project.storyPoints.total) * 100)
+                    : 0;
+
+                const row = document.createElement('tr');
+                row.className = 'border-b border-neutral-800 hover:bg-neutral-800/30';
+                row.innerHTML = `
+                    <td class="py-3 px-4">
+                        <a href="/bug-hatch/project.html?id=${encodeURIComponent(project.projectId)}" class="text-emerald-400 hover:text-emerald-300 font-medium">
+                            ${escapeHtml(project.projectName)}
+                        </a>
+                    </td>
+                    <td class="py-3 px-4 text-center">${project.issueCount}</td>
+                    <td class="py-3 px-4 text-center">${project.storyPoints.total}</td>
+                    <td class="py-3 px-4 text-center">${project.storyPoints.completed}</td>
+                    <td class="py-3 px-4">
+                        <div class="flex items-center gap-2">
+                            <div class="flex-1 bg-neutral-700 rounded-full h-2 overflow-hidden">
+                                <div class="bg-emerald-500 h-2 rounded-full transition-all" style="width: ${progress}%"></div>
+                            </div>
+                            <span class="text-xs text-neutral-400 w-10 text-right">${progress}%</span>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+
+</html>

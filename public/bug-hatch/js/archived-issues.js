@@ -28,6 +28,10 @@
       window.location.href = "/bug-hatch/login.html";
       return false;
     }
+
+    // Setup user menu dropdown
+    if (window.setupUserMenu) window.setupUserMenu(currentUser);
+
     const logoutBtn = qs("#logoutBtn");
     if (logoutBtn) logoutBtn.addEventListener("click", window.bugHatchAuth.handleLogout);
     isDemo = currentUser.isDemo;
@@ -81,10 +85,19 @@
 
   async function unarchiveIssue(issueId) {
     if (isDemo || forceDemo) {
-      alert("Cannot unarchive issues in demo mode");
+      if (window.bhToast) {
+        window.bhToast.show("Cannot unarchive issues in demo mode", { type: "error" });
+      }
       return;
     }
-    if (!confirm("Are you sure you want to unarchive this issue?")) return;
+    const confirmed = await window.showConfirmModal({
+      title: "Unarchive Issue",
+      message: "Are you sure you want to unarchive this issue? It will be moved back to active issues.",
+      confirmText: "Unarchive",
+      cancelText: "Cancel",
+      confirmClass: "bg-emerald-600 hover:bg-emerald-500",
+    });
+    if (!confirmed) return;
 
     try {
       const resp = await fetch(`/api/bug-hatch/issues/${encodeURIComponent(issueId)}/unarchive`, {
@@ -93,7 +106,8 @@
       });
       const data = await resp.json().catch(() => ({}));
       if (!resp.ok) {
-        alert(data.error || "Failed to unarchive issue");
+        const msg = (data && (data.error?.message || data.error)) || "Failed to unarchive issue";
+        alert(msg);
         return;
       }
       // Reload issues
@@ -180,7 +194,8 @@
     );
     const data = await resp.json().catch(() => ({}));
     if (!resp.ok) {
-      qs("#issuesMeta").textContent = data.error || "Failed to load archived issues";
+      const msg = (data && (data.error?.message || data.error)) || "Failed to load archived issues";
+      qs("#issuesMeta").textContent = msg;
       renderIssuesTable([]);
       return;
     }

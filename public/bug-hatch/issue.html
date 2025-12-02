@@ -6,6 +6,7 @@
     <link rel="icon" href="/data/icons/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BugHatch – Issue</title>
+    <script src="/bug-hatch/js/common.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/bug-hatch/css/bh-fallback.css">
 </head>
@@ -22,9 +23,40 @@
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <a href="/" class="gad-link">🦎 GAD</a>
             <a href="/bug-hatch/dashboard.html" class="bh-navbar-brand bh-brand-badge inline-flex items-center gap-2 text-lg font-semibold"><span class="bh-logo-icon text-2xl">🐛</span><span>BugHatch</span></a>
-            <div class="flex gap-2">
+            <div class="flex items-center gap-2 bh-nav-links">
+                <a href="/bug-hatch/dashboard.html" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">Dashboard</a>
                 <a href="/bug-hatch/issues.html" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">Issues</a>
-                <button id="logoutBtn" class="bh-btn bh-btn-danger bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium bg-red-600 hover:bg-red-500 text-white px-2.5 py-1.5">Logout</button>
+                <a href="/bug-hatch/analytics.html" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">Analytics</a>
+                <a href="/bug-hatch/invitations.html" class="bh-btn bh-btn-ghost bh-btn-sm inline-flex items-center justify-center rounded-md text-sm font-medium text-neutral-200 hover:bg-neutral-800 px-2.5 py-1.5">Invitations</a>
+                <!-- User Menu -->
+                <div class="bh-user-menu" id="userMenu">
+                    <button type="button" class="bh-user-menu-trigger">
+                        <span class="bh-user-avatar">U</span>
+                        <span class="bh-user-name">User</span>
+                        <svg class="bh-user-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div class="bh-user-dropdown">
+                        <div class="bh-user-dropdown-header">
+                            <div class="bh-user-dropdown-email"></div>
+                            <span class="bh-user-dropdown-role">member</span>
+                        </div>
+                        <a href="/bug-hatch/profile.html" class="bh-user-dropdown-item">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            Profile
+                        </a>
+                        <div class="bh-user-dropdown-divider"></div>
+                        <button type="button" class="bh-user-dropdown-item bh-logout" id="logoutBtn">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                            Logout
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -72,6 +104,7 @@
                         </select>
                     </label>
                     <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Labels (comma)</span><input id="fieldLabels" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" /></label>
+                    <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Story Points</span><input id="fieldStoryPoints" type="number" min="0" max="100" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" placeholder="0" /></label>
                     <label class="bh-field space-y-1"><span class="bh-label block text-xs font-medium text-neutral-300 mb-1">Description</span><textarea id="fieldDescription" class="bh-input block w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 outline-none" rows="6"></textarea></label>
                     <div id="editError" class="bh-alert bh-alert-error bh-hidden rounded-md border border-red-500/40 bg-red-500/10 text-red-200 text-sm px-3 py-2" style="display:none;"></div>
                     <div class="bh-flex bh-gap-sm bh-justify-end flex items-center justify-end gap-2">
@@ -101,8 +134,10 @@
         </aside>
     </main>
 
+    <script src="/bug-hatch/js/common.js"></script>
     <script src="/bug-hatch/js/auth.js"></script>
     <script src="/bug-hatch/js/demo-propagate.js"></script>
+    <script src="/bug-hatch/js/toast.js"></script>
     <script src="/bug-hatch/js/activity-renderer.js"></script>
     <script src="/bug-hatch/js/comments-renderer.js"></script>
     <script src="/bug-hatch/js/issue-detail.js"></script>

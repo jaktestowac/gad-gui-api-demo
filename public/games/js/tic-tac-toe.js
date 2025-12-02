@@ -237,12 +237,31 @@ function resetGame() {
 
 sessionCodeInput.value = "";
 
+// Display authentication info and enable/disable buttons accordingly
 checkIfAuthenticated(
-  "infoContainer",
-  () => {},
+  "authentication-info",
   () => {
+    // user is authenticated
+    try {
+      const authInfoElement = document.getElementById("authentication-info");
+      const name = getCookieUserName() || getCookieEmail() || getId();
+      const logoutUrl = "/logout";
+      const fullLogoutUrl = `${logoutUrl}`;
+      setBoxMessage(
+        authInfoElement,
+        `Logged in as <strong>${name}</strong>. <a href="${fullLogoutUrl}" class="btn btn-secondary" style="margin-left:10px">Logout</a>`,
+        simpleSuccessBox
+      );
+    } catch (e) {
+      // ignore
+    }
+    startButton.disabled = false;
+    joinButton.disabled = false;
+  },
+  () => {
+    // user is not authenticated - checkIfAuthenticated will already render login/register links
     startButton.disabled = true;
     joinButton.disabled = true;
   },
-  { defaultRedirect: true }
+  { defaultRedirect: true, customMessage: "play the game" }
 );

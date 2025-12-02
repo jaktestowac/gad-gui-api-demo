@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile - GadTalk</title>
+    <link rel="stylesheet" href="/gad-talk/css/gad-talk.css">
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+</head>
+
+<body class="gt-app-layout">
+    <!-- Navbar -->
+    <nav class="gt-navbar">
+        <div class="gt-container-wide gt-flex gt-justify-between gt-items-center">
+            <a href="/" class="gt-link-muted">🦎 GAD</a>
+            <a href="/gad-talk/" class="gt-navbar-brand">
+                <span class="gt-logo"><i class="fa-solid fa-comments"></i></span>
+                <span>GadTalk</span>
+            </a>
+            <div class="gt-flex gt-gap-sm gt-items-center" id="nav-user-section">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main layout -->
+    <div class="gt-main-container">
+        <!-- Left sidebar -->
+        <aside class="gt-sidebar gt-sidebar-left">
+            <nav class="gt-nav-menu" id="main-nav">
+                <a href="/gad-talk/index.html" class="gt-nav-item" data-testid="nav-home">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-house"></i></span>
+                    <span class="gt-nav-text">Home</span>
+                </a>
+                <a href="/gad-talk/explore.html" class="gt-nav-item" data-testid="nav-explore">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <span class="gt-nav-text">Explore</span>
+                </a>
+                <a href="/gad-talk/notifications.html" class="gt-nav-item" data-testid="nav-notifications">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-bell"></i></span>
+                    <span class="gt-nav-text">Notifications</span>
+                    <span class="gt-badge gt-badge-primary gt-hidden" id="notification-badge">0</span>
+                </a>
+                <a href="/gad-talk/bookmarks.html" class="gt-nav-item" data-testid="nav-bookmarks">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-bookmark"></i></span>
+                    <span class="gt-nav-text">Bookmarks</span>
+                </a>
+                <a href="#" class="gt-nav-item gt-nav-item-active" id="nav-profile" data-testid="nav-profile">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-user"></i></span>
+                    <span class="gt-nav-text">Profile</span>
+                </a>
+                <button class="gt-btn gt-btn-primary gt-btn-block gt-mt-lg" id="compose-btn" data-testid="compose-button">
+                    Gad
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <main class="gt-content">
+            <!-- Profile header with back button -->
+            <header class="gt-page-header gt-page-header-sticky">
+                <button class="gt-icon-btn" id="back-btn" data-testid="back-button" onclick="history.back()">
+                    ←
+                </button>
+                <div class="gt-header-info">
+                    <h1 class="gt-page-title" id="profile-name">Loading...</h1>
+                    <span class="gt-text-secondary gt-text-sm" id="gads-count">0 Gads</span>
+                </div>
+            </header>
+
+            <!-- Profile banner and avatar -->
+            <div class="gt-profile-header" id="profile-header">
+                <div class="gt-profile-banner" id="profile-banner">
+                    <!-- Banner image or default gradient -->
+                </div>
+                <div class="gt-profile-avatar-container">
+                    <div class="gt-avatar gt-avatar-xl gt-profile-avatar" id="profile-avatar">
+                        <!-- Avatar populated by JS -->
+                    </div>
+                </div>
+                <div class="gt-profile-actions" id="profile-actions">
+                    <!-- Follow/Edit button populated by JS -->
+                </div>
+            </div>
+
+            <!-- Profile info -->
+            <div class="gt-profile-info gt-card">
+                <h2 class="gt-profile-display-name" id="display-name" data-testid="display-name">Loading...</h2>
+                <span class="gt-profile-username gt-text-secondary" id="username" data-testid="username">@...</span>
+
+                <p class="gt-profile-bio" id="profile-bio" data-testid="profile-bio"></p>
+
+                <div class="gt-profile-meta">
+                    <span id="profile-location" class="gt-profile-meta-item gt-hidden" data-testid="profile-location">
+                        <span class="gt-icon"><i class="fa-solid fa-location-dot"></i></span>
+                        <span></span>
+                    </span>
+                    <span id="profile-website" class="gt-profile-meta-item gt-hidden" data-testid="profile-website">
+                        <span class="gt-icon"><i class="fa-solid fa-link"></i></span>
+                        <a href="#" class="gt-link" target="_blank" rel="noopener"></a>
+                    </span>
+                    <span id="profile-joined" class="gt-profile-meta-item" data-testid="profile-joined">
+                        <span class="gt-icon"><i class="fa-solid fa-calendar"></i></span>
+                        <span>Joined </span>
+                    </span>
+                </div>
+
+                <div class="gt-profile-stats">
+                    <a href="#" class="gt-profile-stat" id="following-link" data-testid="following-stat">
+                        <span class="gt-stat-count" id="following-count">0</span>
+                        <span class="gt-stat-label">Following</span>
+                    </a>
+                    <a href="#" class="gt-profile-stat" id="followers-link" data-testid="followers-stat">
+                        <span class="gt-stat-count" id="followers-count">0</span>
+                        <span class="gt-stat-label">Followers</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Profile tabs -->
+            <div class="gt-tabs gt-tabs-full">
+                <button class="gt-tab gt-tab-active" data-tab="gads" data-testid="tab-gads">Gads</button>
+                <button class="gt-tab" data-tab="replies" data-testid="tab-replies">Replies</button>
+                <button class="gt-tab" data-tab="likes" data-testid="tab-likes">Likes</button>
+            </div>
+
+            <!-- Profile gads feed -->
+            <div class="gt-feed" id="profile-feed" data-testid="profile-feed">
+                <!-- Loading state -->
+                <div class="gt-loading-spinner" id="profile-loading">
+                    <div class="gt-spinner"></div>
+                    <p>Loading gads...</p>
+                </div>
+
+                <!-- Empty state (hidden by default) -->
+                <div class="gt-empty-state gt-hidden" id="profile-empty">
+                    <p class="gt-text-lg">No gads yet</p>
+                    <p class="gt-text-secondary">When this user posts, their gads will show up here.</p>
+                </div>
+
+                <!-- Gads will be inserted here -->
+                <div id="profile-gads-list"></div>
+
+                <!-- Load more -->
+                <div class="gt-load-more gt-hidden" id="profile-load-more">
+                    <button class="gt-btn gt-btn-secondary gt-btn-block" id="profile-load-more-btn">
+                        Load more
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right sidebar -->
+        <aside class="gt-sidebar gt-sidebar-right">
+            <!-- Search -->
+            <div class="gt-search-container">
+                <input type="search" class="gt-search-input" placeholder="Search GadTalk" id="search-input" data-testid="search-input" />
+            </div>
+
+            <!-- Who to follow -->
+            <div class="gt-card gt-suggestions-card">
+                <h2 class="gt-card-title">You might like</h2>
+                <div id="suggestions-list">
+                    <!-- Populated by JS -->
+                    <div class="gt-loading-spinner gt-loading-sm">
+                        <div class="gt-spinner gt-spinner-sm"></div>
+                    </div>
+                </div>
+                <a href="/gad-talk/explore.html?tab=people" class="gt-link gt-text-sm">Show more</a>
+            </div>
+
+            <!-- Footer -->
+            <footer class="gt-sidebar-footer">
+                <a href="/gad-talk/terms.html" class="gt-link-muted">Terms</a>
+                <a href="/gad-talk/privacy.html" class="gt-link-muted">Privacy</a>
+                <a href="/gad-talk/about.html" class="gt-link-muted">About</a>
+                <span class="gt-text-muted">© 2025 GadTalk</span>
+            </footer>
+        </aside>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="gt-modal gt-hidden" id="edit-profile-modal">
+        <div class="gt-modal-overlay" data-close-modal></div>
+        <div class="gt-modal-content gt-card gt-modal-lg">
+            <div class="gt-modal-header">
+                <button type="button" class="gt-icon-btn gt-modal-close" data-close-modal><i class="fa-solid fa-xmark"></i></button>
+                <h2>Edit Profile</h2>
+                <button type="submit" form="edit-profile-form" class="gt-btn gt-btn-primary">Save</button>
+            </div>
+            <form id="edit-profile-form" class="gt-form" data-testid="edit-profile-form">
+                <!-- Banner upload -->
+                <div class="gt-field">
+                    <label class="gt-label">Banner</label>
+                    <div class="gt-banner-upload" id="edit-banner-preview">
+                        <button type="button" class="gt-btn gt-btn-secondary gt-btn-sm" id="change-banner-btn">
+                            Change banner
+                        </button>
+                    </div>
+                    <input type="hidden" id="edit-banner" name="header" />
+                    <div class="gt-field gt-mt-sm">
+                        <label class="gt-label">Banner URL</label>
+                        <input type="url" id="edit-banner-url" class="gt-input" placeholder="https://example.com/banner.jpg" />
+                    </div>
+                </div>
+
+                <!-- Avatar upload -->
+                <div class="gt-field">
+                    <label class="gt-label">Avatar</label>
+                    <div class="gt-flex gt-items-center gt-gap-md">
+                        <div class="gt-avatar gt-avatar-lg" id="edit-avatar-preview"></div>
+                        <button type="button" class="gt-btn gt-btn-secondary gt-btn-sm" id="change-avatar-btn">
+                            Change avatar
+                        </button>
+                    </div>
+                    <input type="hidden" id="edit-avatar" name="avatar" />
+                    <div class="gt-field gt-mt-sm">
+                        <label class="gt-label">Avatar URL</label>
+                        <div class="gt-flex gt-items-center gt-gap-sm" style="flex-wrap: wrap;">
+                            <input type="url" id="edit-avatar-url" class="gt-input" placeholder="https://example.com/avatar.jpg" style="flex: 1; min-width: 200px;" />
+                            <span class="gt-text-secondary">or</span>
+                            <select id="edit-avatar-dropdown" class="gt-input" style="flex: 1; min-width: 200px;">
+                                <option value="">-- Select from gallery --</option>
+                            </select>
+                        </div>
+                        <button type="button" class="gt-btn gt-btn-secondary gt-btn-sm gt-mt-sm" id="choose-avatar-gallery-btn">Choose from gallery (visual)</button>
+                    </div>
+                </div>
+
+                <div class="gt-field">
+                    <label for="edit-display-name" class="gt-label">Display Name</label>
+                    <input type="text" id="edit-display-name" name="displayName" class="gt-input" maxlength="50" data-testid="edit-display-name" />
+                </div>
+
+                <div class="gt-field">
+                    <label for="edit-bio" class="gt-label">Bio</label>
+                    <textarea id="edit-bio" name="bio" class="gt-textarea" maxlength="160" rows="3" data-testid="edit-bio"></textarea>
+                    <span class="gt-char-count" id="bio-char-count">160</span>
+                </div>
+
+                <div class="gt-field">
+                    <label for="edit-location" class="gt-label">Location</label>
+                    <input type="text" id="edit-location" name="location" class="gt-input" maxlength="30" data-testid="edit-location" />
+                </div>
+
+                <div class="gt-field">
+                    <label for="edit-website" class="gt-label">Website</label>
+                    <input type="url" id="edit-website" name="website" class="gt-input" placeholder="https://" data-testid="edit-website" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Avatar Gallery Modal -->
+    <div class="gt-modal gt-hidden" id="avatar-gallery-modal">
+        <div class="gt-modal-overlay" data-close-modal></div>
+        <div class="gt-modal-content gt-card gt-modal-lg">
+            <div class="gt-modal-header">
+                <button type="button" class="gt-icon-btn gt-modal-close" data-close-modal><i class="fa-solid fa-xmark"></i></button>
+                <h2>Choose Avatar</h2>
+            </div>
+            <div class="gt-card gt-flex gt-flex-wrap" id="avatar-gallery-list" style="gap: 8px; max-height: 60vh; overflow: auto;">
+                <!-- Images will be inserted here by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Compose Modal -->
+    <div class="gt-modal gt-hidden" id="compose-modal">
+        <div class="gt-modal-overlay" data-close-modal></div>
+        <div class="gt-modal-content gt-card">
+            <div class="gt-modal-header">
+                <button type="button" class="gt-icon-btn gt-modal-close" data-close-modal><i class="fa-solid fa-xmark"></i></button>
+                <h2>Compose Gad</h2>
+            </div>
+            <form id="modal-compose-form" class="gt-compose-form" data-testid="modal-compose-form">
+                <div class="gt-compose-row">
+                    <div class="gt-avatar gt-avatar-md" id="modal-compose-avatar"></div>
+                    <div class="gt-compose-input-container">
+                        <textarea id="modal-compose-textarea" name="content" class="gt-compose-textarea" placeholder="What's happening?" maxlength="280" rows="5"></textarea>
+                    </div>
+                </div>
+                <div class="gt-compose-actions">
+                    <div class="gt-compose-tools">
+                        <button type="button" class="gt-icon-btn" title="Add emoji"><i class="fa-solid fa-face-smile"></i></button>
+                    </div>
+                    <div class="gt-compose-submit">
+                        <span class="gt-char-count" id="modal-char-count">280</span>
+                        <button type="submit" class="gt-btn gt-btn-primary" id="modal-post-btn" disabled>
+                            Gad
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/gad-talk/js/api.js"></script>
+    <script src="/gad-talk/js/ui.js"></script>
+    <script src="/gad-talk/js/auth.js"></script>
+    <script src="/gad-talk/js/gads.js"></script>
+    <script src="/gad-talk/js/nav.js"></script>
+    <script src="/gad-talk/js/profile.js"></script>
+</body>
+
+</html>

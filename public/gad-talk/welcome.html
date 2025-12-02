@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GadTalk - Join the conversation</title>
+    <link rel="stylesheet" href="/gad-talk/css/gad-talk.css">
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+</head>
+
+<body class="gt-welcome-layout">
+    <!-- Navbar -->
+    <nav class="gt-navbar gt-navbar-transparent">
+        <div class="gt-container-wide gt-flex gt-justify-between gt-items-center">
+            <a href="/" class="gt-link-muted">🦎 GAD</a>
+            <a href="/gad-talk/" class="gt-navbar-brand">
+                <span class="gt-logo"><i class="fa-solid fa-comments"></i></span>
+                <span>GadTalk</span>
+            </a>
+            <div class="gt-flex gt-gap-sm">
+                <a href="/gad-talk/login.html" data-testid="login-link" class="gt-btn gt-btn-secondary gt-btn-sm">
+                    Login
+                </a>
+                <a href="/gad-talk/signup.html" data-testid="signup-link" class="gt-btn gt-btn-primary gt-btn-sm">
+                    Sign Up
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero section -->
+    <main class="gt-welcome-main">
+        <div class="gt-welcome-hero">
+            <div class="gt-welcome-content">
+                <div class="gt-welcome-logo">
+                    <span class="gt-welcome-icon"><i class="fa-solid fa-comments"></i></span>
+                </div>
+                <h1 class="gt-welcome-title">Happening now</h1>
+                <h2 class="gt-welcome-subtitle">Join GadTalk today.</h2>
+
+                <div class="gt-welcome-actions">
+                    <a href="/gad-talk/signup.html" class="gt-btn gt-btn-primary gt-btn-lg gt-btn-block" data-testid="hero-signup-btn">
+                        Create account
+                    </a>
+
+                    <div class="gt-welcome-divider">
+                        <span>or</span>
+                    </div>
+
+                    <a href="/gad-talk/login.html" class="gt-btn gt-btn-outline gt-btn-lg gt-btn-block" data-testid="hero-login-btn">
+                        Sign in
+                    </a>
+                </div>
+
+                <!-- Feature highlights -->
+                <div class="gt-welcome-features">
+                    <div class="gt-welcome-feature">
+                        <span class="gt-feature-icon"><i class="fa-solid fa-rocket"></i></span>
+                        <div>
+                            <h3>Share your thoughts</h3>
+                            <p>Post Gads up to 280 characters with hashtags and mentions</p>
+                        </div>
+                    </div>
+                    <div class="gt-welcome-feature">
+                        <span class="gt-feature-icon"><i class="fa-solid fa-users"></i></span>
+                        <div>
+                            <h3>Connect with others</h3>
+                            <p>Follow users and build your community</p>
+                        </div>
+                    </div>
+                    <div class="gt-welcome-feature">
+                        <span class="gt-feature-icon"><i class="fa-solid fa-bell"></i></span>
+                        <div>
+                            <h3>Stay updated</h3>
+                            <p>Get notifications for likes, replies, and new followers</p>
+                        </div>
+                    </div>
+                    <div class="gt-welcome-feature">
+                        <span class="gt-feature-icon"><i class="fa-solid fa-chart-bar"></i></span>
+                        <div>
+                            <h3>Explore trends</h3>
+                            <p>Discover what's happening with trending hashtags</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Decorative side -->
+            <div class="gt-welcome-decoration">
+                <div class="gt-welcome-preview">
+                    <div class="gt-preview-gad">
+                        <div class="gt-preview-avatar"><i class="fa-solid fa-frog"></i></div>
+                        <div class="gt-preview-content">
+                            <div class="gt-preview-header">
+                                <span class="gt-preview-name">GAD Demo</span>
+                                <span class="gt-preview-username">@gaddemo</span>
+                            </div>
+                            <p class="gt-preview-text">
+                                Welcome to GadTalk! <i class="fa-solid fa-comments"></i> This is an educational platform designed for learning
+                                <span class="gt-hashtag">#testing</span> and <span class="gt-hashtag">#automation</span>.
+                                Join us and start posting! <i class="fa-solid fa-rocket"></i>
+                            </p>
+                            <div class="gt-preview-actions">
+                                <span><i class="fa-solid fa-comments"></i> 12</span>
+                                <span><i class="fa-solid fa-retweet"></i> 8</span>
+                                <span><i class="fa-solid fa-heart"></i> 42</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gt-preview-gad">
+                        <div class="gt-preview-avatar"><i class="fa-solid fa-user-astronaut"></i></div>
+                        <div class="gt-preview-content">
+                            <div class="gt-preview-header">
+                                <span class="gt-preview-name">Test User</span>
+                                <span class="gt-preview-username">@testuser</span>
+                            </div>
+                            <p class="gt-preview-text">
+                                Just discovered <span class="gt-mention">@gaddemo</span> - perfect for practicing
+                                <span class="gt-hashtag">#Playwright</span> and <span class="gt-hashtag">#Selenium</span> automation! <i class="fa-solid fa-bullseye"></i>
+                            </p>
+                            <div class="gt-preview-actions">
+                                <span><i class="fa-solid fa-comments"></i> 5</span>
+                                <span><i class="fa-solid fa-retweet"></i> 3</span>
+                                <span><i class="fa-solid fa-heart"></i> 18</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Educational banner -->
+    <section class="gt-welcome-banner">
+        <div class="gt-container">
+            <div class="gt-banner-content">
+                <span class="gt-banner-icon"><i class="fa-solid fa-graduation-cap"></i></span>
+                <div>
+                    <h3>Built for Learning</h3>
+                    <p>
+                        GadTalk is part of the GAD (GUI API Demo) application - an educational platform
+                        designed for teaching software testing and test automation. Practice UI automation,
+                        API testing, and explore intentional bugs and challenges.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="gt-welcome-footer">
+        <div class="gt-container">
+            <div class="gt-footer-links">
+                <a href="/" class="gt-link-muted"><i class="fa-solid fa-frog"></i> GAD Home</a>
+                <span class="gt-text-muted">•</span>
+                <a href="/tools.html" class="gt-link-muted">Tools</a>
+                <span class="gt-text-muted">•</span>
+                <a href="/version" class="gt-link-muted">Version</a>
+            </div>
+            <p class="gt-footer-copyright">© 2024 GadTalk - Educational Platform</p>
+        </div>
+    </footer>
+
+    <script src="/gad-talk/js/api.js"></script>
+    <script>
+        // Redirect to dashboard if already logged in
+        (async function () {
+            if (window.GadTalkAPI.auth.isAuthenticated()) {
+                try {
+                    await window.GadTalkAPI.auth.me();
+                    window.location.href = '/gad-talk/index.html';
+                } catch (e) {
+                    // Token invalid, stay on welcome page
+                }
+            }
+        })();
+    </script>
+</body>
+
+</html>

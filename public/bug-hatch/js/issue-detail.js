@@ -46,6 +46,10 @@
     }
     // If forced demo through query, treat as demo (read-only) even if user isn't a demo user
     isDemo = !!currentUser.isDemo || forceDemo;
+
+    // Setup user menu dropdown
+    if (window.setupUserMenu) window.setupUserMenu(currentUser);
+
     const logout = qs("#logoutBtn");
     if (logout) logout.addEventListener("click", window.bugHatchAuth.handleLogout);
     return true;
@@ -58,7 +62,8 @@
     });
     const data = await resp.json().catch(() => ({}));
     if (!resp.ok) {
-      showError("#editError", data.error || "Failed to load");
+      const msg = (data && (data.error?.message || data.error)) || "Failed to load";
+      showError("#editError", msg);
       return;
     }
     issueData = data.data;
@@ -160,6 +165,7 @@
     qs("#fieldPriority").value = issueData.priority;
     qs("#fieldAssignee").value = issueData.assigneeId || "";
     qs("#fieldLabels").value = (issueData.labels || []).join(", ");
+    qs("#fieldStoryPoints").value = issueData.storyPoints || "";
     qs("#fieldDescription").value = issueData.description || "";
     const currentStatusEl = qs("#currentStatus");
     currentStatusEl.textContent = issueData.status;
@@ -247,7 +253,8 @@
     });
     const data = await resp.json().catch(() => ({}));
     if (!resp.ok) {
-      showError("#transitionError", data.error || "Transition failed");
+      const msg = (data && (data.error?.message || data.error)) || "Transition failed";
+      showError("#transitionError", msg);
       return;
     }
     issueData = data.data;
@@ -257,6 +264,7 @@
   }
 
   function collectPatch() {
+    const storyPointsVal = qs("#fieldStoryPoints").value.trim();
     return {
       title: qs("#fieldTitle").value.trim(),
       type: qs("#fieldType").value,
@@ -266,6 +274,7 @@
         .value.split(",")
         .map((l) => l.trim())
         .filter(Boolean),
+      storyPoints: storyPointsVal ? parseInt(storyPointsVal, 10) : null,
       description: qs("#fieldDescription").value.trim(),
     };
   }
@@ -286,12 +295,16 @@
     });
     const data = await resp.json().catch(() => ({}));
     if (!resp.ok) {
-      showError("#editError", data.error || "Save failed");
+      const msg = (data && (data.error?.message || data.error)) || "Save failed";
+      showError("#editError", msg);
       return;
     }
     issueData = data.data;
     renderIssue();
     await fetchActivity(); // refresh activity after update
+    if (window.bhToast) {
+      window.bhToast.show("Issue saved successfully", { type: "success", timeout: 3000 });
+    }
   }
 
   async function submitComment(e) {
@@ -351,7 +364,14 @@
 
   async function deleteComment(commentId) {
     if (isDemo) return;
-    if (!confirm("Delete this comment?")) return;
+    const confirmed = await window.showConfirmModal({
+      title: "Delete Comment",
+      message: "Are you sure you want to delete this comment? This cannot be undone.",
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      confirmClass: "bg-red-600 hover:bg-red-500",
+    });
+    if (!confirmed) return;
     const resp = await fetch(`/api/bug-hatch/comments/${encodeURIComponent(commentId)}`, {
       method: "DELETE",
       credentials: "include",
@@ -389,7 +409,8 @@
             });
             const data = await resp.json().catch(() => ({}));
             if (!resp.ok) {
-              showError("#editError", data.error || "Failed to unarchive issue");
+              const msg = (data && (data.error?.message || data.error)) || "Failed to unarchive issue";
+              showError("#editError", msg);
               return;
             }
             issueData = data.data;
@@ -400,7 +421,14 @@
           }
         } else {
           // Archive - ask confirmation
-          if (!confirm("Archive this issue? This can be undone later.")) return;
+          const confirmed = await window.showConfirmModal({
+            title: "Archive Issue",
+            message: "Archive this issue? This can be undone later.",
+            confirmText: "Archive",
+            cancelText: "Cancel",
+            confirmClass: "bg-amber-600 hover:bg-amber-500",
+          });
+          if (!confirmed) return;
           try {
             const resp = await fetch(`/api/bug-hatch/issues/${encodeURIComponent(issueId)}`, {
               method: "DELETE",
@@ -408,7 +436,8 @@
             });
             const data = await resp.json().catch(() => ({}));
             if (!resp.ok) {
-              showError("#editError", data.error || "Failed to archive issue");
+              const msg = (data && (data.error?.message || data.error)) || "Failed to archive issue";
+              showError("#editError", msg);
               return;
             }
             // After archiving, redirect to project issues list

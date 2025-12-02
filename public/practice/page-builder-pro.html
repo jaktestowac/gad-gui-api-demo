@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦎 GAD - Page Builder Pro</title>
+    <!-- Tailwind CSS for UI -->
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+
+        /* Canvas Styles */
+        #canvas-area {
+            background-image:
+                linear-gradient(45deg, #f0f0f0 25%, transparent 25%),
+                linear-gradient(-45deg, #f0f0f0 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #f0f0f0 75%),
+                linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+
+        .component-wrapper {
+            position: relative;
+            border: 2px dashed transparent;
+            transition: all 0.2s;
+        }
+
+        .component-wrapper:hover {
+            border-color: #3b82f6;
+        }
+
+        .component-wrapper.selected {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+
+        .component-actions {
+            position: absolute;
+            top: -12px;
+            right: 10px;
+            background: #2563eb;
+            color: white;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 12px;
+            display: none;
+            z-index: 10;
+        }
+
+        .component-wrapper:hover .component-actions,
+        .component-wrapper.selected .component-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        /* Preview Mode Hides Editor UI */
+        .preview-mode .component-wrapper {
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        .preview-mode .component-actions {
+            display: none !important;
+        }
+
+        .preview-mode #canvas-area {
+            background: white;
+        }
+
+        /* Input styling */
+        .prop-input {
+            width: 100%;
+            background: #374151;
+            border: 1px solid #4b5563;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .prop-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .prop-label {
+            display: block;
+            color: #9ca3af;
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Modal Simulation Styles for Canvas */
+        .builder-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Slider & Modal Styles */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .snap-x {
+            scroll-snap-type: x mandatory;
+        }
+
+        .snap-center {
+            scroll-snap-align: center;
+        }
+
+        #new-page-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-gray-100 h-screen flex flex-col overflow-hidden">
+
+    <!-- Top Navigation -->
+    <header class="h-14 bg-gray-800 border-b border-gray-700 flex items-center justify-between px-4 shrink-0">
+        <a href="/practice/" style=" font-size: small; font-weight: normal;"><i class="fas fa-home"></i> Back to Practice</a>
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-layer-group text-blue-500 text-xl"></i>
+            <h1 class="font-bold text-lg tracking-wide">PageBuilder <span class="text-xs font-normal text-gray-400">v2.1</span></h1>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <div class="flex items-center bg-gray-700 rounded p-1">
+                <button onclick="setMode('edit')" id="btn-edit" class="px-3 py-1 rounded text-sm bg-blue-600 text-white shadow">Editor</button>
+                <button onclick="setMode('preview')" id="btn-live" class="px-3 py-1 rounded text-sm text-gray-300 hover:text-white">Live View</button>
+            </div>
+            <div class="h-6 w-px bg-gray-600 mx-2"></div>
+            <button onclick="app.resetSite()" class="text-red-400 hover:text-red-300 text-sm mr-2" title="Reset All"><i class="fa-solid fa-trash"></i></button>
+
+            <button onclick="app.downloadSite()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded text-sm font-medium flex items-center gap-2 transition">
+                <i class="fa-solid fa-download"></i> Download
+            </button>
+            <button onclick="app.exportSite()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1.5 rounded text-sm font-medium flex items-center gap-2 transition" title="Open in New Tab">
+                <i class="fa-solid fa-external-link-alt"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="flex-1 flex overflow-hidden">
+
+        <!-- Left Sidebar: Elements, Pages & History -->
+        <aside class="w-64 bg-gray-800 border-r border-gray-700 flex flex-col shrink-0">
+
+            <!-- Tabs -->
+            <div class="flex border-b border-gray-700">
+                <button onclick="switchSidebar('elements')" id="tab-elements" class="flex-1 py-3 text-sm font-medium border-b-2 border-blue-500 text-blue-400 bg-gray-700/50">Elements</button>
+                <button onclick="switchSidebar('pages')" id="tab-pages" class="flex-1 py-3 text-sm font-medium text-gray-400 hover:text-gray-200">Pages</button>
+                <button onclick="switchSidebar('history')" id="tab-history" class="flex-1 py-3 text-sm font-medium text-gray-400 hover:text-gray-200">History</button>
+            </div>
+
+            <!-- Elements Panel -->
+            <div id="panel-elements" class="flex-1 overflow-y-auto p-4 space-y-3">
+                <p class="text-xs text-gray-500 uppercase font-bold mb-2">Structure</p>
+                <div onclick="app.addComponent('navbar')" class="cursor-pointer bg-gray-700 hover:bg-gray-600 p-3 rounded flex items-center gap-3 border border-gray-600 transition">
+                    <i class="fa-solid fa-compass text-purple-400"></i>
+                    <div class="text-sm font-medium">Auto Navbar</div>
+                </div>
+                <div onclick="app.addComponent('hero')" class="cursor-pointer bg-gray-700 hover:bg-gray-600 p-3 rounded flex items-center gap-3 border border-gray-600 transition">
+                    <i class="fa-solid fa-image text-blue-400"></i>
+                    <div class="text-sm font-medium">Hero Section</div>
+                </div>
+                <div onclick="app.addComponent('text')" class="cursor-pointer bg-gray-700 hover:bg-gray-600 p-3 rounded flex items-center gap-3 border border-gray-600 transition">
+                    <i class="fa-solid fa-paragraph text-gray-400"></i>
+                    <div class="text-sm font-medium">Text Block</div>
+                </div>
+
+                <p class="text-xs text-gray-500 uppercase font-bold mb-2 mt-4">Marketing</p>
+                <div onclick="app.addComponent('features')" class="cursor-pointer bg-gray-700 hover:bg-gray-600 p-3 rounded flex items-center gap-3 border border-gray-600 transition">
+                    <i class="fa-solid fa-list-check text-green-400"></i>
+                    <div class="text-sm font-medium">Feature Grid</div>
+                </div>
+                <div onclick="app.addComponent('product')" class="cursor-pointer bg-gray-700 hover:bg-gray-600 p-3 rounded flex items-center gap-3 border border-gray-600 transition">
+                    <i class="fa-solid fa-tag text-orange-400"></i>
+                    <div class="text-sm font-medium">Product Card</div>
+                </div>
+                <div onclick="app.addComponent('subscribe')" class="cursor-pointer bg-gray-700 hover:bg-gray-600 p-3 rounded flex items-center gap-3 border border-gray-600 transition">
+                    <i class="fa-solid fa-envelope text-red-400"></i>
+                    <div class="text-sm font-medium">Subscribe Box</div>
+                </div>
+
+                <!-- NEW ELEMENTS -->
+                <div onclick="app.addComponent('slider')" class="cursor-pointer bg-gray-700 hover:bg-gray-600 p-3 rounded flex items-center gap-3 border border-gray-600 transition">
+                    <i class="fa-solid fa-images text-yellow-400"></i>
+                    <div class="text-sm font-medium">Image Slider</div>
+                </div>
+                <div onclick="app.addComponent('testimonial')" class="cursor-pointer bg-gray-700 hover:bg-gray-600 p-3 rounded flex items-center gap-3 border border-gray-600 transition">
+                    <i class="fa-solid fa-comment-dots text-pink-400"></i>
+                    <div class="text-sm font-medium">Testimonials</div>
+                </div>
+                <div onclick="app.addComponent('link')" class="cursor-pointer bg-gray-700 hover:bg-gray-600 p-3 rounded flex items-center gap-3 border border-gray-600 transition">
+                    <i class="fa-solid fa-link text-indigo-400"></i>
+                    <div class="text-sm font-medium">Link / Button</div>
+                </div>
+
+                <p class="text-xs text-gray-500 uppercase font-bold mb-2 mt-4">Interactive</p>
+                <div onclick="app.addComponent('modal')" class="cursor-pointer bg-gray-700 hover:bg-gray-600 p-3 rounded flex items-center gap-3 border border-gray-600 transition">
+                    <i class="fa-regular fa-window-maximize text-teal-400"></i>
+                    <div class="text-sm font-medium">Modal / Popup</div>
+                </div>
+                <div onclick="app.addComponent('footer')" class="cursor-pointer bg-gray-700 hover:bg-gray-600 p-3 rounded flex items-center gap-3 border border-gray-600 transition">
+                    <i class="fa-solid fa-shoe-prints text-gray-400"></i>
+                    <div class="text-sm font-medium">Footer</div>
+                </div>
+            </div>
+
+            <!-- Pages Panel -->
+            <div id="panel-pages" class="flex-1 overflow-y-auto p-4 hidden">
+                <button onclick="app.openPageModal()" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm mb-4">
+                    <i class="fa-solid fa-plus mr-1"></i> New Page
+                </button>
+                <div id="pages-list" class="space-y-2">
+                    <!-- Pages rendered here -->
+                </div>
+            </div>
+
+            <!-- History Panel -->
+            <div id="panel-history" class="flex-1 overflow-y-auto p-4 hidden">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-xs font-bold text-gray-500 uppercase">Last 25 Actions</h3>
+                    <span class="text-[10px] text-gray-600">Click to restore</span>
+                </div>
+                <div id="history-list" class="space-y-2">
+                    <!-- History rendered here -->
+                    <div class="text-center text-gray-500 text-sm mt-4">No actions yet.</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Center Canvas -->
+        <div class="flex-1 bg-gray-100 relative overflow-hidden flex flex-col">
+            <div class="bg-white border-b border-gray-200 px-4 py-2 text-xs text-gray-500 flex justify-between items-center shadow-sm z-10">
+                <span id="canvas-breadcrumb">Editing: Home</span>
+                <span><i class="fa-solid fa-desktop"></i> Desktop View</span>
+            </div>
+
+            <div id="canvas-container" class="flex-1 overflow-y-auto p-8 flex justify-center bg-gray-200">
+                <!-- The Actual Page Render Area -->
+                <div id="canvas-area" class="w-full max-w-[1024px] min-h-[800px] bg-white shadow-xl relative transition-all">
+                    <!-- Components Injected Here -->
+                    <div class="flex flex-col items-center justify-center h-full text-gray-400 pointer-events-none" id="empty-state">
+                        <i class="fa-solid fa-cubes text-4xl mb-2"></i>
+                        <p>Click elements on the left to add them</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar: Properties -->
+        <aside class="w-72 bg-gray-800 border-l border-gray-700 flex flex-col shrink-0">
+            <div class="p-4 border-b border-gray-700">
+                <h2 class="font-bold text-gray-200">Properties</h2>
+                <p class="text-xs text-gray-500" id="prop-subtitle">Select an element to edit</p>
+            </div>
+
+            <div id="properties-form" class="flex-1 overflow-y-auto p-4">
+                <!-- Dynamic Inputs go here -->
+                <div class="text-center mt-10 text-gray-500">
+                    <i class="fa-solid fa-mouse-pointer mb-2"></i>
+                    <p class="text-sm">Click an element on the canvas to configure it.</p>
+                </div>
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- Modal HTML inserted before script -->
+    <div id="new-page-modal">
+        <div class="bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-700 w-80">
+            <h3 class="text-lg font-bold mb-4 text-white">Create New Page</h3>
+            <div class="mb-4">
+                <label class="block text-xs text-gray-400 mb-1">Page Name</label>
+                <input type="text" id="new-page-input" class="w-full bg-gray-700 border border-gray-600 text-white px-3 py-2 rounded focus:outline-none focus:border-blue-500" placeholder="e.g. About Us">
+            </div>
+            <div class="flex justify-end gap-2">
+                <button onclick="document.getElementById('new-page-modal').style.display='none'" class="px-3 py-1 text-sm text-gray-400 hover:text-white">Cancel</button>
+                <button onclick="app.createPage()" class="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        // --- DATA STRUCTURES --- //
+
+        const DEFAULT_COMPONENTS = {
+            'navbar': {
+                name: 'Navigation Bar',
+                html: (data, allPages) => {
+                    const links = allPages.map(p =>
+                        `<a href="#${p.id}" data-nav-target="${p.id}" class="transition-colors px-3 py-2 cursor-pointer font-medium" style="color: ${data.linkColor || '#4b5563'}">${p.name}</a>`
+                    ).join('');
+
+                    const stickyClass = data.isSticky ? 'sticky top-0 z-40 shadow-md' : 'border-b border-gray-200';
+                    const ctaBtn = data.ctaText ? `
+                        <a href="${data.ctaLink || '#'}" class="ml-4 px-4 py-2 rounded text-sm font-bold transition hover:opacity-90" style="background-color: ${data.ctaColor || '#2563eb'}; color: white;">
+                            ${data.ctaText}
+                        </a>` : '';
+
+                    return `
+                        <nav class="${stickyClass} px-6 py-4 flex justify-between items-center" style="background-color: ${data.bgColor || '#ffffff'};">
+                            <div class="font-bold text-xl" style="color: ${data.logoColor || '#1f2937'}">${data.logoText || 'MyBrand'}</div>
+                            <div class="flex items-center gap-2">
+                                ${links}
+                                ${ctaBtn}
+                            </div>
+                        </nav>
+                    `;
+                },
+                props: [
+                    { key: 'logoText', label: 'Logo Text', type: 'text', default: 'MyBrand' },
+                    { key: 'bgColor', label: 'Background Color', type: 'color', default: '#ffffff' },
+                    { key: 'logoColor', label: 'Logo Color', type: 'color', default: '#1f2937' },
+                    { key: 'linkColor', label: 'Link Color', type: 'color', default: '#4b5563' },
+                    { key: 'isSticky', label: 'Sticky Navigation', type: 'checkbox', default: false },
+                    { key: 'ctaText', label: 'CTA Button Text (Optional)', type: 'text', default: '' },
+                    { key: 'ctaLink', label: 'CTA Link', type: 'text', default: '#' },
+                    { key: 'ctaColor', label: 'CTA Button Color', type: 'color', default: '#2563eb' }
+                ]
+            },
+            'hero': {
+                name: 'Hero Section',
+                html: (data) => {
+                    const bgStyle = data.bgImage
+                        ? `background-image: url('${data.bgImage}'); background-size: cover; background-position: center;`
+                        : `background-color: ${data.bgColor || '#f3f4f6'};`;
+
+                    const overlay = data.bgImage
+                        ? `<div class="absolute inset-0" style="background-color: ${data.overlayColor || '#000000'}; opacity: ${data.overlayOpacity || 0.5}"></div>`
+                        : '';
+
+                    const relative = data.bgImage ? 'relative' : '';
+                    const textColor = data.bgImage ? 'white' : (data.textColor || '#1f2937');
+
+                    return `
+                        <section class="text-center px-6 flex flex-col items-center justify-center ${relative}" 
+                            style="${bgStyle} padding-top: ${data.paddingY || '5rem'}; padding-bottom: ${data.paddingY || '5rem'}; min-height: ${data.minHeight || 'auto'};">
+                            ${overlay}
+                            <div class="relative z-10 max-w-4xl mx-auto">
+                                <h1 class="font-bold mb-4" style="color: ${textColor}; font-size: ${data.titleSize || '3.75rem'}; line-height: 1.1;">${data.title || 'Welcome to Our Site'}</h1>
+                                <p class="text-xl mb-8 max-w-2xl mx-auto" style="color: ${textColor}; opacity: 0.9;">${data.subtitle || 'Build amazing things with our simple tools.'}</p>
+                                <button onclick="window.location.hash='${data.btnLink || ''}'" 
+                                    class="px-8 py-3 rounded-lg transition font-semibold shadow-lg hover:opacity-90 transform hover:-translate-y-0.5"
+                                    style="background-color: ${data.btnColor || '#2563eb'}; color: ${data.btnTextColor || '#ffffff'}">
+                                    ${data.btnText || 'Get Started'}
+                                </button>
+                            </div>
+                        </section>
+                    `;
+                },
+                props: [
+                    { key: 'title', label: 'Headline', type: 'text', default: 'Welcome to Our Site' },
+                    { key: 'titleSize', label: 'Title Size', type: 'select', options: ['2rem', '3rem', '3.75rem', '4.5rem', '6rem'], default: '3.75rem' },
+                    { key: 'subtitle', label: 'Subtitle', type: 'text', default: 'Build amazing things.' },
+                    { key: 'btnText', label: 'Button Text', type: 'text', default: 'Get Started' },
+                    { key: 'btnLink', label: 'Button Link (Page)', type: 'pageSelect' },
+                    { key: 'bgColor', label: 'Background Color', type: 'color', default: '#f3f4f6' },
+                    { key: 'bgImage', label: 'Background Image URL', type: 'text', default: '' },
+                    { key: 'overlayColor', label: 'Overlay Color', type: 'color', default: '#000000' },
+                    { key: 'overlayOpacity', label: 'Overlay Opacity', type: 'range', min: '0', max: '0.9', step: '0.1', default: '0.5' },
+                    { key: 'textColor', label: 'Text Color', type: 'color', default: '#1f2937' },
+                    { key: 'btnColor', label: 'Button Color', type: 'color', default: '#2563eb' },
+                    { key: 'btnTextColor', label: 'Button Text Color', type: 'color', default: '#ffffff' },
+                    { key: 'paddingY', label: 'Vertical Padding', type: 'select', options: ['2rem', '5rem', '8rem', '12rem'], default: '5rem' },
+                    { key: 'minHeight', label: 'Min Height', type: 'select', options: ['auto', '400px', '600px', '800px', '100vh'], default: 'auto' }
+                ]
+            },
+            'text': {
+                name: 'Text Block',
+                html: (data) => `
+                    <div class="mx-auto px-6" style="
+                        max-width: ${data.maxWidth || '56rem'}; 
+                        text-align: ${data.align || 'left'}; 
+                        color: ${data.color || '#374151'}; 
+                        padding-top: ${data.paddingY || '2rem'}; 
+                        padding-bottom: ${data.paddingY || '2rem'};
+                        font-size: ${data.fontSize || '1rem'};
+                    ">
+                        <p>${data.content || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}</p>
+                    </div>
+                `,
+                props: [
+                    { key: 'content', label: 'Content', type: 'textarea', default: 'Your text goes here.' },
+                    { key: 'align', label: 'Alignment', type: 'select', options: ['left', 'center', 'right', 'justify'], default: 'left' },
+                    { key: 'maxWidth', label: 'Max Width', type: 'select', options: ['32rem', '42rem', '56rem', '72rem', '100%'], default: '56rem' },
+                    { key: 'fontSize', label: 'Font Size', type: 'select', options: ['0.875rem', '1rem', '1.125rem', '1.25rem', '1.5rem'], default: '1rem' },
+                    { key: 'paddingY', label: 'Vertical Padding', type: 'select', options: ['0', '1rem', '2rem', '4rem'], default: '2rem' },
+                    { key: 'color', label: 'Text Color', type: 'color', default: '#374151' }
+                ]
+            },
+            'features': {
+                name: 'Feature Grid',
+                html: (data) => {
+                    const gridClass = `grid-cols-1 md:grid-cols-${data.cols || '3'}`;
+
+                    const renderCard = (icon, title, desc) => `
+                        <div class="p-6 border rounded-lg hover:shadow-lg transition h-full" style="background-color: ${data.cardBg || '#ffffff'}; border-color: ${data.borderColor || '#e5e7eb'}">
+                            <div class="text-3xl mb-4" style="color: ${data.iconColor || '#3b82f6'}"><i class="${icon}"></i></div>
+                            <h3 class="font-bold text-xl mb-2" style="color: ${data.titleColor || '#111827'}">${title}</h3>
+                            <p style="color: ${data.textColor || '#4b5563'}">${desc}</p>
+                        </div>
+                    `;
+
+                    let cardsHtml = '';
+                    const count = parseInt(data.cols || 3);
+                    for (let i = 1; i <= count; i++) {
+                        cardsHtml += renderCard(data[`icon${i}`] || 'fa-solid fa-star', data[`title${i}`] || `Feature ${i}`, data[`desc${i}`] || 'Description text.');
+                    }
+
+                    return `
+                        <div class="px-6" style="background-color: ${data.sectionBg || '#ffffff'}; padding-top: ${data.paddingY || '4rem'}; padding-bottom: ${data.paddingY || '4rem'};">
+                            <div class="max-w-7xl mx-auto grid ${gridClass} gap-8">
+                                ${cardsHtml}
+                            </div>
+                        </div>
+                    `;
+                },
+                props: [
+                    { key: 'cols', label: 'Columns', type: 'select', options: ['1', '2', '3', '4'], default: '3' },
+                    { key: 'sectionBg', label: 'Section Background', type: 'color', default: '#ffffff' },
+                    { key: 'cardBg', label: 'Card Background', type: 'color', default: '#ffffff' },
+                    { key: 'borderColor', label: 'Border Color', type: 'color', default: '#e5e7eb' },
+                    { key: 'iconColor', label: 'Icon Color', type: 'color', default: '#3b82f6' },
+                    { key: 'paddingY', label: 'Vertical Padding', type: 'select', options: ['2rem', '4rem', '6rem', '8rem'], default: '4rem' },
+                    { key: 'title1', label: 'Feat 1 Title', type: 'text', default: 'Fast' },
+                    { key: 'desc1', label: 'Feat 1 Desc', type: 'text', default: 'Super fast.' },
+                    { key: 'icon1', label: 'Feat 1 Icon (FontAwesome)', type: 'text', default: 'fa-solid fa-bolt' },
+                    { key: 'title2', label: 'Feat 2 Title', type: 'text', default: 'Secure' },
+                    { key: 'desc2', label: 'Feat 2 Desc', type: 'text', default: 'Very secure.' },
+                    { key: 'icon2', label: 'Feat 2 Icon', type: 'text', default: 'fa-solid fa-lock' },
+                    { key: 'title3', label: 'Feat 3 Title', type: 'text', default: 'Mobile' },
+                    { key: 'desc3', label: 'Feat 3 Desc', type: 'text', default: 'Mobile first.' },
+                    { key: 'icon3', label: 'Feat 3 Icon', type: 'text', default: 'fa-solid fa-mobile' }
+                ]
+            },
+            'subscribe': {
+                name: 'Subscribe Box',
+                html: (data) => {
+                    const actionScript = data.actionType === 'redirect'
+                        ? `window.location.href='${data.redirectUrl || '#'}'`
+                        : `alert('${data.successMessage || 'Thank you for subscribing!'}')`;
+
+                    return `
+                    <div class="px-6 text-center" style="background: ${data.bg || '#1e3a8a'}; color: ${data.textColor || '#ffffff'}; padding-top: ${data.paddingY || '4rem'}; padding-bottom: ${data.paddingY || '4rem'};">
+                        <h2 class="text-2xl font-bold mb-4">${data.headline || 'Join our Newsletter'}</h2>
+                        <div class="flex flex-col sm:flex-row gap-2 justify-center max-w-md mx-auto">
+                            <input type="email" placeholder="${data.placeholder || 'Enter your email'}" class="px-4 py-2 rounded text-gray-800 flex-1 outline-none">
+                            <button onclick="${actionScript}" class="px-6 py-2 font-bold rounded transition hover:opacity-90" style="background-color: ${data.btnColor || '#eab308'}; color: ${data.btnTextColor || '#111827'}">${data.btnText || 'Subscribe'}</button>
+                        </div>
+                    </div>
+                `},
+                props: [
+                    { key: 'headline', label: 'Headline', type: 'text', default: 'Join our Newsletter' },
+                    { key: 'placeholder', label: 'Input Placeholder', type: 'text', default: 'Enter your email' },
+                    { key: 'btnText', label: 'Button Text', type: 'text', default: 'Subscribe' },
+                    { key: 'actionType', label: 'Behavior on Click', type: 'select', options: ['message', 'redirect'], default: 'message' },
+                    { key: 'successMessage', label: 'Success Message (Alert)', type: 'text', default: 'Thanks for subscribing!' },
+                    { key: 'redirectUrl', label: 'Redirect URL (if selected)', type: 'text', default: '#' },
+                    { key: 'bg', label: 'Background Color', type: 'color', default: '#1e3a8a' },
+                    { key: 'textColor', label: 'Text Color', type: 'color', default: '#ffffff' },
+                    { key: 'btnColor', label: 'Button Color', type: 'color', default: '#eab308' },
+                    { key: 'btnTextColor', label: 'Button Text Color', type: 'color', default: '#111827' },
+                    { key: 'paddingY', label: 'Vertical Padding', type: 'select', options: ['2rem', '4rem', '6rem'], default: '4rem' }
+                ]
+            },
+            'slider': {
+                name: 'Image Slider (Max 8)',
+                html: (data) => {
+                    const height = data.height || 'h-64';
+
+                    const getSlide = (img, txt) => {
+                        if (!img) return '';
+                        return `
+                            <div class="flex-shrink-0 w-full h-full snap-center bg-cover bg-center flex items-end p-8" style="background-image: url('${img}')">
+                                <span class="bg-black/50 text-white px-4 py-2 rounded backdrop-blur-sm shadow-lg">${txt}</span>
+                            </div>
+                        `;
+                    };
+
+                    let slidesHtml = '';
+                    for (let i = 1; i <= 8; i++) {
+                        slidesHtml += getSlide(data[`img${i}`], data[`caption${i}`]);
+                    }
+
+                    return `
+                        <div class="w-full ${height} relative group bg-gray-100">
+                            <div class="flex overflow-x-auto snap-x snap-mandatory h-full w-full scrollbar-hide">
+                                ${slidesHtml || '<div class="w-full h-full flex items-center justify-center text-gray-400">Add images in properties</div>'}
+                            </div>
+                            <div class="absolute inset-x-0 bottom-4 flex justify-center gap-2 pointer-events-none">
+                                <div class="w-2 h-2 rounded-full bg-white shadow"></div>
+                                <div class="w-2 h-2 rounded-full bg-white/50 shadow"></div>
+                                <div class="w-2 h-2 rounded-full bg-white/50 shadow"></div>
+                            </div>
+                            <div class="absolute inset-0 pointer-events-none flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
+                                 <span class="bg-black/70 text-white px-2 py-1 text-xs rounded">Scroll to view</span>
+                            </div>
+                        </div>
+                    `;
+                },
+                props: [
+                    { key: 'height', label: 'Height', type: 'select', options: ['h-48', 'h-64', 'h-80', 'h-96', 'h-[500px]', 'h-[600px]'], default: 'h-64' },
+                    { key: 'img1', label: 'Image 1 URL', type: 'text', default: 'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?auto=format&fit=crop&w=800' },
+                    { key: 'caption1', label: 'Caption 1', type: 'text', default: 'Slide 1' },
+                    { key: 'img2', label: 'Image 2 URL', type: 'text', default: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800' },
+                    { key: 'caption2', label: 'Caption 2', type: 'text', default: 'Slide 2' },
+                    { key: 'img3', label: 'Image 3 URL', type: 'text', default: 'https://images.unsplash.com/photo-1518173946687-a4c88928d9fd?auto=format&fit=crop&w=800' },
+                    { key: 'caption3', label: 'Caption 3', type: 'text', default: 'Slide 3' },
+                    { key: 'img4', label: 'Image 4 URL', type: 'text', default: '' },
+                    { key: 'caption4', label: 'Caption 4', type: 'text', default: 'Slide 4' },
+                    { key: 'img5', label: 'Image 5 URL', type: 'text', default: '' },
+                    { key: 'caption5', label: 'Caption 5', type: 'text', default: 'Slide 5' },
+                    { key: 'img6', label: 'Image 6 URL', type: 'text', default: '' },
+                    { key: 'caption6', label: 'Caption 6', type: 'text', default: 'Slide 6' },
+                    { key: 'img7', label: 'Image 7 URL', type: 'text', default: '' },
+                    { key: 'caption7', label: 'Caption 7', type: 'text', default: 'Slide 7' },
+                    { key: 'img8', label: 'Image 8 URL', type: 'text', default: '' },
+                    { key: 'caption8', label: 'Caption 8', type: 'text', default: 'Slide 8' },
+                ]
+            },
+            'testimonial': {
+                name: 'Testimonials',
+                html: (data) => {
+                    const renderTestimonial = (name, role, text, img) => {
+                        const avatar = img
+                            ? `<img src="${img}" class="w-12 h-12 rounded-full object-cover shadow-sm">`
+                            : `<div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-xl font-bold text-gray-600">${(name || 'User').substring(0, 2)}</div>`;
+
+                        return `
+                        <div class="p-6 rounded-lg shadow border" style="background-color: ${data.cardBg || '#ffffff'}; border-color: ${data.cardBorder || '#f3f4f6'}">
+                            <div class="flex items-center gap-4 mb-4">
+                                ${avatar}
+                                <div>
+                                    <div class="font-bold" style="color: ${data.textColor || '#111827'}">${name || 'Name'}</div>
+                                    <div class="text-sm" style="color: ${data.accentColor || '#2563eb'}">${role || 'Role'}</div>
+                                </div>
+                            </div>
+                            <p class="italic" style="color: ${data.textColor || '#4b5563'}">"${text || 'Review'}"</p>
+                        </div>
+                    `};
+
+                    let cards = '';
+                    const cols = parseInt(data.cols || 2);
+                    for (let i = 1; i <= cols; i++) {
+                        cards += renderTestimonial(data[`name${i}`], data[`role${i}`], data[`text${i}`], data[`img${i}`]);
+                    }
+
+                    return `
+                    <div class="px-6" style="background-color: ${data.sectionBg || '#f9fafb'}; padding-top: ${data.paddingY || '3rem'}; padding-bottom: ${data.paddingY || '3rem'};">
+                        <div class="max-w-4xl mx-auto text-center mb-10">
+                            <h2 class="text-3xl font-bold" style="color: ${data.titleColor || '#1f2937'}">${data.title || 'What People Say'}</h2>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-${data.cols || '2'} gap-8 max-w-6xl mx-auto">
+                            ${cards}
+                        </div>
+                    </div>
+                `},
+                props: [
+                    { key: 'title', label: 'Section Title', type: 'text', default: 'What People Say' },
+                    { key: 'cols', label: 'Columns', type: 'select', options: ['1', '2', '3', '4'], default: '2' },
+                    { key: 'sectionBg', label: 'Section Background', type: 'color', default: '#f9fafb' },
+                    { key: 'cardBg', label: 'Card Background', type: 'color', default: '#ffffff' },
+                    { key: 'textColor', label: 'Text Color', type: 'color', default: '#1f2937' },
+                    { key: 'accentColor', label: 'Accent Color', type: 'color', default: '#2563eb' },
+                    { key: 'paddingY', label: 'Vertical Padding', type: 'select', options: ['2rem', '4rem', '6rem'], default: '3rem' },
+                    { key: 'name1', label: 'Person 1 Name', type: 'text', default: 'John Doe' },
+                    { key: 'role1', label: 'Person 1 Role', type: 'text', default: 'CEO' },
+                    { key: 'img1', label: 'Person 1 Image URL (Opt)', type: 'text', default: '' },
+                    { key: 'text1', label: 'Person 1 Review', type: 'textarea', default: 'Great service!' },
+                    { key: 'name2', label: 'Person 2 Name', type: 'text', default: 'Jane Smith' },
+                    { key: 'role2', label: 'Person 2 Role', type: 'text', default: 'Designer' },
+                    { key: 'img2', label: 'Person 2 Image URL (Opt)', type: 'text', default: '' },
+                    { key: 'text2', label: 'Person 2 Review', type: 'textarea', default: 'Loved it.' },
+                    { key: 'name3', label: 'Person 3 Name', type: 'text', default: 'Bob Ross' },
+                    { key: 'role3', label: 'Person 3 Role', type: 'text', default: 'Artist' },
+                    { key: 'img3', label: 'Person 3 Image URL (Opt)', type: 'text', default: '' },
+                    { key: 'text3', label: 'Person 3 Review', type: 'textarea', default: 'Happy clouds.' },
+                    { key: 'name4', label: 'Person 4 Name', type: 'text', default: 'Alice' },
+                    { key: 'role4', label: 'Person 4 Role', type: 'text', default: 'Manager' },
+                    { key: 'img4', label: 'Person 4 Image URL (Opt)', type: 'text', default: '' },
+                    { key: 'text4', label: 'Person 4 Review', type: 'textarea', default: 'Excellent.' }
+                ]
+            },
+            'link': {
+                name: 'Link / Button',
+                html: (data) => {
+                    const btnStyles = data.style === 'link'
+                        ? `color: ${data.color || '#2563eb'}; text-decoration: underline;`
+                        : `background-color: ${data.bgColor || '#2563eb'}; color: ${data.color || '#ffffff'}; padding: ${data.padding || '0.5rem 1.5rem'}; border-radius: ${data.radius || '0.25rem'};`;
+
+                    const widthClass = data.width === 'full' ? 'flex' : `inline-block`;
+                    const widthStyle = data.width === 'full' ? 'width: 100%; justify-content: center;' : '';
+
+                    return `
+                        <div class="py-4 px-6 flex" style="justify-content: ${data.align || 'center'}">
+                            <a href="${data.url || '#'}" class="${widthClass} transition hover:opacity-90 font-medium" 
+                               style="${btnStyles} ${widthStyle} font-size: ${data.fontSize || '1rem'};">
+                                ${data.text || 'Click Me'}
+                            </a>
+                        </div>
+                    `;
+                },
+                props: [
+                    { key: 'text', label: 'Link Text', type: 'text', default: 'Click Me' },
+                    { key: 'url', label: 'URL / Hash', type: 'text', default: '#' },
+                    { key: 'style', label: 'Style', type: 'select', options: ['button', 'link'], default: 'button' },
+                    { key: 'align', label: 'Alignment', type: 'select', options: ['flex-start', 'center', 'flex-end'], default: 'center' },
+                    { key: 'width', label: 'Width', type: 'select', options: ['auto', 'full'], default: 'auto' },
+                    { key: 'fontSize', label: 'Font Size', type: 'select', options: ['0.875rem', '1rem', '1.25rem', '1.5rem'], default: '1rem' },
+                    { key: 'bgColor', label: 'Background (Button)', type: 'color', default: '#2563eb' },
+                    { key: 'color', label: 'Text Color', type: 'color', default: '#ffffff' },
+                    { key: 'radius', label: 'Corner Radius', type: 'select', options: ['0', '0.25rem', '0.5rem', '1rem', '99px'], default: '0.25rem' },
+                    { key: 'padding', label: 'Padding', type: 'select', options: ['0.25rem 0.5rem', '0.5rem 1.5rem', '0.75rem 2rem', '1rem 3rem'], default: '0.5rem 1.5rem' }
+                ]
+            },
+            'product': {
+                name: 'Product Card',
+                html: (data) => {
+                    const badge = data.badgeText ? `<div class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shadow">${data.badgeText}</div>` : '';
+
+                    return `
+                    <div class="px-4 flex justify-center" style="padding-top: ${data.paddingY || '3rem'}; padding-bottom: ${data.paddingY || '3rem'}; background-color: ${data.sectionBg || 'transparent'}">
+                        <div class="max-w-sm w-full rounded overflow-hidden shadow-lg border transition hover:shadow-xl relative" style="background-color: ${data.cardBg || '#ffffff'}; border-color: ${data.borderColor || '#e5e7eb'}">
+                            ${badge}
+                            <div class="h-48 flex items-center justify-center text-gray-400 bg-gray-100" style="${data.image ? `background-image: url('${data.image}'); background-size: cover; background-position: center;` : ''}">
+                                ${!data.image ? '<i class="fa-solid fa-image text-4xl"></i>' : ''}
+                            </div>
+                            <div class="px-6 py-4">
+                                <div class="font-bold text-xl mb-2" style="color: ${data.textColor || '#111827'}">${data.name || 'Awesome Product'}</div>
+                                <p class="text-base mb-4" style="color: ${data.textColor || '#374151'}; opacity: 0.8;">
+                                    ${data.desc || 'This is a great product.'}
+                                </p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-2xl font-bold" style="color: ${data.priceColor || '#111827'}">$${data.price || '99'}</span>
+                                    <button class="font-bold py-2 px-4 rounded transition hover:opacity-90" 
+                                        style="background-color: ${data.btnColor || '#2563eb'}; color: ${data.btnTextColor || '#ffffff'}">
+                                        ${data.btnText || 'Buy Now'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `},
+                props: [
+                    { key: 'name', label: 'Product Name', type: 'text', default: 'Awesome Product' },
+                    { key: 'image', label: 'Image URL', type: 'text', default: '' },
+                    { key: 'badgeText', label: 'Badge (e.g. SALE)', type: 'text', default: '' },
+                    { key: 'price', label: 'Price', type: 'number', default: '99' },
+                    { key: 'desc', label: 'Description', type: 'textarea', default: 'Great product.' },
+                    { key: 'btnText', label: 'Button Text', type: 'text', default: 'Buy Now' },
+                    { key: 'sectionBg', label: 'Section Background', type: 'color', default: 'transparent' },
+                    { key: 'cardBg', label: 'Card Background', type: 'color', default: '#ffffff' },
+                    { key: 'textColor', label: 'Text Color', type: 'color', default: '#111827' },
+                    { key: 'priceColor', label: 'Price Color', type: 'color', default: '#111827' },
+                    { key: 'btnColor', label: 'Button Color', type: 'color', default: '#2563eb' },
+                    { key: 'btnTextColor', label: 'Button Text Color', type: 'color', default: '#ffffff' },
+                    { key: 'paddingY', label: 'Vertical Padding', type: 'select', options: ['1rem', '3rem', '5rem'], default: '3rem' }
+                ]
+            },
+            'modal': {
+                name: 'Modal / Popup',
+                html: (data) => {
+                    const modalId = 'modal-' + Math.random().toString(36).substr(2, 9);
+                    return `
+                        <div class="py-10 text-center relative group">
+                            <button onclick="document.getElementById('${modalId}').style.display='flex'" class="px-6 py-2 rounded shadow transition hover:opacity-90" style="background-color: ${data.btnColor || '#4f46e5'}; color: ${data.btnTextColor || '#ffffff'}">
+                                ${data.triggerText || 'Open Modal'}
+                            </button>
+                            <div class="text-xs text-gray-400 mt-2 italic">(Click button to test in Live Preview)</div>
+                            
+                            <div id="${modalId}" class="fixed inset-0 hidden items-center justify-center z-50" style="background-color: ${data.overlayColor || 'rgba(0,0,0,0.5)'}; backdrop-filter: blur(2px);">
+                                <div class="p-8 rounded shadow-2xl w-full relative m-4" style="max-width: ${data.width || '28rem'}; background-color: ${data.modalBg || '#ffffff'};">
+                                    <button onclick="document.getElementById('${modalId}').style.display='none'" class="absolute top-2 right-2 text-2xl" style="color: ${data.textColor || '#374151'}">&times;</button>
+                                    <h2 class="text-2xl font-bold mb-4" style="color: ${data.textColor || '#111827'}">${data.title || 'Special Offer!'}</h2>
+                                    <p class="mb-6" style="color: ${data.textColor || '#4b5563'}">${data.content || 'Details here...'}</p>
+                                    <button onclick="document.getElementById('${modalId}').style.display='none'" class="w-full py-2 rounded transition hover:opacity-90" style="background-color: ${data.closeBtnColor || '#1f2937'}; color: white;">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                },
+                props: [
+                    { key: 'triggerText', label: 'Trigger Button Text', type: 'text', default: 'Open Modal' },
+                    { key: 'title', label: 'Modal Title', type: 'text', default: 'Special Offer' },
+                    { key: 'content', label: 'Modal Content', type: 'textarea', default: 'Details here...' },
+                    { key: 'width', label: 'Modal Width', type: 'select', options: ['20rem', '28rem', '32rem', '48rem'], default: '28rem' },
+                    { key: 'modalBg', label: 'Modal Background', type: 'color', default: '#ffffff' },
+                    { key: 'textColor', label: 'Text Color', type: 'color', default: '#1f2937' },
+                    { key: 'btnColor', label: 'Trigger Button Color', type: 'color', default: '#4f46e5' },
+                    { key: 'btnTextColor', label: 'Trigger Text Color', type: 'color', default: '#ffffff' },
+                    { key: 'overlayColor', label: 'Overlay Color', type: 'color', default: 'rgba(0,0,0,0.5)' }
+                ]
+            },
+            'footer': {
+                name: 'Footer',
+                html: (data) => {
+                    const makeLink = (text, url) => text ? `<a href="${url || '#'}" class="hover:text-white transition-colors mx-2">${text}</a>` : '';
+
+                    const customLinks = [
+                        makeLink(data.link1Text, data.link1Url),
+                        makeLink(data.link2Text, data.link2Url),
+                        makeLink(data.link3Text, data.link3Url),
+                        makeLink(data.link4Text, data.link4Url)
+                    ].join('');
+
+                    return `
+                    <footer class="py-8 px-6 text-center" style="background-color: ${data.bgColor || '#1f2937'}; color: ${data.textColor || '#ffffff'};">
+                        <div class="mb-4 text-sm font-medium opacity-80 flex justify-center flex-wrap gap-4">
+                            ${customLinks}
+                        </div>
+                        <p>&copy; ${new Date().getFullYear()} ${data.company || 'My Company'}. All rights reserved.</p>
+                        ${data.showSocials !== false ? `
+                        <div class="mt-4 flex justify-center gap-4" style="opacity: 0.8">
+                            <a href="#" class="hover:opacity-100 transition"><i class="fa-brands fa-facebook"></i></a>
+                            <a href="#" class="hover:opacity-100 transition"><i class="fa-brands fa-twitter"></i></a>
+                            <a href="#" class="hover:opacity-100 transition"><i class="fa-brands fa-instagram"></i></a>
+                        </div>` : ''}
+                    </footer>
+                `},
+                props: [
+                    { key: 'company', label: 'Company Name', type: 'text', default: 'My Company' },
+                    { key: 'bgColor', label: 'Background Color', type: 'color', default: '#1f2937' },
+                    { key: 'textColor', label: 'Text Color', type: 'color', default: '#ffffff' },
+                    { key: 'showSocials', label: 'Show Icons', type: 'checkbox', default: true },
+                    { key: 'link1Text', label: 'Link 1 Text', type: 'text', default: '' },
+                    { key: 'link1Url', label: 'Link 1 URL', type: 'text', default: '#' },
+                    { key: 'link2Text', label: 'Link 2 Text', type: 'text', default: '' },
+                    { key: 'link2Url', label: 'Link 2 URL', type: 'text', default: '#' },
+                    { key: 'link3Text', label: 'Link 3 Text', type: 'text', default: '' },
+                    { key: 'link3Url', label: 'Link 3 URL', type: 'text', default: '#' },
+                    { key: 'link4Text', label: 'Link 4 Text', type: 'text', default: '' },
+                    { key: 'link4Url', label: 'Link 4 URL', type: 'text', default: '#' },
+                ]
+            }
+        };
+
+        // --- APP STATE --- //
+
+        const appState = {
+            pages: [
+                { id: 'home', name: 'Home', elements: [] }
+            ],
+            history: [], // For undo functionality
+            currentPageId: 'home',
+            selectedElementId: null,
+            mode: 'edit'
+        };
+
+        // Initialize or Load
+        function init() {
+            const saved = localStorage.getItem('js-page-builder-data');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                appState.pages = parsed.pages;
+                appState.currentPageId = parsed.currentPageId;
+            }
+            renderPageList();
+            renderCanvas();
+        }
+
+        // --- CORE LOGIC --- //
+
+        let debounceTimer;
+
+        const app = {
+            // NEW: History Action Recorder
+            recordAction: (description) => {
+                // Keep only last 25
+                if (appState.history.length >= 25) {
+                    appState.history.pop();
+                }
+
+                // Save a deep clone of the current pages state
+                const snapshot = JSON.parse(JSON.stringify(appState.pages));
+
+                appState.history.unshift({
+                    id: Date.now(),
+                    desc: description,
+                    time: new Date().toLocaleTimeString(),
+                    state: snapshot
+                });
+
+                renderHistory();
+            },
+
+            restoreState: (historyId) => {
+                const entry = appState.history.find(h => h.id === historyId);
+                if (!entry) return;
+
+                if (confirm(`Restore state: ${entry.desc}? Unsaved changes will be lost.`)) {
+                    appState.pages = JSON.parse(JSON.stringify(entry.state));
+                    // Check if current page still exists, if not, go to home
+                    if (!appState.pages.find(p => p.id === appState.currentPageId)) {
+                        appState.currentPageId = appState.pages[0].id;
+                    }
+                    appState.selectedElementId = null;
+                    app.save();
+                    renderCanvas();
+                    renderPageList();
+                    renderProperties();
+                }
+            },
+
+            addComponent: (type) => {
+                app.recordAction(`Added ${DEFAULT_COMPONENTS[type].name}`);
+
+                const page = appState.pages.find(p => p.id === appState.currentPageId);
+                const newEl = {
+                    id: Date.now().toString(),
+                    type: type,
+                    data: {}
+                };
+
+                // Set defaults
+                const defs = DEFAULT_COMPONENTS[type].props;
+                if (defs) {
+                    defs.forEach(prop => {
+                        if (prop.default) newEl.data[prop.key] = prop.default;
+                    });
+                }
+
+                page.elements.push(newEl);
+                app.save();
+                renderCanvas();
+                app.selectElement(newEl.id);
+            },
+
+            deleteComponent: (id, e) => {
+                if (e) e.stopPropagation();
+                app.recordAction('Deleted Component');
+
+                const page = appState.pages.find(p => p.id === appState.currentPageId);
+                page.elements = page.elements.filter(el => el.id !== id);
+                if (appState.selectedElementId === id) {
+                    appState.selectedElementId = null;
+                    document.getElementById('properties-form').innerHTML = '<div class="text-center mt-10 text-gray-500"><p>Select an element</p></div>';
+                }
+                app.save();
+                renderCanvas();
+            },
+
+            moveComponent: (id, direction, e) => {
+                if (e) e.stopPropagation();
+                app.recordAction('Moved Component');
+
+                const page = appState.pages.find(p => p.id === appState.currentPageId);
+                const index = page.elements.findIndex(el => el.id === id);
+                if (index === -1) return;
+
+                if (direction === 'up' && index > 0) {
+                    [page.elements[index], page.elements[index - 1]] = [page.elements[index - 1], page.elements[index]];
+                } else if (direction === 'down' && index < page.elements.length - 1) {
+                    [page.elements[index], page.elements[index + 1]] = [page.elements[index + 1], page.elements[index]];
+                }
+                app.save();
+                renderCanvas();
+            },
+
+            selectElement: (id) => {
+                if (appState.mode === 'preview') return;
+                appState.selectedElementId = id;
+                renderCanvas(); // to update selection border
+                renderProperties();
+            },
+
+            updateElementData: (key, value) => {
+                const page = appState.pages.find(p => p.id === appState.currentPageId);
+                const el = page.elements.find(e => e.id === appState.selectedElementId);
+
+                if (el) {
+                    // Update state immediately for live preview
+                    el.data[key] = value;
+                    app.save();
+                    renderCanvas();
+
+                    // Debounce history recording so typing doesn't spam history
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => {
+                        app.recordAction(`Updated ${key} in ${DEFAULT_COMPONENTS[el.type].name}`);
+                    }, 1000);
+                }
+            },
+
+            openPageModal: () => {
+                document.getElementById('new-page-modal').style.display = 'flex';
+                document.getElementById('new-page-input').value = '';
+                document.getElementById('new-page-input').focus();
+            },
+
+            createPage: () => {
+                const nameInput = document.getElementById('new-page-input');
+                const name = nameInput.value.trim();
+
+                if (!name) return;
+
+                const id = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+                if (appState.pages.find(p => p.id === id)) {
+                    alert("Page ID already exists. Please choose a different name.");
+                    return;
+                }
+
+                app.recordAction(`Created Page: ${name}`);
+
+                appState.pages.push({ id, name, elements: [] });
+                document.getElementById('new-page-modal').style.display = 'none';
+
+                app.switchPage(id);
+                app.save();
+            },
+
+            switchPage: (id) => {
+                appState.currentPageId = id;
+                appState.selectedElementId = null;
+                renderPageList();
+                renderCanvas();
+                renderProperties(); // Clear props
+            },
+
+            deletePage: (id, e) => {
+                if (e) e.stopPropagation();
+                if (appState.pages.length <= 1) {
+                    alert("Cannot delete the last page.");
+                    return;
+                }
+                if (confirm("Are you sure?")) {
+                    app.recordAction(`Deleted Page: ${id}`);
+                    appState.pages = appState.pages.filter(p => p.id !== id);
+                    if (appState.currentPageId === id) {
+                        appState.currentPageId = appState.pages[0].id;
+                    }
+                    renderPageList();
+                    renderCanvas();
+                    app.save();
+                }
+            },
+
+            save: () => {
+                // We don't save history to localstorage to avoid size limits, just the current state
+                localStorage.setItem('js-page-builder-data', JSON.stringify({
+                    pages: appState.pages,
+                    currentPageId: appState.currentPageId
+                }));
+            },
+
+            resetSite: () => {
+                if (confirm("Delete all pages and start over?")) {
+                    localStorage.removeItem('js-page-builder-data');
+                    location.reload();
+                }
+            },
+
+            exportSite: () => {
+                const fullHTML = generateFullHTML(appState.pages);
+                const blob = new Blob([fullHTML], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                window.open(url, '_blank');
+            },
+
+            // NEW: Download Function
+            downloadSite: () => {
+                const fullHTML = generateFullHTML(appState.pages);
+                const blob = new Blob([fullHTML], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'my_website.html';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        };
+
+        // --- RENDER FUNCTIONS --- //
+
+        function renderCanvas() {
+            const container = document.getElementById('canvas-area');
+            const page = appState.pages.find(p => p.id === appState.currentPageId);
+            const breadcrumb = document.getElementById('canvas-breadcrumb');
+
+            if (!page) return; // safety
+
+            breadcrumb.innerText = `Page: ${page.name} (${page.id})`;
+
+            if (page.elements.length === 0) {
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-gray-400 pointer-events-none pt-20">
+                        <i class="fa-solid fa-cubes text-4xl mb-2"></i>
+                        <p>Page is empty. Add elements from the left.</p>
+                    </div>`;
+                return;
+            }
+
+            let html = '';
+            page.elements.forEach(el => {
+                const componentDef = DEFAULT_COMPONENTS[el.type];
+                const contentHtml = componentDef.html(el.data, appState.pages);
+                const isSelected = el.id === appState.selectedElementId ? 'selected' : '';
+
+                html += `
+                    <div class="component-wrapper ${isSelected}" onclick="app.selectElement('${el.id}')">
+                        <div class="component-actions">
+                            <span class="font-bold uppercase mr-2 text-xs opacity-75">${componentDef.name}</span>
+                            <button onclick="app.moveComponent('${el.id}', 'up', event)" class="hover:text-blue-200"><i class="fa-solid fa-arrow-up"></i></button>
+                            <button onclick="app.moveComponent('${el.id}', 'down', event)" class="hover:text-blue-200"><i class="fa-solid fa-arrow-down"></i></button>
+                            <button onclick="app.deleteComponent('${el.id}', event)" class="hover:text-red-300 ml-1"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                        ${contentHtml}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderProperties() {
+            const container = document.getElementById('properties-form');
+            const subtitle = document.getElementById('prop-subtitle');
+
+            if (!appState.selectedElementId) {
+                container.innerHTML = '<div class="text-center mt-10 text-gray-500"><i class="fa-solid fa-mouse-pointer mb-2"></i><p class="text-sm">Select an element to edit.</p></div>';
+                subtitle.innerText = "No selection";
+                return;
+            }
+
+            const page = appState.pages.find(p => p.id === appState.currentPageId);
+            const el = page.elements.find(e => e.id === appState.selectedElementId);
+            const componentDef = DEFAULT_COMPONENTS[el.type];
+
+            subtitle.innerText = `Editing: ${componentDef.name}`;
+
+            let formHtml = '';
+
+            componentDef.props.forEach(prop => {
+                const value = el.data[prop.key] !== undefined ? el.data[prop.key] : (prop.default || '');
+
+                formHtml += `<div class="mb-4"><label class="prop-label">${prop.label}</label>`;
+
+                if (prop.type === 'textarea') {
+                    formHtml += `<textarea class="prop-input h-24" oninput="app.updateElementData('${prop.key}', this.value)">${value}</textarea>`;
+                } else if (prop.type === 'color') {
+                    formHtml += `<div class="flex gap-2"><input type="color" value="${value}" oninput="app.updateElementData('${prop.key}', this.value)" class="h-9 w-12 bg-transparent cursor-pointer border-0"><input type="text" value="${value}" class="prop-input flex-1" oninput="app.updateElementData('${prop.key}', this.value)"></div>`;
+                } else if (prop.type === 'select') {
+                    const options = prop.options.map(opt => `<option value="${opt}" ${opt === value ? 'selected' : ''}>${opt}</option>`).join('');
+                    formHtml += `<select class="prop-input" onchange="app.updateElementData('${prop.key}', this.value)">${options}</select>`;
+                } else if (prop.type === 'pageSelect') {
+                    const options = appState.pages.map(p => `<option value="${p.id}" ${p.id === value ? 'selected' : ''}>${p.name}</option>`).join('');
+                    formHtml += `<select class="prop-input" onchange="app.updateElementData('${prop.key}', this.value)"><option value="">-- Select Page --</option>${options}</select>`;
+                } else if (prop.type === 'checkbox') {
+                    formHtml += `<div class="flex items-center"><input type="checkbox" ${value ? 'checked' : ''} onchange="app.updateElementData('${prop.key}', this.checked)" class="w-5 h-5 text-blue-600 rounded cursor-pointer"><span class="ml-2 text-sm text-gray-300">Enabled</span></div>`;
+                } else if (prop.type === 'range') {
+                    formHtml += `<div class="flex items-center gap-2"><input type="range" min="${prop.min}" max="${prop.max}" step="${prop.step}" value="${value}" oninput="app.updateElementData('${prop.key}', this.value)" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer"><span class="text-xs w-8 text-right text-gray-400 font-mono">${value}</span></div>`;
+                } else {
+                    formHtml += `<input type="${prop.type}" class="prop-input" value="${value}" oninput="app.updateElementData('${prop.key}', this.value)">`;
+                }
+
+                formHtml += `</div>`;
+            });
+
+            container.innerHTML = formHtml;
+        }
+
+        function renderPageList() {
+            const container = document.getElementById('pages-list');
+            container.innerHTML = appState.pages.map(p => `
+                <div class="flex items-center justify-between p-2 rounded ${p.id === appState.currentPageId ? 'bg-blue-900 border border-blue-700' : 'bg-gray-700 hover:bg-gray-600'}">
+                    <button onclick="app.switchPage('${p.id}')" class="flex-1 text-left text-sm font-medium truncate px-2">
+                        ${p.name} <span class="text-xs text-gray-500 block">/${p.id}</span>
+                    </button>
+                    ${p.id !== 'home' ? `<button onclick="app.deletePage('${p.id}', event)" class="text-gray-500 hover:text-red-400 px-2"><i class="fa-solid fa-trash-can"></i></button>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('history-list');
+            if (appState.history.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-500 text-sm mt-4">No actions yet.</div>';
+                return;
+            }
+            container.innerHTML = appState.history.map(h => `
+                <div onclick="app.restoreState(${h.id})" class="p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-pointer border-l-2 border-blue-500 transition">
+                    <div class="text-xs font-bold text-gray-300">${h.desc}</div>
+                    <div class="text-[10px] text-gray-500">${h.time}</div>
+                </div>
+            `).join('');
+        }
+
+        // --- UI HELPERS --- //
+
+        function switchSidebar(tab) {
+            const tabs = ['elements', 'pages', 'history'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                if (t === tab) {
+                    el.className = 'flex-1 py-3 text-sm font-medium border-b-2 border-blue-500 text-blue-400 bg-gray-700/50';
+                } else {
+                    el.className = 'flex-1 py-3 text-sm font-medium text-gray-400 hover:text-gray-200';
+                }
+                document.getElementById(`panel-${t}`).style.display = (t === tab) ? 'block' : 'none';
+            });
+        }
+
+        function setMode(mode) {
+            appState.mode = mode;
+            const canvas = document.getElementById('canvas-area');
+            const btnEdit = document.getElementById('btn-edit');
+            const btnLive = document.getElementById('btn-live');
+
+            if (mode === 'preview') {
+                canvas.classList.add('preview-mode');
+                btnLive.className = "px-3 py-1 rounded text-sm bg-green-600 text-white shadow transition";
+                btnEdit.className = "px-3 py-1 rounded text-sm text-gray-300 hover:text-white transition";
+                appState.selectedElementId = null;
+                renderProperties(); // Clear selection
+            } else {
+                canvas.classList.remove('preview-mode');
+                btnEdit.className = "px-3 py-1 rounded text-sm bg-blue-600 text-white shadow transition";
+                btnLive.className = "px-3 py-1 rounded text-sm text-gray-300 hover:text-white transition";
+            }
+        }
+
+        // --- GENERATOR LOGIC --- //
+
+        function generateFullHTML(pages) {
+            let allPagesHtml = '';
+
+            pages.forEach((page, index) => {
+                const isHidden = index === 0 ? '' : 'style="display:none"';
+                let pageContent = '';
+
+                page.elements.forEach(el => {
+                    pageContent += DEFAULT_COMPONENTS[el.type].html(el.data, pages);
+                });
+
+                allPagesHtml += `
+                    <div id="page-${page.id}" class="spa-page" ${isHidden}>
+                        ${pageContent}
+                    </div>
+                `;
+            });
+
+            return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Website</title>
+    <script src="https://cdn.tailwindcss.com"><\/script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        html { scroll-behavior: smooth; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .snap-x { scroll-snap-type: x mandatory; }
+        .snap-center { scroll-snap-align: center; }
+    </style>
+</head>
+<body class="bg-white text-gray-800">
+
+    ${allPagesHtml}
+
+    <script>
+        function handleRoute() {
+            const hash = window.location.hash.substring(1) || '${pages[0].id}';
+            document.querySelectorAll('.spa-page').forEach(div => div.style.display = 'none');
+            const target = document.getElementById('page-' + hash);
+            if(target) {
+                target.style.display = 'block';
+                window.scrollTo(0,0);
+            }
+        }
+        window.addEventListener('hashchange', handleRoute);
+        window.addEventListener('load', handleRoute);
+    <\/script>
+</body>
+</html>`;
+        }
+
+        // Start App
+        init();
+
+    </script>
+</body>
+
+</html>

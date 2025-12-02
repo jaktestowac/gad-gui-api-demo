@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bookmarks - GadTalk</title>
+    <link rel="stylesheet" href="/gad-talk/css/gad-talk.css">
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+</head>
+
+<body class="gt-app-layout">
+    <!-- Navbar -->
+    <nav class="gt-navbar">
+        <div class="gt-container-wide gt-flex gt-justify-between gt-items-center">
+            <a href="/" class="gt-link-muted">🦎 GAD</a>
+            <a href="/gad-talk/" class="gt-navbar-brand">
+                <span class="gt-logo"><i class="fa-solid fa-comments"></i></span>
+                <span>GadTalk</span>
+            </a>
+            <div class="gt-flex gt-gap-sm gt-items-center" id="nav-user-section">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main layout -->
+    <div class="gt-main-container">
+        <!-- Left sidebar -->
+        <aside class="gt-sidebar gt-sidebar-left">
+            <nav class="gt-nav-menu" id="main-nav">
+                <a href="/gad-talk/index.html" class="gt-nav-item" data-testid="nav-home">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-house"></i></span>
+                    <span class="gt-nav-text">Home</span>
+                </a>
+                <a href="/gad-talk/explore.html" class="gt-nav-item" data-testid="nav-explore">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <span class="gt-nav-text">Explore</span>
+                </a>
+                <a href="/gad-talk/notifications.html" class="gt-nav-item" data-testid="nav-notifications">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-bell"></i></span>
+                    <span class="gt-nav-text">Notifications</span>
+                    <span class="gt-badge gt-badge-primary gt-hidden" id="notification-badge">0</span>
+                </a>
+                <a href="/gad-talk/bookmarks.html" class="gt-nav-item gt-nav-item-active" data-testid="nav-bookmarks">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-bookmark"></i></span>
+                    <span class="gt-nav-text">Bookmarks</span>
+                </a>
+                <a href="#" class="gt-nav-item" id="nav-profile" data-testid="nav-profile">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-user"></i></span>
+                    <span class="gt-nav-text">Profile</span>
+                </a>
+                <button class="gt-btn gt-btn-primary gt-btn-block gt-mt-lg" id="compose-btn" data-testid="compose-button">
+                    Gad
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <main class="gt-content">
+            <!-- Header -->
+            <header class="gt-page-header">
+                <h1 class="gt-page-title">Bookmarks</h1>
+                <p class="gt-text-secondary gt-text-sm" id="username-display">@username</p>
+            </header>
+
+            <!-- Bookmarks list -->
+            <div class="gt-bookmarks-container">
+                <div id="bookmarks-loading" class="gt-loading-section">
+                    <div class="gt-spinner"></div>
+                    <span>Loading bookmarks...</span>
+                </div>
+
+                <div id="bookmarks-empty" class="gt-hidden">
+                    <div class="gt-empty-state">
+                        <div class="gt-empty-icon"><i class="fa-solid fa-bookmark"></i></div>
+                        <h3 class="gt-empty-title">Save Gads for later</h3>
+                        <p class="gt-empty-message">Bookmark Gads to easily find them again.</p>
+                    </div>
+                </div>
+
+                <div id="bookmarks-list" class="gt-gads-list" data-testid="bookmarks-list">
+                    <!-- Bookmarked gads will be rendered here -->
+                </div>
+
+                <div id="load-more-section" class="gt-load-more gt-hidden">
+                    <button id="load-more-btn" class="gt-btn gt-btn-secondary" data-testid="load-more-btn">
+                        Load more
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right sidebar -->
+        <aside class="gt-sidebar gt-sidebar-right">
+            <div class="gt-card">
+                <h3 class="gt-card-title">About Bookmarks</h3>
+                <p class="gt-text-secondary gt-text-sm">
+                    Your bookmarks are private. Only you can see what you've saved.
+                </p>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/gad-talk/js/api.js"></script>
+    <script src="/gad-talk/js/ui.js"></script>
+    <script src="/gad-talk/js/auth.js"></script>
+    <script src="/gad-talk/js/gads.js"></script>
+    <script src="/gad-talk/js/nav.js"></script>
+    <script>
+        (async function () {
+            let currentUser = null;
+            let currentPage = 1;
+            let isLoading = false;
+            let hasMore = true;
+
+            // Require authentication
+            currentUser = await window.gadTalkAuth.requireAuth();
+            if (!currentUser) return;
+
+            // Update username display
+            document.getElementById('username-display').textContent = `@${currentUser.username}`;
+
+            // Update nav profile link
+            const navProfile = document.getElementById("nav-profile");
+            if (navProfile) {
+                navProfile.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+            }
+
+            // nav.js populates nav-user-section and dropdown
+
+            // Load bookmarks
+            await loadBookmarks();
+
+            // Load more button
+            document.getElementById('load-more-btn').addEventListener('click', () => {
+                if (!isLoading && hasMore) {
+                    currentPage++;
+                    loadBookmarks(true);
+                }
+            });
+
+            async function loadBookmarks(append = false) {
+                if (isLoading) return;
+                isLoading = true;
+
+                const loadingEl = document.getElementById('bookmarks-loading');
+                const emptyEl = document.getElementById('bookmarks-empty');
+                const listEl = document.getElementById('bookmarks-list');
+                const loadMoreSection = document.getElementById('load-more-section');
+
+                if (!append) {
+                    loadingEl.classList.remove('gt-hidden');
+                    emptyEl.classList.add('gt-hidden');
+                    listEl.innerHTML = '';
+                }
+
+                try {
+                    const response = await window.GadTalkAPI.gads.getBookmarks(currentPage);
+                    const gads = response.gads || [];
+
+                    loadingEl.classList.add('gt-hidden');
+
+                    if (gads.length === 0 && currentPage === 1) {
+                        emptyEl.classList.remove('gt-hidden');
+                        loadMoreSection.classList.add('gt-hidden');
+                    } else {
+                        emptyEl.classList.add('gt-hidden');
+                        window.gadTalkGads.renderGads(gads, listEl, currentUser.id, append);
+
+                        hasMore = response.hasMore !== false && gads.length > 0;
+                        if (hasMore) {
+                            loadMoreSection.classList.remove('gt-hidden');
+                        } else {
+                            loadMoreSection.classList.add('gt-hidden');
+                        }
+                    }
+                } catch (error) {
+                    loadingEl.innerHTML = '<span class="gt-text-error">Failed to load bookmarks</span>';
+                } finally {
+                    isLoading = false;
+                }
+            }
+        })();
+    </script>
+</body>
+
+</html>

@@ -71,6 +71,7 @@ const ConfigKeys = {
   MIN_SECONDS_FOR_RESOURCE_CREATED_RECENTLY_BUG: "minSecondsForResourceCreatedRecentlyBug",
   COMMENTS_SOFT_DELETE_DELAY_IN_SECONDS_BUG: "commentsSoftDeleteDelayInSecondsBug",
   DIAGNOSTICS_ENABLED: "diagnosticsEnabled",
+  METRICS_TRACKING_ENABLED: "metricsTrackingEnabled",
   CAPTCHA_SOLUTION_IN_RESPONSE: "captchaSolutionInResponse",
   MAX_NUMBER_OF_FLASHPOSTS: "maxNumberOfFlashposts",
   SSL_ENABLED: "sslEnabled",
@@ -141,6 +142,7 @@ const FeatureFlagConfigKeys = {
   FEATURE_SOFT_DELETE_USERS: "feature_soft_delete_users",
   STRICT_SURNAME_VALIDATION: "strict_surname_validation",
   FEATURE_BUG_HATCH_MODULE: "feature_bug_hatch_module",
+  FEATURE_GAD_TALK_MODULE: "feature_gad_talk_module",
 };
 
 module.exports = {

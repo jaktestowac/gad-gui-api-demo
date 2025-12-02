@@ -89,7 +89,7 @@
                     }, 1000);
                 } else {
                     const data = await response.json();
-                    statusEl.textContent = 'Error loading demo: ' + (data.error || 'Unknown error');
+                    statusEl.textContent = 'Error loading demo: ' + (data.error?.message || data.error || 'Unknown error');
                     statusEl.style.color = '#dc2626';
                     backBtn.style.display = 'inline-block';
                 }

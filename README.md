@@ -246,7 +246,8 @@ Images are available at:
 
 ## Deploy to **Glitch**
 
-> [!WARNING] > **⚠️ Warning: This deployment method is obsolete and no longer recommended.**
+> [!WARNING]
+> **⚠️ Warning: This deployment method is obsolete and no longer recommended.**
 >
 > Glitch has changed their [platform policies](https://blog.glitch.com/post/changes-are-coming-to-glitch/) and this deployment method may no longer work as expected. Please use one of the other deployment methods instead.
 

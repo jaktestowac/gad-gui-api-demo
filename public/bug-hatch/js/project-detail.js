@@ -30,6 +30,10 @@
       window.location.href = "/bug-hatch/login.html";
       return false;
     }
+
+    // Setup user menu dropdown
+    if (window.setupUserMenu) window.setupUserMenu(currentUser);
+
     const logoutBtn = qs("#logoutBtn");
     if (logoutBtn) logoutBtn.addEventListener("click", window.bugHatchAuth.handleLogout);
     return true;
@@ -41,7 +45,8 @@
     const resp = await fetch(url, { credentials: "include" });
     const data = await resp.json().catch(() => ({}));
     if (!resp.ok) {
-      qs("#projectName").textContent = data.error || "Project not found";
+      const msg = (data && (data.error?.message || data.error)) || "Project not found";
+      qs("#projectName").textContent = msg;
       return null;
     }
 
@@ -106,6 +111,12 @@
     const archivedIssuesLink = qs("#archivedIssuesLink");
     if (archivedIssuesLink) {
       archivedIssuesLink.href = `/bug-hatch/archived-issues.html?id=${encodeURIComponent(p.id)}${
+        forceDemo ? "&demo=true" : ""
+      }`;
+    }
+    const analyticsLink = qs("#analyticsLink");
+    if (analyticsLink) {
+      analyticsLink.href = `/bug-hatch/analytics.html?projectId=${encodeURIComponent(p.id)}${
         forceDemo ? "&demo=true" : ""
       }`;
     }
@@ -272,7 +283,7 @@
           );
           const data = await resp.json().catch(() => ({}));
           if (!resp.ok) {
-            showBoardError(data.error || "Transition failed");
+            showBoardError((data && (data.error?.message || data.error)) || "Transition failed");
             return;
           }
           // update issue cache entry
@@ -460,7 +471,7 @@
           );
           const data = await resp.json().catch(() => ({}));
           if (!resp.ok) {
-            showBoardError(data.error || "Transition failed");
+            showBoardError((data && (data.error?.message || data.error)) || "Transition failed");
             return;
           }
           const idx = issuesCache.findIndex((i) => i.id === issue.id);
@@ -648,7 +659,7 @@
         });
         const data = await resp.json().catch(() => ({}));
         if (!resp.ok) {
-          qcToast(data.error || "Create failed");
+          qcToast((data && (data.error?.message || data.error)) || "Create failed");
           return;
         }
         document.getElementById("qcTitle").value = "";
@@ -706,7 +717,7 @@
       });
       const data = await resp.json().catch(() => ({}));
       if (!resp.ok) {
-        showBoardError(data.error || "Failed to archive issue");
+        showBoardError((data && (data.error?.message || data.error)) || "Failed to archive issue");
         return;
       }
       // Remove from cache and re-render
@@ -750,7 +761,7 @@
       });
       const data = await resp.json().catch(() => ({}));
       if (!resp.ok) {
-        alert(data.error || "Failed to unarchive issue");
+        alert((data && (data.error?.message || data.error)) || "Failed to unarchive issue");
         return;
       }
       // Add to cache and re-render
@@ -781,7 +792,7 @@
       const data = await resp.json().catch(() => ({}));
 
       if (!resp.ok) {
-        throw new Error(data.error || "Failed to load project");
+        throw new Error((data && (data.error?.message || data.error)) || "Failed to load project");
       }
 
       const project = data.data;
@@ -879,7 +890,7 @@
       const addData = await addResp.json().catch(() => ({}));
 
       if (!addResp.ok) {
-        throw new Error(addData.error || "Failed to add member");
+        throw new Error((addData && (addData.error?.message || addData.error)) || "Failed to add member");
       }
 
       // Reload members list
@@ -953,7 +964,7 @@
       const data = await resp.json().catch(() => ({}));
 
       if (!resp.ok) {
-        throw new Error(data.error || "Failed to remove member");
+        throw new Error((data && (data.error?.message || data.error)) || "Failed to remove member");
       }
 
       // Reload members list
@@ -1040,6 +1051,18 @@
         }
       });
     }
+
+    // Add member form submit handler
+    const addMemberForm = qs("#addMemberForm");
+    if (addMemberForm) {
+      addMemberForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = qs("#memberEmail").value.trim();
+        if (email) {
+          await addMember(email);
+        }
+      });
+    }
   }
 
   function setupQuickCreateToggle() {
@@ -1074,7 +1097,7 @@
       const data = await resp.json().catch(() => ({}));
 
       if (!resp.ok) {
-        console.error("Failed to load invitations:", data.error);
+        console.error("Failed to load invitations:", (data && (data.error?.message || data.error)) || data);
         return;
       }
 
@@ -1132,7 +1155,7 @@
 
       const data = await resp.json().catch(() => ({}));
       if (!resp.ok) {
-        const errorMessage = data.error?.message || data.error || "Failed to send invitation";
+        const errorMessage = (data && (data.error?.message || data.error)) || "Failed to send invitation";
         throw new Error(errorMessage);
       }
 
@@ -1157,9 +1180,14 @@
   async function cancelInvitation(invitationId) {
     if (!invitationId) return;
 
-    if (!confirm("Are you sure you want to cancel this invitation?")) {
-      return;
-    }
+    const confirmed = await window.showConfirmModal({
+      title: "Cancel Invitation",
+      message: "Are you sure you want to cancel this invitation?",
+      confirmText: "Cancel Invitation",
+      cancelText: "Keep",
+      confirmClass: "bg-red-600 hover:bg-red-500",
+    });
+    if (!confirmed) return;
 
     try {
       const resp = await fetch(
@@ -1173,7 +1201,7 @@
       const data = await resp.json().catch(() => ({}));
 
       if (!resp.ok) {
-        throw new Error(data.error || "Failed to cancel invitation");
+        throw new Error((data && (data.error?.message || data.error)) || "Failed to cancel invitation");
       }
 
       // Reload invitations

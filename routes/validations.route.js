@@ -62,6 +62,8 @@ const { handleLearning } = require("../endpoints/learning/learning-endpoint.help
 const { handlePractice } = require("../endpoints/practice-endpoint.helpers");
 const { handleBugHatchAuth } = require("../endpoints/bug-hatch/auth-endpoint.helpers");
 const { handleBugHatchAdmin } = require("../endpoints/bug-hatch/admin-endpoint.helpers");
+const { handleTicTacToeBot } = require("../endpoints/tic-tac-toe-bot-endpoint.helpers");
+const { handleGadTalk, initializeGadTalkModule } = require("../endpoints/gad-talk/gad-talk.route");
 
 const validationsRoutes = (req, res, next) => {
   let userAuth = userBaseAuth;
@@ -163,6 +165,12 @@ const validationsRoutes = (req, res, next) => {
     }
     handleCaptchaVerification(req, res);
     if (res.headersSent === true) {
+      return;
+    }
+
+    // Tic Tac Toe Bot API (must be before general /api/games handler)
+    if (req.url.includes("/api/games/tic-tac-toe-bot")) {
+      handleTicTacToeBot(req, res);
       return;
     }
 
@@ -406,7 +414,14 @@ const validationsRoutes = (req, res, next) => {
           handleAcceptInvitation,
           handleRejectInvitation,
           handleCancelInvitation,
+          handleGetMyInvitations,
         } = require("../endpoints/bug-hatch/invitations-endpoint.helpers");
+
+        // Get current user's invitations - must be before other patterns
+        if (req.method === "GET" && req.url === "/api/bug-hatch/invitations/my") {
+          handleGetMyInvitations(req, res);
+          return;
+        }
 
         if (req.method === "POST" && req.url === "/api/bug-hatch/invitations") {
           handleCreateInvitation(req, res);
@@ -449,6 +464,70 @@ const validationsRoutes = (req, res, next) => {
           }
         }
       }
+
+      // BugHatch filters endpoints
+      if (req.url.includes("/api/bug-hatch/filters")) {
+        const {
+          handleGetMyFilters,
+          handleGetFilterById,
+          handleCreateFilter,
+          handleUpdateFilter,
+          handleDeleteFilter,
+        } = require("../endpoints/bug-hatch/filters-endpoint.helpers");
+
+        // Get all user's saved filters
+        if (req.method === "GET" && req.url === "/api/bug-hatch/filters/my") {
+          handleGetMyFilters(req, res);
+          return;
+        }
+
+        // Create new filter
+        if (req.method === "POST" && req.url === "/api/bug-hatch/filters") {
+          handleCreateFilter(req, res);
+          return;
+        }
+
+        // Get specific filter
+        if (req.method === "GET" && /\/api\/bug-hatch\/filters\/[^/]+$/.test(req.url)) {
+          const filterId = req.url.match(/\/api\/bug-hatch\/filters\/([^/]+)/)?.[1];
+          if (filterId && filterId !== "my") {
+            handleGetFilterById(req, res, filterId);
+            return;
+          }
+        }
+
+        // Update filter
+        if (req.method === "PATCH" && /\/api\/bug-hatch\/filters\/[^/]+$/.test(req.url)) {
+          const filterId = req.url.match(/\/api\/bug-hatch\/filters\/([^/]+)/)?.[1];
+          if (filterId) {
+            handleUpdateFilter(req, res, filterId);
+            return;
+          }
+        }
+
+        // Delete filter
+        if (req.method === "DELETE" && /\/api\/bug-hatch\/filters\/[^/]+$/.test(req.url)) {
+          const filterId = req.url.match(/\/api\/bug-hatch\/filters\/([^/]+)/)?.[1];
+          if (filterId) {
+            handleDeleteFilter(req, res, filterId);
+            return;
+          }
+        }
+      }
+
+      // BugHatch metrics endpoint
+      if (req.method === "GET" && req.url.startsWith("/api/bug-hatch/metrics")) {
+        const { handleGetMetrics } = require("../endpoints/bug-hatch/metrics-endpoint.helpers");
+        handleGetMetrics(req, res);
+        return;
+      }
+    }
+
+    // GadTalk module endpoints
+    const isGadTalkEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_GAD_TALK_MODULE);
+    if (req.url.includes("/api/gad-talk/") && isGadTalkEnabled === true) {
+      handleGadTalk(req, res);
+      return;
     }
 
     logTrace("validationsRoutes: Returning:", {

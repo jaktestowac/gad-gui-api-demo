@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Followers - GadTalk</title>
+    <link rel="stylesheet" href="/gad-talk/css/gad-talk.css">
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+</head>
+
+<body class="gt-app-layout">
+    <!-- Navbar -->
+    <nav class="gt-navbar">
+        <div class="gt-container-wide gt-flex gt-justify-between gt-items-center">
+            <a href="/" class="gt-link-muted">🦎 GAD</a>
+            <a href="/gad-talk/" class="gt-navbar-brand">
+                <span class="gt-logo"><i class="fa-solid fa-comments"></i></span>
+                <span>GadTalk</span>
+            </a>
+            <div class="gt-flex gt-gap-sm gt-items-center" id="nav-user-section">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main layout -->
+    <div class="gt-main-container">
+        <!-- Left sidebar -->
+        <aside class="gt-sidebar gt-sidebar-left">
+            <nav class="gt-nav-menu" id="main-nav">
+                <a href="/gad-talk/index.html" class="gt-nav-item" data-testid="nav-home">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-house"></i></span>
+                    <span class="gt-nav-text">Home</span>
+                </a>
+                <a href="/gad-talk/explore.html" class="gt-nav-item" data-testid="nav-explore">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <span class="gt-nav-text">Explore</span>
+                </a>
+                <a href="/gad-talk/notifications.html" class="gt-nav-item" data-testid="nav-notifications">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-bell"></i></span>
+                    <span class="gt-nav-text">Notifications</span>
+                    <span class="gt-badge gt-badge-primary gt-hidden" id="notification-badge">0</span>
+                </a>
+                <a href="/gad-talk/bookmarks.html" class="gt-nav-item" data-testid="nav-bookmarks">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-bookmark"></i></span>
+                    <span class="gt-nav-text">Bookmarks</span>
+                </a>
+                <a href="#" class="gt-nav-item" id="nav-profile" data-testid="nav-profile">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-user"></i></span>
+                    <span class="gt-nav-text">Profile</span>
+                </a>
+                <button class="gt-btn gt-btn-primary gt-btn-block gt-mt-lg" id="compose-btn" data-testid="compose-button">
+                    Gad
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <main class="gt-content">
+            <!-- Page header -->
+            <header class="gt-page-header gt-page-header-sticky">
+                <button class="gt-icon-btn" id="back-btn" data-testid="back-button" onclick="history.back()">
+                    ←
+                </button>
+                <div class="gt-header-info">
+                    <h1 class="gt-page-title" id="page-title">Followers</h1>
+                    <span class="gt-text-secondary gt-text-sm" id="profile-username">@...</span>
+                </div>
+            </header>
+
+            <!-- Tabs for Followers/Following -->
+            <div class="gt-tabs gt-tabs-full">
+                <a href="#" class="gt-tab gt-tab-active" id="tab-followers" data-testid="tab-followers">Followers</a>
+                <a href="#" class="gt-tab" id="tab-following" data-testid="tab-following">Following</a>
+            </div>
+
+            <!-- Users list -->
+            <div class="gt-users-list">
+                <div id="users-loading" class="gt-loading-section">
+                    <div class="gt-spinner"></div>
+                    <span>Loading...</span>
+                </div>
+
+                <div id="users-empty" class="gt-empty-state gt-hidden">
+                    <div class="gt-empty-icon"><i class="fa-solid fa-users"></i></div>
+                    <h3 class="gt-empty-title">No followers yet</h3>
+                    <p class="gt-empty-message">When people follow this account, they'll show up here.</p>
+                </div>
+
+                <div id="users-list" class="gt-results-list" data-testid="users-list">
+                    <!-- Users will be rendered here -->
+                </div>
+
+                <div id="load-more-section" class="gt-load-more gt-hidden">
+                    <button id="load-more-btn" class="gt-btn gt-btn-secondary" data-testid="load-more-btn">
+                        Load more
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right sidebar -->
+        <aside class="gt-sidebar gt-sidebar-right">
+            <div class="gt-card gt-suggestions-card">
+                <h3 class="gt-card-title">Who to follow</h3>
+                <div id="suggestions-list" class="gt-suggestions-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Compose Modal -->
+    <div class="gt-modal gt-hidden" id="compose-modal">
+        <div class="gt-modal-backdrop" data-close-modal></div>
+        <div class="gt-modal-content gt-modal-md">
+            <div class="gt-modal-header">
+                <h2>Compose Gad</h2>
+                <button class="gt-icon-btn" data-close-modal>×</button>
+            </div>
+            <div class="gt-modal-body">
+                <div class="gt-compose-area">
+                    <div id="modal-compose-avatar" class="gt-compose-avatar"></div>
+                    <textarea id="modal-compose-input" class="gt-compose-input" placeholder="What's happening?" maxlength="280"></textarea>
+                </div>
+            </div>
+            <div class="gt-modal-footer">
+                <span class="gt-char-count" id="modal-char-count">280</span>
+                <button id="modal-post-btn" class="gt-btn gt-btn-primary" disabled>Gad</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/gad-talk/js/api.js"></script>
+    <script src="/gad-talk/js/ui.js"></script>
+    <script src="/gad-talk/js/auth.js"></script>
+    <script src="/gad-talk/js/gads.js"></script>
+    <script src="/gad-talk/js/nav.js"></script>
+    <script>
+        (async function () {
+            let currentUser = null;
+            let profileUser = null;
+            let currentPage = 1;
+            let isLoading = false;
+            let hasMore = true;
+
+            // Require authentication
+            currentUser = await window.gadTalkAuth.requireAuth();
+            if (!currentUser) return;
+
+            // Get username from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const username = urlParams.get('user');
+
+            if (!username) {
+                window.location.href = '/gad-talk/';
+                return;
+            }
+
+            // Update nav profile link
+            const navProfile = document.getElementById("nav-profile");
+            if (navProfile) {
+                navProfile.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+            }
+
+            // nav.js populates nav-user-section and dropdown
+
+            // Load profile user
+            try {
+                const response = await window.GadTalkAPI.users.getByUsername(username);
+                profileUser = response.data;
+
+                // Update page title and username
+                document.getElementById('profile-username').textContent = `@${profileUser.username}`;
+                document.title = `People following @${profileUser.username} - GadTalk`;
+
+                // Update tab links
+                document.getElementById('tab-followers').href = `/gad-talk/followers.html?user=${profileUser.username}`;
+                document.getElementById('tab-following').href = `/gad-talk/following.html?user=${profileUser.username}`;
+
+                // Load followers
+                await loadFollowers();
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                window.gadTalkGads.showToast('User not found', 'error');
+                window.location.href = '/gad-talk/';
+                return;
+            }
+
+            // Load more button
+            document.getElementById('load-more-btn').addEventListener('click', () => {
+                if (!isLoading && hasMore) {
+                    currentPage++;
+                    loadFollowers(true);
+                }
+            });
+
+            // Compose modal
+            setupComposeModal();
+
+            // Load suggestions
+            loadSuggestions();
+
+            async function loadFollowers(append = false) {
+                if (isLoading) return;
+                isLoading = true;
+
+                const loadingEl = document.getElementById('users-loading');
+                const emptyEl = document.getElementById('users-empty');
+                const listEl = document.getElementById('users-list');
+                const loadMoreSection = document.getElementById('load-more-section');
+
+                if (!append) {
+                    loadingEl.classList.remove('gt-hidden');
+                    emptyEl.classList.add('gt-hidden');
+                    listEl.innerHTML = '';
+                }
+
+                try {
+                    const response = await window.GadTalkAPI.users.getFollowers(profileUser.id, currentPage);
+                    const followersData = response.followers || [];
+                    // Extract user objects from the followers data (API returns { user: {...} } for each)
+                    const users = followersData.map(f => f.user).filter(u => u != null);
+
+                    loadingEl.classList.add('gt-hidden');
+
+                    if (users.length === 0 && currentPage === 1) {
+                        emptyEl.classList.remove('gt-hidden');
+                        loadMoreSection.classList.add('gt-hidden');
+                    } else {
+                        emptyEl.classList.add('gt-hidden');
+                        renderUsers(users, append);
+
+                        hasMore = users.length >= 20;
+                        if (hasMore) {
+                            loadMoreSection.classList.remove('gt-hidden');
+                        } else {
+                            loadMoreSection.classList.add('gt-hidden');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading followers:', error);
+                    loadingEl.innerHTML = '<span class="gt-text-error">Failed to load followers.</span>';
+                } finally {
+                    isLoading = false;
+                }
+            }
+
+            function renderUsers(users, append) {
+                const listEl = document.getElementById('users-list');
+
+                const html = users.map(user => {
+                    const isOwnProfile = currentUser && currentUser.id === user.id;
+                    const isFollowing = user.isFollowing;
+
+                    return `
+                        <div class="gt-user-card" data-testid="user-card-${user.id}">
+                            <a href="/gad-talk/profile.html?user=${user.username}" class="gt-user-card-link">
+                                ${window.gadTalkGads.getAvatarHtml(user, "md")}
+                                <div class="gt-user-info">
+                                    <span class="gt-user-displayname">${user.displayName || user.username}</span>
+                                    <span class="gt-user-username">@${user.username}</span>
+                                    ${user.bio ? `<p class="gt-user-bio">${user.bio}</p>` : ''}
+                                </div>
+                            </a>
+                            ${!isOwnProfile ? `
+                                <button class="gt-btn ${isFollowing ? 'gt-btn-secondary' : 'gt-btn-primary'} gt-btn-sm gt-follow-btn"
+                                        data-user-id="${user.id}"
+                                        data-testid="follow-btn-${user.id}">
+                                    ${isFollowing ? 'Following' : 'Follow'}
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+
+                if (append) {
+                    listEl.insertAdjacentHTML('beforeend', html);
+                } else {
+                    listEl.innerHTML = html;
+                }
+
+                // Add click handlers for follow buttons
+                listEl.querySelectorAll('.gt-follow-btn').forEach(btn => {
+                    btn.addEventListener('click', handleFollowClick);
+                });
+            }
+
+            async function handleFollowClick(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const btn = e.currentTarget;
+                const userId = btn.dataset.userId;
+                const isFollowing = btn.textContent.trim() === 'Following';
+
+                try {
+                    if (isFollowing) {
+                        await window.GadTalkAPI.users.unfollow(userId);
+                        btn.textContent = 'Follow';
+                        btn.classList.remove('gt-btn-secondary');
+                        btn.classList.add('gt-btn-primary');
+                    } else {
+                        await window.GadTalkAPI.users.follow(userId);
+                        btn.textContent = 'Following';
+                        btn.classList.remove('gt-btn-primary');
+                        btn.classList.add('gt-btn-secondary');
+                    }
+                } catch (error) {
+                    console.error('Error toggling follow:', error);
+                    window.gadTalkGads.showToast('Failed to update follow status', 'error');
+                }
+            }
+
+            function setupComposeModal() {
+                const composeBtn = document.getElementById("compose-btn");
+                const composeModal = document.getElementById("compose-modal");
+                const composeInput = document.getElementById("modal-compose-input");
+                const charCount = document.getElementById("modal-char-count");
+                const postBtn = document.getElementById("modal-post-btn");
+                const modalAvatar = document.getElementById("modal-compose-avatar");
+
+                if (!composeBtn || !composeModal) return;
+
+                if (modalAvatar && currentUser) {
+                    modalAvatar.innerHTML = window.gadTalkGads.getAvatarHtml(currentUser, "md");
+                }
+
+                composeBtn.addEventListener("click", () => {
+                    composeModal.classList.remove("gt-hidden");
+                    composeInput.focus();
+                });
+
+                composeModal.querySelectorAll("[data-close-modal]").forEach((el) => {
+                    el.addEventListener("click", () => {
+                        composeModal.classList.add("gt-hidden");
+                    });
+                });
+
+                composeInput.addEventListener("input", () => {
+                    const remaining = 280 - composeInput.value.length;
+                    charCount.textContent = remaining;
+                    postBtn.disabled = composeInput.value.trim().length === 0;
+                });
+
+                postBtn.addEventListener("click", async () => {
+                    const content = composeInput.value.trim();
+                    if (!content) return;
+
+                    try {
+                        await window.GadTalkAPI.gads.create(content);
+                        composeInput.value = "";
+                        charCount.textContent = "280";
+                        postBtn.disabled = true;
+                        composeModal.classList.add("gt-hidden");
+                        window.gadTalkGads.showToast("Gad posted!", "success");
+                    } catch (error) {
+                        window.gadTalkGads.showToast("Failed to post gad", "error");
+                    }
+                });
+            }
+
+            async function loadSuggestions() {
+                try {
+                    const response = await window.GadTalkAPI.users.getSuggestions(3);
+                    const suggestions = response.users || [];
+                    const container = document.getElementById("suggestions-list");
+
+                    if (suggestions.length === 0) {
+                        container.innerHTML = '<p class="gt-text-secondary gt-text-sm">No suggestions</p>';
+                        return;
+                    }
+
+                    container.innerHTML = suggestions.map(user => `
+                        <div class="gt-suggestion-item">
+                            <a href="/gad-talk/profile.html?user=${user.username}" class="gt-suggestion-link">
+                                ${window.gadTalkGads.getAvatarHtml(user, "sm")}
+                                <div class="gt-suggestion-info">
+                                    <span class="gt-suggestion-name">${user.displayName || user.username}</span>
+                                    <span class="gt-suggestion-username">@${user.username}</span>
+                                </div>
+                            </a>
+                        </div>
+                    `).join('');
+                } catch (error) {
+                    console.error("Error loading suggestions:", error);
+                }
+            }
+        })();
+    </script>
+</body>
+
+</html>

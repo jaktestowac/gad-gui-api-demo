@@ -1,6 +1,6 @@
 {
   "name": "gad-gui-api-demo-v2",
-  "version": "2.8.7",
+  "version": "2.8.8",
   "description": "Simple application with GUI and API to practice test automation and to deploy to Railway, Render etc.",
   "main": "server.js",
   "scripts": {

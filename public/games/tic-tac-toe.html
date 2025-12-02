@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <title>🦎 GAD | Game: Tic Tac Toe (Multiplayer)</title>
@@ -16,7 +16,7 @@
 
 <body>
   <header>
-    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu" role="navigation" aria-label="Games navigation">
       <h1 id="menu-main-gui" class="nav-menu"></h1>
     </div>
 
@@ -26,12 +26,12 @@
         grid-template-columns: repeat(3, 1fr);
         gap: 10px;
         margin-bottom: 20px;
-        width: 350px;
+        width: 250px;
       }
 
       .cell {
-        width: 100px;
-        height: 100px;
+        width: 75px;
+        height: 75px;
         border: 1px solid black;
         display: flex;
         justify-content: center;
@@ -50,42 +50,50 @@
   <br />
   <br />
   <br />
-  <div id="authentication-info" align="center">
+  <br />
+  <div id="authentication-info" align="center" aria-live="polite" role="alert" aria-label="Authentication status">
+    Checking authentication...
   </div>
   <div id="container"></div>
-  <div align="center">
-    <button id="start-button" class="button-primary" onclick="startGame()">Start New Game</button>
-    <button id="stop-button" class="button-primary" disabled onclick="stopGame()">Stop Game</button><br /><br />
+  <div align="center" role="main" aria-labelledby="menu-main-gui">
+    <button id="start-button" class="button-primary" onclick="startGame()" aria-controls="board">Start New Game</button>
+    <button id="stop-button" class="button-primary" disabled onclick="stopGame()" aria-controls="board">Stop Game</button><br /><br />
     <div class="separator">Or join existing game:</div>
     (within one application)
     <br />
     <div align="center" style="align-items: center; display: flex; justify-content: center; width: 500px">
-      <label style="width: 50px">Code:</label>
+      <label for="session-code" style="width: 50px">Code:</label>
       <input type="text" id="session-code" placeholder="Enter session code" style="margin-right: 10px; width: 180px; height: 30px; font-size: 18px; text-align: center" maxlength="6" />
-      <button id="join-button" class="button-primary" style="width: 100px" onclick="joinGame()">Join Game</button>
+      <button id="join-button" class="button-primary" style="width: 100px" onclick="joinGame()" aria-controls="board">Join Game</button>
     </div>
     <br />
-    <label id="messageLbl" style="width: 50px">...</label>
+    <label id="messageLbl" style="width: 50px" role="status" aria-live="polite">...</label>
     <br />
     <br />
-    <div class="board">
-      <div class="cell" coords="0,0"></div>
-      <div class="cell" coords="1,0"></div>
-      <div class="cell" coords="2,0"></div>
-      <div class="cell" coords="0,1"></div>
-      <div class="cell" coords="1,1"></div>
-      <div class="cell" coords="2,1"></div>
-      <div class="cell" coords="0,2"></div>
-      <div class="cell" coords="1,2"></div>
-      <div class="cell" coords="2,2"></div>
+    <div class="board" role="grid" aria-label="Tic Tac Toe board" aria-describedby="messageLbl">
+      <div class="cell" coords="0,0" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 1, column 1" aria-rowindex="1" aria-colindex="1"></div>
+      <div class="cell" coords="1,0" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 1, column 2" aria-rowindex="1" aria-colindex="2"></div>
+      <div class="cell" coords="2,0" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 1, column 3" aria-rowindex="1" aria-colindex="3"></div>
+      <div class="cell" coords="0,1" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 2, column 1" aria-rowindex="2" aria-colindex="1"></div>
+      <div class="cell" coords="1,1" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 2, column 2" aria-rowindex="2" aria-colindex="2"></div>
+      <div class="cell" coords="2,1" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 2, column 3" aria-rowindex="2" aria-colindex="3"></div>
+      <div class="cell" coords="0,2" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 3, column 1" aria-rowindex="3" aria-colindex="1"></div>
+      <div class="cell" coords="1,2" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 3, column 2" aria-rowindex="3" aria-colindex="2"></div>
+      <div class="cell" coords="2,2" role="gridcell" tabindex="0" aria-keyshortcuts="Enter Space" aria-label="Empty cell, row 3, column 3" aria-rowindex="3" aria-colindex="3"></div>
     </div>
-    <div style="display: none" class="score">
-      <span>Player You: <span id="player-x-score">...</span></span><br />
-      <span>Player Opponent: <span id="player-o-score">...</span></span>
+    <div style="display: none" class="score" aria-hidden="true">
+      <span>Player You: <span id="player-x-score" aria-live="polite" aria-label="Your score">...</span></span><br />
+      <span>Player Opponent: <span id="player-o-score" aria-live="polite" aria-label="Opponent score">...</span></span>
     </div>
     <br />
-    <a href="./games.html">
-      <button class="button-primary button-mobile" translateId="btnReturnToGames" style="margin: 10; font-size: 16px">
+    <a href="./tic-tac-toe-collection.html">
+      <button class="button-primary button-mobile" translateId="btnReturnToGames" style="margin-top: 6px;font-size: 16px">
+        Return to Tic Tac Toe Collection
+      </button>
+    </a>
+    <br />
+    <a href="./games.html" style="margin-top: 6px;">
+      <button class="button-primary button-mobile" translateId="btnReturnToGames" style="margin-top: 6px;font-size: 16px">
         Return to Games
       </button>
     </a>

@@ -66,6 +66,10 @@
     const u = new URL(window.location.href);
     forceDemo = u.searchParams.get("demo") === "true";
     isDemo = !!currentUser.isDemo || forceDemo;
+
+    // Setup user menu dropdown
+    if (window.setupUserMenu) window.setupUserMenu(currentUser);
+
     const logoutBtn = document.getElementById("logoutBtn");
     if (logoutBtn) logoutBtn.addEventListener("click", window.bugHatchAuth.handleLogout);
     return true;
@@ -202,7 +206,8 @@
     );
     const data = await resp.json().catch(() => ({}));
     if (!resp.ok) {
-      qs("#issuesMeta").textContent = data.error || "Failed to load issues";
+      const msg = (data && (data.error?.message || data.error)) || "Failed to load issues";
+      qs("#issuesMeta").textContent = msg;
       renderIssuesTable([]);
       return;
     }
@@ -256,7 +261,8 @@
     );
     const data = await resp.json().catch(() => ({}));
     if (!resp.ok) {
-      showCreateError(data.error || "Create failed");
+      const msg = (data && (data.error?.message || data.error)) || "Create failed";
+      showCreateError(msg);
       return;
     }
     // success

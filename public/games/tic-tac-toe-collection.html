@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>🦎 GAD | Game: Tic Tac Toe ULTIMATE COLLECTION</title>
+  <link rel="icon" href="/data/icons/favicon.png" />
+  <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+  <link href="/css/fonts/fonts.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/controls.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/infoBoxes.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+
+<body>
+  <header>
+    <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu" role="navigation" aria-label="Main">
+      <h1 id="menu-main-gui" class="nav-menu"></h1>
+    </div>
+
+    <style>
+      .game-collection {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        padding: 20px;
+        margin-top: 20px;
+      }
+
+      .game-cell {
+        width: 230px;
+        height: 180px;
+        background-color: var(--bg-secondary, #f0f0f0);
+        border: 2px solid var(--border-color, #ccc);
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        text-decoration: none;
+        color: var(--text-primary, #333);
+      }
+
+      .game-cell:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        background-color: var(--bg-hover, #e0e0e0);
+      }
+
+      .game-cell i {
+        font-size: 3em;
+        margin-bottom: 10px;
+        color: var(--accent-color, #555);
+      }
+
+      .game-cell span {
+        font-size: 1.2em;
+        font-weight: bold;
+      }
+
+      .page-description {
+        max-width: 900px;
+        margin: 0 auto;
+        color: var(--text-secondary, #666);
+        font-size: 1rem;
+        text-align: center;
+        padding: 10px 20px;
+      }
+
+      .cell-desc {
+        display: block;
+        font-size: 0.9rem;
+        color: var(--text-secondary, #666);
+        margin-top: 6px;
+        text-align: center;
+        line-height: 1.2;
+        padding: 0 8px;
+      }
+
+      .game-cell:focus {
+        outline: 3px solid var(--accent-color, #007bff);
+        outline-offset: 4px;
+        transform: translateY(-6px);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+      }
+
+      /* Skip link (visible on focus) */
+      .skip-link {
+        position: absolute;
+        left: 8px;
+        top: -100px;
+        background: var(--bg-primary, #007bff);
+        color: #fff;
+        padding: 10px 14px;
+        border-radius: 6px;
+        z-index: 1000;
+      }
+
+      .skip-link:focus {
+        top: 8px;
+      }
+    </style>
+  </header>
+  <br />
+  <br />
+  <br />
+  <br />
+  <!-- Skip to main content link for keyboard users -->
+  <a href="#mainContent" class="skip-link visually-hidden-focusable">Skip to main content</a>
+  <br />
+  <div align="center" style="justify-content: center !important; display: flex; align-items: center">
+
+    <div class="page-description" id="pageDescription">
+      <h2 id="pageTitle">Tic Tac Toe ULTIMATE COLLECTION</h2>
+      <p>Choose your Tic Tac Toe mode!</p>
+      <p>Play against a bot, take turns on the same device, or challenge other players online.</p>
+    </div>
+  </div>
+  <main id="mainContent" role="main" aria-labelledby="pageTitle">
+    <div id="container">
+      <div class="game-collection" role="list" aria-labelledby="pageTitle">
+        <div role="listitem" class="game-cell-wrapper">
+          <a href="tic-tac-toe-bot.html" class="game-cell" title="Play vs Bot" aria-labelledby="game-bot-title" aria-describedby="game-bot-desc" data-testid="game-bot">
+            <i class="fas fa-robot" aria-hidden="true"></i>
+            <span id="game-bot-title">Vs Bot</span>
+            <small class="cell-desc" id="game-bot-desc">Play against an AI opponent - choose difficulty and test your strategy.</small>
+          </a>
+        </div>
+        <div role="listitem" class="game-cell-wrapper">
+          <a href="tic-tac-toe-bot-api.html" class="game-cell" title="Play vs API Bot" aria-labelledby="game-bot-title" aria-describedby="game-bot-desc" data-testid="game-bot">
+            <i class="fas fa-robot" aria-hidden="true"></i>
+            <span id="game-bot-title">Vs API Bot</span>
+            <small class="cell-desc" id="game-bot-desc">Play against an API Bot opponent - choose difficulty and test your strategy.</small>
+          </a>
+        </div>
+        <div role="listitem" class="game-cell-wrapper">
+          <a href="tic-tac-toe-hot-seat.html" class="game-cell" title="Hot Seat" aria-labelledby="game-hot-seat-title" aria-describedby="game-hot-seat-desc" data-testid="game-hot-seat">
+            <i class="fas fa-user-friends" aria-hidden="true"></i>
+            <span id="game-hot-seat-title">Hot Seat</span>
+            <small class="cell-desc" id="game-hot-seat-desc">Two players take turns on the same device for local head-to-head fun.</small>
+          </a>
+        </div>
+        <div role="listitem" class="game-cell-wrapper">
+          <a href="tic-tac-toe.html" class="game-cell" title="Online Multiplayer" aria-labelledby="game-online-title" aria-describedby="game-online-desc" data-testid="game-online-multiplayer">
+            <i class="fas fa-hashtag" aria-hidden="true"></i>
+            <span id="game-online-title">Online Multiplayer</span>
+            <small class="cell-desc" id="game-online-desc">Play against friends and other players online!</small>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+  <div align="center">
+    <a href="./games.html" class="button-primary-small button-mobile" role="link" aria-label="Return to Games" translateId="btnReturnToGames" style="margin: 10px; font-size: 14px">
+      <i class="fas fa-arrow-left" aria-hidden="true"></i>
+      <span>Return to Games</span>
+    </a>
+  </div>
+  <script type="text/javascript" src="/js/common.js"></script>
+  <script type="text/javascript" src="/js/header.js"></script>
+  <script type="text/javascript" src="/version.js"></script>
+  <script type="text/javascript" src="/username.js"></script>
+  <script type="text/javascript" src="/js/darkmode.js"></script>
+  <script type="text/javascript" src="/js/message-notifier.js"></script>
+</body>
+
+</html>

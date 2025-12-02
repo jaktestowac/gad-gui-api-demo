@@ -360,4 +360,5 @@ module.exports = {
   transitionIssueService,
   archiveIssueService,
   unarchiveIssueService,
+  userCanMutateProject,
 };

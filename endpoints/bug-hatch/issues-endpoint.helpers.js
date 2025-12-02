@@ -122,6 +122,53 @@ async function handleUnarchiveIssue(req, res, issueId) {
   res.status(HTTP_OK).send({ ok: true, data: result.issue });
 }
 
+async function handleExportIssuesCsv(req, res, projectId) {
+  const user = getCurrentUser(req);
+  const result = listIssuesService(projectId, req.query || {}, user);
+  if (!result.success) {
+    let status = HTTP_BAD_REQUEST;
+    if (result.errorType === "unauthorized") status = 401;
+    if (result.errorType === "forbidden") status = HTTP_FORBIDDEN;
+    if (result.errorType === "notfound") status = HTTP_NOT_FOUND;
+    res.status(status).send(formatErrorResponse(result.error));
+    return;
+  }
+
+  const issues = result.issues || [];
+  const csvHeaders = [
+    "id",
+    "title",
+    "description",
+    "status",
+    "priority",
+    "type",
+    "storyPoints",
+    "assigneeId",
+    "createdAt",
+    "updatedAt",
+  ];
+
+  function escapeCsvField(value) {
+    if (value === null || value === undefined) return "";
+    const str = String(value);
+    if (str.includes(",") || str.includes('"') || str.includes("\n") || str.includes("\r")) {
+      return '"' + str.replace(/"/g, '""') + '"';
+    }
+    return str;
+  }
+
+  const csvRows = [csvHeaders.join(",")];
+  for (const issue of issues) {
+    const row = csvHeaders.map((h) => escapeCsvField(issue[h]));
+    csvRows.push(row.join(","));
+  }
+  const csvContent = csvRows.join("\r\n");
+
+  res.setHeader("Content-Type", "text/csv; charset=utf-8");
+  res.setHeader("Content-Disposition", `attachment; filename="issues-${projectId}.csv"`);
+  res.status(HTTP_OK).send(csvContent);
+}
+
 async function handleTransitionIssue(req, res, issueId) {
   const user = getCurrentUser(req);
   const { toStatus } = req.body || {};
@@ -148,6 +195,16 @@ function userCanMutateIssue(issue, user) {
 
 function handleBugHatchIssues(req, res) {
   const url = req.url.replace(/\?.*$/, "");
+
+  // CSV export: /api/bug-hatch/projects/:pid/issues/export.csv
+  const exportCsvMatch = url.match(/\/api\/bug-hatch\/projects\/([^/]+)\/issues\/export\.csv\/?$/);
+  if (exportCsvMatch) {
+    const projectId = exportCsvMatch[1];
+    if (req.method === "GET") {
+      handleExportIssuesCsv(req, res, projectId);
+      return;
+    }
+  }
 
   // project issues list & create: /api/bug-hatch/projects/:pid/issues
   const projectIssuesMatch = url.match(/\/api\/bug-hatch\/projects\/([^/]+)\/issues\/?$/);

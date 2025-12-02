@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🦎 GAD | Practice test automation</title>
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/css/fonts/fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/controls.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/infoBoxes.css" />
+    <link rel="stylesheet" href="/css/tools-style.css" />
+    <link rel="stylesheet" href="./css/practice-controls.css" />
+    <style>
+        th,
+        td {
+            border-bottom: 2px solid #dddddd;
+        }
+
+        .search-container {
+            position: relative;
+            margin: 0 auto 10px;
+            max-width: 300px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 3px 30px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            font-size: 12px;
+            outline: none;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .clear-search {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            cursor: pointer;
+            display: none;
+            font-size: 14px;
+            padding: 2px 6px;
+            border-radius: 50%;
+        }
+
+        .clear-search:hover {
+            background: #f0f0f0;
+        }
+
+        .clear-search.visible {
+            display: block;
+        }
+
+        .search-input:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 3px rgba(76, 175, 80, 0.3);
+        }
+
+        .tag-filter {
+            margin: 10px;
+            text-align: center;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 2px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .tag-filter h3 {
+            margin: 0;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+
+        .tag-button {
+            margin: 0;
+            padding: 3px 8px;
+            border-radius: 12px;
+            border: 1px solid #ccc;
+            background: white;
+            cursor: pointer;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .tag-button:hover {
+            background: #f0f0f0;
+        }
+
+        .tag-button.active {
+            background: #4CAF50;
+            color: white;
+            border-color: #45a049;
+        }
+
+        .tag-filter-container {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 8px;
+            margin: 10px auto;
+            max-width: 900px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .menu-link {
+            display: block;
+            width: fit-content;
+        }
+
+        .greyed-out {
+            opacity: 0.5;
+            background-color: #f5f5f5;
+            font-size: 10px !important;
+        }
+
+        .no-results {
+            text-align: center;
+            font-style: italic;
+            color: #666;
+        }
+
+        .additionalDesc {
+            font-size: 12px;
+            font-weight: normal;
+        }
+
+        .small-description {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display: grid; grid-template-columns: 4fr 1fr" class="main-nav-menu">
+            <h1 id="menu-main-practice" class="nav-menu"></h1>
+        </div>
+    </header>
+    <br />
+    <br />
+    <br />
+    <div id="pageHeader" style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center">
+        <h1>
+            Welcome to 🦎<span style="color: rgb(8, 195, 1)">G</span>UI <span style="color: rgb(8, 195, 1)">A</span>PI
+            <span style="color: rgb(8, 195, 1)">D</span>emo <span style="color: rgb(8, 195, 1)">Practice Page</span>!
+        </h1>
+    </div>
+    <div style="font-size: 12px; align-content: center; display: flex; align-items: center; justify-content: center; flex-direction: column; margin: 0 auto; max-width: 800px;">
+        <h2 style="margin: 0px;padding: 0px;">Practice your test automation skills!</h2><br />
+        <div class="small-description">Displaying <span id="pageCount">-</span> practice pages</div>
+    </div>
+    <div class="tag-filter-container">
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Search by name, tag or section..." class="search-input">
+            <i class="fas fa-times clear-search" id="clearSearch" title="Clear search"></i>
+        </div>
+        <div class="tag-filter">
+            <h3>Filter by tags:</h3>
+        </div>
+    </div>
+
+    <div id="practiceContainer" align="center"></div>
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center">
+        <a href="/" class="menu-link">
+            <button class="button-primary-small" id="btnReturn" style="margin-top: 4px; font-size: 14px;">Return to main page</button>
+        </a>
+    </div>
+    <br />
+    <!-- If you're reading this, you're pretty curious! -->
+    <div align="center">
+        <div class="simpleInfoBox">
+            <span style="font-size: 12px;">Want more challenges in 🦎GAD?&nbsp;
+                <br />Have any suggestions?&nbsp;
+                <br />Let us know!&nbsp;
+                <br />
+                <strong><a href="https://forms.gle/d2Fq6EY9ZdL9mMQ28" target="_blank" rel="noopener">📝 Survey / Ankieta</a></strong>
+            </span>
+        </div>
+    </div>
+    <br />
+    <div class="container" style="align-content: center; display: flex; align-items: center; justify-content: center; font-size: 24px">
+        <a href="https://jaktestowac.pl" style="color: dimgray">
+            <span style="display: flex; align-items: center; justify-self: center; font-size: medium">
+                <img src="/data/icons/favicon.png" style="width: 25px !important; height: 25px !important; padding: 0; border: none" alt="" />&nbsp&nbspjaktestowac.pl
+            </span>
+        </a>
+    </div>
+</body>
+
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="/js/header.js"></script>
+<script type="text/javascript" src="/version.js"></script>
+<script>
+    document.getElementById("btnPractice").disabled = true;
+</script>
+<script type="text/javascript" src="./js/practice-data.js"></script>
+<script type="text/javascript" src="./js/practice-renderer.js"></script>
+
+</html>

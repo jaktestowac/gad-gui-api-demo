@@ -100,7 +100,13 @@
           return;
         }
         if (!currentIssueId) return;
-        const ok = confirm("Archive this issue? This can be undone from Archived view.");
+        const ok = await window.showConfirmModal({
+          title: "Archive Issue",
+          message: "Archive this issue? This can be undone from the Archived view.",
+          confirmText: "Archive",
+          cancelText: "Cancel",
+          confirmClass: "bg-amber-600 hover:bg-amber-500",
+        });
         if (!ok) return;
         try {
           const resp = await fetch(`/api/bug-hatch/issues/${encodeURIComponent(currentIssueId)}`, {
@@ -109,10 +115,11 @@
           });
           const data = await resp.json().catch(() => ({}));
           if (!resp.ok) {
+            const msg = (data && (data.error?.message || data.error)) || "Failed to archive issue";
             if (window.bhToast && typeof window.bhToast.show === "function") {
-              window.bhToast.show(data.error || "Failed to archive issue", { type: "error", timeout: 6000 });
+              window.bhToast.show(msg, { type: "error", timeout: 6000 });
             } else {
-              alert(data.error || "Failed to archive issue");
+              alert(msg);
             }
             return;
           }
@@ -383,7 +390,8 @@
                 } else {
                   const errorData = await transitionResponse.json().catch(() => ({}));
                   if (window.bhToast && typeof window.bhToast.show === "function") {
-                    window.bhToast.show(errorData.error || "Transition failed", { type: "error", timeout: 6000 });
+                    const msg = (errorData && (errorData.error?.message || errorData.error)) || "Transition failed";
+                    window.bhToast.show(msg, { type: "error", timeout: 6000 });
                   }
                 }
               } catch (error) {

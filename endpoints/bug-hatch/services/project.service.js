@@ -41,9 +41,15 @@ function validateWorkflow(workflow) {
 
 // ==================== SERVICES ====================
 async function createProjectService(data, currentUser) {
-  // RBAC: only admin can create
-  if (!currentUser || currentUser.role !== "admin") {
-    return { success: false, error: "Only admin users can create projects", errorType: "forbidden" };
+  // RBAC: only authenticated users (non-demo, non-viewer) can create projects
+  if (!currentUser) {
+    return { success: false, error: "Not authenticated", errorType: "unauthorized" };
+  }
+  if (currentUser.isDemo) {
+    return { success: false, error: "Demo users cannot create projects", errorType: "forbidden" };
+  }
+  if (currentUser.role === "viewer") {
+    return { success: false, error: "Viewer role cannot create projects", errorType: "forbidden" };
   }
   const keyValidation = validateProjectKey(data.key);
   if (!keyValidation.valid) return { success: false, error: keyValidation.error };
