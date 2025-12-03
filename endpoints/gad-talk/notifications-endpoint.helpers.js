@@ -86,7 +86,7 @@ async function handleMarkAllRead(req, res) {
   try {
     const userId = req.gadTalkUserId;
 
-    await dbOps.markAllNotificationsRead(userId);
+    await dbOps.markAllNotificationsAsRead(userId);
 
     res.status(HTTP_OK).json({ message: "All notifications marked as read" });
   } catch (error) {

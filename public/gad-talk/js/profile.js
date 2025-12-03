@@ -412,8 +412,19 @@ const gadTalkProfile = (function () {
 
     try {
       let response;
-      // For now, all tabs load user's gads (can be expanded later)
-      response = await window.GadTalkAPI.gads.getByUser(profileUser.id, currentPage);
+      // Load different content based on current tab
+      switch (currentTab) {
+        case "replies":
+          response = await window.GadTalkAPI.gads.getUserReplies(profileUser.id, currentPage);
+          break;
+        case "likes":
+          response = await window.GadTalkAPI.gads.getUserLikes(profileUser.id, currentPage);
+          break;
+        case "gads":
+        default:
+          response = await window.GadTalkAPI.gads.getByUser(profileUser.id, currentPage);
+          break;
+      }
 
       const gads = response.gads || [];
 

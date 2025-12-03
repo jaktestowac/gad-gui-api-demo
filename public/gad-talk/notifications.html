@@ -66,6 +66,22 @@
                 </button>
             </header>
 
+            <!-- Notification Tabs -->
+            <div class="gt-tabs gt-notification-tabs">
+                <button class="gt-tab gt-tab-active" data-tab="all" data-testid="tab-all">
+                    <i class="fa-solid fa-bell"></i>
+                    <span>All</span>
+                </button>
+                <button class="gt-tab" data-tab="mentions" data-testid="tab-mentions">
+                    <i class="fa-solid fa-at"></i>
+                    <span>Mentions</span>
+                </button>
+                <button class="gt-tab" data-tab="interactions" data-testid="tab-interactions">
+                    <i class="fa-solid fa-heart"></i>
+                    <span>Interactions</span>
+                </button>
+            </div>
+
             <!-- Notifications list -->
             <div class="gt-notifications-container">
                 <div id="notifications-loading" class="gt-loading-section">
@@ -116,6 +132,7 @@
             let currentPage = 1;
             let isLoading = false;
             let hasMore = true;
+            let currentTab = 'all'; // 'all', 'mentions', 'interactions'
 
             // Require authentication
             currentUser = await window.gadTalkAuth.requireAuth();
@@ -128,6 +145,9 @@
             }
 
             // nav.js populates nav-user-section and dropdown
+
+            // Setup tab handlers
+            setupTabs();
 
             // Load notifications
             await loadNotifications();
@@ -154,6 +174,56 @@
                 }
             });
 
+            function setupTabs() {
+                const tabs = document.querySelectorAll('.gt-notification-tabs .gt-tab');
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        // Update active tab styling
+                        tabs.forEach(t => t.classList.remove('gt-tab-active'));
+                        tab.classList.add('gt-tab-active');
+
+                        // Set current tab and reset pagination
+                        currentTab = tab.dataset.tab;
+                        currentPage = 1;
+                        hasMore = true;
+
+                        // Reload notifications with new filter
+                        loadNotifications(false);
+                    });
+                });
+            }
+
+            function filterNotificationsByTab(notifications, tab) {
+                if (tab === 'all') {
+                    return notifications;
+                } else if (tab === 'mentions') {
+                    // Mentions tab: mentions, replies
+                    return notifications.filter(n => ['mention', 'reply', 'quote'].includes(n.type));
+                } else if (tab === 'interactions') {
+                    // Interactions tab: likes, reposts, follows
+                    return notifications.filter(n => ['like', 'repost', 'follow'].includes(n.type));
+                }
+                return notifications;
+            }
+
+            function getEmptyMessage(tab) {
+                if (tab === 'mentions') {
+                    return {
+                        title: 'No mentions yet',
+                        message: 'When someone mentions you in a Gad, you\'ll see it here.'
+                    };
+                } else if (tab === 'interactions') {
+                    return {
+                        title: 'No interactions yet',
+                        message: 'Likes, reposts, and new followers will appear here.'
+                    };
+                }
+                return {
+                    title: 'No notifications yet',
+                    message: 'When someone interacts with your Gads, you\'ll see it here.'
+                };
+            }
+
             async function loadNotifications(append = false) {
                 if (isLoading) return;
                 isLoading = true;
@@ -171,18 +241,27 @@
 
                 try {
                     const response = await window.GadTalkAPI.notifications.getAll(currentPage);
-                    const notifications = response.notifications || [];
+                    let notifications = response.notifications || [];
+
+                    // Filter notifications based on current tab
+                    notifications = filterNotificationsByTab(notifications, currentTab);
 
                     loadingEl.classList.add('gt-hidden');
 
                     if (notifications.length === 0 && currentPage === 1) {
+                        const emptyMsg = getEmptyMessage(currentTab);
+                        const emptyTitleEl = emptyEl.querySelector('.gt-empty-title');
+                        const emptyMsgEl = emptyEl.querySelector('.gt-empty-message');
+                        if (emptyTitleEl) emptyTitleEl.textContent = emptyMsg.title;
+                        if (emptyMsgEl) emptyMsgEl.textContent = emptyMsg.message;
                         emptyEl.classList.remove('gt-hidden');
                         loadMoreSection.classList.add('gt-hidden');
                     } else {
                         emptyEl.classList.add('gt-hidden');
                         renderNotifications(notifications, append);
 
-                        hasMore = response.hasMore !== false && notifications.length > 0;
+                        // Check if there might be more (based on original response, not filtered)
+                        hasMore = response.hasMore !== false && (response.notifications || []).length > 0;
                         if (hasMore) {
                             loadMoreSection.classList.remove('gt-hidden');
                         } else {

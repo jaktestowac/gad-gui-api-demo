@@ -331,16 +331,37 @@ const GadTalkAPI = (function () {
 
     /**
      * Get home timeline (gads from followed users)
+     * @param {number} page - Page number (for page-based pagination)
+     * @param {number} limit - Items per page
+     * @param {string} sort - Sort type: 'latest', 'top', 'media'
+     * @param {string} cursor - Cursor for cursor-based pagination
      */
-    async getTimeline(page = 1, limit = 20) {
-      return request(`/gads/timeline?page=${page}&limit=${limit}`);
+    async getTimeline(page = 1, limit = 20, sort = "latest", cursor = null) {
+      let url = `/gads/timeline?page=${page}&limit=${limit}&sort=${sort}`;
+      if (cursor) url += `&cursor=${encodeURIComponent(cursor)}`;
+      return request(url);
     },
 
     /**
      * Get for-you feed (all gads)
+     * @param {number} page - Page number (for page-based pagination)
+     * @param {number} limit - Items per page
+     * @param {string} sort - Sort type: 'latest', 'top', 'media'
+     * @param {string} cursor - Cursor for cursor-based pagination
      */
-    async getForYou(page = 1, limit = 20) {
-      return request(`/gads/foryou?page=${page}&limit=${limit}`);
+    async getForYou(page = 1, limit = 20, sort = "latest", cursor = null) {
+      let url = `/gads/foryou?page=${page}&limit=${limit}&sort=${sort}`;
+      if (cursor) url += `&cursor=${encodeURIComponent(cursor)}`;
+      return request(url);
+    },
+
+    /**
+     * Get popular gads sorted by engagement
+     * @param {number} page - Page number
+     * @param {number} limit - Items per page
+     */
+    async getPopular(page = 1, limit = 20) {
+      return request(`/gads/popular?page=${page}&limit=${limit}`);
     },
 
     /**
@@ -348,6 +369,20 @@ const GadTalkAPI = (function () {
      */
     async getByUser(userId, page = 1, limit = 20) {
       return request(`/users/${encodeURIComponent(userId)}/gads?page=${page}&limit=${limit}`);
+    },
+
+    /**
+     * Get replies by a specific user
+     */
+    async getUserReplies(userId, page = 1, limit = 20) {
+      return request(`/users/${encodeURIComponent(userId)}/replies?page=${page}&limit=${limit}`);
+    },
+
+    /**
+     * Get gads liked by a specific user
+     */
+    async getUserLikes(userId, page = 1, limit = 20) {
+      return request(`/users/${encodeURIComponent(userId)}/likes?page=${page}&limit=${limit}`);
     },
 
     /**
@@ -448,6 +483,13 @@ const GadTalkAPI = (function () {
     },
 
     /**
+     * Get all notifications (alias for get)
+     */
+    async getAll(page = 1, limit = 20) {
+      return request(`/notifications?page=${page}&limit=${limit}`);
+    },
+
+    /**
      * Get unread count
      */
     async getUnreadCount() {
@@ -511,6 +553,70 @@ const GadTalkAPI = (function () {
     },
   };
 
+  // ==================== Search API ====================
+
+  const search = {
+    /**
+     * Get search suggestions (autocomplete)
+     */
+    async getSuggestions(query, limit = 8) {
+      return request(`/search/suggestions?q=${encodeURIComponent(query)}&limit=${limit}`);
+    },
+
+    /**
+     * Combined search for gads, users, and hashtags
+     */
+    async all(query, page = 1, limit = 20) {
+      return request(`/search?q=${encodeURIComponent(query)}&page=${page}&limit=${limit}`);
+    },
+
+    /**
+     * Search gads only
+     */
+    async gads(query, page = 1, limit = 20) {
+      return request(`/search/gads?q=${encodeURIComponent(query)}&page=${page}&limit=${limit}`);
+    },
+
+    /**
+     * Search users only
+     */
+    async users(query, page = 1, limit = 20) {
+      return request(`/search/users?q=${encodeURIComponent(query)}&page=${page}&limit=${limit}`);
+    },
+  };
+
+  // ==================== Explore API ====================
+
+  const explore = {
+    /**
+     * Get explore page data (trending content, popular users, etc.)
+     */
+    async getData() {
+      return request("/explore");
+    },
+
+    /**
+     * Get trending content
+     */
+    async getTrending(limit = 10) {
+      return request(`/explore/trending?limit=${limit}`);
+    },
+
+    /**
+     * Get popular gads
+     */
+    async getPopularGads(page = 1, limit = 20) {
+      return request(`/explore/gads?page=${page}&limit=${limit}`);
+    },
+
+    /**
+     * Get suggested users to follow
+     */
+    async getSuggestedUsers(limit = 10) {
+      return request(`/explore/users?limit=${limit}`);
+    },
+  };
+
   // Public API
   return {
     auth,
@@ -519,6 +625,8 @@ const GadTalkAPI = (function () {
     notifications,
     hashtags,
     admin,
+    search,
+    explore,
     getToken,
     setToken,
     clearToken,

@@ -6,6 +6,7 @@
 const gadTalkApp = (function () {
   let currentUser = null;
   let currentFeed = "for-you";
+  let currentSort = "latest";
   let currentPage = 1;
   let isLoading = false;
   let hasMore = true;
@@ -35,6 +36,7 @@ const gadTalkApp = (function () {
 
     // Common setup for both modes
     setupFeedTabs();
+    setupSortOptions();
     setupSearch();
 
     // Load initial feed (works for both guest and authenticated)
@@ -526,6 +528,29 @@ const gadTalkApp = (function () {
   }
 
   /**
+   * Setup sort options (Latest/Top)
+   */
+  function setupSortOptions() {
+    const sortBtns = document.querySelectorAll(".gt-sort-btn[data-sort]");
+    sortBtns.forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const sortType = btn.dataset.sort;
+        if (sortType === currentSort) return;
+
+        // Update active sort button
+        sortBtns.forEach((b) => b.classList.remove("gt-sort-active"));
+        btn.classList.add("gt-sort-active");
+
+        // Load feed with new sort
+        currentSort = sortType;
+        currentPage = 1;
+        hasMore = true;
+        await loadFeed();
+      });
+    });
+  }
+
+  /**
    * Setup search
    */
   function setupSearch() {
@@ -582,9 +607,9 @@ const gadTalkApp = (function () {
     try {
       let response;
       if (currentFeed === "following") {
-        response = await window.GadTalkAPI.gads.getTimeline(currentPage);
+        response = await window.GadTalkAPI.gads.getTimeline(currentPage, 20, currentSort);
       } else {
-        response = await window.GadTalkAPI.gads.getForYou(currentPage);
+        response = await window.GadTalkAPI.gads.getForYou(currentPage, 20, currentSort);
       }
 
       const gads = response.gads || [];

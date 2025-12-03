@@ -1269,27 +1269,29 @@ async function createNotification(notifData) {
 }
 
 /**
- * Get notifications for a user
+ * Get notifications for a user with pagination
  * @param {string} userId - User ID
- * @param {Object} options - Options (limit, unreadOnly)
- * @returns {Array} Array of notifications
+ * @param {number} page - Page number (default 1)
+ * @param {number} limit - Items per page (default 20)
+ * @param {Object} options - Additional options (unreadOnly)
+ * @returns {Object} { notifications: Array, total: number }
  */
-function getNotifications(userId, options = {}) {
+function getNotifications(userId, page = 1, limit = 20, options = {}) {
   const db = readGadTalkDb();
-  let notifications = db.notifications.filter((n) => areIdsEqual(n.userId, userId));
+  let allNotifications = db.notifications.filter((n) => areIdsEqual(n.userId, userId));
 
   if (options.unreadOnly) {
-    notifications = notifications.filter((n) => !n.read);
+    allNotifications = allNotifications.filter((n) => !n.read);
   }
 
   // Sort by createdAt desc
-  notifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  allNotifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-  if (options.limit) {
-    notifications = notifications.slice(0, options.limit);
-  }
+  const total = allNotifications.length;
+  const start = (page - 1) * limit;
+  const notifications = allNotifications.slice(start, start + limit);
 
-  return notifications;
+  return { notifications, total };
 }
 
 /**
@@ -1435,6 +1437,39 @@ function hasBlocked(blockerId, blockedId) {
 function hasMuted(muterId, mutedId) {
   const db = readGadTalkDb();
   return db.mutes.some((m) => areIdsEqual(m.muterId, muterId) && areIdsEqual(m.mutedId, mutedId));
+}
+
+/**
+ * Get all user IDs blocked by a user
+ * @param {string} userId - The user who did the blocking
+ * @returns {string[]} Array of blocked user IDs
+ */
+function getBlockedUserIds(userId) {
+  if (!userId) return [];
+  const db = readGadTalkDb();
+  return db.blocks.filter((b) => areIdsEqual(b.blockerId, userId)).map((b) => b.blockedId);
+}
+
+/**
+ * Get all user IDs who blocked a user
+ * @param {string} userId - The user who was blocked
+ * @returns {string[]} Array of user IDs who blocked this user
+ */
+function getBlockedByUserIds(userId) {
+  if (!userId) return [];
+  const db = readGadTalkDb();
+  return db.blocks.filter((b) => areIdsEqual(b.blockedId, userId)).map((b) => b.blockerId);
+}
+
+/**
+ * Get all user IDs muted by a user
+ * @param {string} userId - The user who did the muting
+ * @returns {string[]} Array of muted user IDs
+ */
+function getMutedUserIds(userId) {
+  if (!userId) return [];
+  const db = readGadTalkDb();
+  return db.mutes.filter((m) => areIdsEqual(m.muterId, userId)).map((m) => m.mutedId);
 }
 
 // ==================== BOOKMARK OPERATIONS ====================
@@ -1667,30 +1702,63 @@ async function deleteRegad(userId, gadId) {
 }
 
 /**
- * Get "For You" feed - all gads sorted by recency
- * @param {number} page - Page number
+ * Get "For You" feed - all gads with sorting support
+ * Supports both page-based and cursor-based pagination
+ * @param {number} page - Page number (for page-based pagination)
  * @param {number} limit - Items per page
  * @param {Object} options - Filter options
  * @param {string} options.currentUserId - Current user ID for visibility filtering
  * @param {string[]} options.followingIds - IDs of users the current user follows
+ * @param {string} options.sort - Sort type: 'latest', 'top', 'media'
+ * @param {string} options.cursor - Cursor for cursor-based pagination (ID of last item)
  */
 function getGadsForYou(page = 1, limit = 20, options = {}) {
   const db = readGadTalkDb();
-  const { currentUserId, followingIds = [] } = options;
+  const {
+    currentUserId,
+    followingIds = [],
+    sort = "latest",
+    blockedUserIds = [],
+    mutedUserIds = [],
+    cursor = null,
+  } = options;
 
-  const allGads = db.gads
-    .filter((g) => {
-      if (g.deleted) return false;
-      // Apply visibility filtering
-      return isGadVisibleToUser(g, currentUserId, followingIds);
-    })
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  // Combine blocked and muted users for filtering
+  const excludedUserIds = [...new Set([...blockedUserIds, ...mutedUserIds])];
+
+  let allGads = db.gads.filter((g) => {
+    if (g.deleted) return false;
+    // Filter out gads from blocked/muted users
+    if (excludedUserIds.some((id) => areIdsEqual(id, g.userId))) return false;
+    // Apply visibility filtering
+    if (!isGadVisibleToUser(g, currentUserId, followingIds)) return false;
+    // Filter by media if sort type is 'media'
+    if (sort === "media" && !g.imageUrl) return false;
+    return true;
+  });
+
+  // Apply sorting
+  allGads = sortGadsBy(allGads, sort);
 
   const total = allGads.length;
+
+  // Cursor-based pagination
+  if (cursor) {
+    const cursorIndex = allGads.findIndex((g) => areIdsEqual(g.id, cursor));
+    if (cursorIndex !== -1) {
+      allGads = allGads.slice(cursorIndex + 1);
+    }
+    const gads = allGads.slice(0, limit);
+    const nextCursor = gads.length === limit && gads.length > 0 ? gads[gads.length - 1].id : null;
+    return { gads, total, nextCursor };
+  }
+
+  // Page-based pagination
   const start = (page - 1) * limit;
   const gads = allGads.slice(start, start + limit);
+  const nextCursor = start + limit < total && gads.length > 0 ? gads[gads.length - 1].id : null;
 
-  return { gads, total };
+  return { gads, total, nextCursor };
 }
 
 /**
@@ -1730,31 +1798,135 @@ function isGadVisibleToUser(gad, currentUserId, followingIds = []) {
 }
 
 /**
- * Get gads by multiple users
- * @param {string[]} userIds - User IDs to get gads from
+ * Sort gads by specified type
+ * @param {Array} gads - Array of gads
+ * @param {string} sortType - 'latest', 'top', or 'media'
+ * @returns {Array} Sorted gads
+ */
+function sortGadsBy(gads, sortType) {
+  switch (sortType) {
+    case "top":
+      // Sort by engagement score (likes + reposts + replies)
+      return gads.sort((a, b) => {
+        const scoreA = (a.likeCount || 0) + (a.regadCount || 0) * 3 + (a.replyCount || 0) * 2;
+        const scoreB = (b.likeCount || 0) + (b.regadCount || 0) * 3 + (b.replyCount || 0) * 2;
+        // Secondary sort by date for ties
+        if (scoreB === scoreA) {
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        }
+        return scoreB - scoreA;
+      });
+
+    case "media":
+    case "latest":
+    default:
+      // Sort by creation date, newest first
+      return gads.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }
+}
+
+/**
+ * Get popular gads sorted by engagement
  * @param {number} page - Page number
  * @param {number} limit - Items per page
  * @param {Object} options - Filter options
  * @param {string} options.currentUserId - Current user ID for visibility filtering
  * @param {string[]} options.followingIds - IDs of users the current user follows
+ * @param {string[]} options.blockedUserIds - IDs of users blocked by current user
+ * @returns {Object} { gads, total }
  */
-function getGadsByUsers(userIds, page = 1, limit = 20, options = {}) {
+function getPopularGads(page = 1, limit = 20, options = {}) {
   const db = readGadTalkDb();
-  const { currentUserId, followingIds = [] } = options;
+  const { currentUserId, followingIds = [], blockedUserIds = [] } = options;
 
-  const allGads = db.gads
-    .filter((g) => {
-      if (g.deleted) return false;
-      if (!userIds.some((uid) => areIdsEqual(g.userId, uid))) return false;
-      return isGadVisibleToUser(g, currentUserId, followingIds);
-    })
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  let allGads = db.gads.filter((g) => {
+    if (g.deleted) return false;
+    // Filter out gads from blocked users
+    if (blockedUserIds.some((id) => areIdsEqual(id, g.userId))) return false;
+    // Apply visibility filtering
+    if (!isGadVisibleToUser(g, currentUserId, followingIds)) return false;
+    return true;
+  });
+
+  // Sort by engagement score (likes + reposts*3 + replies*2)
+  allGads = allGads.sort((a, b) => {
+    const scoreA = (a.likeCount || 0) + (a.regadCount || 0) * 3 + (a.replyCount || 0) * 2;
+    const scoreB = (b.likeCount || 0) + (b.regadCount || 0) * 3 + (b.replyCount || 0) * 2;
+    // Secondary sort by date for ties
+    if (scoreB === scoreA) {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    }
+    return scoreB - scoreA;
+  });
 
   const total = allGads.length;
   const start = (page - 1) * limit;
   const gads = allGads.slice(start, start + limit);
 
   return { gads, total };
+}
+
+/**
+ * Get gads by multiple users
+ * Supports both page-based and cursor-based pagination
+ * @param {string[]} userIds - User IDs to get gads from
+ * @param {number} page - Page number
+ * @param {number} limit - Items per page
+ * @param {Object} options - Filter options
+ * @param {string} options.currentUserId - Current user ID for visibility filtering
+ * @param {string[]} options.followingIds - IDs of users the current user follows
+ * @param {string} options.sort - Sort type: 'latest', 'top', 'media'
+ * @param {string[]} options.blockedUserIds - IDs of users blocked by current user
+ * @param {string[]} options.mutedUserIds - IDs of users muted by current user
+ * @param {string} options.cursor - Cursor for cursor-based pagination (ID of last item)
+ */
+function getGadsByUsers(userIds, page = 1, limit = 20, options = {}) {
+  const db = readGadTalkDb();
+  const {
+    currentUserId,
+    followingIds = [],
+    sort = "latest",
+    blockedUserIds = [],
+    mutedUserIds = [],
+    cursor = null,
+  } = options;
+
+  // Combine blocked and muted users for filtering
+  const excludedUserIds = [...new Set([...blockedUserIds, ...mutedUserIds])];
+
+  let allGads = db.gads.filter((g) => {
+    if (g.deleted) return false;
+    if (!userIds.some((uid) => areIdsEqual(g.userId, uid))) return false;
+    // Filter out gads from blocked/muted users
+    if (excludedUserIds.some((id) => areIdsEqual(id, g.userId))) return false;
+    if (!isGadVisibleToUser(g, currentUserId, followingIds)) return false;
+    // Filter by media if sort type is 'media'
+    if (sort === "media" && !g.imageUrl) return false;
+    return true;
+  });
+
+  // Apply sorting
+  allGads = sortGadsBy(allGads, sort);
+
+  const total = allGads.length;
+
+  // Cursor-based pagination
+  if (cursor) {
+    const cursorIndex = allGads.findIndex((g) => areIdsEqual(g.id, cursor));
+    if (cursorIndex !== -1) {
+      allGads = allGads.slice(cursorIndex + 1);
+    }
+    const gads = allGads.slice(0, limit);
+    const nextCursor = gads.length === limit && gads.length > 0 ? gads[gads.length - 1].id : null;
+    return { gads, total, nextCursor };
+  }
+
+  // Page-based pagination
+  const start = (page - 1) * limit;
+  const gads = allGads.slice(start, start + limit);
+  const nextCursor = start + limit < total && gads.length > 0 ? gads[gads.length - 1].id : null;
+
+  return { gads, total, nextCursor };
 }
 
 /**
@@ -1781,6 +1953,67 @@ function getGadsByUser(userId, page = 1, limit = 20, options = {}) {
   const total = allGads.length;
   const start = (page - 1) * limit;
   const gads = allGads.slice(start, start + limit);
+
+  return { gads, total };
+}
+
+/**
+ * Get replies made by a user (gads that are replies to other gads)
+ * @param {string} userId - User ID
+ * @param {number} page - Page number
+ * @param {number} limit - Items per page
+ * @param {Object} options - Filter options
+ */
+function getUserReplies(userId, page = 1, limit = 20, options = {}) {
+  const db = readGadTalkDb();
+  const { currentUserId, followingIds = [] } = options;
+
+  const allReplies = db.gads
+    .filter((g) => {
+      if (g.deleted) return false;
+      if (!areIdsEqual(g.userId, userId)) return false;
+      // Must be a reply (has replyTo or replyToId)
+      if (!g.replyTo && !g.replyToId) return false;
+      return isGadVisibleToUser(g, currentUserId, followingIds);
+    })
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  const total = allReplies.length;
+  const start = (page - 1) * limit;
+  const gads = allReplies.slice(start, start + limit);
+
+  return { gads, total };
+}
+
+/**
+ * Get gads liked by a user
+ * @param {string} userId - User ID
+ * @param {number} page - Page number
+ * @param {number} limit - Items per page
+ * @param {Object} options - Filter options
+ */
+function getUserLikedGads(userId, page = 1, limit = 20, options = {}) {
+  const db = readGadTalkDb();
+  const { currentUserId, followingIds = [] } = options;
+
+  // Get all likes by this user
+  const userLikes = db.likes
+    .filter((l) => areIdsEqual(l.userId, userId))
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  // Get the gads for these likes
+  const allLikedGads = userLikes
+    .map((like) => {
+      const gad = db.gads.find((g) => areIdsEqual(g.id, like.gadId));
+      if (!gad || gad.deleted) return null;
+      if (!isGadVisibleToUser(gad, currentUserId, followingIds)) return null;
+      return gad;
+    })
+    .filter(Boolean);
+
+  const total = allLikedGads.length;
+  const start = (page - 1) * limit;
+  const gads = allLikedGads.slice(start, start + limit);
 
   return { gads, total };
 }
@@ -1822,16 +2055,19 @@ function getReplies(gadId, page = 1, limit = 20, options = {}) {
  * @param {Object} options - Filter options
  * @param {string} options.currentUserId - Current user ID for visibility filtering
  * @param {string[]} options.followingIds - IDs of users the current user follows
+ * @param {string[]} options.blockedUserIds - IDs of users blocked by current user
  */
 function searchGads(query, page = 1, limit = 20, options = {}) {
   const db = readGadTalkDb();
-  const { currentUserId, followingIds = [] } = options;
+  const { currentUserId, followingIds = [], blockedUserIds = [] } = options;
   const lowerQuery = query.toLowerCase();
 
   const allGads = db.gads
     .filter((g) => {
       if (g.deleted) return false;
       if (!g.content || !g.content.toLowerCase().includes(lowerQuery)) return false;
+      // Filter out gads from blocked users
+      if (blockedUserIds.some((id) => areIdsEqual(id, g.userId))) return false;
       return isGadVisibleToUser(g, currentUserId, followingIds);
     })
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -1850,16 +2086,23 @@ function searchGads(query, page = 1, limit = 20, options = {}) {
  * @param {number} limit - Items per page
  * @param {Object} options - Filter options
  * @param {string} options.currentUserId - Current user ID (to exclude from results)
+ * @param {string[]} options.blockedUserIds - IDs of users blocked by current user
+ * @param {string[]} options.blockedByUserIds - IDs of users who blocked current user
  */
 function searchUsers(query, page = 1, limit = 20, options = {}) {
   const db = readGadTalkDb();
-  const { currentUserId } = options;
+  const { currentUserId, blockedUserIds = [], blockedByUserIds = [] } = options;
   const lowerQuery = query.toLowerCase();
+
+  // Combine blocked users for filtering
+  const excludedUserIds = [...new Set([...blockedUserIds, ...blockedByUserIds])];
 
   const allUsers = db.users
     .filter((u) => {
       // Exclude current user from search results
       if (currentUserId && areIdsEqual(u.id, currentUserId)) return false;
+      // Exclude blocked users
+      if (excludedUserIds.some((id) => areIdsEqual(id, u.id))) return false;
       // Match username or display name
       const usernameMatch = u.username && u.username.toLowerCase().includes(lowerQuery);
       const displayNameMatch = u.displayName && u.displayName.toLowerCase().includes(lowerQuery);
@@ -2118,6 +2361,9 @@ module.exports = {
   getGadsForYou,
   getGadsByUsers,
   getGadsByUser,
+  getUserReplies,
+  getUserLikedGads,
+  getPopularGads,
   getReplies,
   searchGads,
   searchUsers,
@@ -2158,9 +2404,12 @@ module.exports = {
   createBlock,
   deleteBlock,
   hasBlocked,
+  getBlockedUserIds,
+  getBlockedByUserIds,
   createMute,
   deleteMute,
   hasMuted,
+  getMutedUserIds,
 
   // Bookmarks
   createBookmark,

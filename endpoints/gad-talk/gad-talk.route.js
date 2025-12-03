@@ -58,6 +58,8 @@ const {
   handleGetForYouFeed,
   handleGetTimeline,
   handleGetUserGads,
+  handleGetUserReplies,
+  handleGetUserLikes,
   handleLikeGad,
   handleUnlikeGad,
   handleRegad,
@@ -68,6 +70,7 @@ const {
   handleGetReplies,
   handleSearchGads,
   handleGetTrendingHashtags,
+  handleGetPopularGads,
   handleGetGadsByHashtag,
 } = require("./gads-endpoint.helpers");
 
@@ -77,6 +80,14 @@ const {
   handleMarkRead,
   handleMarkAllRead,
 } = require("./notifications-endpoint.helpers");
+
+const {
+  handleSearchSuggestions,
+  handleCombinedSearch,
+  handleGetExplore,
+  handleGetExploreTopics,
+  handleGetPopularGadsSearch,
+} = require("./search-endpoint.helpers");
 
 const { initializeAllGadTalkDatabases } = require("./db-gad-talk.operations");
 
@@ -180,6 +191,16 @@ async function handleGadTalk(req, res) {
     // ==================== HASHTAGS ROUTES ====================
     if (segments[0] === "hashtags") {
       return await handleHashtagsRoutes(req, res, method, segments);
+    }
+
+    // ==================== SEARCH ROUTES ====================
+    if (segments[0] === "search") {
+      return await handleSearchRoutes(req, res, method, segments);
+    }
+
+    // ==================== EXPLORE ROUTES ====================
+    if (segments[0] === "explore") {
+      return await handleExploreRoutes(req, res, method, segments);
     }
 
     // ==================== ADMIN ROUTES ====================
@@ -339,6 +360,20 @@ async function handleUserRoutes(req, res, method, segments) {
       }
       break;
 
+    case "replies":
+      if (method === "GET") {
+        req.params = { userId };
+        return handleGetUserReplies(req, res);
+      }
+      break;
+
+    case "likes":
+      if (method === "GET") {
+        req.params = { userId };
+        return handleGetUserLikes(req, res);
+      }
+      break;
+
     default:
       break;
   }
@@ -367,13 +402,18 @@ async function handleGadsRoutes(req, res, method, segments) {
     return handleGetForYouFeed(req, res);
   }
 
+  // GET /api/gad-talk/gads/popular - Get popular gads
+  if (gadId === "popular" && method === "GET") {
+    return handleGetPopularGads(req, res);
+  }
+
   // GET /api/gad-talk/gads/search - Search gads
   if (gadId === "search" && method === "GET") {
     return handleSearchGads(req, res);
   }
 
   // Routes with gad ID
-  if (gadId && gadId !== "timeline" && gadId !== "foryou" && gadId !== "search") {
+  if (gadId && gadId !== "timeline" && gadId !== "foryou" && gadId !== "popular" && gadId !== "search") {
     req.params = { gadId };
     const subAction = segments[2];
 
@@ -473,6 +513,49 @@ async function handleHashtagsRoutes(req, res, method, segments) {
   if (hashtag && method === "GET") {
     req.params = { hashtag };
     return handleGetGadsByHashtag(req, res);
+  }
+
+  res.status(HTTP_METHOD_NOT_ALLOWED).send(formatErrorResponse("Method not allowed"));
+}
+
+/**
+ * Handle search routes
+ */
+async function handleSearchRoutes(req, res, method, segments) {
+  const action = segments[1];
+
+  // GET /api/gad-talk/search - Combined search
+  if (!action && method === "GET") {
+    return handleCombinedSearch(req, res);
+  }
+
+  // GET /api/gad-talk/search/suggestions - Get autocomplete suggestions
+  if (action === "suggestions" && method === "GET") {
+    return handleSearchSuggestions(req, res);
+  }
+
+  res.status(HTTP_METHOD_NOT_ALLOWED).send(formatErrorResponse("Method not allowed"));
+}
+
+/**
+ * Handle explore routes
+ */
+async function handleExploreRoutes(req, res, method, segments) {
+  const action = segments[1];
+
+  // GET /api/gad-talk/explore - Get explore page data
+  if (!action && method === "GET") {
+    return handleGetExplore(req, res);
+  }
+
+  // GET /api/gad-talk/explore/topics - Get explore topics
+  if (action === "topics" && method === "GET") {
+    return handleGetExploreTopics(req, res);
+  }
+
+  // GET /api/gad-talk/explore/popular - Get popular gads
+  if (action === "popular" && method === "GET") {
+    return handleGetPopularGadsSearch(req, res);
   }
 
   res.status(HTTP_METHOD_NOT_ALLOWED).send(formatErrorResponse("Method not allowed"));

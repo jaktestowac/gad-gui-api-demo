@@ -69,7 +69,13 @@
                 <form id="search-form" class="gt-search-form" data-testid="search-form">
                     <div class="gt-search-input-wrapper">
                         <span class="gt-search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
-                        <input type="search" id="search-input" class="gt-search-input" placeholder="Search GadTalk" data-testid="search-input" />
+                        <input type="search" id="search-input" class="gt-search-input" placeholder="Search GadTalk" data-testid="search-input" autocomplete="off" />
+                        <!-- Autocomplete suggestions dropdown -->
+                        <div class="gt-search-suggestions gt-hidden" id="search-suggestions" data-testid="search-suggestions">
+                            <div class="gt-suggestions-content" id="suggestions-content">
+                                <!-- Suggestions will be populated here -->
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -139,9 +145,152 @@
             // Handle search
             const searchForm = document.getElementById('search-form');
             const searchInput = document.getElementById('search-input');
+            const searchSuggestions = document.getElementById('search-suggestions');
+            const suggestionsContent = document.getElementById('suggestions-content');
+
+            let debounceTimer = null;
+            let selectedIndex = -1;
+
+            // Autocomplete suggestions
+            searchInput.addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                const query = searchInput.value.trim();
+
+                if (query.length < 2) {
+                    hideSuggestions();
+                    return;
+                }
+
+                debounceTimer = setTimeout(async () => {
+                    try {
+                        const response = await window.GadTalkAPI.search.getSuggestions(query);
+                        renderSuggestions(response);
+                    } catch (error) {
+                        console.error('Failed to load suggestions:', error);
+                        hideSuggestions();
+                    }
+                }, 200);
+            });
+
+            // Keyboard navigation for suggestions
+            searchInput.addEventListener('keydown', (e) => {
+                if (searchSuggestions.classList.contains('gt-hidden')) return;
+
+                const items = suggestionsContent.querySelectorAll('.gt-suggestion-item');
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+                    updateSelectedItem(items);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    selectedIndex = Math.max(selectedIndex - 1, -1);
+                    updateSelectedItem(items);
+                } else if (e.key === 'Enter' && selectedIndex >= 0) {
+                    e.preventDefault();
+                    items[selectedIndex].click();
+                } else if (e.key === 'Escape') {
+                    hideSuggestions();
+                }
+            });
+
+            // Hide suggestions when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!searchInput.contains(e.target) && !searchSuggestions.contains(e.target)) {
+                    hideSuggestions();
+                }
+            });
+
+            function renderSuggestions(data) {
+                const { users = [], hashtags = [], recentSearches = [] } = data;
+
+                if (users.length === 0 && hashtags.length === 0) {
+                    suggestionsContent.innerHTML = `
+                        <div class="gt-suggestions-empty">No suggestions found</div>
+                    `;
+                    showSuggestions();
+                    return;
+                }
+
+                let html = '';
+
+                // Users section
+                if (users.length > 0) {
+                    html += `<div class="gt-suggestion-section">Users</div>`;
+                    html += users.map(user => `
+                        <div class="gt-suggestion-item" data-type="user" data-value="${user.username}">
+                            <div class="gt-suggestion-icon gt-suggestion-user">
+                                <img src="${user.avatar || '/gad-talk/images/default-avatar.png'}" alt="${user.name}" />
+                            </div>
+                            <div class="gt-suggestion-text">
+                                <div class="gt-suggestion-primary">${user.name}</div>
+                                <div class="gt-suggestion-secondary">@${user.username}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                // Hashtags section
+                if (hashtags.length > 0) {
+                    html += `<div class="gt-suggestion-section">Hashtags</div>`;
+                    html += hashtags.map(tag => `
+                        <div class="gt-suggestion-item" data-type="hashtag" data-value="${tag.tag}">
+                            <div class="gt-suggestion-icon">
+                                <i class="fa-solid fa-hashtag"></i>
+                            </div>
+                            <div class="gt-suggestion-text">
+                                <div class="gt-suggestion-primary">#${tag.tag}</div>
+                                <div class="gt-suggestion-secondary">${tag.count || 0} gads</div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                suggestionsContent.innerHTML = html;
+                selectedIndex = -1;
+
+                // Add click handlers
+                suggestionsContent.querySelectorAll('.gt-suggestion-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const type = item.dataset.type;
+                        const value = item.dataset.value;
+
+                        if (type === 'user') {
+                            window.location.href = `/gad-talk/profile.html?user=${value}`;
+                        } else if (type === 'hashtag') {
+                            window.location.href = `/gad-talk/explore.html?hashtag=${value}`;
+                        } else {
+                            searchInput.value = value;
+                            searchForm.dispatchEvent(new Event('submit'));
+                        }
+                    });
+                });
+
+                showSuggestions();
+            }
+
+            function showSuggestions() {
+                searchSuggestions.classList.remove('gt-hidden');
+            }
+
+            function hideSuggestions() {
+                searchSuggestions.classList.add('gt-hidden');
+                selectedIndex = -1;
+            }
+
+            function updateSelectedItem(items) {
+                items.forEach((item, idx) => {
+                    if (idx === selectedIndex) {
+                        item.classList.add('gt-suggestion-active');
+                    } else {
+                        item.classList.remove('gt-suggestion-active');
+                    }
+                });
+            }
 
             searchForm.addEventListener('submit', (e) => {
                 e.preventDefault();
+                hideSuggestions();
                 const query = searchInput.value.trim();
                 if (query) {
                     window.location.href = `/gad-talk/search.html?q=${encodeURIComponent(query)}`;
@@ -153,7 +302,13 @@
             const hashtag = urlParams.get('hashtag');
             if (hashtag) {
                 loadHashtagGads(hashtag);
+            } else {
+                // Load popular gads when no hashtag is specified
+                loadPopularGads();
             }
+
+            // Load user suggestions
+            loadSuggestions();
 
             async function loadTrending() {
                 const trendingList = document.getElementById('trending-list');
@@ -168,7 +323,7 @@
                     if (hashtags.length === 0) {
                         trendingList.innerHTML = `
                             <div class="gt-empty-state-sm">
-                                <p class="gt-text-secondary">No trending hashtags yet</p>
+                                <p class="gt-text-secondary">No trending hashtags yet. Start posting with #hashtags!</p>
                             </div>
                         `;
                         return;
@@ -184,13 +339,116 @@
                         </a>
                     `).join('');
                 } catch (error) {
-                    trendingLoading.innerHTML = '<span class="gt-text-error">Failed to load trends</span>';
+                    console.error('Failed to load trending:', error);
+                    trendingLoading.classList.add('gt-hidden');
+                    trendingList.innerHTML = `
+                        <div class="gt-empty-state-sm">
+                            <p class="gt-text-secondary">No trending hashtags available</p>
+                        </div>
+                    `;
+                }
+            }
+
+            async function loadPopularGads() {
+                const popularGads = document.getElementById('popular-gads');
+                const popularLoading = document.getElementById('popular-loading');
+
+                try {
+                    const response = await window.GadTalkAPI.gads.getPopular(1, 10);
+                    const gads = response.gads || [];
+
+                    popularLoading.classList.add('gt-hidden');
+
+                    if (gads.length === 0) {
+                        popularGads.innerHTML = `
+                            <div class="gt-empty-state">
+                                <div class="gt-empty-icon"><i class="fa-solid fa-fire"></i></div>
+                                <h3 class="gt-empty-title">No popular Gads yet</h3>
+                                <p class="gt-empty-message">Be the first to create engaging content!</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    window.gadTalkGads.renderGads(gads, popularGads, currentUser.id);
+                } catch (error) {
+                    console.error('Failed to load popular gads:', error);
+                    popularLoading.classList.add('gt-hidden');
+                    popularGads.innerHTML = `
+                        <div class="gt-empty-state-sm">
+                            <p class="gt-text-secondary">No popular gads available</p>
+                        </div>
+                    `;
+                }
+            }
+
+            async function loadSuggestions() {
+                const suggestionsList = document.getElementById('suggestions-list');
+                const suggestionsLoading = document.getElementById('suggestions-loading');
+
+                try {
+                    const response = await window.GadTalkAPI.users.getSuggestions(5);
+                    const users = response.users || [];
+
+                    suggestionsLoading.classList.add('gt-hidden');
+
+                    if (users.length === 0) {
+                        suggestionsList.innerHTML = `
+                            <p class="gt-text-secondary gt-text-sm">No suggestions available</p>
+                        `;
+                        return;
+                    }
+
+                    suggestionsList.innerHTML = users.map(user => `
+                        <div class="gt-suggestion-user" data-testid="suggestion-${user.id}">
+                            <a href="/gad-talk/profile.html?user=${user.username}" class="gt-suggestion-user-info">
+                                <img src="${user.avatar || '/gad-talk/images/default-avatar.png'}" alt="${user.displayName}" class="gt-avatar gt-avatar-sm" />
+                                <div class="gt-suggestion-user-text">
+                                    <span class="gt-suggestion-user-name">${user.displayName}</span>
+                                    <span class="gt-suggestion-user-handle">@${user.username}</span>
+                                </div>
+                            </a>
+                            <button class="gt-btn gt-btn-sm gt-btn-outline gt-follow-btn" 
+                                    data-user-id="${user.id}"
+                                    data-testid="follow-btn-${user.id}">
+                                Follow
+                            </button>
+                        </div>
+                    `).join('');
+
+                    // Add follow button handlers
+                    suggestionsList.querySelectorAll('.gt-follow-btn').forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            e.preventDefault();
+                            const userId = btn.dataset.userId;
+                            try {
+                                if (btn.classList.contains('gt-following')) {
+                                    await window.GadTalkAPI.users.unfollow(userId);
+                                    btn.classList.remove('gt-following');
+                                    btn.textContent = 'Follow';
+                                } else {
+                                    await window.GadTalkAPI.users.follow(userId);
+                                    btn.classList.add('gt-following');
+                                    btn.textContent = 'Following';
+                                }
+                            } catch (error) {
+                                console.error('Follow action failed:', error);
+                            }
+                        });
+                    });
+                } catch (error) {
+                    console.error('Failed to load suggestions:', error);
+                    suggestionsLoading.classList.add('gt-hidden');
+                    suggestionsList.innerHTML = `
+                        <p class="gt-text-secondary gt-text-sm">No suggestions available</p>
+                    `;
                 }
             }
 
             async function loadHashtagGads(hashtag) {
                 const popularSection = document.querySelector('.gt-card.gt-mt-md');
                 const popularGads = document.getElementById('popular-gads');
+                const popularLoading = document.getElementById('popular-loading');
 
                 popularSection.querySelector('h2').textContent = `#${hashtag}`;
 
@@ -198,7 +456,7 @@
                     const response = await window.GadTalkAPI.gads.getByHashtag(hashtag);
                     const gads = response.gads || [];
 
-                    document.getElementById('popular-loading').classList.add('gt-hidden');
+                    popularLoading.classList.add('gt-hidden');
 
                     if (gads.length === 0) {
                         popularGads.innerHTML = `
@@ -213,7 +471,13 @@
 
                     window.gadTalkGads.renderGads(gads, popularGads, currentUser.id);
                 } catch (error) {
-                    document.getElementById('popular-loading').innerHTML = '<span class="gt-text-error">Failed to load gads</span>';
+                    console.error('Failed to load hashtag gads:', error);
+                    popularLoading.classList.add('gt-hidden');
+                    popularGads.innerHTML = `
+                        <div class="gt-empty-state-sm">
+                            <p class="gt-text-secondary">Could not load gads for #${hashtag}</p>
+                        </div>
+                    `;
                 }
             }
         })();
