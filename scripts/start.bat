@@ -1,7 +1,5 @@
 @echo off
-REM Start the server in a new cmd window using npm run start
-SETLOCAL
+REM Start the server in the current console so closing this console will stop the server
 cd /d "%~dp0\.."
 echo Starting GAD GUI API demo (npm run start) in %CD%
-start "GAD Demo - npm start" cmd /k "npm run start"
-ENDLOCAL
+npm run start
