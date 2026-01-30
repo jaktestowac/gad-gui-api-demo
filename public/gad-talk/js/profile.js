@@ -137,7 +137,9 @@ const gadTalkProfile = (function () {
               <span class="gt-suggestion-username">@${user.username}</span>
             </div>
           </a>
-          <button class="gt-btn gt-btn-primary gt-btn-sm" data-follow="${user.id}" data-testid="follow-${user.username}">
+          <button class="gt-btn gt-btn-primary gt-btn-sm" data-follow="${user.id}" data-testid="follow-${
+            user.username
+          }">
             Follow
           </button>
         </div>
