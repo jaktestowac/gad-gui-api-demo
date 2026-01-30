@@ -315,7 +315,7 @@
                 const trendingLoading = document.getElementById('trending-loading');
 
                 try {
-                    const response = await window.GadTalkAPI.gads.getTrending();
+                    const response = await window.GadTalkAPI.gads.getTrending(5);
                     const hashtags = response.hashtags || [];
 
                     trendingLoading.classList.add('gt-hidden');
@@ -331,7 +331,6 @@
 
                     trendingList.innerHTML = hashtags.map((tag, idx) => `
                         <a href="/gad-talk/explore.html?hashtag=${tag.tag}" class="gt-trending-item" data-testid="trending-item-${idx}">
-                            <span class="gt-trending-rank">${idx + 1}</span>
                             <div class="gt-trending-info">
                                 <span class="gt-trending-tag">#${tag.tag}</span>
                                 <span class="gt-trending-count">${tag.count} Gads</span>

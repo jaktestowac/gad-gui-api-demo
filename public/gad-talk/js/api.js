@@ -365,6 +365,22 @@ const GadTalkAPI = (function () {
     },
 
     /**
+     * Get trending hashtags (alias)
+     * @param {number} limit - Number of hashtags
+     */
+    async getTrending(limit = 10) {
+      return request(`/hashtags/trending?limit=${limit}`);
+    },
+
+    /**
+     * Get gads by hashtag (alias)
+     * @param {string} hashtag - Hashtag without #
+     */
+    async getByHashtag(hashtag, page = 1, limit = 20) {
+      return request(`/hashtags/${encodeURIComponent(hashtag)}?page=${page}&limit=${limit}`);
+    },
+
+    /**
      * Get gads by a specific user
      */
     async getByUser(userId, page = 1, limit = 20) {

@@ -21,6 +21,8 @@ const {
   createFollow,
   deleteFollow,
   isFollowing,
+  getBlockedUserIds,
+  getBlockedByUserIds,
   createBlock,
   deleteBlock,
   hasBlocked,
@@ -179,8 +181,13 @@ async function handleSearchUsers(req, res) {
     const authUser = getAuthenticatedUser(req);
     const currentUserId = authUser ? authUser.id : null;
 
+    const blockedUserIds = currentUserId ? getBlockedUserIds(currentUserId) : [];
+    const blockedByUserIds = currentUserId ? getBlockedByUserIds(currentUserId) : [];
+
     const { users, total } = searchUsers(query.trim(), parseInt(page), parseInt(limit), {
       currentUserId,
+      blockedUserIds,
+      blockedByUserIds,
     });
 
     // Sanitize user data and add isFollowing info
@@ -459,6 +466,17 @@ async function handleFollow(req, res) {
       return;
     }
 
+    // Block checks
+    if (hasBlocked(authUser.id, id)) {
+      res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Cannot follow a user you have blocked"));
+      return;
+    }
+
+    if (hasBlocked(id, authUser.id)) {
+      res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Cannot follow this user"));
+      return;
+    }
+
     const follow = await createFollow(authUser.id, id);
 
     logDebug("GadTalk: User followed:", { followerId: authUser.id, followingId: id });
@@ -519,6 +537,8 @@ async function handleGetFollowers(req, res) {
 
     let followers = getFollowers(id);
 
+    const authUser = getAuthenticatedUser(req);
+
     // Sort by createdAt desc
     followers.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
@@ -536,13 +556,28 @@ async function handleGetFollowers(req, res) {
     followers = followers.slice(0, limitNum);
 
     // Get follower user details
-    const followerUsers = followers.map((f) => {
-      const followerUser = findGadTalkUserById(f.followerId);
-      return {
-        ...f,
-        user: sanitizeUser(followerUser),
-      };
-    });
+    const followerUsers = followers
+      .map((f) => {
+        const followerUser = findGadTalkUserById(f.followerId);
+        if (!followerUser) return null;
+
+        if (authUser) {
+          if (hasBlocked(authUser.id, followerUser.id) || hasBlocked(followerUser.id, authUser.id)) {
+            return null;
+          }
+        }
+
+        const sanitized = sanitizeUser(followerUser);
+        if (authUser) {
+          sanitized.isFollowing = isFollowing(authUser.id, followerUser.id);
+        }
+
+        return {
+          ...f,
+          user: sanitized,
+        };
+      })
+      .filter(Boolean);
 
     res.status(HTTP_OK).json({
       followers: followerUsers,
@@ -572,6 +607,8 @@ async function handleGetFollowing(req, res) {
 
     let following = getFollowing(id);
 
+    const authUser = getAuthenticatedUser(req);
+
     // Sort by createdAt desc
     following.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
@@ -589,13 +626,28 @@ async function handleGetFollowing(req, res) {
     following = following.slice(0, limitNum);
 
     // Get following user details
-    const followingUsers = following.map((f) => {
-      const followingUser = findGadTalkUserById(f.followingId);
-      return {
-        ...f,
-        user: sanitizeUser(followingUser),
-      };
-    });
+    const followingUsers = following
+      .map((f) => {
+        const followingUser = findGadTalkUserById(f.followingId);
+        if (!followingUser) return null;
+
+        if (authUser) {
+          if (hasBlocked(authUser.id, followingUser.id) || hasBlocked(followingUser.id, authUser.id)) {
+            return null;
+          }
+        }
+
+        const sanitized = sanitizeUser(followingUser);
+        if (authUser) {
+          sanitized.isFollowing = isFollowing(authUser.id, followingUser.id);
+        }
+
+        return {
+          ...f,
+          user: sanitized,
+        };
+      })
+      .filter(Boolean);
 
     res.status(HTTP_OK).json({
       following: followingUsers,
@@ -622,10 +674,11 @@ async function handleGetSuggestions(req, res) {
     // Get all users
     const allUsers = gadTalkUsersDb();
 
-    // Filter out current user and shadow banned users
+    // Filter out current user and shadow banned/blocked users
     let suggestions = allUsers.filter((u) => {
       if (authUser && u.id === authUser.id) return false;
       if (u.shadowBanned) return false;
+      if (authUser && (hasBlocked(authUser.id, u.id) || hasBlocked(u.id, authUser.id))) return false;
       return true;
     });
 
@@ -633,7 +686,13 @@ async function handleGetSuggestions(req, res) {
     suggestions = suggestions.slice(0, parseInt(limit, 10));
 
     res.status(HTTP_OK).json({
-      users: suggestions.map(sanitizeUser),
+      users: suggestions.map((user) => {
+        const sanitized = sanitizeUser(user);
+        if (authUser) {
+          sanitized.isFollowing = isFollowing(authUser.id, user.id);
+        }
+        return sanitized;
+      }),
     });
   } catch (error) {
     logError("GadTalk get suggestions error:", error);

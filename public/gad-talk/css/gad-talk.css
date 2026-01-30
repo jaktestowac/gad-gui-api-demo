@@ -538,13 +538,6 @@ a:hover {
   transition: background-color 0.15s;
 }
 
-.gt-trending-item:hover {
-  text-decoration: none;
-  background-color: var(--gt-bg-hover);
-  margin: 0 calc(-1 * var(--gt-spacing-sm));
-  padding: var(--gt-spacing-xs) var(--gt-spacing-sm);
-}
-
 .gt-trending-category {
   font-size: 0.75rem;
   color: var(--gt-text-muted);
@@ -2604,16 +2597,19 @@ body.gt-modal-open {
   display: flex;
   flex-direction: column;
   gap: 0;
+  width: 100%;
 }
 
 .gt-trending-item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-between;
   gap: var(--gt-spacing-sm);
-  padding: var(--gt-spacing-sm) var(--gt-spacing-md);
+  padding: var(--gt-spacing-xs) var(--gt-spacing-sm);
   border-bottom: 1px solid var(--gt-border);
   text-decoration: none;
   transition: background-color 0.15s;
+  line-height: 1.25;
 }
 
 .gt-trending-item:hover {
@@ -2625,32 +2621,28 @@ body.gt-modal-open {
 }
 
 .gt-trending-rank {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--gt-text-muted);
-  width: 18px;
-  flex-shrink: 0;
-  padding-top: 2px;
+  display: none;
 }
 
 .gt-trending-info {
   flex: 1;
   display: flex;
-  flex-direction: column;
-  gap: 1px;
+  align-items: center;
+  gap: var(--gt-spacing-xs);
   min-width: 0;
 }
 
 .gt-trending-tag {
   font-weight: 600;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   color: var(--gt-text-primary);
-  line-height: 1.3;
+  line-height: 1.2;
 }
 
 .gt-trending-count {
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   color: var(--gt-text-muted);
+  margin-left: auto;
 }
 
 /* ==================== SECTION TITLE ==================== */
@@ -2996,12 +2988,6 @@ body.gt-modal-open {
   border-bottom: none;
   border-radius: var(--gt-radius-sm);
   transition: background-color 0.15s;
-}
-
-.gt-trending-card .gt-trending-item:hover {
-  background-color: var(--gt-bg-hover);
-  margin: 0 calc(-1 * var(--gt-spacing-xs));
-  padding: var(--gt-spacing-xs);
 }
 
 .gt-trending-card .gt-trending-category {

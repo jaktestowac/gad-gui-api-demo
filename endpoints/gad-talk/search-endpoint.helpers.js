@@ -29,8 +29,31 @@ async function handleSearchSuggestions(req, res) {
 
     const { suggestions } = searchService.getSearchSuggestions(query, userId, { limit });
 
+    const users = suggestions
+      .filter((item) => item.type === "user")
+      .map((item) => ({
+        username: item.username || (item.value ? item.value.replace(/^@/, "") : ""),
+        name: item.displayName || item.username || (item.value ? item.value.replace(/^@/, "") : ""),
+        displayName: item.displayName || item.username,
+        avatar: item.avatar || null,
+      }));
+
+    const hashtags = suggestions
+      .filter((item) => item.type === "hashtag")
+      .map((item) => ({
+        tag: item.tag || (item.value ? item.value.replace(/^#/, "") : ""),
+        count: item.count || 0,
+      }));
+
+    const recentSearches = suggestions
+      .filter((item) => item.type === "recent" || item.type === "query")
+      .map((item) => ({ value: item.value }));
+
     res.status(HTTP_OK).json({
       suggestions,
+      users,
+      hashtags,
+      recentSearches,
       query: query.trim(),
     });
   } catch (error) {
