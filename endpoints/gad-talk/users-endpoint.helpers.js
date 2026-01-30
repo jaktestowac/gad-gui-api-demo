@@ -622,10 +622,9 @@ async function handleGetSuggestions(req, res) {
     // Get all users
     const allUsers = gadTalkUsersDb();
 
-    // Filter out current user and already followed users
+    // Filter out current user and shadow banned users
     let suggestions = allUsers.filter((u) => {
       if (authUser && u.id === authUser.id) return false;
-      if (authUser && isFollowing(authUser.id, u.id)) return false;
       if (u.shadowBanned) return false;
       return true;
     });

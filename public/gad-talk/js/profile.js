@@ -22,6 +22,8 @@ const gadTalkProfile = (function () {
 
     // Update nav user section
     updateNavUser();
+    // Load sidebar suggestions
+    loadSidebarSuggestions();
 
     // Get username from URL
     const params = new URLSearchParams(window.location.search);
@@ -108,6 +110,59 @@ const gadTalkProfile = (function () {
       dropdownBtn.addEventListener("click", () => {
         window.location.href = `/gad-talk/profile.html?user=${currentUser.username}`;
       });
+    }
+  }
+
+  async function loadSidebarSuggestions() {
+    const suggestionsList = document.getElementById("suggestions-list");
+    if (!suggestionsList) return;
+
+    try {
+      const response = await window.GadTalkAPI.users.getSuggestions(3);
+      const users = response.users || [];
+
+      if (users.length === 0) {
+        suggestionsList.innerHTML = '<p class="gt-text-secondary gt-text-sm">No suggestions</p>';
+        return;
+      }
+
+      suggestionsList.innerHTML = users
+        .map(
+          (user) => `
+        <div class="gt-suggestion-item">
+          <a href="/gad-talk/profile.html?user=${user.username}" class="gt-suggestion-user">
+            ${window.gadTalkGads.getAvatarHtml(user, "sm")}
+            <div class="gt-suggestion-info">
+              <span class="gt-suggestion-name">${user.displayName || user.username}</span>
+              <span class="gt-suggestion-username">@${user.username}</span>
+            </div>
+          </a>
+          <button class="gt-btn gt-btn-primary gt-btn-sm" data-follow="${user.id}" data-testid="follow-${user.username}">
+            Follow
+          </button>
+        </div>
+      `
+        )
+        .join("");
+
+      // Attach follow handlers
+      suggestionsList.querySelectorAll("[data-follow]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const userId = btn.dataset.follow;
+          try {
+            await window.GadTalkAPI.users.follow(userId);
+            btn.textContent = "Following";
+            btn.classList.remove("gt-btn-primary");
+            btn.classList.add("gt-btn-secondary");
+            btn.disabled = true;
+          } catch (error) {
+            console.error("Error following user:", error);
+          }
+        });
+      });
+    } catch (error) {
+      console.error("Error loading sidebar suggestions:", error);
+      suggestionsList.innerHTML = '<p class="gt-text-secondary gt-text-sm">Failed to load suggestions</p>';
     }
   }
 
