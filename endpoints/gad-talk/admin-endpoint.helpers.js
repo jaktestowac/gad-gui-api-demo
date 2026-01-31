@@ -461,27 +461,32 @@ async function handleFeatureFlagsPage(_req, res) {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GadTalk Feature Flags</title>
-    <style>
-      body { font-family: Arial, sans-serif; background:#0b0c0f; color:#e7e9ea; margin:0; padding:24px; }
-      .container { max-width: 720px; margin: 0 auto; }
-      h1 { font-size: 22px; margin-bottom: 12px; }
-      .card { background:#16181c; border:1px solid #2f3336; border-radius:12px; padding:16px; }
-      .row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid #2f3336; }
-      .row:last-child { border-bottom:none; }
-      .tag { font-size: 12px; color:#71767b; }
-      button { background:#1d9bf0; color:#fff; border:none; border-radius:999px; padding:6px 12px; cursor:pointer; font-weight:600; }
-      button.off { background:#2f3336; color:#e7e9ea; }
-      .small { font-size: 12px; color:#71767b; }
-    </style>
+    <link rel="stylesheet" href="/gad-talk/css/gad-talk.css" />
+    <style>${getAdminPageStyles()}</style>
   </head>
   <body>
-    <div class="container">
-      <h1>GadTalk Feature Flags</h1>
-
-      <div class="small">Page to view and manage GadTalk feature flags. Changes apply immediately.</div>
-      <button id="return-to-gadtalk">Return to GadTalk Home</button>
-      <div class="card" id="flags"></div>
+    <!-- Header -->
+    <div class="gt-admin-header">
+      <div class="gt-admin-header-content">
+        <div class="gt-header-brand">
+          🚩 Feature Flags
+        </div>
+        <a href="/api/gad-talk/admin/backend" class="gt-header-back-link">← Backend</a>
+      </div>
     </div>
+
+    <!-- Main Content -->
+    <div class="gt-admin-container">
+      <h1 class="gt-admin-title">Feature Flags Management</h1>
+      <p class="gt-admin-subtitle">View and manage feature flags. Toggle features on/off in real-time. Changes apply immediately.</p>
+      <a href="/gadtalk" style="color: #1d9bf0; text-decoration: none; margin-bottom: 24px; display: inline-block;">← Home</a>
+      <a href="/api/gad-talk/admin/backend" style="color: #1d9bf0; text-decoration: none; margin-bottom: 24px; display: inline-block;">← Backend</a>
+      <div id="flags" style="background: linear-gradient(180deg, rgba(22, 24, 28, 0.92), rgba(14, 15, 18, 0.92)); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 14px; padding: 20px; box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px);"></div>
+    </div>
+
+    <!-- Footer -->
+    ${getAdminPageFooter()}
+
     <script src="/gad-talk/js/feature-flags-admin.js"></script>
   </body>
   </html>`;
@@ -684,6 +689,49 @@ function getAdminPageStyles() {
     .gt-footer-copyright {
       color: #536471;
       font-size: 13px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 10px;
+      border-bottom: 1px solid rgba(47, 51, 54, 0.35);
+      border-radius: 8px;
+      transition: background-color 0.15s, transform 0.12s;
+      font-size: 13px;
+      line-height: 1.2;
+      min-height: 36px;
+    }
+    .row:hover {
+      background-color: rgba(29, 155, 240, 0.04);
+      transform: translateY(-1px);
+    }
+    .row:last-child {
+      border-bottom: none;
+    }
+    .row button {
+      background-color: #1d9bf0;
+      color: #fff;
+      border: none;
+      border-radius: 9999px;
+      padding: 3px 10px;
+      font-weight: 600;
+      font-size: 12px;
+      height: 28px;
+      cursor: pointer;
+      transition: background-color 0.15s;
+      white-space: nowrap;
+    }
+    .row button:hover {
+      background-color: #1a8cd8;
+    }
+    .row button.off {
+      background-color: #2f3336;
+      color: #71767b;
+    }
+    .row button.off:hover {
+      background-color: #38444d;
     }
   `;
 }
