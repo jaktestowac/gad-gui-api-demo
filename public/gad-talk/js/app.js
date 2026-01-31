@@ -970,6 +970,49 @@ const gadTalkApp = (function () {
     init();
   }
 
+  // Debug / Console helpers
+  function listFeatureFlags() {
+    return featureFlags;
+  }
+
+  function listEnabledFeatureFlags() {
+    return Object.keys(featureFlags).filter((k) => featureFlags[k]);
+  }
+
+  function whoami() {
+    return currentUser || "(guest)";
+  }
+
+  function showState() {
+    return {
+      currentFeed,
+      currentSort,
+      currentPage,
+      isGuestMode,
+      hashtagHashEnabled,
+    };
+  }
+
+  async function reloadFeatureFlags() {
+    await loadFeatureFlags();
+    applyFeatureFlags();
+    return featureFlags;
+  }
+
+  function debugHelp() {
+    return {
+      description: "GadTalk console commands",
+      commands: {
+        help: "GadTalk.debug.help() - show this help (returns object)",
+        listFeatureFlags: "GadTalk.debug.listFeatureFlags() - list all flags (object)",
+        listEnabledFeatureFlags: "GadTalk.debug.listEnabledFeatureFlags() - list enabled flags (array)",
+        whoami: "GadTalk.debug.whoami() - show current user or '(guest)'",
+        showState: "GadTalk.debug.showState() - show app state (object)",
+        reloadFeatureFlags: "GadTalk.debug.reloadFeatureFlags() - reload flags from API (async)",
+      },
+    };
+  }
+
   // Public API
   return {
     init,
@@ -980,8 +1023,24 @@ const gadTalkApp = (function () {
     checkNotifications,
     showLoginPrompt,
     isGuest: () => isGuestMode,
+
+    // Expose debug helpers for console use
+    debug: {
+      help: debugHelp,
+      listFeatureFlags,
+      listEnabledFeatureFlags,
+      whoami,
+      showState,
+      reloadFeatureFlags,
+    },
   };
 })();
 
 // Export for use in other scripts
 window.gadTalkApp = gadTalkApp;
+
+// Export console-friendly debug object for use on any page
+window.GadTalk = window.GadTalk || {};
+window.GadTalk.debug = window.gadTalkApp.debug;
+// Backwards-compatible shorthand
+window.GadTalkDebug = window.gadTalkApp.debug;
