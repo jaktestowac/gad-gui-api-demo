@@ -663,7 +663,6 @@ function getAdminPageStyles() {
       justify-content: space-between;
     }
     .gt-header-brand {
-      display: flex;
       align-items: center;
       gap: 8px;
       font-size: 1.25rem;
@@ -693,11 +692,13 @@ function getAdminPageStyles() {
       font-weight: 700;
       margin-bottom: 8px;
       color: #e7e9ea;
+      margin-top: 0;
     }
     .gt-admin-subtitle {
       font-size: 14px;
       color: #71767b;
-      margin-bottom: 24px;
+      margin-bottom: 14px;
+      margin-top: 0;
     }
     .gt-admin-grid {
       display: grid;
@@ -911,16 +912,16 @@ async function handleAdminBackendPage(_req, res) {
     <div class="gt-admin-header">
       <div class="gt-admin-header-content">
         <div class="gt-header-brand">
-          ⚙️ GadTalk Backend
+          ⚙️ GadTalk Backend<br />
+          <a href="/gad-talk" class="gt-header-back-link" style="font-size: 12px;">← Back to GadTalk</a> 
         </div>
-        <a href="/gad-talk" class="gt-header-back-link">← Back to GadTalk</a>
       </div>
     </div>
 
     <!-- Main Content -->
     <div class="gt-admin-container">
-      <h1 class="gt-admin-title">Backend Management</h1>
-      <p class="gt-admin-subtitle">Access internal tools and configurations for GadTalk platform administration. <a href="/gad-talk" class="gt-header-back-link">← Back to GadTalk</a></p>
+      <p class="gt-admin-subtitle">Access internal tools and configurations for GadTalk platform administration. 
+      <a href="/gad-talk" class="gt-header-back-link">← Back to GadTalk</a></p>
         
 
       <div class="gt-admin-grid">
@@ -1068,8 +1069,8 @@ async function handleChaosDashboardPage(_req, res) {
     <!-- Compact Header -->
     <header class="chaos-header">
       <div class="chaos-header-inner">
-        <a href="/api/gad-talk/admin/backend" class="chaos-back" style="font-size: 14px;">← Back to Backend</a>
-        <h1 class="chaos-logo">🎲 Chaos Engine Dashboard</h1>
+        
+        <h1 class="chaos-logo">🎲 Chaos Engine Dashboard<br /><a href="/api/gad-talk/admin/backend" class="chaos-back" style="font-size: 12px;">← Back to Backend</a></h1>
         <div class="chaos-master">
           <span class="chaos-master-label" id="chaos-status">OFF</span>
           <button id="chaos-master-btn" class="chaos-power-btn" title="Toggle Chaos">⚡</button>
