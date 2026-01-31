@@ -34,6 +34,11 @@ const DEFAULT_FEATURE_FLAGS = [
     description: "Search page recent history",
   },
   {
+    key: "hashtag_hash_url",
+    enabled: true,
+    description: "Enable /gad-talk/#hashtag URL routing",
+  },
+  {
     key: "bookmark_filters",
     enabled: true,
     description: "Bookmarks search and sorting controls",

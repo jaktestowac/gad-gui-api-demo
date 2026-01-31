@@ -13,6 +13,8 @@ const gadTalkApp = (function () {
   let isGuestMode = false;
   let guestRedirectTimer = null;
   let guestScrollHandler = null;
+  let featureFlags = {};
+  let hashtagHashEnabled = true;
 
   function showFollowMessage(container, message) {
     if (!container) return;
@@ -128,6 +130,13 @@ const gadTalkApp = (function () {
    * Initialize the app
    */
   async function init() {
+    await loadFeatureFlags();
+    applyFeatureFlags();
+
+    if (hashtagHashEnabled && handleHashtagHashRedirect()) {
+      return;
+    }
+
     // Use optional auth - allow guests to view content
     currentUser = await window.gadTalkAuth.optionalAuth();
     isGuestMode = !currentUser;
@@ -161,6 +170,51 @@ const gadTalkApp = (function () {
         dropdown.classList.add("gt-hidden");
       });
     });
+  }
+
+  async function loadFeatureFlags() {
+    if (!window.GadTalkAPI || !window.GadTalkAPI.featureFlags) return;
+    try {
+      const response = await window.GadTalkAPI.featureFlags.getAll();
+      const flags = response?.data || response?.flags || response || [];
+      featureFlags = flags.reduce((acc, flag) => {
+        acc[String(flag.key || "").toLowerCase()] = !!flag.enabled;
+        return acc;
+      }, {});
+    } catch (error) {
+      featureFlags = {};
+    }
+  }
+
+  function applyFeatureFlags() {
+    hashtagHashEnabled = featureFlags.hashtag_hash_url !== false;
+  }
+
+  function handleHashtagHashRedirect() {
+    const hashtag = getHashtagFromHash();
+    if (!hashtag) return false;
+
+    const target = `/gad-talk/explore.html?hashtag=${encodeURIComponent(hashtag)}`;
+    window.location.replace(target);
+    return true;
+  }
+
+  function getHashtagFromHash() {
+    const raw = window.location.hash || "";
+    if (!raw || raw === "#") return null;
+
+    let decoded = "";
+    try {
+      decoded = decodeURIComponent(raw.slice(1));
+    } catch (error) {
+      decoded = raw.slice(1);
+    }
+
+    const trimmed = decoded.trim().replace(/^#/, "");
+    if (!trimmed) return null;
+
+    const match = trimmed.match(/[a-zA-Z0-9_]+/);
+    return match ? match[0] : null;
   }
 
   /**
