@@ -3740,3 +3740,7 @@ body.gt-modal-open {
   font-weight: 700;
   margin: 0;
 }
+
+.gt-suggestions-card {
+  margin-top: var(--gt-spacing-lg);
+}

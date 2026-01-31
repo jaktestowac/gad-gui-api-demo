@@ -749,7 +749,7 @@ function getAdminPageFooter() {
           <a href="/gad-talk/privacy.html" class="gt-footer-link">Privacy</a>
           <a href="/gad-talk/terms.html" class="gt-footer-link">Terms</a>
         </div>
-        <div class="gt-footer-copyright">© 2025 GadTalk • Backend</div>
+        <div class="gt-footer-copyright">© ${new Date().getFullYear()} GadTalk • Backend</div>
       </div>
     </div>
   `;
@@ -774,7 +774,7 @@ async function handleAdminBackendPage(_req, res) {
         <div class="gt-header-brand">
           ⚙️ GadTalk Backend
         </div>
-        <a href="/" class="gt-header-back-link">← Back to GadTalk</a>
+        <a href="/gad-talk" class="gt-header-back-link">← Back to GadTalk</a>
       </div>
     </div>
 
