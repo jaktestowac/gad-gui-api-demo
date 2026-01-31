@@ -795,7 +795,7 @@ async function handleAdminBackendPage(_req, res) {
         <div class="gt-admin-item">
           <div class="gt-admin-item-title">📚 API Documentation</div>
           <div class="gt-admin-item-desc">Interactive API documentation and testing with Swagger UI.</div>
-          <a href="/api/gad-talk/admin/swagger" class="gt-admin-item-link disabled">Coming Soon</a>
+          <a href="/tools/swagger-gadtalk.html" class="gt-admin-item-link">Open Swagger</a>
         </div>
 
         <!-- Features Description -->
@@ -803,6 +803,13 @@ async function handleAdminBackendPage(_req, res) {
           <div class="gt-admin-item-title">📖 Features Guide</div>
           <div class="gt-admin-item-desc">Detailed description of all platform features and capabilities.</div>
           <a href="/api/gad-talk/admin/features-description" class="gt-admin-item-link disabled">Coming Soon</a>
+        </div>
+
+        <-- Chaos Engineering -->
+        <div class="gt-admin-item">
+          <div class="gt-admin-item-title">🧩 Chaos Engineering</div>
+          <div class="gt-admin-item-desc">Simulate failures and test system resilience with chaos engineering tools.</div>
+          <a href="/gad-talk/chaos-admin.html" class="gt-admin-item-link disabled">Coming Soon</a>
         </div>
       </div>
     </div>

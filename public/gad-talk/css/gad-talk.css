@@ -3877,3 +3877,420 @@ body.gt-modal-open {
 .gt-suggestions-card {
   margin-top: var(--gt-spacing-lg);
 }
+
+/* ==================== EMOJI PICKER ==================== */
+
+.gt-emoji-picker {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 320px;
+  max-height: 350px;
+  background-color: var(--gt-bg-secondary);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-lg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--gt-spacing-xs);
+}
+
+.gt-emoji-picker-header {
+  padding: var(--gt-spacing-sm);
+  border-bottom: 1px solid var(--gt-border);
+}
+
+.gt-emoji-search {
+  width: 100%;
+  padding: var(--gt-spacing-xs) var(--gt-spacing-sm);
+  background-color: var(--gt-bg-tertiary);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-full);
+  color: var(--gt-text-primary);
+  font-size: 0.875rem;
+}
+
+.gt-emoji-search:focus {
+  outline: none;
+  border-color: var(--gt-primary);
+}
+
+.gt-emoji-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--gt-border);
+  padding: var(--gt-spacing-xs);
+  gap: 2px;
+  overflow-x: auto;
+}
+
+.gt-emoji-tab {
+  padding: var(--gt-spacing-xs);
+  background: none;
+  border: none;
+  border-radius: var(--gt-radius-sm);
+  cursor: pointer;
+  font-size: 1.1rem;
+  opacity: 0.6;
+  transition: opacity 0.15s, background-color 0.15s;
+}
+
+.gt-emoji-tab:hover {
+  opacity: 1;
+  background-color: var(--gt-bg-tertiary);
+}
+
+.gt-emoji-tab-active {
+  opacity: 1;
+  background-color: var(--gt-primary-light);
+}
+
+.gt-emoji-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--gt-spacing-sm);
+}
+
+.gt-emoji-section-title {
+  font-size: 0.75rem;
+  color: var(--gt-text-secondary);
+  text-transform: uppercase;
+  margin-bottom: var(--gt-spacing-xs);
+  font-weight: 600;
+}
+
+.gt-emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 2px;
+}
+
+.gt-emoji-btn {
+  padding: var(--gt-spacing-xs);
+  background: none;
+  border: none;
+  border-radius: var(--gt-radius-sm);
+  cursor: pointer;
+  font-size: 1.25rem;
+  transition: background-color 0.15s, transform 0.1s;
+}
+
+.gt-emoji-btn:hover {
+  background-color: var(--gt-bg-tertiary);
+  transform: scale(1.2);
+}
+
+/* ==================== AUTOCOMPLETE DROPDOWN ==================== */
+
+.gt-autocomplete-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--gt-bg-secondary);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  max-height: 250px;
+  overflow-y: auto;
+  margin-top: var(--gt-spacing-xs);
+}
+
+.gt-autocomplete-dropdown-hashtag {
+  /* Position below mention dropdown if both visible */
+}
+
+.gt-autocomplete-item {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-spacing-sm);
+  padding: var(--gt-spacing-sm) var(--gt-spacing-md);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.gt-autocomplete-item:hover,
+.gt-autocomplete-item-selected {
+  background-color: var(--gt-bg-tertiary);
+}
+
+.gt-autocomplete-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gt-autocomplete-item-name {
+  font-weight: 600;
+  color: var(--gt-text-primary);
+  font-size: 0.875rem;
+}
+
+.gt-autocomplete-item-username,
+.gt-autocomplete-item-count {
+  color: var(--gt-text-secondary);
+  font-size: 0.75rem;
+}
+
+.gt-autocomplete-hashtag-icon {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--gt-primary);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--gt-primary-light);
+  border-radius: var(--gt-radius-full);
+}
+
+/* ==================== CHARACTER COUNTDOWN RING ==================== */
+
+.gt-char-ring-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+}
+
+.gt-char-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.gt-char-ring-progress {
+  transition: stroke-dashoffset 0.15s ease, stroke 0.15s ease;
+}
+
+.gt-char-ring-count {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--gt-text-secondary);
+  z-index: 1;
+}
+
+/* ==================== WHO LIKED/REGADDED MODAL ==================== */
+
+.gt-who-modal-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.gt-who-modal-item {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-spacing-md);
+  padding: var(--gt-spacing-md);
+  border-bottom: 1px solid var(--gt-border);
+  transition: background-color 0.15s;
+}
+
+.gt-who-modal-item:hover {
+  background-color: var(--gt-bg-tertiary);
+}
+
+.gt-who-modal-item:last-child {
+  border-bottom: none;
+}
+
+.gt-who-modal-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.gt-who-modal-item-name {
+  font-weight: 600;
+  color: var(--gt-text-primary);
+  display: block;
+  text-decoration: none;
+}
+
+.gt-who-modal-item-name:hover {
+  text-decoration: underline;
+}
+
+.gt-who-modal-item-username {
+  color: var(--gt-text-secondary);
+  font-size: 0.875rem;
+}
+
+.gt-who-modal-empty {
+  padding: var(--gt-spacing-xl);
+  text-align: center;
+  color: var(--gt-text-secondary);
+}
+
+.gt-who-modal-loading {
+  padding: var(--gt-spacing-xl);
+  text-align: center;
+}
+
+/* ==================== PROFILE BADGES ==================== */
+
+.gt-profile-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gt-spacing-xs);
+  margin-top: var(--gt-spacing-sm);
+}
+
+.gt-badge-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gt-spacing-xs);
+  padding: 4px 10px;
+  background-color: var(--gt-bg-tertiary);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-full);
+  font-size: 0.75rem;
+  color: var(--gt-text-secondary);
+}
+
+.gt-badge-item-icon {
+  font-size: 0.875rem;
+}
+
+.gt-badge-beta-tester {
+  background-color: rgba(139, 92, 246, 0.15);
+  border-color: rgba(139, 92, 246, 0.3);
+  color: #a78bfa;
+}
+
+.gt-badge-early-adopter {
+  background-color: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #34d399;
+}
+
+.gt-badge-power-user {
+  background-color: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: #fbbf24;
+}
+
+.gt-badge-verified {
+  background-color: rgba(29, 155, 240, 0.15);
+  border-color: rgba(29, 155, 240, 0.3);
+  color: var(--gt-primary);
+}
+
+.gt-badge-top-contributor {
+  background-color: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+.gt-badge-admin {
+  background-color: rgba(236, 72, 153, 0.15);
+  border-color: rgba(236, 72, 153, 0.3);
+  color: #f472b6;
+}
+
+/* ==================== CLICKABLE ACTION COUNTS ==================== */
+
+.gt-action-count-clickable {
+  cursor: pointer;
+  transition: color 0.15s, text-decoration 0.15s;
+}
+
+.gt-action-count-clickable:hover {
+  color: var(--gt-primary);
+  text-decoration: underline;
+}
+
+/* ==================== WHO MODAL ADDITIONAL STYLES ==================== */
+
+.gt-who-modal-content {
+  min-height: 100px;
+}
+
+.gt-who-modal-user {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-spacing-md);
+  padding: var(--gt-spacing-md);
+  border-bottom: 1px solid var(--gt-border);
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.15s;
+}
+
+.gt-who-modal-user:hover {
+  background-color: var(--gt-bg-tertiary);
+}
+
+.gt-who-modal-user:last-child {
+  border-bottom: none;
+}
+
+.gt-who-modal-user-avatar {
+  flex-shrink: 0;
+}
+
+.gt-who-modal-user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.gt-who-modal-user-name {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-spacing-xs);
+}
+
+.gt-who-modal-user-username {
+  color: var(--gt-text-secondary);
+  font-size: 0.875rem;
+}
+
+.gt-who-modal-user-time {
+  color: var(--gt-text-tertiary);
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+.gt-who-modal-total {
+  padding: var(--gt-spacing-sm) var(--gt-spacing-md);
+  color: var(--gt-text-secondary);
+  font-size: 0.875rem;
+  border-top: 1px solid var(--gt-border);
+  text-align: center;
+}
+
+.gt-who-modal-load-more {
+  display: block;
+  width: 100%;
+  padding: var(--gt-spacing-md);
+  background: none;
+  border: none;
+  color: var(--gt-primary);
+  cursor: pointer;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.gt-who-modal-load-more:hover {
+  background-color: var(--gt-bg-tertiary);
+}
+
+.gt-who-modal-load-more:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.gt-who-modal-error {
+  padding: var(--gt-spacing-xl);
+  text-align: center;
+  color: var(--gt-error);
+}
+
+.gt-who-modal-error .gt-icon {
+  font-size: 2rem;
+  margin-bottom: var(--gt-spacing-sm);
+}

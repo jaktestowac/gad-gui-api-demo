@@ -712,6 +712,72 @@ async function handleUnlikeGad(req, res) {
 }
 
 /**
+ * Get users who liked a gad
+ */
+async function handleGetWhoLiked(req, res) {
+  try {
+    const { gadId } = req.params;
+    const limit = parseInt(req.query.limit) || 50;
+    const offset = parseInt(req.query.offset) || 0;
+
+    // Check if feature is enabled
+    const featureFlags = await dbOps.getFeatureFlagsMap();
+    if (!featureFlags.who_liked) {
+      return res.status(HTTP_NOT_FOUND).json(formatErrorResponse("Feature not available"));
+    }
+
+    const gad = await dbOps.getGadById(gadId);
+    if (!gad) {
+      return res.status(HTTP_NOT_FOUND).json(formatErrorResponse("Gad not found"));
+    }
+
+    const result = await dbOps.getLikesForGad(gadId, { limit, offset });
+
+    res.status(HTTP_OK).json({
+      users: result.users,
+      total: result.total,
+      hasMore: result.hasMore,
+    });
+  } catch (error) {
+    logError("[GadTalk] Error getting who liked:", error);
+    res.status(HTTP_INTERNAL_SERVER_ERROR).json(formatErrorResponse("Failed to get users who liked"));
+  }
+}
+
+/**
+ * Get users who regadded a gad
+ */
+async function handleGetWhoRegadded(req, res) {
+  try {
+    const { gadId } = req.params;
+    const limit = parseInt(req.query.limit) || 50;
+    const offset = parseInt(req.query.offset) || 0;
+
+    // Check if feature is enabled
+    const featureFlags = await dbOps.getFeatureFlagsMap();
+    if (!featureFlags.who_regadded) {
+      return res.status(HTTP_NOT_FOUND).json(formatErrorResponse("Feature not available"));
+    }
+
+    const gad = await dbOps.getGadById(gadId);
+    if (!gad) {
+      return res.status(HTTP_NOT_FOUND).json(formatErrorResponse("Gad not found"));
+    }
+
+    const result = dbOps.getRegadsForGad(gadId, { limit, offset });
+
+    res.status(HTTP_OK).json({
+      users: result.users,
+      total: result.total,
+      hasMore: result.hasMore,
+    });
+  } catch (error) {
+    logError("[GadTalk] Error getting who regadded:", error);
+    res.status(HTTP_INTERNAL_SERVER_ERROR).json(formatErrorResponse("Failed to get users who regadded"));
+  }
+}
+
+/**
  * Regad (retweet) a gad
  */
 async function handleRegad(req, res) {
@@ -1174,6 +1240,8 @@ module.exports = {
   handleGetUserLikes,
   handleLikeGad,
   handleUnlikeGad,
+  handleGetWhoLiked,
+  handleGetWhoRegadded,
   handleRegad,
   handleUnregad,
   handleBookmarkGad,

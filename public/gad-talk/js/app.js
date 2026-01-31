@@ -188,6 +188,16 @@ const gadTalkApp = (function () {
 
   function applyFeatureFlags() {
     hashtagHashEnabled = featureFlags.hashtag_hash_url !== false;
+
+    // Initialize interaction modals with feature flags
+    if (window.GadTalkInteractionModals) {
+      window.GadTalkInteractionModals.init(featureFlags);
+    }
+
+    // Initialize compose enhancements with feature flags
+    if (window.GadTalkComposeEnhancements) {
+      window.GadTalkComposeEnhancements.setFeatureFlags(featureFlags);
+    }
   }
 
   function handleHashtagHashRedirect() {
@@ -329,6 +339,13 @@ const gadTalkApp = (function () {
         quotePreviewId: "quote-gad-preview",
       }
     );
+
+    // Initialize compose enhancements (emoji picker, autocomplete, char ring)
+    if (window.GadTalkComposeEnhancements) {
+      window.GadTalkComposeEnhancements.init("compose-textarea", "char-count", "add-emoji-btn");
+      window.GadTalkComposeEnhancements.init("modal-compose-textarea", "modal-char-count", "modal-add-emoji-btn");
+      window.GadTalkComposeEnhancements.init("quote-compose-textarea", "quote-char-count", null);
+    }
 
     // Setup compose modal
     setupComposeModal();

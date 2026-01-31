@@ -15,6 +15,7 @@ const {
   findGadTalkUserByUsername,
   updateGadTalkUserProfile,
   getGadTalkUserStats,
+  getUserBadges,
   gadTalkUsersDb,
   getFollowers,
   getFollowing,
@@ -31,6 +32,7 @@ const {
   deleteMute,
   hasMuted,
   searchUsers,
+  isFeatureEnabled,
 } = require("./db-gad-talk.operations");
 const { verifyGadTalkToken } = require("./services/auth.service");
 const gadTalkConfig = require("./gad-talk-config");
@@ -314,11 +316,16 @@ async function handleGetUserProfile(req, res) {
     const isBlockedUser = authUser && !isOwnProfile ? hasBlocked(authUser.id, id) : false;
     const isMutedUser = authUser && !isOwnProfile ? hasMuted(authUser.id, id) : false;
 
+    // Get badges if feature is enabled
+    const badgesEnabled = isFeatureEnabled("profile_badges");
+    const badges = badgesEnabled ? getUserBadges(id) : [];
+
     res.status(HTTP_OK).send({
       ok: true,
       data: {
         ...sanitizeUser(user),
         stats,
+        badges,
         isFollowing: isFollowingUser,
         isOwnProfile,
         isBlocked: isBlockedUser,

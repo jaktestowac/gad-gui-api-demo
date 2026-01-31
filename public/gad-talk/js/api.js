@@ -420,6 +420,26 @@ const GadTalkAPI = (function () {
     },
 
     /**
+     * Get users who liked a gad
+     * @param {string} gadId - Gad ID
+     * @param {number} limit - Max results (default 50)
+     * @param {number} offset - Offset (default 0)
+     */
+    async getWhoLiked(gadId, limit = 50, offset = 0) {
+      return request(`/gads/${encodeURIComponent(gadId)}/likes?limit=${limit}&offset=${offset}`);
+    },
+
+    /**
+     * Get users who regadded a gad
+     * @param {string} gadId - Gad ID
+     * @param {number} limit - Max results (default 50)
+     * @param {number} offset - Offset (default 0)
+     */
+    async getWhoRegadded(gadId, limit = 50, offset = 0) {
+      return request(`/gads/${encodeURIComponent(gadId)}/regads?limit=${limit}&offset=${offset}`);
+    },
+
+    /**
      * Regad (retweet) a gad
      */
     async regad(gadId, comment = "") {

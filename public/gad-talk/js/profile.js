@@ -355,6 +355,33 @@ const gadTalkProfile = (function () {
   }
 
   /**
+   * Render profile badges
+   */
+  function renderProfileBadges(badges) {
+    const container = document.getElementById("profile-badges");
+    if (!container) return;
+
+    if (!badges || badges.length === 0) {
+      container.classList.add("gt-hidden");
+      return;
+    }
+
+    const badgesHtml = badges
+      .map(
+        (badge) => `
+        <span class="gt-badge-item gt-badge-${badge.id}" title="${badge.description || badge.name}">
+          <span class="gt-badge-item-icon"><i class="${badge.icon}"></i></span>
+          <span>${badge.name}</span>
+        </span>
+      `
+      )
+      .join("");
+
+    container.innerHTML = badgesHtml;
+    container.classList.remove("gt-hidden");
+  }
+
+  /**
    * Update profile UI
    */
   function updateProfileUI() {
@@ -468,6 +495,9 @@ const gadTalkProfile = (function () {
       joined.querySelector("span:last-child").textContent =
         "Joined " + joinedDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
     }
+
+    // Render profile badges
+    renderProfileBadges(profileUser.badges);
 
     // Update stats
     const followingCount = document.getElementById("following-count");

@@ -72,6 +72,8 @@ const {
   handleGetUserLikes,
   handleLikeGad,
   handleUnlikeGad,
+  handleGetWhoLiked,
+  handleGetWhoRegadded,
   handleRegad,
   handleUnregad,
   handleBookmarkGad,
@@ -465,9 +467,19 @@ async function handleGadsRoutes(req, res, method, segments) {
         if (method === "DELETE") return handleUnlikeGad(req, res);
         break;
 
+      case "likes":
+        // GET /api/gad-talk/gads/:gadId/likes - Get who liked
+        if (method === "GET") return handleGetWhoLiked(req, res);
+        break;
+
       case "regad":
         if (method === "POST") return handleRegad(req, res);
         if (method === "DELETE") return handleUnregad(req, res);
+        break;
+
+      case "regads":
+        // GET /api/gad-talk/gads/:gadId/regads - Get who regadded
+        if (method === "GET") return handleGetWhoRegadded(req, res);
         break;
 
       case "bookmark":

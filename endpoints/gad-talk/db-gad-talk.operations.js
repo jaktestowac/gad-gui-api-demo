@@ -48,6 +48,41 @@ const DEFAULT_FEATURE_FLAGS = [
     enabled: true,
     description: "Followers/Following sorting controls",
   },
+  {
+    key: "emoji_picker",
+    enabled: true,
+    description: "Emoji picker in compose form",
+  },
+  {
+    key: "mention_autocomplete",
+    enabled: true,
+    description: "Autocomplete dropdown when typing @username",
+  },
+  {
+    key: "hashtag_autocomplete",
+    enabled: true,
+    description: "Autocomplete dropdown when typing #hashtag",
+  },
+  {
+    key: "char_ring",
+    enabled: true,
+    description: "Circular character countdown indicator",
+  },
+  {
+    key: "who_liked",
+    enabled: true,
+    description: "Modal showing users who liked a gad",
+  },
+  {
+    key: "who_regadded",
+    enabled: true,
+    description: "Modal showing users who regadded a gad",
+  },
+  {
+    key: "profile_badges",
+    enabled: true,
+    description: "Achievement badges on user profiles",
+  },
 ];
 
 let featureFlagsCache = null;
@@ -1034,6 +1069,96 @@ function getGadTalkUserStats(userId) {
   };
 }
 
+/**
+ * Get user badges based on their profile and activity
+ * @param {string} userId - User ID
+ * @returns {Array} Array of badge objects
+ */
+function getUserBadges(userId) {
+  const db = readGadTalkDb();
+  const user = db.users.find((u) => areIdsEqual(u.id, userId));
+  if (!user) return [];
+
+  const badges = [];
+
+  // Check for verified badge
+  if (user.verified) {
+    badges.push({
+      id: "verified",
+      name: "Verified",
+      icon: "fa-solid fa-circle-check",
+      description: "Verified account",
+    });
+  }
+
+  // Check for admin badge
+  if (user.role === "admin") {
+    badges.push({
+      id: "admin",
+      name: "Admin",
+      icon: "fa-solid fa-shield",
+      description: "Platform administrator",
+    });
+  }
+
+  // Beta tester - users who joined early (first 20 users)
+  const userIndex = db.users.findIndex((u) => areIdsEqual(u.id, userId));
+  if (userIndex < 20) {
+    badges.push({
+      id: "beta_tester",
+      name: "Beta Tester",
+      icon: "fa-solid fa-flask",
+      description: "Early beta tester of GadTalk",
+    });
+  }
+
+  // Early adopter - users who joined in the first 100
+  if (userIndex >= 20 && userIndex < 100) {
+    badges.push({
+      id: "early_adopter",
+      name: "Early Adopter",
+      icon: "fa-solid fa-seedling",
+      description: "Early adopter of GadTalk",
+    });
+  }
+
+  // Power user - more than 100 gads
+  const gadsCount = db.gads.filter((g) => areIdsEqual(g.userId, userId) && !g.deleted).length;
+  if (gadsCount >= 100) {
+    badges.push({
+      id: "power_user",
+      name: "Power User",
+      icon: "fa-solid fa-bolt",
+      description: "Posted 100+ gads",
+    });
+  }
+
+  // Top contributor - more than 1000 total likes received
+  const userGadIds = db.gads.filter((g) => areIdsEqual(g.userId, userId) && !g.deleted).map((g) => g.id);
+  const totalLikesReceived = db.likes.filter((l) => userGadIds.some((gId) => areIdsEqual(l.gadId, gId))).length;
+  if (totalLikesReceived >= 1000) {
+    badges.push({
+      id: "top_contributor",
+      name: "Top Contributor",
+      icon: "fa-solid fa-crown",
+      description: "Received 1000+ likes",
+    });
+  }
+
+  // Social butterfly - more than 500 followers
+  const followersCount = db.follows.filter((f) => areIdsEqual(f.followingId, userId)).length;
+  if (followersCount >= 500) {
+    badges.push({
+      id: "influencer",
+      name: "Influencer",
+      icon: "fa-solid fa-star",
+      description: "500+ followers",
+    });
+  }
+
+  return badges;
+}
+
 // ==================== GAD (POST) OPERATIONS ====================
 
 /**
@@ -1275,6 +1400,49 @@ function isFollowing(followerId, followingId) {
 }
 
 // ==================== LIKE OPERATIONS ====================
+
+/**
+ * Get users who liked a gad
+ * @param {string} gadId - Gad ID
+ * @param {Object} options - Pagination options
+ * @param {number} options.limit - Max results (default 50)
+ * @param {number} options.offset - Offset (default 0)
+ * @returns {Promise<Object>} Users who liked with pagination info
+ */
+async function getLikesForGad(gadId, options = {}) {
+  const { limit = 50, offset = 0 } = options;
+  const db = readGadTalkDb();
+
+  // Get all likes for this gad
+  const likes = db.likes
+    .filter((l) => areIdsEqual(l.gadId, gadId))
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  const total = likes.length;
+  const paginatedLikes = likes.slice(offset, offset + limit);
+
+  // Get user info for each like
+  const usersWhoLiked = [];
+  for (const like of paginatedLikes) {
+    const user = db.users.find((u) => areIdsEqual(u.id, like.userId));
+    if (user) {
+      usersWhoLiked.push({
+        id: user.id,
+        username: user.username,
+        displayName: user.displayName,
+        avatar: user.avatar,
+        verified: user.verified || false,
+        likedAt: like.createdAt,
+      });
+    }
+  }
+
+  return {
+    users: usersWhoLiked,
+    total,
+    hasMore: offset + limit < total,
+  };
+}
 
 /**
  * Create a like
@@ -1787,6 +1955,50 @@ async function deleteRegad(userId, gadId) {
     }
   });
   return deleted;
+}
+
+/**
+ * Get users who regadded a gad
+ * @param {string} gadId - Gad ID
+ * @param {Object} options - Pagination options
+ * @param {number} options.limit - Max results (default 50)
+ * @param {number} options.offset - Offset (default 0)
+ * @returns {Promise<Object>} Users who regadded with pagination info
+ */
+function getRegadsForGad(gadId, options = {}) {
+  const { limit = 50, offset = 0 } = options;
+  const db = readGadTalkDb();
+
+  // Get all regads for this gad from outbox
+  const regads = db.outbox
+    .filter((o) => o.type === "regad" && areIdsEqual(o.gadId, gadId))
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  const total = regads.length;
+  const paginatedRegads = regads.slice(offset, offset + limit);
+
+  // Get user info for each regad
+  const usersWhoRegadded = [];
+  for (const regad of paginatedRegads) {
+    const user = db.users.find((u) => areIdsEqual(u.id, regad.userId));
+    if (user) {
+      usersWhoRegadded.push({
+        id: user.id,
+        username: user.username,
+        displayName: user.displayName,
+        avatar: user.avatar,
+        verified: user.verified || false,
+        regaddedAt: regad.createdAt,
+        comment: regad.comment || null,
+      });
+    }
+  }
+
+  return {
+    users: usersWhoRegadded,
+    total,
+    hasMore: offset + limit < total,
+  };
 }
 
 /**
@@ -2734,6 +2946,7 @@ module.exports = {
   updateGadTalkUserLastLogin,
   updateGadTalkUserProfile,
   getGadTalkUserStats,
+  getUserBadges,
   getUserById,
   getUserByUsername,
 
@@ -2774,11 +2987,13 @@ module.exports = {
   createLike,
   deleteLike,
   hasUserLikedGad,
+  getLikesForGad,
 
   // Regads
   createRegad,
   deleteRegad,
   hasUserRegadded,
+  getRegadsForGad,
 
   // Notifications
   createNotification,
