@@ -818,6 +818,33 @@ a:hover {
 
 .gt-input {
   width: 100%;
+}
+
+/* Compact card modifier for lightweight pages */
+.gt-card-compact {
+  padding: var(--gt-spacing-sm);
+  border-radius: 12px;
+}
+
+/* Slightly smaller page title for compact pages */
+.gt-page-title-compact {
+  font-size: 1.15rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Tighten up headings inside compact cards */
+.gt-card-compact h3,
+.gt-card-compact .gt-card-title {
+  margin-bottom: 0.4rem;
+  font-size: 1rem;
+}
+
+/* Make avatar + name more compact */
+.gt-nav-user-btn .gt-avatar {
+  width: 30px;
+  height: 30px;
+}
+
   padding: var(--gt-spacing-sm) var(--gt-spacing-md);
   font-size: 1rem;
   color: var(--gt-text-primary);

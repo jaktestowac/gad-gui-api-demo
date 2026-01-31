@@ -56,71 +56,94 @@
         <!-- Main content -->
         <main class="gt-content">
             <header class="gt-page-header">
-                <h1 class="gt-page-title">About GadTalk</h1>
-                <p class="gt-text-secondary">A social playground for testing, QA, and automation enthusiasts.</p>
+                <a href="javascript:history.back()" class="gt-icon-btn gt-mr-sm">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <h1 class="gt-page-title gt-page-title-compact">About GadTalk</h1>
             </header>
 
-            <section class="gt-card gt-mb-lg">
-                <h2>Our Mission</h2>
-                <p class="gt-text-secondary">
+            <div class="gt-p-sm">
+                <div class="gt-card gt-card-compact">
+                    <p class="gt-text-secondary gt-mb-sm">A social playground for testing, QA, and automation enthusiasts.</p>
                     GadTalk helps testers and developers share knowledge, build community, and practice automation
                     in a safe, realistic environment.
-                </p>
-            </section>
+                    </p>
+                </div>
 
-            <section class="gt-card gt-mb-lg">
-                <h2>What Makes GadTalk Different</h2>
-                <ul class="gt-text-secondary">
-                    <li>Realistic data and endpoints for automation practice.</li>
-                    <li>Consistent UI patterns with test-friendly selectors.</li>
-                    <li>Feature flags, chaos testing, and admin tools for advanced scenarios.</li>
-                </ul>
-            </section>
+                <div class="gt-mb-sm">
+                    <h3 class="gt-text-primary gt-mb-sm">What Makes GadTalk Different</h3>
+                    <ul class="gt-text-secondary" style="padding-left: 1.5rem;">
+                        <li>Realistic data and endpoints for automation practice.</li>
+                        <li>Consistent UI patterns with test-friendly selectors.</li>
+                        <li>Feature flags, chaos testing, and admin tools for advanced scenarios.</li>
+                    </ul>
+                </div>
 
-            <section class="gt-card gt-mb-lg">
-                <h2>Community Guidelines</h2>
-                <p class="gt-text-secondary">
-                    Be respectful, share responsibly, and help others learn. We celebrate curiosity and collaboration.
-                </p>
-            </section>
+                <div class="gt-mb-lg">
+                    <h3 class="gt-text-primary gt-mb-sm">Community Guidelines</h3>
+                    <p class="gt-text-secondary">
+                        Be respectful, share responsibly, and help others learn. We celebrate curiosity and collaboration.
+                    </p>
+                </div>
 
-            <section class="gt-card">
-                <h2>Contact</h2>
-                <p class="gt-text-secondary">
-                    Want to contribute or report an issue? Visit our
-                    <a href="https://github.com/jaktestowac/gad-gui-api-demo" class="gt-link">GitHub repository</a>
-                    or email <a href="mailto:hello@gadtalk.local" class="gt-link">hello@gadtalk.local</a>.
-                </p>
-            </section>
-        </main>
-
-        <!-- Right sidebar -->
-        <aside class="gt-sidebar gt-sidebar-right">
-            <div class="gt-card">
-                <h3 class="gt-card-title">Learn more</h3>
-                <div class="gt-flex gt-flex-col gt-gap-sm">
-                    <a href="/gad-talk/terms.html" class="gt-link">Terms of Service</a>
-                    <a href="/gad-talk/privacy.html" class="gt-link">Privacy Policy</a>
+                <div>
+                    <h3 class="gt-text-primary gt-mb-sm">Contact</h3>
+                    <p class="gt-text-secondary">
+                        Want to contribute or report an issue? Visit our
+                        <a href="https://github.com/jaktestowac/gad-gui-api-demo" class="gt-link">GitHub repository</a>.
+                    </p>
                 </div>
             </div>
-            <div class="gt-card">
-                <h3 class="gt-card-title">Version</h3>
-                <p class="gt-text-secondary">GadTalk Demo • 2026</p>
-            </div>
+    </div>
+    </main>
 
-            <footer class="gt-sidebar-footer">
-                <a href="/gad-talk/terms.html" class="gt-link-muted">Terms</a>
-                <a href="/gad-talk/privacy.html" class="gt-link-muted">Privacy</a>
-                <a href="/gad-talk/about.html" class="gt-link-muted">About</a>
-                <a href="/api/gad-talk/admin/backend" class="gt-btn gt-btn-secondary gt-btn-sm">Backend</a>
-                <span class="gt-text-muted">© <span class="gt-year"></span> GadTalk</span>
-            </footer>
-        </aside>
+    <!-- Right sidebar -->
+    <aside class="gt-sidebar gt-sidebar-right">
+        <div class="gt-card">
+            <h3 class="gt-card-title">Learn more</h3>
+            <div class="gt-flex gt-flex-col gt-gap-sm">
+                <a href="/gad-talk/terms.html" class="gt-link">Terms of Service</a>
+                <a href="/gad-talk/privacy.html" class="gt-link">Privacy Policy</a>
+            </div>
+        </div>
+        <div class="gt-card">
+            <h3 class="gt-card-title">Version</h3>
+            <p class="gt-text-secondary">GadTalk Demo • 2026</p>
+        </div>
+
+        <footer class="gt-sidebar-footer">
+            <a href="/gad-talk/terms.html" class="gt-link-muted">Terms</a>
+            <a href="/gad-talk/privacy.html" class="gt-link-muted">Privacy</a>
+            <a href="/gad-talk/about.html" class="gt-link-muted">About</a>
+            <a href="/api/gad-talk/admin/backend" class="gt-btn gt-btn-secondary gt-btn-sm">Backend</a>
+            <span class="gt-text-muted">© <span class="gt-year"></span> GadTalk</span>
+        </footer>
+    </aside>
     </div>
 
     <script src="/gad-talk/js/api.js"></script>
     <script src="/gad-talk/js/auth.js"></script>
     <script src="/gad-talk/js/nav.js"></script>
+    <script>
+        (async function () {
+            var s = document.getElementById('nav-user-section');
+            if (!s) return;
+            if (s.querySelector('.gt-nav-user') || s.querySelector('.gt-nav-avatar')) return;
+            if (!window.gadTalkAuth) return;
+            const currentUser = await window.gadTalkAuth.optionalAuth();
+            if (!currentUser) return;
+            const avatarHtml = window.gadTalkGads && window.gadTalkGads.getAvatarHtml
+                ? window.gadTalkGads.getAvatarHtml(currentUser, 'sm')
+                : `<img src="${currentUser.avatar || '/gad-talk/images/default-avatar.png'}" class="gt-avatar gt-avatar-sm" alt="${currentUser.displayName || currentUser.username}">`;
+            s.innerHTML = `
+          <div class="gt-nav-user">
+            <button class="gt-nav-user-btn" onclick="window.location.href='/gad-talk/@${encodeURIComponent(currentUser.username)}'">
+              ${avatarHtml}
+              <span class="gt-nav-user-name">${currentUser.displayName || currentUser.username}</span>
+            </button>
+          </div>`;
+        })();
+    </script>
     <script src="/gad-talk/js/footer.js"></script>
 </body>
 

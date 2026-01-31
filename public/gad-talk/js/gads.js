@@ -70,15 +70,10 @@ const gadTalkGads = (function () {
    * Get avatar HTML
    */
   function getAvatarHtml(user, size = "md") {
-    const avatar = user?.avatar;
+    // Always return an image element; fall back to the default avatar when user has no avatar set
     const displayName = user?.displayName || user?.username || "?";
-    const initial = displayName.charAt(0).toUpperCase();
-
-    if (avatar) {
-      return `<img src="${avatar}" alt="${displayName}" class="gt-avatar gt-avatar-${size}" />`;
-    }
-
-    return `<div class="gt-avatar gt-avatar-${size}" style="display: flex; align-items: center; justify-content: center; font-weight: bold;">${initial}</div>`;
+    const avatar = user?.avatar || "/gad-talk/images/default-avatar.png";
+    return `<img src="${avatar}" alt="${displayName}" class="gt-avatar gt-avatar-${size}" />`;
   }
 
   /**
