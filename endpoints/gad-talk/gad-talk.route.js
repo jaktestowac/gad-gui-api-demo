@@ -48,6 +48,11 @@ const {
   handleUpdateChaosConfig,
   handleEnableChaos,
   handleDisableChaos,
+  handleGetFeatureFlags,
+  handleUpdateFeatureFlag,
+  handleEnableFeatureFlag,
+  handleDisableFeatureFlag,
+  handleFeatureFlagsPage,
 } = require("./admin-endpoint.helpers");
 
 const {
@@ -631,6 +636,33 @@ async function handleAdminRoutes(req, res, method, segments) {
     case "metrics":
       if (method === "GET") return handleGetMetrics(req, res);
       break;
+
+    case "features":
+      if (method === "GET") return handleFeatureFlagsPage(req, res);
+      break;
+
+    case "feature-flags": {
+      const flagKey = segments[2];
+      const flagAction = segments[3];
+
+      if (!flagKey && method === "GET") {
+        return handleGetFeatureFlags(req, res);
+      }
+
+      if (flagKey) {
+        req.params = { flag: flagKey };
+        if (!flagAction && method === "PUT") {
+          return handleUpdateFeatureFlag(req, res);
+        }
+        if (flagAction === "enable" && method === "POST") {
+          return handleEnableFeatureFlag(req, res);
+        }
+        if (flagAction === "disable" && method === "POST") {
+          return handleDisableFeatureFlag(req, res);
+        }
+      }
+      break;
+    }
 
     case "chaos": {
       const chaosAction = segments[2];

@@ -20,6 +20,57 @@ const auditDbLock = {
   queue: [],
 };
 
+// ==================== FEATURE FLAGS ====================
+
+const DEFAULT_FEATURE_FLAGS = [
+  {
+    key: "charts",
+    enabled: true,
+    description: "Profile analytics charts",
+  },
+];
+
+let featureFlagsCache = null;
+
+function normalizeFeatureFlagKey(key) {
+  return String(key || "")
+    .trim()
+    .toLowerCase();
+}
+
+function buildFeatureFlagEntry(flag, existing = {}) {
+  const now = new Date().toISOString();
+  return {
+    key: normalizeFeatureFlagKey(flag.key || existing.key),
+    enabled: existing.enabled ?? flag.enabled ?? false,
+    description: flag.description || existing.description || "",
+    updatedAt: existing.updatedAt || now,
+    updatedBy: existing.updatedBy || "system",
+  };
+}
+
+function ensureFeatureFlagsInDb(db) {
+  let updated = false;
+  if (!Array.isArray(db.featureFlags)) {
+    db.featureFlags = [];
+    updated = true;
+  }
+
+  for (const flag of DEFAULT_FEATURE_FLAGS) {
+    const key = normalizeFeatureFlagKey(flag.key);
+    const existingIndex = db.featureFlags.findIndex((entry) => normalizeFeatureFlagKey(entry.key) === key);
+    if (existingIndex === -1) {
+      db.featureFlags.push({
+        ...buildFeatureFlagEntry(flag),
+        updatedAt: new Date().toISOString(),
+      });
+      updated = true;
+    }
+  }
+
+  return updated;
+}
+
 // ==================== LOCK FUNCTIONS ====================
 
 /**
@@ -133,10 +184,12 @@ function readGadTalkDb() {
         mutes: demoData.mutes || [],
         bookmarks: demoData.bookmarks || [],
         hashtags: demoData.hashtags || [],
+        featureFlags: demoData.featureFlags || [],
         outbox: [],
         missions: [],
         missionCompletions: [],
       };
+      ensureFeatureFlagsInDb(db);
       fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2));
       logDebug("GadTalk DB seeded with demo data");
     }
@@ -219,6 +272,7 @@ function readGadTalkDemoDb() {
       mutes: [],
       bookmarks: [],
       hashtags: [],
+      featureFlags: [],
       outbox: [],
       missions: [],
       missionCompletions: [],
@@ -337,6 +391,7 @@ const REQUIRED_COLLECTIONS = [
   "mutes",
   "bookmarks",
   "hashtags",
+  "featureFlags",
   "outbox",
   "missions",
   "missionCompletions",
@@ -484,6 +539,7 @@ async function checkAndRepairGadTalkDb() {
       const repairedIntegrity = checkDbIntegrity(repairedDb);
 
       if (repairedIntegrity.valid) {
+        ensureFeatureFlagsInDb(repairedDb);
         logDebug("[GadTalk] Database repaired successfully");
         await writeGadTalkDb(repairedDb);
         return { status: "repaired", db: repairedDb, repairs: integrity.errors };
@@ -506,6 +562,12 @@ async function checkAndRepairGadTalkDb() {
     }
 
     logDebug("[GadTalk] Database integrity check passed");
+
+    const flagsUpdated = ensureFeatureFlagsInDb(db);
+    if (flagsUpdated) {
+      logDebug("[GadTalk] Feature flags updated with defaults");
+      await writeGadTalkDb(db);
+    }
 
     // Even if integrity passes, check if gads collection is empty and needs seeding
     if (!Array.isArray(db.gads) || db.gads.length === 0) {
@@ -627,10 +689,13 @@ async function initializeGadTalkDb() {
       mutes: (seed && seed.mutes) || [],
       bookmarks: (seed && seed.bookmarks) || [],
       hashtags: (seed && seed.hashtags) || [],
+      featureFlags: (seed && seed.featureFlags) || [],
       outbox: (seed && seed.outbox) || [],
       missions: (seed && seed.missions) || [],
       missionCompletions: (seed && seed.missionCompletions) || [],
     };
+
+    ensureFeatureFlagsInDb(initialDb);
 
     // Write to database
     await writeGadTalkDb(initialDb);
@@ -725,10 +790,13 @@ async function resetGadTalkDatabaseWithDemoData() {
       mutes: demoDb.mutes || [],
       bookmarks: demoDb.bookmarks || [],
       hashtags: demoDb.hashtags || [],
+      featureFlags: demoDb.featureFlags || [],
       outbox: demoDb.outbox || [],
       missions: demoDb.missions || [],
       missionCompletions: demoDb.missionCompletions || [],
     };
+
+    ensureFeatureFlagsInDb(resetDb);
 
     await writeGadTalkDb(resetDb);
     await writeAuditDb({ audit: [] });
@@ -2299,6 +2367,7 @@ function getGadTalkDbStatus() {
       mutes: db.mutes.length,
       bookmarks: db.bookmarks.length,
       hashtags: db.hashtags.length,
+      featureFlags: db.featureFlags.length,
       outbox: db.outbox.length,
       missions: db.missions.length,
       missionCompletions: db.missionCompletions.length,
@@ -2535,6 +2604,80 @@ function getUserHashtagDistribution(userId, options = {}) {
   };
 }
 
+// ==================== FEATURE FLAG OPERATIONS ====================
+
+function getFeatureFlags() {
+  if (!featureFlagsCache) {
+    const db = readGadTalkDb();
+    ensureFeatureFlagsInDb(db);
+    featureFlagsCache = db.featureFlags || [];
+  }
+
+  return [...featureFlagsCache].sort((a, b) => a.key.localeCompare(b.key));
+}
+
+function getFeatureFlagsMap() {
+  const flags = getFeatureFlags();
+  return flags.reduce((acc, flag) => {
+    acc[normalizeFeatureFlagKey(flag.key)] = flag;
+    return acc;
+  }, {});
+}
+
+function isFeatureEnabled(flagKey) {
+  const key = normalizeFeatureFlagKey(flagKey);
+  const flags = getFeatureFlagsMap();
+  if (!Object.prototype.hasOwnProperty.call(flags, key)) {
+    return true;
+  }
+  return !!flags[key].enabled;
+}
+
+async function setFeatureFlag(flagKey, enabled, actorUserId = null) {
+  const key = normalizeFeatureFlagKey(flagKey);
+  if (!key) {
+    throw new Error("Feature flag key is required");
+  }
+
+  let updatedFlag;
+  let previousEnabled = null;
+
+  await mutateAndWriteDb((db) => {
+    ensureFeatureFlagsInDb(db);
+    const index = db.featureFlags.findIndex((flag) => normalizeFeatureFlagKey(flag.key) === key);
+    if (index >= 0) {
+      previousEnabled = db.featureFlags[index].enabled;
+      db.featureFlags[index].enabled = !!enabled;
+      db.featureFlags[index].updatedAt = new Date().toISOString();
+      db.featureFlags[index].updatedBy = actorUserId || "anonymous";
+      updatedFlag = db.featureFlags[index];
+    } else {
+      updatedFlag = {
+        key,
+        enabled: !!enabled,
+        description: "",
+        updatedAt: new Date().toISOString(),
+        updatedBy: actorUserId || "anonymous",
+      };
+      db.featureFlags.push(updatedFlag);
+    }
+  });
+
+  featureFlagsCache = null;
+
+  await createGadTalkAuditLog({
+    actorUserId: actorUserId || "anonymous",
+    eventType: "feature-flag-updated",
+    payloadObject: {
+      key,
+      enabled: !!enabled,
+      previousEnabled,
+    },
+  });
+
+  return updatedFlag;
+}
+
 // ==================== EXPORTS ====================
 
 module.exports = {
@@ -2661,4 +2804,10 @@ module.exports = {
   getUserEngagementTimeline,
   getUserFollowerGrowth,
   getUserHashtagDistribution,
+
+  // Feature flags
+  getFeatureFlags,
+  getFeatureFlagsMap,
+  isFeatureEnabled,
+  setFeatureFlag,
 };

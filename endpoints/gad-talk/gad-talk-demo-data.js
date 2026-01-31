@@ -1526,6 +1526,15 @@ module.exports = {
     { tag: "reliability", count: 1, trendingScore: 32.0, lastCalculated: now },
     { tag: "bugbounty", count: 1, trendingScore: 30.0, lastCalculated: now },
   ],
+  featureFlags: [
+    {
+      key: "charts",
+      enabled: true,
+      description: "Profile analytics charts",
+      updatedAt: now,
+      updatedBy: "system",
+    },
+  ],
   outbox: [],
   missions: [
     {

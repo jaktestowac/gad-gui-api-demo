@@ -569,6 +569,45 @@ const GadTalkAPI = (function () {
     },
   };
 
+  // ==================== Feature Flags API ====================
+
+  const featureFlags = {
+    /**
+     * Get all feature flags
+     */
+    async getAll() {
+      return request("/admin/feature-flags");
+    },
+
+    /**
+     * Update feature flag
+     */
+    async update(flagKey, enabled) {
+      return request(`/admin/feature-flags/${encodeURIComponent(flagKey)}`, {
+        method: "PUT",
+        body: { enabled },
+      });
+    },
+
+    /**
+     * Enable feature flag
+     */
+    async enable(flagKey) {
+      return request(`/admin/feature-flags/${encodeURIComponent(flagKey)}/enable`, {
+        method: "POST",
+      });
+    },
+
+    /**
+     * Disable feature flag
+     */
+    async disable(flagKey) {
+      return request(`/admin/feature-flags/${encodeURIComponent(flagKey)}/disable`, {
+        method: "POST",
+      });
+    },
+  };
+
   // ==================== Search API ====================
 
   const search = {
@@ -673,6 +712,7 @@ const GadTalkAPI = (function () {
     notifications,
     hashtags,
     admin,
+    featureFlags,
     search,
     explore,
     analytics,

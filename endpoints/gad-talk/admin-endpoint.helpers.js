@@ -6,6 +6,8 @@ const {
   getGadTalkDbStatus,
   initializeAllGadTalkDatabases,
   getGadTalkAuditLogs,
+  getFeatureFlags,
+  setFeatureFlag,
 } = require("./db-gad-talk.operations");
 const { getAuthenticatedUser } = require("./users-endpoint.helpers");
 const gadTalkConfig = require("./gad-talk-config");
@@ -32,6 +34,11 @@ function checkAdminAuth(req) {
   }
 
   return { isAdmin: true, user };
+}
+
+function getActorUserId(req) {
+  const user = getAuthenticatedUser(req);
+  return user ? user.id : null;
 }
 
 // ==================== ADMIN HANDLERS ====================
@@ -365,6 +372,123 @@ async function handleDisableChaos(req, res) {
   }
 }
 
+/**
+ * Get feature flags (public)
+ * GET /api/gad-talk/admin/feature-flags
+ */
+async function handleGetFeatureFlags(req, res) {
+  try {
+    const flags = getFeatureFlags();
+    res.status(HTTP_OK).send({
+      ok: true,
+      data: flags,
+    });
+  } catch (error) {
+    logError("GadTalk admin feature-flags error:", error);
+    res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to get feature flags"));
+  }
+}
+
+/**
+ * Update feature flag (public)
+ * PUT /api/gad-talk/admin/feature-flags/:flag
+ */
+async function handleUpdateFeatureFlag(req, res) {
+  try {
+    const { flag } = req.params;
+    const { enabled } = req.body || {};
+    if (enabled === undefined) {
+      res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Enabled value is required"));
+      return;
+    }
+
+    const updated = await setFeatureFlag(flag, !!enabled, getActorUserId(req));
+
+    res.status(HTTP_OK).send({
+      ok: true,
+      data: updated,
+    });
+  } catch (error) {
+    logError("GadTalk admin feature-flag update error:", error);
+    res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to update feature flag"));
+  }
+}
+
+/**
+ * Enable feature flag (public)
+ * POST /api/gad-talk/admin/feature-flags/:flag/enable
+ */
+async function handleEnableFeatureFlag(req, res) {
+  try {
+    const { flag } = req.params;
+    const updated = await setFeatureFlag(flag, true, getActorUserId(req));
+    res.status(HTTP_OK).send({
+      ok: true,
+      data: updated,
+    });
+  } catch (error) {
+    logError("GadTalk admin feature-flag enable error:", error);
+    res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to enable feature flag"));
+  }
+}
+
+/**
+ * Disable feature flag (public)
+ * POST /api/gad-talk/admin/feature-flags/:flag/disable
+ */
+async function handleDisableFeatureFlag(req, res) {
+  try {
+    const { flag } = req.params;
+    const updated = await setFeatureFlag(flag, false, getActorUserId(req));
+    res.status(HTTP_OK).send({
+      ok: true,
+      data: updated,
+    });
+  } catch (error) {
+    logError("GadTalk admin feature-flag disable error:", error);
+    res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to disable feature flag"));
+  }
+}
+
+/**
+ * Feature flags UI page (public)
+ * GET /api/gad-talk/admin/features
+ */
+async function handleFeatureFlagsPage(_req, res) {
+  const html = `<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GadTalk Feature Flags</title>
+    <style>
+      body { font-family: Arial, sans-serif; background:#0b0c0f; color:#e7e9ea; margin:0; padding:24px; }
+      .container { max-width: 720px; margin: 0 auto; }
+      h1 { font-size: 22px; margin-bottom: 12px; }
+      .card { background:#16181c; border:1px solid #2f3336; border-radius:12px; padding:16px; }
+      .row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid #2f3336; }
+      .row:last-child { border-bottom:none; }
+      .tag { font-size: 12px; color:#71767b; }
+      button { background:#1d9bf0; color:#fff; border:none; border-radius:999px; padding:6px 12px; cursor:pointer; font-weight:600; }
+      button.off { background:#2f3336; color:#e7e9ea; }
+      .small { font-size: 12px; color:#71767b; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>GadTalk Feature Flags</h1>
+
+      <p class="small">Public testing page. Changes apply immediately.</p>
+      <button onclick="window.location.href='/gad-talk'">Return to GadTalk Home</button>
+      <div class="card" id="flags"></div>
+    </div>
+    <script src="/gad-talk/js/feature-flags-admin.js"></script>
+  </body>
+  </html>`;
+
+  res.status(HTTP_OK).send(html);
+}
+
 // ==================== EXPORTS ====================
 
 module.exports = {
@@ -379,6 +503,11 @@ module.exports = {
   handleUpdateChaosConfig,
   handleEnableChaos,
   handleDisableChaos,
+  handleGetFeatureFlags,
+  handleUpdateFeatureFlag,
+  handleEnableFeatureFlag,
+  handleDisableFeatureFlag,
+  handleFeatureFlagsPage,
 
   // Helpers
   checkAdminAuth,

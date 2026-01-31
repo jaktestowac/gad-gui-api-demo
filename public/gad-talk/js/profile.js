@@ -11,6 +11,7 @@ const gadTalkProfile = (function () {
   let currentPage = 1;
   let isLoading = false;
   let hasMore = true;
+  let featureFlags = {};
 
   /**
    * Initialize the profile page
@@ -32,6 +33,9 @@ const gadTalkProfile = (function () {
     // Load profile
     await loadProfile(username);
 
+    // Load feature flags
+    await loadFeatureFlags();
+
     // Setup tabs
     setupTabs();
 
@@ -45,6 +49,40 @@ const gadTalkProfile = (function () {
     const navProfile = document.getElementById("nav-profile");
     if (navProfile) {
       navProfile.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+    }
+  }
+
+  async function loadFeatureFlags() {
+    if (!window.GadTalkAPI || !window.GadTalkAPI.featureFlags) return;
+    try {
+      const response = await window.GadTalkAPI.featureFlags.getAll();
+      const flags = response?.data || response?.flags || response || [];
+      featureFlags = flags.reduce((acc, flag) => {
+        acc[String(flag.key || "").toLowerCase()] = !!flag.enabled;
+        return acc;
+      }, {});
+
+      applyFeatureFlags();
+    } catch (error) {
+      featureFlags = {};
+      applyFeatureFlags();
+    }
+  }
+
+  function applyFeatureFlags() {
+    const analyticsTab = document.querySelector('.gt-tab[data-tab="analytics"]');
+    const chartsSection = document.getElementById("profile-charts");
+    const chartsEnabled = featureFlags.charts !== false;
+
+    if (analyticsTab) {
+      analyticsTab.classList.toggle("gt-hidden", !chartsEnabled);
+    }
+    if (chartsSection) {
+      chartsSection.classList.toggle("gt-hidden", !chartsEnabled || currentTab !== "analytics");
+    }
+
+    if (!chartsEnabled && currentTab === "analytics") {
+      setActiveTab("gads");
     }
   }
 
@@ -448,6 +486,10 @@ const gadTalkProfile = (function () {
 
   async function setActiveTab(tabName) {
     currentTab = tabName;
+
+    if (currentTab === "analytics" && featureFlags.charts === false) {
+      currentTab = "gads";
+    }
 
     const chartsSection = document.getElementById("profile-charts");
     const profileFeed = document.getElementById("profile-feed");

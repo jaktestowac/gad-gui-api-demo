@@ -5,7 +5,12 @@
 
 const dbOps = require("./db-gad-talk.operations");
 const { logError } = require("../../helpers/logger-api");
-const { HTTP_OK, HTTP_NOT_FOUND, HTTP_INTERNAL_SERVER_ERROR } = require("../../helpers/response.helpers");
+const {
+  HTTP_OK,
+  HTTP_NOT_FOUND,
+  HTTP_FORBIDDEN,
+  HTTP_INTERNAL_SERVER_ERROR,
+} = require("../../helpers/response.helpers");
 const { formatErrorResponse } = require("../../helpers/helpers");
 
 function parseNumber(value, min, max, fallback) {
@@ -19,8 +24,17 @@ function ensureUserExists(userId) {
   return user || null;
 }
 
+function ensureChartsEnabled(res) {
+  if (!dbOps.isFeatureEnabled("charts")) {
+    res.status(HTTP_FORBIDDEN).json(formatErrorResponse("Feature disabled"));
+    return false;
+  }
+  return true;
+}
+
 async function handleGetActivityHeatmap(req, res) {
   try {
+    if (!ensureChartsEnabled(res)) return;
     const { userId } = req.params;
     const user = ensureUserExists(userId);
     if (!user) {
@@ -43,6 +57,7 @@ async function handleGetActivityHeatmap(req, res) {
 
 async function handleGetEngagementTimeline(req, res) {
   try {
+    if (!ensureChartsEnabled(res)) return;
     const { userId } = req.params;
     const user = ensureUserExists(userId);
     if (!user) {
@@ -65,6 +80,7 @@ async function handleGetEngagementTimeline(req, res) {
 
 async function handleGetFollowerGrowth(req, res) {
   try {
+    if (!ensureChartsEnabled(res)) return;
     const { userId } = req.params;
     const user = ensureUserExists(userId);
     if (!user) {
@@ -87,6 +103,7 @@ async function handleGetFollowerGrowth(req, res) {
 
 async function handleGetHashtagDistribution(req, res) {
   try {
+    if (!ensureChartsEnabled(res)) return;
     const { userId } = req.params;
     const user = ensureUserExists(userId);
     if (!user) {
