@@ -3,6 +3,9 @@ const { formatErrorResponse } = require("../../helpers/helpers");
 const { HTTP_NOT_FOUND, HTTP_METHOD_NOT_ALLOWED } = require("../../helpers/response.helpers");
 const { verifyToken } = require("../../helpers/jwtauth");
 
+// Import chaos helpers
+const { applyChaosEffects, shouldApplyChaos } = require("./chaos-helpers");
+
 // Import endpoint handlers
 const {
   handleSignup,
@@ -46,10 +49,14 @@ const {
   handleInitDb,
   handleGetLogs,
   handleGetMetrics,
+  handleGetChaosStatus,
   handleGetChaosConfig,
   handleUpdateChaosConfig,
   handleEnableChaos,
   handleDisableChaos,
+  handleGetChaosPresets,
+  handleApplyChaosPreset,
+  handleChaosDashboardPage,
   handleGetFeatureFlags,
   handleUpdateFeatureFlag,
   handleEnableFeatureFlag,
@@ -182,6 +189,31 @@ async function handleGadTalk(req, res) {
   logTrace("GadTalk request:", { method, segments, url: req.url, userId: req.gadTalkUserId });
 
   try {
+    // ==================== APPLY CHAOS EFFECTS ====================
+    // Apply chaos effects to non-admin, non-auth routes
+    if (shouldApplyChaos(req.url)) {
+      const { shouldContinue, chaosApplied } = await applyChaosEffects(req, res);
+
+      // If chaos caused a failure, response already sent
+      if (!shouldContinue) {
+        logDebug("Chaos: Request terminated by chaos effect", {
+          url: req.url,
+          chaosApplied,
+        });
+        return;
+      }
+
+      // Log any delays that were applied
+      if (chaosApplied.randomDelay > 0 || chaosApplied.slowEndpointDelay > 0) {
+        logDebug("Chaos: Delays applied", {
+          url: req.url,
+          randomDelay: chaosApplied.randomDelay,
+          slowEndpointDelay: chaosApplied.slowEndpointDelay,
+          total: chaosApplied.randomDelay + chaosApplied.slowEndpointDelay,
+        });
+      }
+    }
+
     // ==================== AUTH ROUTES ====================
     if (segments[0] === "auth") {
       return await handleAuthRoutes(req, res, method, segments);
@@ -708,9 +740,24 @@ async function handleAdminRoutes(req, res, method, segments) {
 
     case "chaos": {
       const chaosAction = segments[2];
+      if (!chaosAction && method === "GET") {
+        return handleChaosDashboardPage(req, res);
+      }
       if (chaosAction === "config") {
         if (method === "GET") return handleGetChaosConfig(req, res);
         if (method === "PUT") return handleUpdateChaosConfig(req, res);
+      } else if (chaosAction === "presets") {
+        const presetName = segments[3];
+        if (!presetName && method === "GET") {
+          return handleGetChaosPresets(req, res);
+        }
+        if (presetName && method === "POST") {
+          req.params = { preset: presetName };
+          return handleApplyChaosPreset(req, res);
+        }
+      } else if (chaosAction === "status" && method === "GET") {
+        // Public endpoint - no auth required
+        return handleGetChaosStatus(req, res);
       } else if (chaosAction === "enable" && method === "POST") {
         return handleEnableChaos(req, res);
       } else if (chaosAction === "disable" && method === "POST") {

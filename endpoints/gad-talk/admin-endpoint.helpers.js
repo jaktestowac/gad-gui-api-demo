@@ -251,19 +251,46 @@ async function handleGetMetrics(req, res) {
 }
 
 /**
- * Get chaos configuration
- * GET /api/gad-talk/admin/chaos/config
+ * Get chaos status (public - no auth required)
+ * GET /api/gad-talk/admin/chaos/status
+ * Returns whether chaos is active without requiring authentication
  */
-async function handleGetChaosConfig(req, res) {
+async function handleGetChaosStatus(_req, res) {
   try {
-    // Check admin auth
-    const authCheck = checkAdminAuth(req);
-    if (!authCheck.isAdmin) {
-      const statusCode = authCheck.error.includes("Authentication") ? HTTP_UNAUTHORIZED : HTTP_FORBIDDEN;
-      res.status(statusCode).send(formatErrorResponse(authCheck.error));
-      return;
+    const chaos = gadTalkConfig.chaos;
+    const isActive = chaos && chaos.enabled;
+
+    // Count active features
+    let activeFeatureCount = 0;
+    if (isActive && chaos.features) {
+      if (chaos.features.randomDelays?.enabled) activeFeatureCount++;
+      if (chaos.features.intermittentFailures?.enabled) activeFeatureCount++;
+      if (chaos.features.slowEndpoints?.enabled) activeFeatureCount++;
+      if (chaos.features.flakyWebSocket?.enabled) activeFeatureCount++;
     }
 
+    res.status(HTTP_OK).send({
+      ok: true,
+      data: {
+        enabled: isActive,
+        activeFeatureCount,
+        message: isActive
+          ? `Chaos mode is ACTIVE with ${activeFeatureCount} feature(s) enabled`
+          : "Chaos mode is disabled",
+      },
+    });
+  } catch (error) {
+    logError("GadTalk chaos status error:", error);
+    res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to get chaos status"));
+  }
+}
+
+/**
+ * Get chaos configuration (public)
+ * GET /api/gad-talk/admin/chaos/config
+ */
+async function handleGetChaosConfig(_req, res) {
+  try {
     res.status(HTTP_OK).send({
       ok: true,
       data: gadTalkConfig.chaos,
@@ -275,19 +302,11 @@ async function handleGetChaosConfig(req, res) {
 }
 
 /**
- * Update chaos configuration
+ * Update chaos configuration (public)
  * PUT /api/gad-talk/admin/chaos/config
  */
 async function handleUpdateChaosConfig(req, res) {
   try {
-    // Check admin auth
-    const authCheck = checkAdminAuth(req);
-    if (!authCheck.isAdmin) {
-      const statusCode = authCheck.error.includes("Authentication") ? HTTP_UNAUTHORIZED : HTTP_FORBIDDEN;
-      res.status(statusCode).send(formatErrorResponse(authCheck.error));
-      return;
-    }
-
     const updates = req.body;
 
     // Update chaos config (in-memory only)
@@ -298,7 +317,7 @@ async function handleUpdateChaosConfig(req, res) {
       Object.assign(gadTalkConfig.chaos.features, updates.features);
     }
 
-    logDebug("GadTalk: Chaos config updated by admin:", { userId: authCheck.user?.id, updates });
+    logDebug("GadTalk: Chaos config updated:", { updates });
 
     res.status(HTTP_OK).send({
       ok: true,
@@ -311,22 +330,14 @@ async function handleUpdateChaosConfig(req, res) {
 }
 
 /**
- * Enable chaos mode
+ * Enable chaos mode (public)
  * POST /api/gad-talk/admin/chaos/enable
  */
-async function handleEnableChaos(req, res) {
+async function handleEnableChaos(_req, res) {
   try {
-    // Check admin auth
-    const authCheck = checkAdminAuth(req);
-    if (!authCheck.isAdmin) {
-      const statusCode = authCheck.error.includes("Authentication") ? HTTP_UNAUTHORIZED : HTTP_FORBIDDEN;
-      res.status(statusCode).send(formatErrorResponse(authCheck.error));
-      return;
-    }
-
     gadTalkConfig.chaos.enabled = true;
 
-    logDebug("GadTalk: Chaos mode enabled by admin:", { userId: authCheck.user?.id });
+    logDebug("GadTalk: Chaos mode enabled");
 
     res.status(HTTP_OK).send({
       ok: true,
@@ -342,22 +353,14 @@ async function handleEnableChaos(req, res) {
 }
 
 /**
- * Disable chaos mode
+ * Disable chaos mode (public)
  * POST /api/gad-talk/admin/chaos/disable
  */
-async function handleDisableChaos(req, res) {
+async function handleDisableChaos(_req, res) {
   try {
-    // Check admin auth
-    const authCheck = checkAdminAuth(req);
-    if (!authCheck.isAdmin) {
-      const statusCode = authCheck.error.includes("Authentication") ? HTTP_UNAUTHORIZED : HTTP_FORBIDDEN;
-      res.status(statusCode).send(formatErrorResponse(authCheck.error));
-      return;
-    }
-
     gadTalkConfig.chaos.enabled = false;
 
-    logDebug("GadTalk: Chaos mode disabled by admin:", { userId: authCheck.user?.id });
+    logDebug("GadTalk: Chaos mode disabled");
 
     res.status(HTTP_OK).send({
       ok: true,
@@ -369,6 +372,142 @@ async function handleDisableChaos(req, res) {
   } catch (error) {
     logError("GadTalk admin disable chaos error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to disable chaos"));
+  }
+}
+
+// ==================== CHAOS PRESETS ====================
+
+const CHAOS_PRESETS = {
+  off: {
+    name: "Off",
+    description: "All chaos features disabled",
+    icon: "✅",
+    config: {
+      enabled: false,
+      features: {
+        randomDelays: { enabled: false },
+        intermittentFailures: { enabled: false },
+        slowEndpoints: { enabled: false },
+        flakyWebSocket: { enabled: false },
+      },
+    },
+  },
+  mild: {
+    name: "Mild",
+    description: "Light delays, very rare failures",
+    icon: "🌤️",
+    config: {
+      enabled: true,
+      features: {
+        randomDelays: { enabled: true, minMs: 50, maxMs: 500, probability: 0.1 },
+        intermittentFailures: { enabled: false },
+        slowEndpoints: { enabled: false },
+        flakyWebSocket: { enabled: false },
+      },
+    },
+  },
+  moderate: {
+    name: "Moderate",
+    description: "Noticeable delays, occasional failures",
+    icon: "🌥️",
+    config: {
+      enabled: true,
+      features: {
+        randomDelays: { enabled: true, minMs: 100, maxMs: 1500, probability: 0.25 },
+        intermittentFailures: { enabled: true, probability: 0.03, httpStatus: 503 },
+        slowEndpoints: { enabled: true, endpoints: ["/api/gad-talk/search"], delayMs: 1500 },
+        flakyWebSocket: { enabled: false },
+      },
+    },
+  },
+  severe: {
+    name: "Severe",
+    description: "Heavy delays, frequent failures",
+    icon: "⛈️",
+    config: {
+      enabled: true,
+      features: {
+        randomDelays: { enabled: true, minMs: 200, maxMs: 3000, probability: 0.4 },
+        intermittentFailures: { enabled: true, probability: 0.1, httpStatus: 503 },
+        slowEndpoints: {
+          enabled: true,
+          endpoints: ["/api/gad-talk/search", "/api/gad-talk/gads", "/api/gad-talk/users"],
+          delayMs: 2500,
+        },
+        flakyWebSocket: { enabled: true, disconnectProbability: 0.05, reconnectDelayMs: 3000 },
+      },
+    },
+  },
+  nightmare: {
+    name: "Nightmare",
+    description: "Maximum chaos - expect failures everywhere",
+    icon: "💀",
+    config: {
+      enabled: true,
+      features: {
+        randomDelays: { enabled: true, minMs: 500, maxMs: 5000, probability: 0.6 },
+        intermittentFailures: { enabled: true, probability: 0.2, httpStatus: 503 },
+        slowEndpoints: {
+          enabled: true,
+          endpoints: ["/api/gad-talk/search", "/api/gad-talk/gads", "/api/gad-talk/users", "/api/gad-talk/timeline"],
+          delayMs: 4000,
+        },
+        flakyWebSocket: { enabled: true, disconnectProbability: 0.15, reconnectDelayMs: 8000 },
+      },
+    },
+  },
+};
+
+/**
+ * Get chaos presets (public)
+ * GET /api/gad-talk/admin/chaos/presets
+ */
+async function handleGetChaosPresets(_req, res) {
+  try {
+    res.status(HTTP_OK).send({
+      ok: true,
+      data: {
+        presets: CHAOS_PRESETS,
+        currentConfig: gadTalkConfig.chaos,
+      },
+    });
+  } catch (error) {
+    logError("GadTalk admin chaos presets error:", error);
+    res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to get chaos presets"));
+  }
+}
+
+/**
+ * Apply chaos preset (public)
+ * POST /api/gad-talk/admin/chaos/presets/:preset
+ */
+async function handleApplyChaosPreset(req, res) {
+  try {
+    const { preset } = req.params;
+    const presetConfig = CHAOS_PRESETS[preset];
+
+    if (!presetConfig) {
+      res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(`Unknown preset: ${preset}`));
+      return;
+    }
+
+    // Apply preset config
+    gadTalkConfig.chaos.enabled = presetConfig.config.enabled;
+    Object.assign(gadTalkConfig.chaos.features, presetConfig.config.features);
+
+    logDebug("GadTalk: Chaos preset applied:", { preset });
+
+    res.status(HTTP_OK).send({
+      ok: true,
+      data: {
+        message: `Chaos preset '${presetConfig.name}' applied`,
+        preset: preset,
+        chaos: gadTalkConfig.chaos,
+      },
+    });
+  } catch (error) {
+    logError("GadTalk admin chaos preset apply error:", error);
+    res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to apply chaos preset"));
   }
 }
 
@@ -781,7 +920,8 @@ async function handleAdminBackendPage(_req, res) {
     <!-- Main Content -->
     <div class="gt-admin-container">
       <h1 class="gt-admin-title">Backend Management</h1>
-      <p class="gt-admin-subtitle">Access internal tools and configurations for GadTalk platform administration</p>
+      <p class="gt-admin-subtitle">Access internal tools and configurations for GadTalk platform administration. <a href="/gad-talk" class="gt-header-back-link">← Back to GadTalk</a></p>
+        
 
       <div class="gt-admin-grid">
         <!-- Feature Flags -->
@@ -805,11 +945,11 @@ async function handleAdminBackendPage(_req, res) {
           <a href="/api/gad-talk/admin/features-description" class="gt-admin-item-link disabled">Coming Soon</a>
         </div>
 
-        <-- Chaos Engineering -->
+        <!-- Chaos Engineering -->
         <div class="gt-admin-item">
           <div class="gt-admin-item-title">🧩 Chaos Engineering</div>
           <div class="gt-admin-item-desc">Simulate failures and test system resilience with chaos engineering tools.</div>
-          <a href="/gad-talk/chaos-admin.html" class="gt-admin-item-link disabled">Coming Soon</a>
+          <a href="/api/gad-talk/admin/chaos" class="gt-admin-item-link">Open Chaos Dashboard</a>
         </div>
       </div>
     </div>
@@ -907,6 +1047,513 @@ async function handleFeaturesDescriptionPage(_req, res) {
   res.status(HTTP_OK).send(html);
 }
 
+/**
+ * Chaos Dashboard page - Modern compact design
+ * GET /api/gad-talk/admin/chaos
+ */
+async function handleChaosDashboardPage(_req, res) {
+  const html = `<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chaos Dashboard - GadTalk</title>
+    <link rel="stylesheet" href="/gad-talk/css/gad-talk.css" />
+    <style>
+      ${getAdminPageStyles()}
+      ${getChaosDashboardStyles()}
+    </style>
+  </head>
+  <body>
+    <!-- Compact Header -->
+    <header class="chaos-header">
+      <div class="chaos-header-inner">
+        <a href="/api/gad-talk/admin/backend" class="chaos-back" style="font-size: 14px;">← Back to Backend</a>
+        <h1 class="chaos-logo">🎲 Chaos Engine Dashboard</h1>
+        <div class="chaos-master">
+          <span class="chaos-master-label" id="chaos-status">OFF</span>
+          <button id="chaos-master-btn" class="chaos-power-btn" title="Toggle Chaos">⚡</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="chaos-main">
+      <!-- Presets Row -->
+      <section class="chaos-presets-bar" id="chaos-presets"></section>
+
+      <!-- Compact Features Grid -->
+      <section class="chaos-grid">
+        <!-- Random Delays -->
+        <div class="chaos-card" data-feature="randomDelays">
+          <div class="chaos-card-head">
+            <span class="chaos-card-icon">⏱️</span>
+            <span class="chaos-card-title">Delays</span>
+            <label class="chaos-switch">
+              <input type="checkbox" id="toggle-randomDelays" />
+              <span class="chaos-switch-track"></span>
+            </label>
+          </div>
+          <div class="chaos-card-body">
+            <div class="chaos-row">
+              <label>Min</label>
+              <input type="number" id="randomDelays-minMs" min="0" max="10000" value="100" />
+              <span class="chaos-unit">ms</span>
+            </div>
+            <div class="chaos-row">
+              <label>Max</label>
+              <input type="number" id="randomDelays-maxMs" min="0" max="10000" value="3000" />
+              <span class="chaos-unit">ms</span>
+            </div>
+            <div class="chaos-row chaos-row-range">
+              <label>Chance</label>
+              <input type="range" id="randomDelays-probability" min="0" max="100" value="30" />
+              <span class="chaos-range-val" id="randomDelays-probability-value">30%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Intermittent Failures -->
+        <div class="chaos-card" data-feature="intermittentFailures">
+          <div class="chaos-card-head">
+            <span class="chaos-card-icon">💥</span>
+            <span class="chaos-card-title">Failures</span>
+            <label class="chaos-switch">
+              <input type="checkbox" id="toggle-intermittentFailures" />
+              <span class="chaos-switch-track"></span>
+            </label>
+          </div>
+          <div class="chaos-card-body">
+            <div class="chaos-row chaos-row-range">
+              <label>Rate</label>
+              <input type="range" id="intermittentFailures-probability" min="0" max="50" value="5" />
+              <span class="chaos-range-val" id="intermittentFailures-probability-value">5%</span>
+            </div>
+            <div class="chaos-row">
+              <label>Code</label>
+              <select id="intermittentFailures-httpStatus">
+                <option value="500">500</option>
+                <option value="502">502</option>
+                <option value="503" selected>503</option>
+                <option value="504">504</option>
+                <option value="429">429</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slow Endpoints -->
+        <div class="chaos-card chaos-card-wide" data-feature="slowEndpoints">
+          <div class="chaos-card-head">
+            <span class="chaos-card-icon">🐢</span>
+            <span class="chaos-card-title">Slow Endpoints</span>
+            <label class="chaos-switch">
+              <input type="checkbox" id="toggle-slowEndpoints" />
+              <span class="chaos-switch-track"></span>
+            </label>
+          </div>
+          <div class="chaos-card-body chaos-card-body-row">
+            <div class="chaos-row">
+              <label>Delay</label>
+              <input type="number" id="slowEndpoints-delayMs" min="0" max="10000" value="2000" />
+              <span class="chaos-unit">ms</span>
+            </div>
+            <div class="chaos-endpoints" id="slowEndpoints-list">
+              <label class="chaos-chip"><input type="checkbox" value="/api/gad-talk/search" /><span>/search</span></label>
+              <label class="chaos-chip"><input type="checkbox" value="/api/gad-talk/gads" /><span>/gads</span></label>
+              <label class="chaos-chip"><input type="checkbox" value="/api/gad-talk/users" /><span>/users</span></label>
+              <label class="chaos-chip"><input type="checkbox" value="/api/gad-talk/timeline" /><span>/timeline</span></label>
+              <label class="chaos-chip"><input type="checkbox" value="/api/gad-talk/notifications" /><span>/notify</span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flaky WebSocket -->
+        <div class="chaos-card" data-feature="flakyWebSocket">
+          <div class="chaos-card-head">
+            <span class="chaos-card-icon">🔌</span>
+            <span class="chaos-card-title">WebSocket</span>
+            <label class="chaos-switch">
+              <input type="checkbox" id="toggle-flakyWebSocket" />
+              <span class="chaos-switch-track"></span>
+            </label>
+          </div>
+          <div class="chaos-card-body">
+            <div class="chaos-row chaos-row-range">
+              <label>Drop</label>
+              <input type="range" id="flakyWebSocket-disconnectProbability" min="0" max="50" value="10" />
+              <span class="chaos-range-val" id="flakyWebSocket-disconnectProbability-value">10%</span>
+            </div>
+            <div class="chaos-row">
+              <label>Reconn</label>
+              <input type="number" id="flakyWebSocket-reconnectDelayMs" min="0" max="30000" value="5000" />
+              <span class="chaos-unit">ms</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Action Bar -->
+      <div class="chaos-actions">
+        <button id="apply-chaos-config" class="chaos-btn chaos-btn-primary">✓ Apply</button>
+        <button id="reset-chaos-config" class="chaos-btn chaos-btn-ghost">Reset</button>
+        <details class="chaos-details">
+          <summary>📋 JSON</summary>
+          <pre class="chaos-json" id="chaos-config-json">Loading...</pre>
+        </details>
+      </div>
+    </main>
+
+    <script src="/gad-talk/js/chaos-dashboard.js"></script>
+  </body>
+  </html>`;
+  res.status(HTTP_OK).send(html);
+}
+
+/**
+ * Get chaos dashboard specific styles - Modern compact design
+ */
+function getChaosDashboardStyles() {
+  return `
+    /* Reset and base */
+    body { background: #0a0b0d; }
+    
+    /* Compact Header */
+    .chaos-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: linear-gradient(180deg, rgba(10,11,13,0.98) 0%, rgba(10,11,13,0.95) 100%);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 8px 16px;
+    }
+    .chaos-header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .chaos-back {
+      color: #71767b;
+      text-decoration: none;
+      font-size: 18px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: all 0.15s;
+    }
+    .chaos-back:hover { background: rgba(255,255,255,0.05); color: #e7e9ea; }
+    .chaos-logo {
+      font-size: 16px;
+      font-weight: 700;
+      color: #e7e9ea;
+      margin: 0;
+      flex: 1;
+    }
+    .chaos-master {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chaos-master-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: rgba(239,68,68,0.15);
+      color: #ef4444;
+      transition: all 0.2s;
+    }
+    .chaos-master-label.active {
+      background: rgba(34,197,94,0.15);
+      color: #22c55e;
+    }
+    .chaos-power-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #1d9bf0 0%, #0c7abf 100%);
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .chaos-power-btn:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(29,155,240,0.3); }
+    .chaos-power-btn:active { transform: scale(0.98); }
+
+    /* Main */
+    .chaos-main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    /* Presets Bar - Horizontal compact */
+    .chaos-presets-bar {
+      display: flex;
+      gap: 6px;
+      padding: 8px 0 16px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .chaos-presets-bar::-webkit-scrollbar { height: 0; }
+    .chaos-preset-pill {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-size: 13px;
+      color: #a1a1aa;
+      white-space: nowrap;
+    }
+    .chaos-preset-pill:hover { 
+      background: rgba(255,255,255,0.06); 
+      border-color: rgba(255,255,255,0.12);
+      color: #e7e9ea;
+    }
+    .chaos-preset-pill.active {
+      background: rgba(29,155,240,0.12);
+      border-color: rgba(29,155,240,0.4);
+      color: #1d9bf0;
+    }
+    .chaos-preset-pill .icon { font-size: 14px; }
+
+    /* Features Grid */
+    .chaos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .chaos-card {
+      background: linear-gradient(180deg, rgba(22,24,28,0.9) 0%, rgba(14,15,18,0.9) 100%);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.15s;
+    }
+    .chaos-card:hover { border-color: rgba(255,255,255,0.1); }
+    .chaos-card-wide { grid-column: 1 / -1; }
+    
+    .chaos-card-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      background: rgba(0,0,0,0.2);
+    }
+    .chaos-card-icon { font-size: 16px; }
+    .chaos-card-title {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 600;
+      color: #e7e9ea;
+    }
+
+    /* Compact Switch */
+    .chaos-switch {
+      position: relative;
+      display: inline-block;
+      width: 36px;
+      height: 20px;
+    }
+    .chaos-switch input { opacity: 0; width: 0; height: 0; }
+    .chaos-switch-track {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: #333;
+      border-radius: 20px;
+      transition: 0.2s;
+    }
+    .chaos-switch-track::before {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      left: 2px;
+      bottom: 2px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.2s;
+    }
+    .chaos-switch input:checked + .chaos-switch-track { background: #1d9bf0; }
+    .chaos-switch input:checked + .chaos-switch-track::before { transform: translateX(16px); }
+
+    /* Card Body */
+    .chaos-card-body {
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .chaos-card-body-row {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    /* Compact Rows */
+    .chaos-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chaos-row label {
+      font-size: 11px;
+      color: #71767b;
+      min-width: 40px;
+      font-weight: 500;
+    }
+    .chaos-row input[type="number"],
+    .chaos-row select {
+      flex: 1;
+      min-width: 60px;
+      max-width: 80px;
+      padding: 5px 8px;
+      background: #1a1b1e;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #e7e9ea;
+      font-size: 12px;
+    }
+    .chaos-row input:focus, .chaos-row select:focus {
+      outline: none;
+      border-color: #1d9bf0;
+    }
+    .chaos-unit {
+      font-size: 10px;
+      color: #52525b;
+      min-width: 20px;
+    }
+    .chaos-row-range { flex-wrap: wrap; }
+    .chaos-row-range input[type="range"] {
+      flex: 1;
+      min-width: 80px;
+      height: 4px;
+      accent-color: #1d9bf0;
+    }
+    .chaos-range-val {
+      font-size: 11px;
+      font-weight: 600;
+      color: #1d9bf0;
+      min-width: 32px;
+      text-align: right;
+    }
+
+    /* Endpoint Chips */
+    .chaos-endpoints {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      flex: 1;
+    }
+    .chaos-chip {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      font-size: 11px;
+      color: #a1a1aa;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .chaos-chip:hover { background: rgba(255,255,255,0.06); }
+    .chaos-chip:has(input:checked) {
+      background: rgba(29,155,240,0.12);
+      border-color: rgba(29,155,240,0.3);
+      color: #1d9bf0;
+    }
+    .chaos-chip input { display: none; }
+
+    /* Actions */
+    .chaos-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 0;
+    }
+    .chaos-btn {
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: none;
+    }
+    .chaos-btn-primary {
+      background: linear-gradient(135deg, #1d9bf0 0%, #0c7abf 100%);
+      color: white;
+    }
+    .chaos-btn-primary:hover { box-shadow: 0 4px 12px rgba(29,155,240,0.25); }
+    .chaos-btn-ghost {
+      background: transparent;
+      color: #71767b;
+      border: 1px solid #333;
+    }
+    .chaos-btn-ghost:hover { background: rgba(255,255,255,0.03); color: #e7e9ea; }
+
+    /* JSON Details */
+    .chaos-details {
+      margin-left: auto;
+      position: relative;
+    }
+    .chaos-details summary {
+      font-size: 12px;
+      color: #71767b;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: all 0.15s;
+      list-style: none;
+    }
+    .chaos-details summary::-webkit-details-marker {
+      display: none;
+    }
+    .chaos-details summary:hover { background: rgba(255,255,255,0.03); }
+    .chaos-json {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: calc(100% + 6px);
+      width: min(460px, 90vw);
+      max-height: 320px;
+      overflow: auto;
+      background: #16181c;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 10px;
+      color: #71767b;
+      white-space: pre-wrap;
+      word-break: break-word;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+      z-index: 50;
+    }
+    .chaos-details[open] .chaos-json {
+      display: block;
+    }
+  `;
+}
+
 // ==================== EXPORTS ====================
 
 module.exports = {
@@ -917,10 +1564,14 @@ module.exports = {
   handleInitDb,
   handleGetLogs,
   handleGetMetrics,
+  handleGetChaosStatus,
   handleGetChaosConfig,
   handleUpdateChaosConfig,
   handleEnableChaos,
   handleDisableChaos,
+  handleGetChaosPresets,
+  handleApplyChaosPreset,
+  handleChaosDashboardPage,
   handleGetFeatureFlags,
   handleUpdateFeatureFlag,
   handleEnableFeatureFlag,

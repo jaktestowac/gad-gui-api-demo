@@ -83,6 +83,11 @@ const DEFAULT_FEATURE_FLAGS = [
     enabled: true,
     description: "Achievement badges on user profiles",
   },
+  {
+    key: "chaos_dashboard",
+    enabled: true,
+    description: "Chaos mode dashboard for testing resilience",
+  },
 ];
 
 let featureFlagsCache = null;
