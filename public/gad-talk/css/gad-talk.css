@@ -242,13 +242,57 @@ a:hover {
   background-color: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--gt-border);
-  padding: var(--gt-spacing-md);
+  /* compact one-line header */
+  padding: 0.35rem var(--gt-spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--gt-spacing-sm);
+  flex-wrap: nowrap;
+  overflow: hidden;
 }
 
 .gt-page-title {
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: 700;
-  margin: 0 0 var(--gt-spacing-sm) 0;
+  margin: 0;
+  white-space: nowrap;
+  flex: none;
+  margin-right: var(--gt-spacing-sm);
+}
+
+/* Ensure tabs & sort stay compact and inline */
+.gt-page-header .gt-tabs {
+  gap: 0.25rem;
+  display: flex;
+  align-items: center;
+  flex: none;
+}
+
+.gt-page-header .gt-tab {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+.gt-page-header .gt-sort-options {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex: none;
+}
+
+@media (max-width: 480px) {
+  .gt-page-title {
+    font-size: 0.95rem;
+  }
+  .gt-page-header .gt-tab,
+  .gt-page-header .gt-sort-btn {
+    padding: 0.25rem 0.4rem;
+    font-size: 0.8125rem;
+  }
+  .gt-sort-btn span {
+    display: none;
+  }
 }
 
 /* Feed and Gads */
