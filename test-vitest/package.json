@@ -6,6 +6,7 @@
   "scripts": {
     "test": "vitest",
     "test:run": "vitest run",
+    "test:gadtalk": "vitest run tests/gad-talk-race.test.js",
     "cleanup": "node -e \"import('./tests/cleanup.js')\"",
     "start-server": "node start-server.js",
     "test:port-3003": "cross-env TEST_SERVER_PORT=3003 npm test",
