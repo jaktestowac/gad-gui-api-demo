@@ -1149,6 +1149,7 @@ a:hover {
   left: var(--gt-spacing-md);
   border: 4px solid var(--gt-bg-primary);
   border-radius: 50%;
+  z-index: 200; /* sit above sticky navbar (z-index:100) */
 }
 
 .gt-profile-actions {
@@ -2557,6 +2558,7 @@ body.gt-modal-open {
     width: 80px !important;
     height: 80px !important;
     top: -40px;
+    z-index: 200; /* ensure avatar overlaps navbar */
   }
 
   .gt-toast-container {
@@ -3768,15 +3770,24 @@ body.gt-modal-open {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: var(--gt-spacing-sm);
-  padding: var(--gt-spacing-sm) var(--gt-spacing-md);
+  gap: var(--gt-spacing-xs);
+  padding: var(--gt-spacing-xs) var(--gt-spacing-md);
   border-bottom: 1px solid var(--gt-border);
   background-color: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(12px);
+  flex-wrap: wrap;
 }
 
 .gt-filter-select {
-  min-width: 140px;
+  min-width: 110px;
+  width: auto;
+  max-width: 180px;
+}
+
+.gt-followers-sort .gt-text-sm {
+  font-size: 0.8rem;
+  line-height: 1.1;
+  white-space: nowrap;
 }
 
 .gt-profile-display-name {

@@ -387,12 +387,6 @@ const gadTalkProfile = (function () {
       }
     }
 
-    // Update avatar
-    const profileAvatar = document.getElementById("profile-avatar");
-    if (profileAvatar) {
-      profileAvatar.innerHTML = window.gadTalkGads.getAvatarHtml(profileUser, "xl");
-    }
-
     // Update actions
     const profileActions = document.getElementById("profile-actions");
     if (profileActions) {
