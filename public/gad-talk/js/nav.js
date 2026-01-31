@@ -18,6 +18,10 @@
             <a href="/gad-talk/signup.html" class="gt-btn gt-btn-primary gt-btn-sm" data-testid="nav-signup-button">Sign up</a>
           </div>
         `;
+      const navProfile = document.getElementById("nav-profile");
+      if (navProfile) {
+        navProfile.href = "/gad-talk/login.html";
+      }
       return;
     }
 
@@ -38,6 +42,11 @@
         </button>
       </div>
     `;
+
+    const navProfile = document.getElementById("nav-profile");
+    if (navProfile) {
+      navProfile.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+    }
 
     const dropdownBtn = navUserSection.querySelector("#nav-user-dropdown-btn");
     if (dropdownBtn && window.GadTalkUI) {

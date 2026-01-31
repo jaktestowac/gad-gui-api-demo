@@ -30,6 +30,7 @@ const {
   handleGetFollowers,
   handleGetFollowing,
   handleGetSuggestions,
+  handleGetRecommendations,
   handleBlock,
   handleUnblock,
   handleMute,
@@ -294,6 +295,11 @@ async function handleUserRoutes(req, res, method, segments) {
     return handleGetSuggestions(req, res);
   }
 
+  // GET /api/gad-talk/users/recommendations
+  if (segments[1] === "recommendations" && method === "GET") {
+    return handleGetRecommendations(req, res);
+  }
+
   // GET /api/gad-talk/users/gallery
   if (segments[1] === "gallery" && method === "GET") {
     return handleGetAvatarGallery(req, res);
@@ -476,7 +482,7 @@ async function handleGadsRoutes(req, res, method, segments) {
 /**
  * Handle bookmarks routes
  */
-async function handleBookmarksRoutes(req, res, method, _segments) {
+async function handleBookmarksRoutes(req, res, method) {
   // GET /api/gad-talk/bookmarks - Get user's bookmarks
   if (method === "GET") {
     return handleGetBookmarks(req, res);

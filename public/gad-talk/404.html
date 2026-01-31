@@ -42,7 +42,7 @@
                 <a href="/gad-talk/" class="gt-btn gt-btn-primary gt-btn-lg" data-testid="go-home-btn">
                     Go to Home
                 </a>
-                <button onclick="history.back()" class="gt-btn gt-btn-secondary gt-btn-lg" data-testid="go-back-btn">
+                <button id="go-back-btn" class="gt-btn gt-btn-secondary gt-btn-lg" data-testid="go-back-btn">
                     Go Back
                 </button>
             </div>
@@ -72,27 +72,7 @@
     <script src="/gad-talk/js/api.js"></script>
     <script src="/gad-talk/js/auth.js"></script>
     <script src="/gad-talk/js/nav.js"></script>
-    <script>
-        // Update nav if user is logged in
-        (async function () {
-            if (window.GadTalkAPI.auth.isAuthenticated()) {
-                try {
-                    const response = await window.GadTalkAPI.auth.me();
-                    const user = response.user;
-                    const navSection = document.getElementById('nav-user-section');
-                    if (navSection && user) {
-                        navSection.innerHTML = `
-                            <a href="/gad-talk/profile.html?id=${user.id}" class="gt-nav-avatar">
-                                <div class="gt-avatar gt-avatar-sm">${user.avatar || user.username.charAt(0).toUpperCase()}</div>
-                            </a>
-                        `;
-                    }
-                } catch (e) {
-                    // Token invalid, show login link
-                }
-            }
-        })();
-    </script>
+    <script src="/gad-talk/js/404.js"></script>
 </body>
 
 </html>

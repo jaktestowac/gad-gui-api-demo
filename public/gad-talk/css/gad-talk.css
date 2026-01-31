@@ -605,6 +605,59 @@ a:hover {
   text-overflow: ellipsis;
 }
 
+/* Sidebar footer */
+.gt-sidebar-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 0.75rem 0.9rem;
+  margin-top: var(--gt-spacing-lg);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  background: linear-gradient(160deg, rgba(32, 35, 39, 0.9), rgba(18, 20, 24, 0.9));
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+}
+
+.gt-sidebar-footer a,
+.gt-sidebar-footer .gt-btn {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.gt-sidebar-footer a {
+  color: var(--gt-text-secondary);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--gt-radius-full);
+  background-color: transparent;
+  transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+}
+
+.gt-sidebar-footer a:hover {
+  color: var(--gt-text-primary);
+  background-color: rgba(29, 155, 240, 0.1);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.gt-sidebar-footer .gt-btn-secondary {
+  border-color: rgba(255, 255, 255, 0.08);
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.gt-sidebar-footer .gt-btn-secondary:hover:not(:disabled) {
+  background-color: rgba(29, 155, 240, 0.12);
+  border-color: rgba(29, 155, 240, 0.35);
+}
+
+.gt-sidebar-footer .gt-text-muted {
+  color: var(--gt-text-muted);
+  font-size: 0.75rem;
+  margin-left: auto;
+}
+
 /* User navigation section */
 .gt-nav-user {
   display: flex;

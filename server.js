@@ -314,6 +314,12 @@ server.use("/api", router);
 
 router.render = renderResponse;
 
+// Redirect legacy /gadtalk to /gad-talk
+server.use("/gadtalk", function (req, res) {
+  const targetPath = `/gad-talk${req.originalUrl.replace(/^\/gadtalk/, "")}`;
+  res.redirect(301, targetPath);
+});
+
 // GadTalk 404 handler - serve gad-talk/404.html for non-existent gad-talk pages
 server.use("/gad-talk", function (req, res, next) {
   // Only handle HTML requests for pages that don't exist

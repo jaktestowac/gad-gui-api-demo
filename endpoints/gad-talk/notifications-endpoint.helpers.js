@@ -16,7 +16,9 @@ async function handleGetNotifications(req, res) {
   try {
     const userId = req.gadTalkUserId;
     const page = parseInt(req.query.page) || 1;
-    const limit = Math.min(parseInt(req.query.limit) || config.defaultPageSize, config.maxPageSize);
+    const defaultPageSize = config.pagination?.defaultPageSize || 20;
+    const maxPageSize = config.pagination?.maxPageSize || 100;
+    const limit = Math.min(parseInt(req.query.limit) || defaultPageSize, maxPageSize);
 
     const { notifications, total } = await dbOps.getNotifications(userId, page, limit);
 
@@ -70,7 +72,7 @@ async function handleMarkRead(req, res) {
       return res.status(403).json(formatErrorResponse("Not authorized"));
     }
 
-    await dbOps.markNotificationRead(notificationId);
+    await dbOps.markNotificationAsRead(notificationId);
 
     res.status(HTTP_OK).json({ message: "Notification marked as read" });
   } catch (error) {

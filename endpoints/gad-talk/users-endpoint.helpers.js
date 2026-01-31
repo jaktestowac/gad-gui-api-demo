@@ -26,6 +26,7 @@ const {
   createBlock,
   deleteBlock,
   hasBlocked,
+  getMutedUserIds,
   createMute,
   deleteMute,
   hasMuted,
@@ -35,6 +36,49 @@ const { verifyGadTalkToken } = require("./services/auth.service");
 const gadTalkConfig = require("./gad-talk-config");
 
 // ==================== HELPERS ====================
+
+function clampNumber(value, min, max, fallback) {
+  const parsed = Number.parseInt(value, 10);
+  if (Number.isNaN(parsed)) return fallback;
+  return Math.max(min, Math.min(max, parsed));
+}
+
+function toTimestamp(value) {
+  const ts = Date.parse(value);
+  return Number.isNaN(ts) ? null : ts;
+}
+
+function getRecencyBoost(dateValue) {
+  const ts = toTimestamp(dateValue);
+  if (!ts) return 0;
+  const daysAgo = (Date.now() - ts) / (1000 * 60 * 60 * 24);
+  if (daysAgo <= 1) return 15;
+  if (daysAgo <= 7) return 8;
+  if (daysAgo <= 30) return 3;
+  return 0;
+}
+
+function computeSuggestionScore(user, stats, context) {
+  if (!user) return -Infinity;
+
+  const popularityScore =
+    (stats.followersCount || 0) * 2 + (stats.gadsCount || 0) + Math.round((stats.likesCount || 0) * 0.5);
+  const activityScore = getRecencyBoost(user.lastLoginAt) + getRecencyBoost(user.createdAt);
+  const networkScore = (context.followedByCount.get(user.id) || 0) * 20 + (context.followersOfMe.has(user.id) ? 30 : 0);
+
+  let score = 0;
+  if (context.mode === "network") {
+    score = networkScore * 1.4 + popularityScore * 0.3 + activityScore * 0.3;
+  } else if (context.mode === "popular") {
+    score = popularityScore * 1.2 + activityScore * 0.4;
+  } else {
+    score = popularityScore * 0.6 + activityScore * 0.6 + networkScore * 1.0;
+  }
+
+  if (user.role === "admin") score += 20;
+
+  return score + Math.random();
+}
 
 /**
  * Get authenticated user from request
@@ -173,8 +217,13 @@ async function handleSearchUsers(req, res) {
     const { q: query, page = 1, limit = 20 } = req.query;
 
     if (!query || query.trim().length < 2) {
-      res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Search query must be at least 2 characters"));
-      return;
+      return res.status(HTTP_OK).json({
+        users: [],
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total: 0,
+        hasMore: false,
+      });
     }
 
     // Get current user if authenticated (to exclude from results)
@@ -668,7 +717,11 @@ async function handleGetFollowing(req, res) {
  */
 async function handleGetSuggestions(req, res) {
   try {
-    const { limit = 5 } = req.query;
+    const { limit = 5, mode = "discover", includeFollowed = "false", includeStats = "false" } = req.query;
+    const limitNum = clampNumber(limit, 1, 50, 5);
+    const suggestionMode = String(mode || "discover").toLowerCase();
+    const allowFollowed = String(includeFollowed).toLowerCase() === "true";
+    const shouldIncludeStats = String(includeStats).toLowerCase() === "true";
 
     // Check authentication
     const authUser = getAuthenticatedUser(req);
@@ -676,30 +729,81 @@ async function handleGetSuggestions(req, res) {
     // Get all users
     const allUsers = gadTalkUsersDb();
 
+    const followingIds = authUser ? new Set(getFollowing(authUser.id).map((f) => f.followingId)) : new Set();
+    const followersOfMe = authUser ? new Set(getFollowers(authUser.id).map((f) => f.followerId)) : new Set();
+    const blockedUserIds = authUser ? new Set(getBlockedUserIds(authUser.id)) : new Set();
+    const blockedByUserIds = authUser ? new Set(getBlockedByUserIds(authUser.id)) : new Set();
+    const mutedUserIds = authUser ? new Set(getMutedUserIds(authUser.id)) : new Set();
+
+    const followedByCount = new Map();
+    if (authUser && followingIds.size > 0) {
+      for (const followingId of followingIds) {
+        const secondDegree = getFollowing(followingId);
+        for (const follow of secondDegree) {
+          if (!follow?.followingId) continue;
+          followedByCount.set(follow.followingId, (followedByCount.get(follow.followingId) || 0) + 1);
+        }
+      }
+    }
+
     // Filter out current user and shadow banned/blocked users
     let suggestions = allUsers.filter((u) => {
+      if (!u) return false;
       if (authUser && u.id === authUser.id) return false;
       if (u.shadowBanned) return false;
-      if (authUser && (hasBlocked(authUser.id, u.id) || hasBlocked(u.id, authUser.id))) return false;
+      if (authUser && (blockedUserIds.has(u.id) || blockedByUserIds.has(u.id))) return false;
+      if (authUser && mutedUserIds.has(u.id)) return false;
+      if (!allowFollowed && authUser && followingIds.has(u.id)) return false;
       return true;
     });
 
-    // Limit
-    suggestions = suggestions.slice(0, parseInt(limit, 10));
+    const context = {
+      mode: ["discover", "network", "popular"].includes(suggestionMode) ? suggestionMode : "discover",
+      followedByCount,
+      followersOfMe,
+    };
+
+    suggestions = suggestions
+      .map((user) => {
+        const stats = getGadTalkUserStats(user.id);
+        return {
+          user,
+          stats,
+          score: computeSuggestionScore(user, stats, context),
+        };
+      })
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limitNum);
 
     res.status(HTTP_OK).json({
-      users: suggestions.map((user) => {
+      users: suggestions.map(({ user, stats }) => {
         const sanitized = sanitizeUser(user);
         if (authUser) {
           sanitized.isFollowing = isFollowing(authUser.id, user.id);
         }
+        if (shouldIncludeStats) {
+          sanitized.stats = stats;
+        }
         return sanitized;
       }),
+      meta: {
+        mode: context.mode,
+        limit: limitNum,
+        includeFollowed: allowFollowed,
+      },
     });
   } catch (error) {
     logError("GadTalk get suggestions error:", error);
     res.status(HTTP_BAD_REQUEST).json(formatErrorResponse(error.message || "Failed to get suggestions"));
   }
+}
+
+/**
+ * Get follow recommendations (advanced suggestions)
+ * GET /api/gad-talk/users/recommendations
+ */
+async function handleGetRecommendations(req, res) {
+  return handleGetSuggestions(req, res);
 }
 
 // ==================== BLOCK/MUTE HANDLERS ====================
@@ -842,6 +946,7 @@ module.exports = {
   handleGetFollowers,
   handleGetFollowing,
   handleGetSuggestions,
+  handleGetRecommendations,
 
   // Block/Mute handlers
   handleBlock,
