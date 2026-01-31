@@ -678,10 +678,12 @@ a:hover {
 
 /* Cards */
 .gt-card {
-  background-color: var(--gt-bg-secondary);
-  border: 1px solid var(--gt-border);
-  border-radius: var(--gt-radius-lg);
-  padding: var(--gt-spacing-lg);
+  background: linear-gradient(180deg, rgba(22, 24, 28, 0.92), rgba(14, 15, 18, 0.92));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: var(--gt-spacing-md);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
 }
 
 .gt-card-glow {
@@ -695,6 +697,10 @@ a:hover {
   font-weight: 500;
   color: var(--gt-text-secondary);
   margin-bottom: var(--gt-spacing-xs);
+}
+
+#followers-sort {
+  width: 9085%;
 }
 
 .gt-input {
@@ -2775,16 +2781,17 @@ body.gt-modal-open {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--gt-spacing-sm);
-  padding: var(--gt-spacing-xs) var(--gt-spacing-sm);
-  border-bottom: 1px solid var(--gt-border);
+  gap: var(--gt-spacing-xs);
+  padding: 6px var(--gt-spacing-sm);
+  border-bottom: 1px solid rgba(47, 51, 54, 0.5);
   text-decoration: none;
-  transition: background-color 0.15s;
-  line-height: 1.25;
+  transition: background-color 0.15s, box-shadow 0.15s;
+  line-height: 1.2;
 }
 
 .gt-trending-item:hover {
-  background-color: var(--gt-bg-hover);
+  background-color: rgba(29, 155, 240, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(29, 155, 240, 0.12);
 }
 
 .gt-trending-item:last-child {
@@ -2792,26 +2799,35 @@ body.gt-modal-open {
 }
 
 .gt-trending-rank {
-  display: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--gt-text-muted);
+  background-color: rgba(255, 255, 255, 0.04);
 }
 
 .gt-trending-info {
   flex: 1;
   display: flex;
   align-items: center;
-  gap: var(--gt-spacing-xs);
+  gap: 6px;
   min-width: 0;
 }
 
 .gt-trending-tag {
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   color: var(--gt-text-primary);
   line-height: 1.2;
 }
 
 .gt-trending-count {
-  font-size: 0.6875rem;
+  font-size: 0.65rem;
   color: var(--gt-text-muted);
   margin-left: auto;
 }
@@ -3151,18 +3167,49 @@ body.gt-modal-open {
 }
 
 /* Trending item in sidebar */
+.gt-trending-card {
+  position: relative;
+  overflow: hidden;
+  padding: var(--gt-spacing-md);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(180deg, rgba(22, 24, 28, 0.9), rgba(12, 13, 16, 0.9));
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+}
+
+.gt-trending-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(29, 155, 240, 0.18), transparent 55%),
+    radial-gradient(circle at bottom left, rgba(255, 255, 255, 0.06), transparent 60%);
+  pointer-events: none;
+}
+
+.gt-trending-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.gt-trending-card .gt-card-title {
+  font-size: 1rem;
+  letter-spacing: 0.005em;
+  margin-bottom: var(--gt-spacing-sm);
+}
+
 .gt-trending-card .gt-trending-item {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: var(--gt-spacing-xs) 0;
-  border-bottom: none;
-  border-radius: var(--gt-radius-sm);
-  transition: background-color 0.15s;
+  padding: var(--gt-spacing-xs) var(--gt-spacing-sm);
+  margin: 0 calc(var(--gt-spacing-sm) * -1);
+  border-bottom: 1px solid rgba(47, 51, 54, 0.4);
+  border-radius: 10px;
+  transition: background-color 0.15s, box-shadow 0.15s;
 }
 
 .gt-trending-card .gt-trending-category {
-  font-size: 0.6875rem;
+  font-size: 0.65rem;
   color: var(--gt-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.02em;
@@ -3171,16 +3218,21 @@ body.gt-modal-open {
 .gt-trending-card .gt-trending-tag {
   font-weight: 600;
   color: var(--gt-text-primary);
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   display: inline-block;
   word-break: break-word;
   line-height: 1.3;
 }
 
 .gt-trending-card .gt-trending-count {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--gt-text-muted);
   margin-top: 0;
+}
+
+.gt-trending-card .gt-trending-item:hover {
+  background-color: rgba(29, 155, 240, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(29, 155, 240, 0.12);
 }
 
 /* Thread connector for replies */
@@ -3482,4 +3534,102 @@ body.gt-modal-open {
 .gt-follow-btn.gt-following:hover {
   background-color: var(--gt-danger);
   border-color: var(--gt-danger);
+}
+
+/* ==================== SEARCH HISTORY ==================== */
+
+.gt-search-history {
+  margin: var(--gt-spacing-md) 0 var(--gt-spacing-lg);
+  padding: var(--gt-spacing-md);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-lg);
+  background-color: var(--gt-bg-secondary);
+}
+
+.gt-search-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gt-spacing-md);
+  margin-bottom: var(--gt-spacing-sm);
+}
+
+.gt-search-history-title {
+  font-size: 0.9375rem;
+  margin: 0;
+}
+
+.gt-search-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gt-spacing-sm);
+}
+
+.gt-search-history-item {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-spacing-sm);
+  padding: var(--gt-spacing-sm) var(--gt-spacing-md);
+  border-radius: var(--gt-radius-md);
+  border: 1px solid var(--gt-border);
+  background-color: var(--gt-bg-tertiary);
+  color: var(--gt-text-primary);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.gt-search-history-item:hover {
+  background-color: var(--gt-bg-hover);
+  border-color: var(--gt-border-light);
+}
+
+.gt-search-history-icon {
+  color: var(--gt-text-secondary);
+}
+
+.gt-search-history-text {
+  flex: 1;
+  font-size: 0.875rem;
+}
+
+/* ==================== BOOKMARK FILTERS ==================== */
+
+.gt-bookmark-filters {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--gt-spacing-md);
+  padding: var(--gt-spacing-md);
+  border-bottom: 1px solid var(--gt-border);
+  background-color: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12px);
+}
+
+.gt-bookmark-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gt-spacing-xs);
+  flex: 1;
+}
+
+.gt-bookmark-filter-input,
+.gt-bookmark-filter-select {
+  width: 100%;
+}
+
+/* ==================== FOLLOWERS SORT ==================== */
+
+.gt-followers-sort {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--gt-spacing-sm);
+  padding: var(--gt-spacing-sm) var(--gt-spacing-md);
+  border-bottom: 1px solid var(--gt-border);
+  background-color: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12px);
+}
+
+.gt-filter-select {
+  min-width: 140px;
 }

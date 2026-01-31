@@ -1,4 +1,12 @@
 (function () {
+  function bindReturnButton() {
+    const btn = document.getElementById("return-to-gadtalk");
+    if (!btn) return;
+    btn.addEventListener("click", () => {
+      window.location.href = "/gad-talk";
+    });
+  }
+
   async function fetchFlags() {
     const res = await fetch("/api/gad-talk/admin/feature-flags");
     const json = await res.json();
@@ -61,10 +69,23 @@
     });
   }
 
-  fetchFlags()
-    .then(renderFlags)
-    .catch(function () {
-      const root = document.getElementById("flags");
-      if (root) root.innerHTML = '<p class="small">Failed to load flags.</p>';
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      bindReturnButton();
+      fetchFlags()
+        .then(renderFlags)
+        .catch(function () {
+          const root = document.getElementById("flags");
+          if (root) root.innerHTML = '<p class="small">Failed to load flags.</p>';
+        });
     });
+  } else {
+    bindReturnButton();
+    fetchFlags()
+      .then(renderFlags)
+      .catch(function () {
+        const root = document.getElementById("flags");
+        if (root) root.innerHTML = '<p class="small">Failed to load flags.</p>';
+      });
+  }
 })();

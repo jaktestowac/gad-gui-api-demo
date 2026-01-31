@@ -175,10 +175,10 @@ const gadTalkProfile = (function () {
               <span class="gt-suggestion-username">@${user.username}</span>
             </div>
           </a>
-          <button class="gt-btn gt-btn-primary gt-btn-sm" data-follow="${user.id}" data-testid="follow-${
-            user.username
-          }">
-            Follow
+          <button class="gt-btn ${
+            user.isFollowing ? "gt-btn-secondary gt-following" : "gt-btn-primary"
+          } gt-btn-sm" data-follow="${user.id}" data-testid="follow-${user.username}">
+            ${user.isFollowing ? "Following" : "Follow"}
           </button>
         </div>
       `
@@ -189,14 +189,27 @@ const gadTalkProfile = (function () {
       suggestionsList.querySelectorAll("[data-follow]").forEach((btn) => {
         btn.addEventListener("click", async () => {
           const userId = btn.dataset.follow;
+          if (btn.dataset.loading === "true") return;
+
+          btn.dataset.loading = "true";
+          btn.disabled = true;
+
           try {
             await window.GadTalkAPI.users.follow(userId);
             btn.textContent = "Following";
             btn.classList.remove("gt-btn-primary");
-            btn.classList.add("gt-btn-secondary");
-            btn.disabled = true;
+            btn.classList.add("gt-btn-secondary", "gt-following");
           } catch (error) {
-            console.error("Error following user:", error);
+            if (error && error.message && /already following/i.test(error.message)) {
+              btn.textContent = "Following";
+              btn.classList.remove("gt-btn-primary");
+              btn.classList.add("gt-btn-secondary", "gt-following");
+            } else {
+              console.error("Error following user:", error);
+            }
+          } finally {
+            btn.dataset.loading = "false";
+            btn.disabled = false;
           }
         });
       });

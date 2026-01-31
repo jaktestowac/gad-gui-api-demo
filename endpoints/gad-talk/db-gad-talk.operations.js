@@ -28,6 +28,21 @@ const DEFAULT_FEATURE_FLAGS = [
     enabled: true,
     description: "Profile analytics charts",
   },
+  {
+    key: "search_history",
+    enabled: true,
+    description: "Search page recent history",
+  },
+  {
+    key: "bookmark_filters",
+    enabled: true,
+    description: "Bookmarks search and sorting controls",
+  },
+  {
+    key: "followers_sorting",
+    enabled: true,
+    description: "Followers/Following sorting controls",
+  },
 ];
 
 let featureFlagsCache = null;

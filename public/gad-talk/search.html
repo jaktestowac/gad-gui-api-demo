@@ -78,6 +78,19 @@
                 <button class="gt-tab" data-filter="users" data-testid="filter-users">Users</button>
             </div>
 
+            <!-- Search history (feature-flagged) -->
+            <section id="search-history-section" class="gt-search-history gt-hidden" data-testid="search-history-section">
+                <div class="gt-search-history-header">
+                    <h3 class="gt-search-history-title">Recent searches</h3>
+                    <button type="button" class="gt-btn gt-btn-secondary gt-btn-sm" id="clear-search-history" data-testid="clear-search-history">
+                        Clear
+                    </button>
+                </div>
+                <div id="search-history-list" class="gt-search-history-list" data-testid="search-history-list">
+                    <!-- History items will render here -->
+                </div>
+            </section>
+
             <!-- Search results -->
             <div class="gt-search-results">
                 <div id="search-prompt" class="gt-search-prompt">
@@ -138,10 +151,21 @@
             let currentPage = 1;
             let isLoading = false;
             let hasMore = true;
+            let featureFlags = {};
+            let searchHistoryEnabled = false;
+
+            const SEARCH_HISTORY_KEY = 'gadtalk_search_history';
+            const SEARCH_HISTORY_LIMIT = 8;
 
             // Require authentication
             currentUser = await window.gadTalkAuth.requireAuth();
             if (!currentUser) return;
+
+            // Load feature flags
+            await loadFeatureFlags();
+            applyFeatureFlags();
+
+            setupSearchHistory();
 
             // Update nav profile link
             const navProfile = document.getElementById("nav-profile");
@@ -170,6 +194,7 @@
                 if (query) {
                     currentQuery = query;
                     currentPage = 1;
+                    saveSearchHistory(query);
                     // Update URL
                     window.history.pushState({}, '', `/gad-talk/search.html?q=${encodeURIComponent(query)}`);
                     performSearch();
@@ -254,6 +279,97 @@
                 } finally {
                     isLoading = false;
                 }
+            }
+
+            async function loadFeatureFlags() {
+                if (!window.GadTalkAPI || !window.GadTalkAPI.featureFlags) return;
+                try {
+                    const response = await window.GadTalkAPI.featureFlags.getAll();
+                    const flags = response?.data || response?.flags || response || [];
+                    featureFlags = flags.reduce((acc, flag) => {
+                        acc[String(flag.key || '').toLowerCase()] = !!flag.enabled;
+                        return acc;
+                    }, {});
+                } catch (error) {
+                    featureFlags = {};
+                }
+            }
+
+            function applyFeatureFlags() {
+                searchHistoryEnabled = featureFlags.search_history !== false;
+                const historySection = document.getElementById('search-history-section');
+                if (historySection) {
+                    historySection.classList.toggle('gt-hidden', !searchHistoryEnabled);
+                }
+            }
+
+            function setupSearchHistory() {
+                if (!searchHistoryEnabled) return;
+
+                const clearBtn = document.getElementById('clear-search-history');
+                if (clearBtn) {
+                    clearBtn.addEventListener('click', () => {
+                        localStorage.removeItem(SEARCH_HISTORY_KEY);
+                        renderSearchHistory();
+                    });
+                }
+
+                renderSearchHistory();
+            }
+
+            function getSearchHistory() {
+                try {
+                    const raw = localStorage.getItem(SEARCH_HISTORY_KEY);
+                    const parsed = raw ? JSON.parse(raw) : [];
+                    return Array.isArray(parsed) ? parsed : [];
+                } catch (error) {
+                    return [];
+                }
+            }
+
+            function saveSearchHistory(query) {
+                if (!searchHistoryEnabled) return;
+                const trimmed = (query || '').trim();
+                if (!trimmed) return;
+
+                const history = getSearchHistory().filter(item => item.toLowerCase() !== trimmed.toLowerCase());
+                history.unshift(trimmed);
+                const next = history.slice(0, SEARCH_HISTORY_LIMIT);
+                localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(next));
+                renderSearchHistory();
+            }
+
+            function renderSearchHistory() {
+                if (!searchHistoryEnabled) return;
+                const listEl = document.getElementById('search-history-list');
+                if (!listEl) return;
+
+                const history = getSearchHistory();
+                if (history.length === 0) {
+                    listEl.innerHTML = '<p class="gt-text-secondary gt-text-sm">No recent searches yet.</p>';
+                    return;
+                }
+
+                listEl.innerHTML = history
+                    .map(item => `
+                        <button type="button" class="gt-search-history-item" data-query="${item}" data-testid="history-item-${item}">
+                            <span class="gt-search-history-icon"><i class="fa-solid fa-clock-rotate-left"></i></span>
+                            <span class="gt-search-history-text">${item}</span>
+                        </button>
+                    `)
+                    .join('');
+
+                listEl.querySelectorAll('[data-query]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const query = btn.getAttribute('data-query');
+                        if (!query) return;
+                        searchInput.value = query;
+                        currentQuery = query;
+                        currentPage = 1;
+                        window.history.pushState({}, '', `/gad-talk/search.html?q=${encodeURIComponent(query)}`);
+                        performSearch();
+                    });
+                });
             }
 
             function renderUsers(users, append) {

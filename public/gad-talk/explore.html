@@ -407,10 +407,10 @@
                                     <span class="gt-suggestion-user-handle">@${user.username}</span>
                                 </div>
                             </a>
-                            <button class="gt-btn gt-btn-sm gt-btn-outline gt-follow-btn" 
+                            <button class="gt-btn gt-btn-sm ${user.isFollowing ? "gt-btn-secondary gt-following" : "gt-btn-outline"} gt-follow-btn" 
                                     data-user-id="${user.id}"
                                     data-testid="follow-btn-${user.id}">
-                                Follow
+                                ${user.isFollowing ? "Following" : "Follow"}
                             </button>
                         </div>
                     `).join('');
@@ -420,18 +420,34 @@
                         btn.addEventListener('click', async (e) => {
                             e.preventDefault();
                             const userId = btn.dataset.userId;
+                            if (btn.dataset.loading === 'true') return;
+
+                            btn.dataset.loading = 'true';
+                            btn.disabled = true;
+
                             try {
                                 if (btn.classList.contains('gt-following')) {
                                     await window.GadTalkAPI.users.unfollow(userId);
-                                    btn.classList.remove('gt-following');
+                                    btn.classList.remove('gt-following', 'gt-btn-secondary');
+                                    btn.classList.add('gt-btn-outline');
                                     btn.textContent = 'Follow';
                                 } else {
                                     await window.GadTalkAPI.users.follow(userId);
-                                    btn.classList.add('gt-following');
+                                    btn.classList.add('gt-following', 'gt-btn-secondary');
+                                    btn.classList.remove('gt-btn-outline');
                                     btn.textContent = 'Following';
                                 }
                             } catch (error) {
-                                console.error('Follow action failed:', error);
+                                if (error && error.message && /already following/i.test(error.message)) {
+                                    btn.classList.add('gt-following', 'gt-btn-secondary');
+                                    btn.classList.remove('gt-btn-outline');
+                                    btn.textContent = 'Following';
+                                } else {
+                                    console.error('Follow action failed:', error);
+                                }
+                            } finally {
+                                btn.dataset.loading = 'false';
+                                btn.disabled = false;
                             }
                         });
                     });

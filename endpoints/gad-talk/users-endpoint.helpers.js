@@ -570,6 +570,7 @@ async function handleGetFollowers(req, res) {
         const sanitized = sanitizeUser(followerUser);
         if (authUser) {
           sanitized.isFollowing = isFollowing(authUser.id, followerUser.id);
+          sanitized.isFollower = isFollowing(followerUser.id, authUser.id);
         }
 
         return {
@@ -640,6 +641,7 @@ async function handleGetFollowing(req, res) {
         const sanitized = sanitizeUser(followingUser);
         if (authUser) {
           sanitized.isFollowing = isFollowing(authUser.id, followingUser.id);
+          sanitized.isFollower = isFollowing(followingUser.id, authUser.id);
         }
 
         return {

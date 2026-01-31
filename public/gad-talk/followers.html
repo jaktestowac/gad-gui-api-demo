@@ -76,6 +76,16 @@
                 <a href="#" class="gt-tab" id="tab-following" data-testid="tab-following">Following</a>
             </div>
 
+            <!-- Sorting (feature-flagged) -->
+            <div id="followers-sort-bar" class="gt-followers-sort gt-hidden" data-testid="followers-sort-bar">
+                <span class="gt-text-secondary gt-text-sm">Sort by</span>
+                <select id="followers-sort" class="gt-input gt-input-sm gt-filter-select" data-testid="followers-sort">
+                    <option value="recent">Recent</option>
+                    <option value="az">A–Z</option>
+                    <option value="mutuals">Mutuals</option>
+                </select>
+            </div>
+
             <!-- Users list -->
             <div class="gt-users-list">
                 <div id="users-loading" class="gt-loading-section">
@@ -146,10 +156,18 @@
             let currentPage = 1;
             let isLoading = false;
             let hasMore = true;
+            let featureFlags = {};
+            let followersSortingEnabled = false;
+            let currentSort = "recent";
+            let allUsers = [];
 
             // Require authentication
             currentUser = await window.gadTalkAuth.requireAuth();
             if (!currentUser) return;
+
+            await loadFeatureFlags();
+            applyFeatureFlags();
+            setupSortControls();
 
             // Get username from URL
             const urlParams = new URLSearchParams(window.location.search);
@@ -217,13 +235,21 @@
                     loadingEl.classList.remove('gt-hidden');
                     emptyEl.classList.add('gt-hidden');
                     listEl.innerHTML = '';
+                    allUsers = [];
                 }
 
                 try {
                     const response = await window.GadTalkAPI.users.getFollowers(profileUser.id, currentPage);
                     const followersData = response.followers || [];
                     // Extract user objects from the followers data (API returns { user: {...} } for each)
-                    const users = followersData.map(f => f.user).filter(u => u != null);
+                    const users = followersData
+                        .map(f => {
+                            if (!f || !f.user) return null;
+                            return { ...f.user, _followCreatedAt: f.createdAt };
+                        })
+                        .filter(u => u != null);
+
+                    allUsers = append ? allUsers.concat(users) : users;
 
                     loadingEl.classList.add('gt-hidden');
 
@@ -232,7 +258,7 @@
                         loadMoreSection.classList.add('gt-hidden');
                     } else {
                         emptyEl.classList.add('gt-hidden');
-                        renderUsers(users, append);
+                        renderUsers(allUsers);
 
                         hasMore = users.length >= 20;
                         if (hasMore) {
@@ -252,7 +278,9 @@
             function renderUsers(users, append) {
                 const listEl = document.getElementById('users-list');
 
-                const html = users.map(user => {
+                const sorted = sortUsers(users);
+
+                const html = sorted.map(user => {
                     const isOwnProfile = currentUser && currentUser.id === user.id;
                     const isFollowing = user.isFollowing;
 
@@ -277,15 +305,83 @@
                     `;
                 }).join('');
 
-                if (append) {
-                    listEl.insertAdjacentHTML('beforeend', html);
-                } else {
-                    listEl.innerHTML = html;
-                }
+                listEl.innerHTML = html;
 
                 // Add click handlers for follow buttons
                 listEl.querySelectorAll('.gt-follow-btn').forEach(btn => {
                     btn.addEventListener('click', handleFollowClick);
+                });
+
+                const emptyEl = document.getElementById('users-empty');
+                const emptyTitle = emptyEl?.querySelector('.gt-empty-title');
+                const emptyMessage = emptyEl?.querySelector('.gt-empty-message');
+
+                if (sorted.length === 0) {
+                    emptyEl?.classList.remove('gt-hidden');
+                    if (followersSortingEnabled && currentSort === 'mutuals') {
+                        if (emptyTitle) emptyTitle.textContent = 'No mutuals yet';
+                        if (emptyMessage) emptyMessage.textContent = 'When you follow each other, mutuals will appear here.';
+                    } else {
+                        if (emptyTitle) emptyTitle.textContent = 'No followers yet';
+                        if (emptyMessage) emptyMessage.textContent = "When people follow this account, they'll show up here.";
+                    }
+                } else {
+                    emptyEl?.classList.add('gt-hidden');
+                }
+            }
+
+            async function loadFeatureFlags() {
+                if (!window.GadTalkAPI || !window.GadTalkAPI.featureFlags) return;
+                try {
+                    const response = await window.GadTalkAPI.featureFlags.getAll();
+                    const flags = response?.data || response?.flags || response || [];
+                    featureFlags = flags.reduce((acc, flag) => {
+                        acc[String(flag.key || '').toLowerCase()] = !!flag.enabled;
+                        return acc;
+                    }, {});
+                } catch (error) {
+                    featureFlags = {};
+                }
+            }
+
+            function applyFeatureFlags() {
+                followersSortingEnabled = featureFlags.followers_sorting !== false;
+                const sortBar = document.getElementById('followers-sort-bar');
+                if (sortBar) {
+                    sortBar.classList.toggle('gt-hidden', !followersSortingEnabled);
+                }
+            }
+
+            function setupSortControls() {
+                if (!followersSortingEnabled) return;
+                const sortSelect = document.getElementById('followers-sort');
+                if (!sortSelect) return;
+
+                sortSelect.addEventListener('change', () => {
+                    currentSort = sortSelect.value;
+                    renderUsers(allUsers);
+                });
+            }
+
+            function sortUsers(users) {
+                const list = [...users];
+
+                if (!followersSortingEnabled) return list;
+
+                if (currentSort === 'az') {
+                    return list.sort((a, b) => (a.username || '').localeCompare(b.username || ''));
+                }
+
+                if (currentSort === 'mutuals') {
+                    return list
+                        .filter(user => !!user.isFollowing)
+                        .sort((a, b) => (a.username || '').localeCompare(b.username || ''));
+                }
+
+                return list.sort((a, b) => {
+                    const aDate = new Date(a._followCreatedAt || 0).getTime();
+                    const bDate = new Date(b._followCreatedAt || 0).getTime();
+                    return bDate - aDate;
                 });
             }
 

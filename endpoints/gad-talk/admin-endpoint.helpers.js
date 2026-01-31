@@ -479,7 +479,7 @@ async function handleFeatureFlagsPage(_req, res) {
       <h1>GadTalk Feature Flags</h1>
 
       <p class="small">Public testing page. Changes apply immediately.</p>
-      <button onclick="window.location.href='/gad-talk'">Return to GadTalk Home</button>
+      <button id="return-to-gadtalk">Return to GadTalk Home</button>
       <div class="card" id="flags"></div>
     </div>
     <script src="/gad-talk/js/feature-flags-admin.js"></script>
