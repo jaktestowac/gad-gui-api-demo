@@ -2310,6 +2310,231 @@ function getGadTalkDbStatus() {
   };
 }
 
+// ==================== ANALYTICS (CHARTS) ====================
+
+function clampNumber(value, min, max, fallback) {
+  const parsed = Number.parseInt(value, 10);
+  if (Number.isNaN(parsed)) return fallback;
+  return Math.max(min, Math.min(max, parsed));
+}
+
+function normalizeToUtcDate(date) {
+  const d = new Date(date);
+  if (Number.isNaN(d.getTime())) return null;
+  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+}
+
+function toDateKey(value) {
+  const d = normalizeToUtcDate(value);
+  if (!d) return null;
+  return d.toISOString().slice(0, 10);
+}
+
+function buildDateKeys(days, endDate = new Date()) {
+  const end = normalizeToUtcDate(endDate) || new Date();
+  const keys = [];
+  for (let i = days - 1; i >= 0; i -= 1) {
+    const d = new Date(end);
+    d.setUTCDate(end.getUTCDate() - i);
+    keys.push(d.toISOString().slice(0, 10));
+  }
+  return keys;
+}
+
+function formatLabelFromDateKey(dateKey) {
+  try {
+    const date = new Date(`${dateKey}T00:00:00Z`);
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  } catch (e) {
+    return dateKey;
+  }
+}
+
+function startOfUtcWeek(date) {
+  const normalized = normalizeToUtcDate(date) || new Date();
+  const day = normalized.getUTCDay();
+  const diff = (day + 6) % 7; // Monday = 0
+  const start = new Date(normalized);
+  start.setUTCDate(normalized.getUTCDate() - diff);
+  return start;
+}
+
+function getUserActivityHeatmap(userId, options = {}) {
+  const db = readGadTalkDb();
+  const days = clampNumber(options.days, 7, 366, 365);
+  const dateKeys = buildDateKeys(days, options.endDate || new Date());
+  const counts = Object.fromEntries(dateKeys.map((key) => [key, 0]));
+
+  db.gads
+    .filter((g) => !g.deleted && areIdsEqual(g.userId, userId))
+    .forEach((gad) => {
+      const key = toDateKey(gad.createdAt);
+      if (key && Object.prototype.hasOwnProperty.call(counts, key)) {
+        counts[key] += 1;
+      }
+    });
+
+  const data = dateKeys.map((key) => ({ date: key, count: counts[key] || 0 }));
+  const maxCount = data.reduce((max, entry) => Math.max(max, entry.count), 0);
+
+  return {
+    range: {
+      from: dateKeys[0],
+      to: dateKeys[dateKeys.length - 1],
+      days,
+    },
+    data,
+    maxCount,
+  };
+}
+
+function getUserEngagementTimeline(userId, options = {}) {
+  const db = readGadTalkDb();
+  const days = clampNumber(options.days, 7, 180, 30);
+  const dateKeys = buildDateKeys(days, options.endDate || new Date());
+  const likes = Object.fromEntries(dateKeys.map((key) => [key, 0]));
+  const replies = Object.fromEntries(dateKeys.map((key) => [key, 0]));
+  const reposts = Object.fromEntries(dateKeys.map((key) => [key, 0]));
+
+  const userGadIds = new Set(db.gads.filter((g) => !g.deleted && areIdsEqual(g.userId, userId)).map((g) => g.id));
+
+  db.likes.forEach((like) => {
+    if (!userGadIds.has(like.gadId)) return;
+    const key = toDateKey(like.createdAt);
+    if (key && Object.prototype.hasOwnProperty.call(likes, key)) {
+      likes[key] += 1;
+    }
+  });
+
+  db.gads.forEach((gad) => {
+    if (gad.deleted) return;
+    const replyToId = gad.replyToId || gad.replyTo;
+    if (!replyToId || !userGadIds.has(replyToId)) return;
+    const key = toDateKey(gad.createdAt);
+    if (key && Object.prototype.hasOwnProperty.call(replies, key)) {
+      replies[key] += 1;
+    }
+  });
+
+  db.outbox.forEach((entry) => {
+    if (entry.type !== "regad" || !userGadIds.has(entry.gadId)) return;
+    const key = toDateKey(entry.createdAt);
+    if (key && Object.prototype.hasOwnProperty.call(reposts, key)) {
+      reposts[key] += 1;
+    }
+  });
+
+  db.gads.forEach((gad) => {
+    if (gad.deleted || !gad.isRepost || !gad.repostOfId) return;
+    if (!userGadIds.has(gad.repostOfId)) return;
+    const key = toDateKey(gad.createdAt);
+    if (key && Object.prototype.hasOwnProperty.call(reposts, key)) {
+      reposts[key] += 1;
+    }
+  });
+
+  const labels = dateKeys.map((key) => formatLabelFromDateKey(key));
+
+  return {
+    range: {
+      from: dateKeys[0],
+      to: dateKeys[dateKeys.length - 1],
+      days,
+    },
+    labels,
+    dateKeys,
+    series: {
+      likes: dateKeys.map((key) => likes[key] || 0),
+      replies: dateKeys.map((key) => replies[key] || 0),
+      reposts: dateKeys.map((key) => reposts[key] || 0),
+    },
+    totals: {
+      likes: Object.values(likes).reduce((sum, val) => sum + val, 0),
+      replies: Object.values(replies).reduce((sum, val) => sum + val, 0),
+      reposts: Object.values(reposts).reduce((sum, val) => sum + val, 0),
+    },
+  };
+}
+
+function getUserFollowerGrowth(userId, options = {}) {
+  const db = readGadTalkDb();
+  const weeks = clampNumber(options.weeks, 4, 52, 12);
+  const endDate = normalizeToUtcDate(options.endDate || new Date()) || new Date();
+  const endWeekStart = startOfUtcWeek(endDate);
+  const weekStarts = [];
+
+  for (let i = weeks - 1; i >= 0; i -= 1) {
+    const d = new Date(endWeekStart);
+    d.setUTCDate(endWeekStart.getUTCDate() - i * 7);
+    weekStarts.push(d);
+  }
+
+  const followerDates = db.follows
+    .filter((f) => areIdsEqual(f.followingId, userId))
+    .map((f) => normalizeToUtcDate(f.createdAt))
+    .filter(Boolean)
+    .sort((a, b) => a - b);
+
+  const counts = [];
+  let runningTotal = 0;
+  let cursor = 0;
+
+  for (const weekStart of weekStarts) {
+    const weekEnd = new Date(weekStart);
+    weekEnd.setUTCDate(weekStart.getUTCDate() + 6);
+
+    while (cursor < followerDates.length && followerDates[cursor] <= weekEnd) {
+      runningTotal += 1;
+      cursor += 1;
+    }
+
+    counts.push(runningTotal);
+  }
+
+  return {
+    range: {
+      from: weekStarts[0].toISOString().slice(0, 10),
+      to: weekStarts[weekStarts.length - 1].toISOString().slice(0, 10),
+      weeks,
+    },
+    labels: weekStarts.map((date) => formatLabelFromDateKey(date.toISOString().slice(0, 10))),
+    dateKeys: weekStarts.map((date) => date.toISOString().slice(0, 10)),
+    counts,
+  };
+}
+
+function getUserHashtagDistribution(userId, options = {}) {
+  const db = readGadTalkDb();
+  const limit = clampNumber(options.limit, 3, 12, 8);
+  const counts = {};
+
+  db.gads
+    .filter((g) => !g.deleted && areIdsEqual(g.userId, userId))
+    .forEach((gad) => {
+      const tags = Array.isArray(gad.hashtags) && gad.hashtags.length > 0 ? gad.hashtags : extractHashtags(gad.content);
+      tags.forEach((tag) => {
+        const normalized = String(tag).toLowerCase();
+        counts[normalized] = (counts[normalized] || 0) + 1;
+      });
+    });
+
+  const entries = Object.entries(counts)
+    .map(([tag, count]) => ({ tag, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, limit);
+
+  const total = entries.reduce((sum, item) => sum + item.count, 0);
+  const hashtags = entries.map((item) => ({
+    ...item,
+    percent: total ? Math.round((item.count / total) * 1000) / 10 : 0,
+  }));
+
+  return {
+    total,
+    hashtags,
+  };
+}
+
 // ==================== EXPORTS ====================
 
 module.exports = {
@@ -2430,4 +2655,10 @@ module.exports = {
 
   // Status
   getGadTalkDbStatus,
+
+  // Analytics
+  getUserActivityHeatmap,
+  getUserEngagementTimeline,
+  getUserFollowerGrowth,
+  getUserHashtagDistribution,
 };

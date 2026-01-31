@@ -124,7 +124,59 @@
                 <button class="gt-tab gt-tab-active" data-tab="gads" data-testid="tab-gads">Gads</button>
                 <button class="gt-tab" data-tab="replies" data-testid="tab-replies">Replies</button>
                 <button class="gt-tab" data-tab="likes" data-testid="tab-likes">Likes</button>
+                <button class="gt-tab" data-tab="analytics" data-testid="tab-analytics">Analytics</button>
             </div>
+
+            <!-- Analytics charts (tab content) -->
+            <section class="gt-analytics-section gt-hidden" id="profile-charts">
+                <div class="gt-analytics-header">
+                    <div>
+                        <h2 class="gt-card-title">Analytics</h2>
+                        <p class="gt-text-secondary gt-text-sm">Last <span id="analytics-range-label">90</span> days</p>
+                    </div>
+                    <div class="gt-chart-controls">
+                        <select id="analytics-range" class="gt-input gt-input-sm" data-testid="analytics-range">
+                            <option value="30">Last 30 days</option>
+                            <option value="90" selected>Last 90 days</option>
+                            <option value="365">Last 365 days</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="gt-charts-grid">
+                    <div class="gt-chart-card" data-testid="chart-activity">
+                        <div class="gt-chart-header">
+                            <h3>Activity Heatmap</h3>
+                            <span class="gt-text-secondary gt-text-sm">Posts per day</span>
+                        </div>
+                        <div class="gt-chart-body" id="chart-activity-heatmap"></div>
+                    </div>
+
+                    <div class="gt-chart-card" data-testid="chart-engagement">
+                        <div class="gt-chart-header">
+                            <h3>Engagement Timeline</h3>
+                            <span class="gt-text-secondary gt-text-sm">Likes, replies, reposts</span>
+                        </div>
+                        <div class="gt-chart-body" id="chart-engagement-line"></div>
+                    </div>
+
+                    <div class="gt-chart-card" data-testid="chart-followers">
+                        <div class="gt-chart-header">
+                            <h3>Follower Growth</h3>
+                            <span class="gt-text-secondary gt-text-sm">Weekly progression</span>
+                        </div>
+                        <div class="gt-chart-body" id="chart-follower-growth"></div>
+                    </div>
+
+                    <div class="gt-chart-card" data-testid="chart-hashtags">
+                        <div class="gt-chart-header">
+                            <h3>Top Hashtags</h3>
+                            <span class="gt-text-secondary gt-text-sm">Most-used tags</span>
+                        </div>
+                        <div class="gt-chart-body" id="chart-hashtag-donut"></div>
+                    </div>
+                </div>
+            </section>
 
             <!-- Profile gads feed -->
             <div class="gt-feed" id="profile-feed" data-testid="profile-feed">
@@ -303,6 +355,7 @@
     <script src="/gad-talk/js/auth.js"></script>
     <script src="/gad-talk/js/gads.js"></script>
     <script src="/gad-talk/js/nav.js"></script>
+    <script src="/gad-talk/js/charts.js"></script>
     <script src="/gad-talk/js/profile.js"></script>
 </body>
 

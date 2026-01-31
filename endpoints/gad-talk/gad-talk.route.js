@@ -89,6 +89,13 @@ const {
   handleGetPopularGadsSearch,
 } = require("./search-endpoint.helpers");
 
+const {
+  handleGetActivityHeatmap,
+  handleGetEngagementTimeline,
+  handleGetFollowerGrowth,
+  handleGetHashtagDistribution,
+} = require("./analytics-endpoint.helpers");
+
 const { initializeAllGadTalkDatabases } = require("./db-gad-talk.operations");
 
 // ==================== ROUTE HANDLING ====================
@@ -201,6 +208,11 @@ async function handleGadTalk(req, res) {
     // ==================== EXPLORE ROUTES ====================
     if (segments[0] === "explore") {
       return await handleExploreRoutes(req, res, method, segments);
+    }
+
+    // ==================== ANALYTICS ROUTES ====================
+    if (segments[0] === "analytics") {
+      return await handleAnalyticsRoutes(req, res, method, segments);
     }
 
     // ==================== ADMIN ROUTES ====================
@@ -556,6 +568,34 @@ async function handleExploreRoutes(req, res, method, segments) {
   // GET /api/gad-talk/explore/popular - Get popular gads
   if (action === "popular" && method === "GET") {
     return handleGetPopularGadsSearch(req, res);
+  }
+
+  res.status(HTTP_METHOD_NOT_ALLOWED).send(formatErrorResponse("Method not allowed"));
+}
+
+/**
+ * Handle analytics routes
+ */
+async function handleAnalyticsRoutes(req, res, method, segments) {
+  const action = segments[1];
+
+  // GET /api/gad-talk/analytics/user/:userId/:metric
+  if (action === "user" && segments[2] && segments[3] && method === "GET") {
+    req.params = { userId: segments[2] };
+    const metric = segments[3];
+
+    switch (metric) {
+      case "activity-heatmap":
+        return handleGetActivityHeatmap(req, res);
+      case "engagement-timeline":
+        return handleGetEngagementTimeline(req, res);
+      case "follower-growth":
+        return handleGetFollowerGrowth(req, res);
+      case "hashtag-distribution":
+        return handleGetHashtagDistribution(req, res);
+      default:
+        break;
+    }
   }
 
   res.status(HTTP_METHOD_NOT_ALLOWED).send(formatErrorResponse("Method not allowed"));

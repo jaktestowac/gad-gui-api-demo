@@ -633,6 +633,38 @@ const GadTalkAPI = (function () {
     },
   };
 
+  // ==================== Analytics API ====================
+
+  const analytics = {
+    /**
+     * Get activity heatmap data
+     */
+    async getActivityHeatmap(userId, days = 365) {
+      return request(`/analytics/user/${encodeURIComponent(userId)}/activity-heatmap?days=${days}`);
+    },
+
+    /**
+     * Get engagement timeline data
+     */
+    async getEngagementTimeline(userId, days = 30) {
+      return request(`/analytics/user/${encodeURIComponent(userId)}/engagement-timeline?days=${days}`);
+    },
+
+    /**
+     * Get follower growth data
+     */
+    async getFollowerGrowth(userId, weeks = 12) {
+      return request(`/analytics/user/${encodeURIComponent(userId)}/follower-growth?weeks=${weeks}`);
+    },
+
+    /**
+     * Get hashtag distribution data
+     */
+    async getHashtagDistribution(userId, limit = 8) {
+      return request(`/analytics/user/${encodeURIComponent(userId)}/hashtag-distribution?limit=${limit}`);
+    },
+  };
+
   // Public API
   return {
     auth,
@@ -643,6 +675,7 @@ const GadTalkAPI = (function () {
     admin,
     search,
     explore,
+    analytics,
     getToken,
     setToken,
     clearToken,

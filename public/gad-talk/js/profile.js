@@ -441,18 +441,37 @@ const gadTalkProfile = (function () {
         tabs.forEach((t) => t.classList.remove("gt-tab-active"));
         tab.classList.add("gt-tab-active");
 
-        currentTab = tab.dataset.tab;
-        currentPage = 1;
-        hasMore = true;
-        await loadProfileGads();
+        await setActiveTab(tab.dataset.tab);
       });
     });
+  }
+
+  async function setActiveTab(tabName) {
+    currentTab = tabName;
+
+    const chartsSection = document.getElementById("profile-charts");
+    const profileFeed = document.getElementById("profile-feed");
+
+    if (currentTab === "analytics") {
+      if (profileFeed) profileFeed.classList.add("gt-hidden");
+      if (chartsSection) chartsSection.classList.remove("gt-hidden");
+      await loadProfileCharts();
+      return;
+    }
+
+    if (chartsSection) chartsSection.classList.add("gt-hidden");
+    if (profileFeed) profileFeed.classList.remove("gt-hidden");
+
+    currentPage = 1;
+    hasMore = true;
+    await loadProfileGads();
   }
 
   /**
    * Load profile gads
    */
   async function loadProfileGads() {
+    if (currentTab === "analytics") return;
     if (!profileUser || isLoading) return;
     isLoading = true;
 
@@ -508,6 +527,14 @@ const gadTalkProfile = (function () {
     } finally {
       isLoading = false;
     }
+  }
+
+  /**
+   * Load analytics charts for the profile
+   */
+  async function loadProfileCharts() {
+    if (!profileUser || !window.gadTalkCharts || !window.gadTalkCharts.loadUserCharts) return;
+    await window.gadTalkCharts.loadUserCharts(profileUser.id);
   }
 
   /**
@@ -814,6 +841,8 @@ const gadTalkProfile = (function () {
     init,
     loadProfile,
     loadProfileGads,
+    loadProfileCharts,
+    setActiveTab,
   };
 })();
 

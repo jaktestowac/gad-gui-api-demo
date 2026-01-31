@@ -1055,6 +1055,177 @@ a:hover {
   margin-top: var(--gt-spacing-md);
 }
 
+/* Analytics charts */
+.gt-analytics-section {
+  padding: var(--gt-spacing-md);
+  border-bottom: 1px solid var(--gt-border);
+}
+
+.gt-analytics-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gt-spacing-md);
+  margin-bottom: var(--gt-spacing-md);
+}
+
+.gt-input-sm {
+  padding: 6px 12px;
+  font-size: 0.8125rem;
+}
+
+.gt-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gt-spacing-md);
+}
+
+.gt-chart-card {
+  background-color: var(--gt-bg-secondary);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-lg);
+  padding: var(--gt-spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gt-spacing-sm);
+  min-height: 220px;
+}
+
+.gt-chart-header h3 {
+  margin: 0 0 4px 0;
+  font-size: 1rem;
+}
+
+.gt-chart-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gt-spacing-sm);
+}
+
+.gt-chart-loading {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-spacing-sm);
+  color: var(--gt-text-secondary);
+}
+
+.gt-chart-empty {
+  padding: var(--gt-spacing-md) 0;
+  color: var(--gt-text-secondary);
+  font-size: 0.875rem;
+}
+
+.gt-chart-svg {
+  width: 100%;
+  height: auto;
+}
+
+.gt-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gt-spacing-sm);
+  font-size: 0.8125rem;
+  color: var(--gt-text-secondary);
+}
+
+.gt-chart-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gt-chart-legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background-color: var(--gt-primary);
+}
+
+/* Heatmap */
+.gt-heatmap-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, 12px);
+  gap: 4px;
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.gt-heatmap-cell {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background-color: var(--gt-bg-tertiary);
+}
+
+.gt-heatmap-level-0 {
+  background-color: #1f2226;
+}
+
+.gt-heatmap-level-1 {
+  background-color: rgba(29, 155, 240, 0.25);
+}
+
+.gt-heatmap-level-2 {
+  background-color: rgba(29, 155, 240, 0.45);
+}
+
+.gt-heatmap-level-3 {
+  background-color: rgba(29, 155, 240, 0.7);
+}
+
+.gt-heatmap-level-4 {
+  background-color: rgba(29, 155, 240, 0.95);
+}
+
+.gt-heatmap-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--gt-spacing-sm);
+  font-size: 0.75rem;
+}
+
+.gt-heatmap-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+/* Donut chart */
+.gt-donut-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-spacing-md);
+  flex-wrap: wrap;
+}
+
+.gt-donut-chart {
+  width: 120px;
+  height: 120px;
+}
+
+.gt-donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: var(--gt-text-primary);
+}
+
+.gt-donut-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (max-width: 900px) {
+  .gt-charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .gt-profile-stat {
   display: flex;
   gap: var(--gt-spacing-xs);
