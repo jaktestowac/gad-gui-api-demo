@@ -468,14 +468,21 @@ a:hover {
 .gt-compose-textarea {
   width: 100%;
   min-height: 80px;
-  padding: var(--gt-spacing-sm);
+  padding: calc(var(--gt-spacing-sm) + 2px);
   font-size: 1.125rem;
   color: var(--gt-text-primary);
-  background-color: transparent;
-  border: none;
+  background-color: var(--gt-bg-primary);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-sm);
   outline: none;
-  resize: none;
+  resize: vertical;
   font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s;
+}
+
+.gt-compose-textarea:focus {
+  border-color: var(--gt-primary);
+  box-shadow: 0 0 0 4px var(--gt-primary-light);
 }
 
 .gt-compose-textarea::placeholder {
@@ -818,6 +825,47 @@ a:hover {
 
 .gt-input {
   width: 100%;
+  box-sizing: border-box;
+  padding: var(--gt-spacing-sm) var(--gt-spacing-md);
+  font-size: 1rem;
+  color: var(--gt-text-primary);
+  background-color: var(--gt-bg-primary);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-sm);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s;
+}
+
+.gt-input:focus {
+  border-color: var(--gt-primary);
+  box-shadow: 0 0 0 4px var(--gt-primary-light);
+}
+
+.gt-input::placeholder {
+  color: var(--gt-text-muted);
+}
+
+.gt-input[disabled],
+.gt-input[readonly] {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background-color: var(--gt-bg-tertiary);
+}
+
+.gt-input.is-invalid,
+.gt-input[data-invalid="true"] {
+  border-color: var(--gt-error);
+  box-shadow: 0 0 0 4px rgba(255, 60, 60, 0.06);
+}
+
+.gt-input-sm {
+  padding: 6px 8px;
+  font-size: 0.875rem;
+}
+
+.gt-input-lg {
+  padding: 14px 16px;
+  font-size: 1.125rem;
 }
 
 /* Compact card modifier for lightweight pages */
@@ -845,25 +893,6 @@ a:hover {
   height: 30px;
 }
 
-  padding: var(--gt-spacing-sm) var(--gt-spacing-md);
-  font-size: 1rem;
-  color: var(--gt-text-primary);
-  background-color: var(--gt-bg-primary);
-  border: 1px solid var(--gt-border);
-  border-radius: var(--gt-radius-sm);
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.gt-input:focus {
-  border-color: var(--gt-primary);
-  box-shadow: 0 0 0 3px var(--gt-primary-light);
-}
-
-.gt-input::placeholder {
-  color: var(--gt-text-muted);
-}
-
 .gt-field {
   margin-bottom: var(--gt-spacing-md);
 }
@@ -880,12 +909,24 @@ a:hover {
   resize: vertical;
   min-height: 100px;
   font-family: inherit;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s;
 }
 
 .gt-textarea:focus {
   border-color: var(--gt-primary);
-  box-shadow: 0 0 0 3px var(--gt-primary-light);
+  box-shadow: 0 0 0 4px var(--gt-primary-light);
+}
+
+.gt-textarea[disabled] {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background-color: var(--gt-bg-tertiary);
+}
+
+.gt-textarea.is-invalid,
+.gt-textarea[data-invalid="true"] {
+  border-color: var(--gt-error);
+  box-shadow: 0 0 0 4px rgba(255, 60, 60, 0.06);
 }
 
 /* Checkbox */
@@ -2745,10 +2786,20 @@ body.gt-modal-open {
   color: var(--gt-text-primary);
   font-size: 1rem;
   outline: none;
+  min-width: 60px;
 }
 
 .gt-search-input::placeholder {
   color: var(--gt-text-secondary);
+}
+
+.gt-search-input:focus {
+  outline: none;
+}
+
+.gt-search-input[disabled] {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .gt-search-prompt {
