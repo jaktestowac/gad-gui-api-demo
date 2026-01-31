@@ -19,8 +19,7 @@ const gadTalkProfile = (function () {
     if (!msgEl) {
       msgEl = document.createElement("span");
       msgEl.className = "gt-text-secondary gt-text-sm gt-follow-message";
-      msgEl.style.display = "block";
-      msgEl.style.marginTop = "4px";
+      msgEl.setAttribute("role", "status");
       container.appendChild(msgEl);
     }
     msgEl.textContent = message;
@@ -133,9 +132,14 @@ const gadTalkProfile = (function () {
     // Load sidebar suggestions
     loadSidebarSuggestions();
 
-    // Get username from URL
+    // Get username from URL or pathname (/gad-talk/@username)
     const params = new URLSearchParams(window.location.search);
-    const username = params.get("user") || currentUser.username;
+    let username = params.get("user");
+    if (!username) {
+      const m = window.location.pathname.match(/@([^/]+)/);
+      if (m) username = decodeURIComponent(m[1]);
+    }
+    username = username || currentUser.username;
 
     // Load profile
     await loadProfile(username);
@@ -155,7 +159,7 @@ const gadTalkProfile = (function () {
     // Setup nav profile link
     const navProfile = document.getElementById("nav-profile");
     if (navProfile) {
-      navProfile.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+      navProfile.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
     }
   }
 
@@ -223,7 +227,7 @@ const gadTalkProfile = (function () {
               text: "Profile",
               icon: '<i class="fa-solid fa-user"></i>',
               onClick: () => {
-                window.location.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+                window.location.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
               },
             },
             {
@@ -253,7 +257,7 @@ const gadTalkProfile = (function () {
       });
     } else if (dropdownBtn) {
       dropdownBtn.addEventListener("click", () => {
-        window.location.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+        window.location.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
       });
     }
   }
@@ -274,7 +278,7 @@ const gadTalkProfile = (function () {
         .map(
           (user) => `
         <div class="gt-suggestion-item">
-          <a href="/gad-talk/profile.html?user=${user.username}" class="gt-suggestion-user">
+          <a href="/gad-talk/@${encodeURIComponent(user.username)}" class="gt-suggestion-user">
             ${window.gadTalkGads.getAvatarHtml(user, "sm")}
             <div class="gt-suggestion-info">
               <span class="gt-suggestion-name">${user.displayName || user.username}</span>
@@ -369,11 +373,17 @@ const gadTalkProfile = (function () {
 
     // Update banner (stored as header in backend)
     const profileBanner = document.getElementById("profile-banner");
-    if (profileBanner) {
+    const profileHeaderEl = document.getElementById("profile-header");
+    if (profileBanner && profileHeaderEl) {
       if (profileUser.header) {
+        profileHeaderEl.classList.remove("gt-profile-header--no-banner");
         profileBanner.style.backgroundImage = `url(${profileUser.header})`;
+        profileBanner.style.background = "";
       } else {
-        profileBanner.style.background = "linear-gradient(135deg, var(--gt-primary), var(--gt-secondary))";
+        // No banner: hide the banner element and collapse header spacing
+        profileHeaderEl.classList.add("gt-profile-header--no-banner");
+        profileBanner.style.backgroundImage = "";
+        profileBanner.style.background = "none";
       }
     }
 

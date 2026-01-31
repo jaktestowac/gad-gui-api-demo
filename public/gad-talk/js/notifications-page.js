@@ -15,7 +15,7 @@
     // Update nav profile link
     const navProfile = document.getElementById("nav-profile");
     if (navProfile) {
-      navProfile.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+      navProfile.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
     }
 
     setupTabs();

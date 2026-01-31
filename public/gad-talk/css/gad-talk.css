@@ -569,6 +569,7 @@ a:hover {
   align-items: center;
   justify-content: space-between;
   padding: var(--gt-spacing-sm) 0;
+  position: relative; /* allow absolutely positioned messages without shifting layout */
 }
 
 .gt-suggestion-user {
@@ -595,6 +596,21 @@ a:hover {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Follow message should not push content; show it as an overlay */
+.gt-follow-message {
+  position: absolute;
+  right: 0;
+  top: calc(100% + var(--gt-spacing-xs));
+  background-color: var(--gt-bg-secondary);
+  color: var(--gt-text-secondary);
+  padding: 4px 8px;
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-md);
+  white-space: nowrap;
+  z-index: 2;
+  font-size: 0.8125rem;
 }
 
 .gt-suggestion-username {
@@ -1065,6 +1081,19 @@ a:hover {
   background-position: center;
 }
 
+/* When the banner is not set we hide and collapse it to save vertical space */
+.gt-profile-header.gt-profile-header--no-banner .gt-profile-banner {
+  display: none;
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* Move avatar closer to profile info when banner is absent */
+.gt-profile-header.gt-profile-header--no-banner .gt-profile-avatar {
+  top: -32px;
+}
+
 .gt-profile-info {
   padding: var(--gt-spacing-md);
   position: relative;
@@ -1080,8 +1109,24 @@ a:hover {
 
 .gt-profile-actions {
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: var(--gt-spacing-md);
+  gap: var(--gt-gap-sm);
+  align-items: center;
+}
+
+/* Position actions at top-right of profile info card */
+.gt-profile-info .gt-profile-actions {
+  position: absolute;
+  top: var(--gt-spacing-md);
+  right: var(--gt-spacing-md);
+}
+
+/* On small screens, make actions flow with document flow below the main info */
+@media (max-width: 600px) {
+  .gt-profile-info .gt-profile-actions {
+    position: static;
+    margin-top: var(--gt-spacing-md);
+    justify-content: flex-end;
+  }
 }
 
 .gt-profile-name {
@@ -1705,7 +1750,10 @@ a:hover {
   max-height: 90vh;
   max-width: 600px;
   width: 100%;
-  overflow: hidden;
+  /* Allow modal body to scroll when content is taller than viewport */
+  overflow: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
   animation: gt-modal-in 0.2s ease;
@@ -3685,4 +3733,10 @@ body.gt-modal-open {
 
 .gt-filter-select {
   min-width: 140px;
+}
+
+.gt-profile-display-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
 }

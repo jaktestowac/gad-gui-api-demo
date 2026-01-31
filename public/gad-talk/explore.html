@@ -142,7 +142,7 @@
             // Update nav profile link
             const navProfile = document.getElementById("nav-profile");
             if (navProfile) {
-                navProfile.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+                navProfile.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
             }
 
             // nav.js populates nav-user-section and dropdown
@@ -264,7 +264,7 @@
                         const value = item.dataset.value;
 
                         if (type === 'user') {
-                            window.location.href = `/gad-talk/profile.html?user=${value}`;
+                            window.location.href = `/gad-talk/@${encodeURIComponent(value)}`;
                         } else if (type === 'hashtag') {
                             window.location.href = `/gad-talk/explore.html?hashtag=${value}`;
                         } else {
@@ -408,7 +408,7 @@
 
                     suggestionsList.innerHTML = users.map(user => `
                         <div class="gt-suggestion-user" data-testid="suggestion-${user.id}">
-                            <a href="/gad-talk/profile.html?user=${user.username}" class="gt-suggestion-user-info">
+                            <a href="/gad-talk/@${encodeURIComponent(user.username)}" class="gt-suggestion-user-info">
                                 <img src="${user.avatar || '/gad-talk/images/default-avatar.png'}" alt="${user.displayName}" class="gt-avatar gt-avatar-sm" />
                                 <div class="gt-suggestion-user-text">
                                     <span class="gt-suggestion-user-name">${user.displayName}</span>

@@ -36,6 +36,7 @@ const {
   handleMute,
   handleUnmute,
   handleSearchUsers,
+  handleCheckUsernameAvailability,
 } = require("./users-endpoint.helpers");
 
 const {
@@ -308,6 +309,14 @@ async function handleUserRoutes(req, res, method, segments) {
   // GET /api/gad-talk/users/search?q=query
   if (segments[1] === "search" && method === "GET") {
     return handleSearchUsers(req, res);
+  }
+
+  // GET /api/gad-talk/users/available/:username
+  if (segments[1] === "available" && segments[2]) {
+    req.params = { username: segments[2] };
+    if (method === "GET") return handleCheckUsernameAvailability(req, res);
+    res.status(HTTP_METHOD_NOT_ALLOWED).send(formatErrorResponse("Method not allowed"));
+    return;
   }
 
   // GET /api/gad-talk/users/username/:username

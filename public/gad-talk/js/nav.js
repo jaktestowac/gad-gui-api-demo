@@ -45,7 +45,7 @@
 
     const navProfile = document.getElementById("nav-profile");
     if (navProfile) {
-      navProfile.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+      navProfile.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
     }
 
     const dropdownBtn = navUserSection.querySelector("#nav-user-dropdown-btn");
@@ -60,7 +60,7 @@
               text: "Profile",
               icon: '<i class="fa-solid fa-user"></i>',
               onClick: () => {
-                window.location.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+                window.location.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
               },
             },
             {
@@ -92,7 +92,7 @@
       });
     } else if (dropdownBtn) {
       dropdownBtn.addEventListener("click", () => {
-        window.location.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+        window.location.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
       });
     }
   }

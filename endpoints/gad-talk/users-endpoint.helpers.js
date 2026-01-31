@@ -262,6 +262,36 @@ async function handleSearchUsers(req, res) {
 }
 
 /**
+ * Check username availability
+ * GET /api/gad-talk/users/available/:username
+ */
+async function handleCheckUsernameAvailability(req, res) {
+  try {
+    const username = req.params?.username || req.query?.username;
+    if (!username) {
+      res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Username is required"));
+      return;
+    }
+
+    // Validate username format using auth service validator
+    const { validateUsername } = require("./services/auth.service");
+    const validation = validateUsername(username);
+    if (!validation.valid) {
+      // Use 422 Unprocessable Entity
+      const { HTTP_UNPROCESSABLE_ENTITY } = require("../../helpers/response.helpers");
+      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse(validation.error));
+      return;
+    }
+
+    const existing = findGadTalkUserByUsername(username);
+    res.status(HTTP_OK).json({ available: !existing });
+  } catch (error) {
+    logError("GadTalk check username availability error:", error);
+    res.status(HTTP_BAD_REQUEST).json(formatErrorResponse(error.message || "Failed to check username"));
+  }
+}
+
+/**
  * Get user profile with stats
  * GET /api/gad-talk/users/:id/profile
  */

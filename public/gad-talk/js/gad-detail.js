@@ -339,16 +339,16 @@
 
     // Avatar
     elements.avatar.innerHTML = `
-      <a href="/gad-talk/profile.html?user=${user.username}">
+      <a href="/gad-talk/@${encodeURIComponent(user.username)}">
         ${window.gadTalkGads.getAvatarHtml(user, "lg")}
       </a>
     `;
 
     // User info
     elements.displayName.textContent = user.displayName || user.username || "Unknown";
-    elements.displayName.href = `/gad-talk/profile.html?user=${user.username}`;
+    elements.displayName.href = `/gad-talk/@${encodeURIComponent(user.username)}`;
     elements.username.textContent = `@${user.username || "unknown"}`;
-    elements.username.href = `/gad-talk/profile.html?user=${user.username}`;
+    elements.username.href = `/gad-talk/@${encodeURIComponent(user.username)}`;
 
     if (user.verified) {
       elements.verified.classList.remove("gt-hidden");
@@ -384,7 +384,7 @@
     if (gad.replyToUser) {
       elements.replyIndicator.classList.remove("gt-hidden");
       elements.replyToLink.textContent = `@${gad.replyToUser.username}`;
-      elements.replyToLink.href = `/gad-talk/profile.html?user=${gad.replyToUser.username}`;
+      elements.replyToLink.href = `/gad-talk/@${encodeURIComponent(gad.replyToUser.username)}`;
 
       // Update reply context in composer
       elements.replyContext?.classList.remove("gt-hidden");

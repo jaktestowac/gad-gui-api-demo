@@ -178,7 +178,7 @@
             // Update nav profile link
             const navProfile = document.getElementById("nav-profile");
             if (navProfile) {
-                navProfile.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+                navProfile.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
             }
 
             // nav.js populates nav-user-section and dropdown
@@ -384,7 +384,7 @@
                 const resultsEl = document.getElementById('results-list');
 
                 const html = users.map(user => `
-                    <a href="/gad-talk/profile.html?user=${user.username}" class="gt-user-result" data-testid="user-result-${user.id}">
+                    <a href="/gad-talk/@${encodeURIComponent(user.username)}" class="gt-user-result" data-testid="user-result-${user.id}">
                         <div class="gt-avatar gt-avatar-md">
                             ${user.avatar || user.username.charAt(0).toUpperCase()}
                         </div>

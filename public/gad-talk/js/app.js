@@ -20,8 +20,7 @@ const gadTalkApp = (function () {
     if (!msgEl) {
       msgEl = document.createElement("span");
       msgEl.className = "gt-text-secondary gt-text-sm gt-follow-message";
-      msgEl.style.display = "block";
-      msgEl.style.marginTop = "4px";
+      msgEl.setAttribute("role", "status");
       container.appendChild(msgEl);
     }
     msgEl.textContent = message;
@@ -289,7 +288,7 @@ const gadTalkApp = (function () {
     // Setup nav profile link
     const navProfile = document.getElementById("nav-profile");
     if (navProfile) {
-      navProfile.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+      navProfile.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
     }
 
     // Check for unread notifications
@@ -438,7 +437,7 @@ const gadTalkApp = (function () {
               text: "Profile",
               icon: '<i class="fa-solid fa-user"></i>',
               onClick: () => {
-                window.location.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+                window.location.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
               },
             },
             {
@@ -470,7 +469,7 @@ const gadTalkApp = (function () {
     } else if (dropdownBtn) {
       // Fallback: navigate to profile on click
       dropdownBtn.addEventListener("click", () => {
-        window.location.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+        window.location.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
       });
     }
   }
@@ -833,7 +832,7 @@ const gadTalkApp = (function () {
         .map(
           (user) => `
         <div class="gt-suggestion-item">
-          <a href="/gad-talk/profile.html?user=${user.username}" class="gt-suggestion-user">
+          <a href="/gad-talk/@${encodeURIComponent(user.username)}" class="gt-suggestion-user">
             ${window.gadTalkGads.getAvatarHtml(user, "sm")}
             <div class="gt-suggestion-info">
               <span class="gt-suggestion-name">${user.displayName || user.username}</span>

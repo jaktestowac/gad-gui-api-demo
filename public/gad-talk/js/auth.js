@@ -168,6 +168,26 @@ const gadTalkAuth = (function () {
       return;
     }
 
+    // Check username availability with backend
+    try {
+      const availRes = await fetch(`/api/gad-talk/users/available/${encodeURIComponent(username)}`);
+      if (availRes.status === 422) {
+        const err = await availRes.json();
+        showError(err.error || "Invalid username");
+        return;
+      }
+      if (availRes.ok) {
+        const json = await availRes.json();
+        if (!json.available) {
+          showError("Username is already taken");
+          return;
+        }
+      }
+    } catch (e) {
+      // Ignore availability check failure and proceed with signup (server will still enforce uniqueness)
+      console.warn("Username availability check failed", e);
+    }
+
     setButtonLoading(submitBtn, true);
 
     try {

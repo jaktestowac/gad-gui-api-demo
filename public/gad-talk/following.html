@@ -189,7 +189,7 @@
             // Update nav profile link
             const navProfile = document.getElementById("nav-profile");
             if (navProfile) {
-                navProfile.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+                navProfile.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
             }
 
             // nav.js populates nav-user-section and dropdown
@@ -294,7 +294,7 @@
 
                     return `
                         <div class="gt-user-card" data-testid="user-card-${user.id}">
-                            <a href="/gad-talk/profile.html?user=${user.username}" class="gt-user-card-link">
+                            <a href="/gad-talk/@${encodeURIComponent(user.username)}" class="gt-user-card-link">
                                 ${window.gadTalkGads.getAvatarHtml(user, "md")}
                                 <div class="gt-user-info">
                                     <span class="gt-user-displayname">${user.displayName || user.username}</span>
@@ -480,7 +480,7 @@
 
                     container.innerHTML = suggestions.map(user => `
                         <div class="gt-suggestion-item">
-                            <a href="/gad-talk/profile.html?user=${user.username}" class="gt-suggestion-link">
+                            <a href="/gad-talk/@${encodeURIComponent(user.username)}" class="gt-suggestion-link">
                                 ${window.gadTalkGads.getAvatarHtml(user, "sm")}
                                 <div class="gt-suggestion-info">
                                     <span class="gt-suggestion-name">${user.displayName || user.username}</span>

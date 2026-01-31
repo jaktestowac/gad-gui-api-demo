@@ -61,7 +61,7 @@ const gadTalkGads = (function () {
     );
 
     // Linkify mentions
-    parsed = parsed.replace(/@(\w+)/g, '<a href="/gad-talk/profile.html?user=$1" class="gt-link gt-mention">@$1</a>');
+    parsed = parsed.replace(/@(\w+)/g, '<a href="/gad-talk/@$1" class="gt-link gt-mention">@$1</a>');
 
     return parsed;
   }
@@ -114,7 +114,9 @@ const gadTalkGads = (function () {
       replyIndicator = `
         <div class="gt-gad-reply-indicator">
           <span class="gt-text-secondary">Replying to </span>
-          <a href="/gad-talk/profile.html?user=${gad.replyToUser.username}" class="gt-link">@${gad.replyToUser.username}</a>
+          <a href="/gad-talk/@${encodeURIComponent(gad.replyToUser.username)}" class="gt-link">@${
+        gad.replyToUser.username
+      }</a>
         </div>
       `;
     }
@@ -143,7 +145,9 @@ const gadTalkGads = (function () {
         <a href="/gad-talk/gad.html?id=${qg.id}" class="gt-quoted-gad" data-testid="quoted-gad-${qg.id}">
           <div class="gt-quoted-gad-header">
             <span class="gt-quoted-gad-author">
-              <span class="gt-gad-display-name">${qgDisplayName}</span>
+              <a href="/gad-talk/@${encodeURIComponent(
+                qgUsername
+              )}" class="gt-quoted-gad-author-link"><span class="gt-gad-display-name">${qgDisplayName}</span></a>
               <span class="gt-gad-username">@${qgUsername}</span>
             </span>
             <span class="gt-gad-separator">·</span>
@@ -160,13 +164,13 @@ const gadTalkGads = (function () {
         ${regadIndicator}
         <div class="gt-gad-content">
           <div class="gt-gad-avatar">
-            <a href="/gad-talk/profile.html?user=${username}">
+            <a href="/gad-talk/@${encodeURIComponent(username)}">
               ${avatarHtml}
             </a>
           </div>
           <div class="gt-gad-body">
             <div class="gt-gad-header">
-              <a href="/gad-talk/profile.html?user=${username}" class="gt-gad-author">
+              <a href="/gad-talk/@${encodeURIComponent(username)}" class="gt-gad-author">
                 <span class="gt-gad-display-name">${displayName}</span>
                 ${
                   user.verified
