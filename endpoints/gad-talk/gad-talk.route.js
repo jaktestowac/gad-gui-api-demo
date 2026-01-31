@@ -55,6 +55,9 @@ const {
   handleEnableFeatureFlag,
   handleDisableFeatureFlag,
   handleFeatureFlagsPage,
+  handleAdminBackendPage,
+  handleSwaggerPlaceholder,
+  handleFeaturesDescriptionPage,
 } = require("./admin-endpoint.helpers");
 
 const {
@@ -654,6 +657,18 @@ async function handleAdminRoutes(req, res, method, segments) {
 
     case "features":
       if (method === "GET") return handleFeatureFlagsPage(req, res);
+      break;
+
+    case "backend":
+      if (method === "GET") return handleAdminBackendPage(req, res);
+      break;
+
+    case "swagger":
+      if (method === "GET") return handleSwaggerPlaceholder(req, res);
+      break;
+
+    case "features-description":
+      if (method === "GET") return handleFeaturesDescriptionPage(req, res);
       break;
 
     case "feature-flags": {
