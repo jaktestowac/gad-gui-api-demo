@@ -906,7 +906,6 @@ function getAdminPageStyles() {
       transition: transform 0.2s, box-shadow 0.2s;
     }
     .gt-admin-item:hover {
-      transform: translateY(-2px);
       box-shadow: 0 15px 35px rgba(29, 155, 240, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.03);
     }
     .gt-admin-item-title {
@@ -1034,8 +1033,7 @@ function getAdminPageStyles() {
       min-height: 36px;
     }
     .row:hover {
-      background-color: rgba(29, 155, 240, 0.04);
-      transform: translateY(-1px);
+      background-color: rgba(29, 155, 240, 0.04); 
     }
     .row:last-child {
       border-bottom: none;
@@ -1143,10 +1141,21 @@ async function handleAdminBackendPage(_req, res) {
           <a href="/api/gad-talk/admin/chaos" class="gt-admin-item-link">Open Chaos Dashboard</a>
         </div>
       </div>
+
+      <!-- Health Summary -->
+      <div style="margin-top: 22px;">
+        <button id="load-health-btn" class="gt-back-button">🔍 Load Health Summary</button>
+        <div id="health-summary" style="margin-top: 12px; max-width: 900px;
+          background: linear-gradient(180deg, rgba(22,24,28,0.92), rgba(14,15,18,0.92));
+          border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px; color: #e7e9ea; display: none; white-space: pre-wrap; font-family: monospace; font-size: 13px;
+        "></div>
+      </div>
     </div>
 
     <!-- Footer -->
     ${getAdminPageFooter()}
+
+    <script src="/gad-talk/js/admin-backend-health.js" defer></script>
   </body>
   </html>`;
   res.status(HTTP_OK).send(html);

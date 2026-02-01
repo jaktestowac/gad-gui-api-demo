@@ -53,6 +53,10 @@
     {
       "name": "Admin",
       "description": "Administrative endpoints"
+    },
+    {
+      "name": "Status",
+      "description": "Public health and status endpoints"
     }
   ],
   "paths": {
@@ -3992,6 +3996,17 @@
           }
         }
       }
+    },
+    "/health": {
+      "get": {
+        "tags": ["Status"],
+        "summary": "Get public health and status information for GadTalk module",
+        "operationId": "getHealth",
+        "responses": {
+          "200": { "$ref": "#/components/schemas/HealthResponse" },
+          "503": { "$ref": "#/components/schemas/ErrorResponse" }
+        }
+      }
     }
   },
   "components": {
@@ -4961,6 +4976,40 @@
                 "type": "string",
                 "format": "date-time"
               }
+            }
+          }
+        }
+      },
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "ok": { "type": "boolean" },
+          "data": {
+            "type": "object",
+            "properties": {
+              "module": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "version": { "type": "string" }
+                }
+              },
+              "initialized": { "type": "boolean" },
+              "uptimeSeconds": { "type": "number" },
+              "timestamp": { "type": "string", "format": "date-time" },
+              "dbStatus": { "$ref": "#/components/schemas/DbStatusResponse" },
+              "chaos": {
+                "type": "object",
+                "properties": {
+                  "enabled": { "type": "boolean" },
+                  "activeFeatureCount": { "type": "integer" }
+                }
+              },
+              "featureFlags": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/FeatureFlag" }
+              },
+              "metrics": { "$ref": "#/components/schemas/MetricsResponse" }
             }
           }
         }

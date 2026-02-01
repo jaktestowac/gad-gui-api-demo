@@ -116,6 +116,8 @@ const {
   handleGetHashtagDistribution,
 } = require("./analytics-endpoint.helpers");
 
+const { handleGetHealth } = require("./health-endpoint.helpers");
+
 const { initializeAllGadTalkDatabases } = require("./db-gad-talk.operations");
 
 // ==================== ROUTE HANDLING ====================
@@ -188,6 +190,11 @@ async function handleGadTalk(req, res) {
   extractUserFromToken(req);
 
   logTrace("GadTalk request:", { method, segments, url: req.url, userId: req.gadTalkUserId });
+
+  // Public health endpoint - bypass chaos effects and return module status
+  if (segments[0] === "health" && method === "GET") {
+    return handleGetHealth(req, res);
+  }
 
   try {
     // ==================== APPLY CHAOS EFFECTS ====================
