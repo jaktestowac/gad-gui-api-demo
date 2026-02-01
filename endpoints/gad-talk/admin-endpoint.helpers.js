@@ -481,7 +481,13 @@ const CHAOS_PRESETS = {
           delayMs: 4000,
         },
         flakyWebSocket: { enabled: true, disconnectProbability: 0.15, reconnectDelayMs: 8000 },
-        featureFlagChaos: { enabled: true, flagKey: "chaos_dashboard", mode: "require-enabled", probability: 0.3, httpStatus: 503 },
+        featureFlagChaos: {
+          enabled: true,
+          flagKey: "chaos_dashboard",
+          mode: "require-enabled",
+          probability: 0.3,
+          httpStatus: 503,
+        },
       },
     },
   },
@@ -1170,6 +1176,8 @@ async function handleChaosDashboardPage(_req, res) {
         
         <h1 class="chaos-logo">🎲 Chaos Engine Dashboard<br /><a href="/api/gad-talk/admin/backend" class="chaos-back" style="font-size: 12px;">← Back to Backend</a></h1>
         <div class="chaos-master">
+          <button id="apply-chaos-config" class="chaos-btn chaos-btn-primary">✓ Apply</button>
+          <button id="reset-chaos-config" class="chaos-btn chaos-btn-ghost">Reset</button>
           <span class="chaos-master-label" id="chaos-status">OFF</span>
           <button id="chaos-master-btn" class="chaos-power-btn" title="Toggle Chaos">⚡</button>
         </div>
@@ -1391,8 +1399,6 @@ async function handleChaosDashboardPage(_req, res) {
 
       <!-- Action Bar -->
       <div class="chaos-actions">
-        <button id="apply-chaos-config" class="chaos-btn chaos-btn-primary">✓ Apply</button>
-        <button id="reset-chaos-config" class="chaos-btn chaos-btn-ghost">Reset</button>
         <details class="chaos-details">
           <summary>📋 JSON</summary>
           <pre class="chaos-json" id="chaos-config-json">Loading...</pre>
@@ -1712,7 +1718,6 @@ function getChaosDashboardStyles() {
 
     /* JSON Details */
     .chaos-details {
-      margin-left: auto;
       position: relative;
     }
     .chaos-details summary {
@@ -1730,9 +1735,6 @@ function getChaosDashboardStyles() {
     .chaos-details summary:hover { background: rgba(255,255,255,0.03); }
     .chaos-json {
       display: none;
-      position: absolute;
-      right: 0;
-      top: calc(100% + 6px);
       width: min(460px, 90vw);
       max-height: 320px;
       overflow: auto;
