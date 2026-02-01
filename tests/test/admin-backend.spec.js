@@ -27,4 +27,13 @@ describe("Admin backend pages", async () => {
     expect(response.status).to.equal(200);
     expect(response.text).to.contain("Features Description");
   });
+
+  it("GET /api/gad-talk/admin/chaos/metrics returns metrics", async () => {
+    const response = await request.get(`/api/gad-talk/admin/chaos/metrics`);
+    expect(response.status).to.equal(200);
+    expect(response.body).to.have.property("ok", true);
+    expect(response.body).to.have.property("data");
+    expect(response.body.data).to.have.property("totals");
+    expect(response.body.data.totals).to.have.property("requestsEvaluated");
+  });
 });

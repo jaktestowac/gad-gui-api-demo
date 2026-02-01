@@ -3954,6 +3954,44 @@
           }
         }
       }
+    },
+    "/admin/chaos/status": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Get chaos status",
+        "operationId": "getChaosStatus",
+        "responses": {
+          "200": {
+            "description": "Chaos status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/chaos/metrics": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Get chaos metrics",
+        "operationId": "getChaosMetrics",
+        "responses": {
+          "200": {
+            "description": "Chaos metrics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
