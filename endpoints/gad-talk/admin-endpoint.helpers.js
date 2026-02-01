@@ -1628,7 +1628,7 @@ function getChaosDashboardStyles() {
     .chaos-row select {
       flex: 1;
       min-width: 60px;
-      max-width: 80px;
+      max-width: 500px;
       padding: 5px 8px;
       background: #1a1b1e;
       border: 1px solid #333;
