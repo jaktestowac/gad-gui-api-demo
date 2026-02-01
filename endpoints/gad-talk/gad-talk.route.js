@@ -117,6 +117,7 @@ const {
 } = require("./analytics-endpoint.helpers");
 
 const { handleGetHealth } = require("./health-endpoint.helpers");
+const { handleContactForm } = require("./contact-endpoint.helpers");
 
 const { initializeAllGadTalkDatabases } = require("./db-gad-talk.operations");
 
@@ -265,6 +266,13 @@ async function handleGadTalk(req, res) {
     // ==================== ANALYTICS ROUTES ====================
     if (segments[0] === "analytics") {
       return await handleAnalyticsRoutes(req, res, method, segments);
+    }
+
+    // ==================== CONTACT ROUTES ====================
+    if (segments[0] === "contact") {
+      if (method === "POST") return handleContactForm(req, res);
+      res.status(HTTP_METHOD_NOT_ALLOWED).send(formatErrorResponse("Method not allowed"));
+      return;
     }
 
     // ==================== ADMIN ROUTES ====================

@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="/data/icons/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Privacy Policy - GadTalk</title>
+    <title>Contact - GadTalk</title>
     <link rel="stylesheet" href="/gad-talk/css/gad-talk.css" />
     <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
 </head>
@@ -59,63 +59,52 @@
                 <a href="javascript:history.back()" class="gt-icon-btn gt-mr-sm">
                     <i class="fa-solid fa-arrow-left"></i>
                 </a>
-                <h1 class="gt-page-title gt-page-title-compact">Privacy Policy</h1>
+                <h1 class="gt-page-title gt-page-title-compact">Contact GadTalk</h1>
             </header>
 
             <div class="gt-p-sm">
+                <div class="gt-card gt-card-compact gt-mb-sm">
+                    <p class="gt-text-secondary gt-mb-sm">This is a test contact page for the GadTalk demo.</p>
+                    <p class="gt-text-secondary">
+                        Messages sent here are logged in the GadTalk audit database for testing purposes.
+                        Please do not submit real personal or confidential information.
+                    </p>
+                    <p class="gt-text-secondary">
+                        Note: This is a test/demo page. Submissions are rate-limited (to prevent spam) and are stored
+                        for testing; if logging is temporarily unavailable your message will still be accepted but a
+                        warning may be returned.
+                    </p>
+                </div>
+
                 <div class="gt-card gt-card-compact">
-                    <p class="gt-text-secondary gt-mb-sm">Last updated: Jan 31, 2026</p>
-                    you agree to this Policy.
-                    </p>
-                </div>
+                    <div id="error-message" class="gt-alert gt-alert-error gt-hidden" data-testid="contact-error"></div>
+                    <div id="success-message" class="gt-alert gt-alert-success gt-hidden" data-testid="contact-success"></div>
 
-                <div class="gt-mb-sm">
-                    <h3 class="gt-text-primary gt-mb-sm">1. Information We Collect</h3>
-                    <ul class="gt-text-secondary" style="padding-left: 1.5rem;">
-                        <li>Account data: username, email, and profile details.</li>
-                        <li>Content: posts, replies, and interactions you share.</li>
-                        <li>Usage data: pages viewed and feature usage to improve the service.</li>
-                    </ul>
-                </div>
+                    <form id="contact-form" data-testid="contact-form">
+                        <div class="gt-field">
+                            <label for="contact-name" class="gt-label">Name</label>
+                            <input type="text" id="contact-name" name="name" data-testid="contact-name" class="gt-input" placeholder="Your name" required maxlength="80" />
+                        </div>
 
-                <div class="gt-mb-sm">
-                    <h3 class="gt-text-primary gt-mb-sm">2. How We Use Information</h3>
-                    <ul class="gt-text-secondary" style="padding-left: 1.5rem;">
-                        <li>To operate, maintain, and improve GadTalk.</li>
-                        <li>To personalize content and recommendations.</li>
-                        <li>To keep the community safe and prevent abuse.</li>
-                    </ul>
-                </div>
+                        <div class="gt-field">
+                            <label for="contact-email" class="gt-label">Email</label>
+                            <input type="email" id="contact-email" name="email" data-testid="contact-email" class="gt-input" placeholder="you@example.com" required maxlength="120" />
+                        </div>
 
-                <div class="gt-mb-sm">
-                    <h3 class="gt-text-primary gt-mb-sm">3. Cookies</h3>
-                    <p class="gt-text-secondary">
-                        We use cookies and local storage for authentication and to remember your preferences. You can
-                        clear cookies in your browser settings.
-                    </p>
-                </div>
+                        <div class="gt-field">
+                            <label for="contact-subject" class="gt-label">Subject</label>
+                            <input type="text" id="contact-subject" name="subject" data-testid="contact-subject" class="gt-input" placeholder="What can we help with?" maxlength="120" />
+                        </div>
 
-                <div class="gt-mb-sm">
-                    <h3 class="gt-text-primary gt-mb-sm">4. Data Sharing</h3>
-                    <p class="gt-text-secondary">
-                        We do not sell your data. We may share data to comply with legal requirements or to protect the
-                        community.
-                    </p>
-                </div>
+                        <div class="gt-field">
+                            <label for="contact-message" class="gt-label">Message</label>
+                            <textarea id="contact-message" name="message" data-testid="contact-message" class="gt-textarea" rows="5" maxlength="2000" placeholder="Tell us more..." required></textarea>
+                        </div>
 
-                <div class="gt-mb-lg">
-                    <h3 class="gt-text-primary gt-mb-sm">5. Data Retention</h3>
-                    <p class="gt-text-secondary">
-                        We retain data for as long as your account is active or as needed to provide the service. You may
-                        request deletion by contacting support.
-                    </p>
-                </div>
-
-                <div>
-                    <h3 class="gt-text-primary gt-mb-sm">6. Contact</h3>
-                    <p class="gt-text-secondary">
-                        Privacy questions? Use our <a href="/gad-talk/contact.html" class="gt-link">contact form</a>.
-                    </p>
+                        <button type="submit" class="gt-btn gt-btn-primary gt-btn-block" data-testid="contact-submit">
+                            Send message
+                        </button>
+                    </form>
                 </div>
             </div>
         </main>
@@ -123,15 +112,16 @@
         <!-- Right sidebar -->
         <aside class="gt-sidebar gt-sidebar-right">
             <div class="gt-card">
-                <h3 class="gt-card-title">More</h3>
-                <div class="gt-flex gt-flex-col gt-gap-sm">
-                    <a href="/gad-talk/terms.html" class="gt-link">Terms of Service</a>
-                    <a href="/gad-talk/about.html" class="gt-link">About GadTalk</a>
-                </div>
+                <h3 class="gt-card-title">Need guidance?</h3>
+                <p class="gt-text-secondary">Share testing ideas, bug reports, or feedback with the team.</p>
             </div>
             <div class="gt-card">
-                <h3 class="gt-card-title">Security</h3>
-                <p class="gt-text-secondary">We use standard safeguards to protect your data.</p>
+                <h3 class="gt-card-title">Policies</h3>
+                <div class="gt-flex gt-flex-col gt-gap-sm">
+                    <a href="/gad-talk/terms.html" class="gt-link">Terms of Service</a>
+                    <a href="/gad-talk/privacy.html" class="gt-link">Privacy Policy</a>
+                    <a href="/gad-talk/about.html" class="gt-link">About GadTalk</a>
+                </div>
             </div>
 
             <footer class="gt-sidebar-footer">
@@ -147,26 +137,7 @@
     <script src="/gad-talk/js/api.js"></script>
     <script src="/gad-talk/js/auth.js"></script>
     <script src="/gad-talk/js/nav.js"></script>
-    <script>
-        (async function () {
-            var s = document.getElementById('nav-user-section');
-            if (!s) return;
-            if (s.querySelector('.gt-nav-user') || s.querySelector('.gt-nav-avatar')) return;
-            if (!window.gadTalkAuth) return;
-            const currentUser = await window.gadTalkAuth.optionalAuth();
-            if (!currentUser) return;
-            const avatarHtml = window.gadTalkGads && window.gadTalkGads.getAvatarHtml
-                ? window.gadTalkGads.getAvatarHtml(currentUser, 'sm')
-                : `<img src="${currentUser.avatar || '/gad-talk/images/default-avatar.png'}" class="gt-avatar gt-avatar-sm" alt="${currentUser.displayName || currentUser.username}">`;
-            s.innerHTML = `
-          <div class="gt-nav-user">
-            <button class="gt-nav-user-btn" onclick="window.location.href='/gad-talk/@${encodeURIComponent(currentUser.username)}'">
-              ${avatarHtml}
-              <span class="gt-nav-user-name">${currentUser.displayName || currentUser.username}</span>
-            </button>
-          </div>`;
-        })();
-    </script>
+    <script src="/gad-talk/js/contact.js"></script>
     <script src="/gad-talk/js/footer.js"></script>
 </body>
 

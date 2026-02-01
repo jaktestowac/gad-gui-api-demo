@@ -753,6 +753,68 @@ const GadTalkAPI = (function () {
     },
   };
 
+  // ==================== Contact API ====================
+
+  const contact = {
+    /**
+     * Submit contact form with timeout and retry support
+     * options: { timeoutMs: number, retries: number }
+     */
+    async submit(payload, options = {}) {
+      const timeoutMs = options.timeoutMs || 8000;
+      const retries = typeof options.retries === "number" ? options.retries : 2;
+      const url = `${BASE_URL}/contact`;
+
+      const token = getToken();
+
+      async function attempt(remainingRetries, attemptNum) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+        const headers = {
+          "Content-Type": "application/json",
+        };
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+
+        try {
+          const res = await fetch(url, {
+            method: "POST",
+            headers,
+            body: JSON.stringify(payload),
+            signal: controller.signal,
+          });
+
+          clearTimeout(timer);
+
+          const data = await res.json().catch(() => ({}));
+
+          if (!res.ok) {
+            const errorMessage =
+              (data && data.error && (typeof data.error === "string" ? data.error : data.error.message)) ||
+              data.message ||
+              "Request failed";
+            const err = new Error(errorMessage);
+            err.status = res.status;
+            throw err;
+          }
+
+          return data;
+        } catch (err) {
+          clearTimeout(timer);
+          // If aborted or network error, attempt retry
+          if ((err.name === "AbortError" || !err.status) && remainingRetries > 0) {
+            const backoff = 300 * Math.pow(2, attemptNum);
+            await new Promise((r) => setTimeout(r, backoff));
+            return attempt(remainingRetries - 1, attemptNum + 1);
+          }
+          throw err;
+        }
+      }
+
+      return attempt(retries, 0);
+    },
+  };
+
   // Public API
   return {
     auth,
@@ -765,6 +827,7 @@ const GadTalkAPI = (function () {
     search,
     explore,
     analytics,
+    contact,
     getToken,
     setToken,
     clearToken,
