@@ -119,6 +119,35 @@ const GadTalkAPI = (function () {
     },
 
     /**
+     * Request password reset
+     */
+    async forgotPassword(email) {
+      return request("/auth/forgot-password", {
+        method: "POST",
+        body: { email },
+      });
+    },
+
+    /**
+     * Reset password with token
+     */
+    async resetPassword(token, password) {
+      return request("/auth/reset-password", {
+        method: "POST",
+        body: { token, password },
+      });
+    },
+
+    /**
+     * Simulated OAuth Google login
+     */
+    async oauthGoogle() {
+      return request("/auth/oauth/google", {
+        method: "POST",
+      });
+    },
+
+    /**
      * Login as demo user
      */
     async loginDemo() {

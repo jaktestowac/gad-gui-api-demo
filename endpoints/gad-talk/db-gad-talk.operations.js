@@ -1054,6 +1054,23 @@ async function updateGadTalkUserProfile(userId, updates) {
 }
 
 /**
+ * Update user's password
+ * @param {string} userId - User ID
+ * @param {string} newPassword - New password (plain text for educational purposes)
+ * @returns {Promise<Object>} Updated user
+ */
+async function updateGadTalkUserPassword(userId, newPassword) {
+  let updatedUser;
+  await mutateAndWriteDb((db) => {
+    const idx = db.users.findIndex((u) => areIdsEqual(u.id, userId));
+    if (idx === -1) throw new Error("User not found");
+    db.users[idx].password = newPassword;
+    updatedUser = db.users[idx];
+  });
+  return updatedUser;
+}
+
+/**
  * Get user stats (followers, following, posts counts)
  * @param {string} userId - User ID
  * @returns {Object} Stats object
@@ -2950,6 +2967,7 @@ module.exports = {
   createGadTalkUser,
   updateGadTalkUserLastLogin,
   updateGadTalkUserProfile,
+  updateGadTalkUserPassword,
   getGadTalkUserStats,
   getUserBadges,
   getUserById,

@@ -16,6 +16,7 @@ const {
   getCurrentUser,
   refreshToken,
   requestPasswordReset,
+  resetPasswordWithToken,
 } = require("./services/auth.service");
 const gadTalkConfig = require("./gad-talk-config");
 
@@ -273,7 +274,11 @@ async function handleForgotPassword(req, res) {
 
     res.status(HTTP_OK).send({
       ok: true,
-      data: { message: result.message },
+      data: {
+        message: result.message,
+        resetUrl: result.resetUrl,
+        expiresAt: result.expiresAt,
+      },
     });
   } catch (error) {
     logError("GadTalk forgot password error:", error);
@@ -287,14 +292,22 @@ async function handleForgotPassword(req, res) {
  */
 async function handleResetPassword(req, res) {
   try {
-    // eslint-disable-next-line no-unused-vars
     const { token, password } = req.body;
 
-    // For educational purposes, just return success
-    // In a real app, you would verify the reset token and update the password
+    const result = await resetPasswordWithToken(token, password);
+
+    if (!result.success) {
+      let statusCode = HTTP_BAD_REQUEST;
+      if (result.errorType === "validation") {
+        statusCode = HTTP_UNPROCESSABLE_ENTITY;
+      }
+      res.status(statusCode).send(formatErrorResponse(result.error));
+      return;
+    }
+
     res.status(HTTP_OK).send({
       ok: true,
-      data: { message: "Password reset successfully (simulated)" },
+      data: { message: result.message || "Password reset successfully" },
     });
   } catch (error) {
     logError("GadTalk reset password error:", error);

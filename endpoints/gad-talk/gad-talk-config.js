@@ -13,6 +13,7 @@ module.exports = {
     keepSignInDuration: "7d",
     passwordMinLength: 6,
     passwordMaxLength: 100,
+    passwordResetTtlMinutes: 15,
     usernameMinLength: 3,
     usernameMaxLength: 15,
     usernamePattern: /^[a-zA-Z0-9_]+$/,
