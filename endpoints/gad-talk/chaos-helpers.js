@@ -20,6 +20,8 @@ const chaosMetrics = {
   lastUpdatedAt: null,
 };
 
+const chaosRateLimitStore = new Map();
+
 function recordChaosMetric(url, type) {
   const key = url || "unknown";
   chaosMetrics.totals.requestsEvaluated += type === "evaluated" ? 1 : 0;
@@ -96,6 +98,11 @@ function matchesSlowEndpoint(url, endpoints) {
   });
 }
 
+function getMatchingEndpoint(url, endpoints) {
+  if (!endpoints || !Array.isArray(endpoints)) return null;
+  return endpoints.find((endpoint) => url.startsWith(endpoint) || url.includes(endpoint)) || null;
+}
+
 function matchesScopePattern(url, patterns) {
   if (!patterns || !Array.isArray(patterns) || patterns.length === 0) return false;
   return patterns.some((pattern) => url.startsWith(pattern) || url.includes(pattern));
@@ -126,6 +133,53 @@ function shouldApplyScope(url, method, scope) {
   }
 
   return true;
+}
+
+function shouldTargetRequest(req, targeting) {
+  if (!targeting || !targeting.enabled) return true;
+
+  const userId = req?.gadTalkUserId || null;
+  const role = req?.gadTalkUserData?.role || "anonymous";
+
+  if (targeting.requireAuth && !userId) return false;
+  if (!targeting.applyToAnonymous && !userId) return false;
+
+  if (Array.isArray(targeting.denyUsers) && targeting.denyUsers.includes(userId)) return false;
+  if (Array.isArray(targeting.denyRoles) && targeting.denyRoles.includes(role)) return false;
+
+  if (Array.isArray(targeting.allowUsers) && targeting.allowUsers.length > 0) {
+    if (!userId || !targeting.allowUsers.includes(userId)) return false;
+  }
+
+  if (Array.isArray(targeting.allowRoles) && targeting.allowRoles.length > 0) {
+    if (!targeting.allowRoles.includes(role)) return false;
+  }
+
+  return true;
+}
+
+function getRateLimitKey(url, endpoint, actorKey) {
+  return `${endpoint || "*"}::${url || "unknown"}::${actorKey}`;
+}
+
+function checkRateLimitChaos({ url, endpoint, limit, windowMs, actorKey }) {
+  const key = getRateLimitKey(url, endpoint, actorKey);
+  const now = Date.now();
+  const entry = chaosRateLimitStore.get(key);
+  if (!entry || now > entry.resetAt) {
+    chaosRateLimitStore.set(key, {
+      count: 1,
+      resetAt: now + windowMs,
+    });
+    return { limited: false };
+  }
+
+  entry.count += 1;
+  if (entry.count > limit) {
+    return { limited: true, resetAt: entry.resetAt, count: entry.count };
+  }
+
+  return { limited: false };
 }
 
 function truncateStrings(value, maxLength, depth = 0) {
@@ -236,11 +290,135 @@ async function applyChaosEffects(req, res) {
     return { shouldContinue: true, chaosApplied };
   }
 
+  if (!shouldTargetRequest(req, chaos.targeting)) {
+    return { shouldContinue: true, chaosApplied };
+  }
+
   const url = req.url || req.originalUrl || "";
   const features = chaos.features || {};
 
   logTrace("Chaos: Evaluating effects for", { url });
   recordChaosMetric(url, "evaluated");
+
+  // ==================== DEPENDENCY OUTAGE ====================
+  if (features.dependencyOutage?.enabled) {
+    const dependencies = features.dependencyOutage.dependencies || [];
+    const defaultProbability = features.dependencyOutage.probability ?? 0.2;
+    const matchedDependency = dependencies.find((dep) => getMatchingEndpoint(url, dep.endpoints || []));
+
+    if (matchedDependency) {
+      const probability = matchedDependency.probability ?? defaultProbability;
+      if (shouldTrigger(probability)) {
+        const httpStatus = matchedDependency.httpStatus || 503;
+        chaosApplied.failure = true;
+        chaosApplied.failureStatus = httpStatus;
+        chaosApplied.failureReason = "dependencyOutage";
+
+        logDebug("Chaos: Simulating dependency outage", {
+          url,
+          dependency: matchedDependency.name,
+          httpStatus,
+          probability,
+        });
+
+        recordChaosMetric(url, "failure");
+
+        try {
+          await createGadTalkAuditLog({
+            actorUserId: req.gadTalkUserId || "anonymous",
+            eventType: "chaos-effect",
+            payloadObject: {
+              type: "dependencyOutage",
+              url,
+              dependency: matchedDependency.name,
+              httpStatus,
+              probability,
+            },
+          });
+        } catch (error) {
+          logError("Chaos: Failed to write audit log", { error: error.message });
+        }
+
+        res.status(httpStatus).json({
+          ok: false,
+          error: {
+            message: matchedDependency.message || "Upstream dependency unavailable (Chaos Mode)",
+            code: "CHAOS_DEPENDENCY",
+            chaosMode: true,
+            dependency: matchedDependency.name,
+          },
+        });
+
+        return { shouldContinue: false, chaosApplied };
+      }
+    }
+  }
+
+  // ==================== RATE LIMIT CHAOS ====================
+  if (features.rateLimitChaos?.enabled) {
+    const endpoints = features.rateLimitChaos.endpoints || [];
+    const matchedEndpoint = getMatchingEndpoint(url, endpoints);
+    if (matchedEndpoint) {
+      const windowMs = features.rateLimitChaos.windowMs || 15000;
+      const limit = features.rateLimitChaos.limit || 5;
+      const perUser = features.rateLimitChaos.perUser !== false;
+      const httpStatus = features.rateLimitChaos.httpStatus || 429;
+      const actorKey = perUser ? req.gadTalkUserId || req.ip || "anonymous" : "global";
+
+      const rateCheck = checkRateLimitChaos({
+        url,
+        endpoint: matchedEndpoint,
+        limit,
+        windowMs,
+        actorKey,
+      });
+
+      if (rateCheck.limited) {
+        chaosApplied.failure = true;
+        chaosApplied.failureStatus = httpStatus;
+        chaosApplied.failureReason = "rateLimitChaos";
+
+        logDebug("Chaos: Triggering rate limit", {
+          url,
+          matchedEndpoint,
+          actorKey,
+          limit,
+          windowMs,
+        });
+
+        recordChaosMetric(url, "failure");
+
+        try {
+          await createGadTalkAuditLog({
+            actorUserId: req.gadTalkUserId || "anonymous",
+            eventType: "chaos-effect",
+            payloadObject: {
+              type: "rateLimitChaos",
+              url,
+              matchedEndpoint,
+              limit,
+              windowMs,
+              actorKey,
+            },
+          });
+        } catch (error) {
+          logError("Chaos: Failed to write audit log", { error: error.message });
+        }
+
+        res.set("Retry-After", String(Math.max(1, Math.ceil((rateCheck.resetAt - Date.now()) / 1000))));
+        res.status(httpStatus).json({
+          ok: false,
+          error: {
+            message: "Too Many Requests (Chaos Mode)",
+            code: "CHAOS_RATE_LIMIT",
+            chaosMode: true,
+          },
+        });
+
+        return { shouldContinue: false, chaosApplied };
+      }
+    }
+  }
 
   // ==================== FEATURE-FLAG CHAOS ====================
   if (features.featureFlagChaos?.enabled) {
@@ -292,6 +470,222 @@ async function applyChaosEffects(req, res) {
       });
 
       return { shouldContinue: false, chaosApplied };
+    }
+  }
+
+  // ==================== CONNECTION TIMEOUT CHAOS ====================
+  if (features.connectionTimeoutChaos?.enabled) {
+    const endpoints = features.connectionTimeoutChaos.endpoints || [];
+    const matchedEndpoint = getMatchingEndpoint(url, endpoints);
+    if (matchedEndpoint) {
+      const probability = features.connectionTimeoutChaos.probability ?? 0.1;
+      if (shouldTrigger(probability)) {
+        const timeoutMs = features.connectionTimeoutChaos.timeoutMs || 5000;
+        chaosApplied.failure = true;
+        chaosApplied.failureStatus = 408; // Request Timeout
+        chaosApplied.failureReason = "connectionTimeoutChaos";
+
+        logDebug("Chaos: Simulating connection timeout", {
+          url,
+          timeoutMs,
+          probability,
+        });
+
+        recordChaosMetric(url, "failure");
+
+        try {
+          await createGadTalkAuditLog({
+            actorUserId: req.gadTalkUserId || "anonymous",
+            eventType: "chaos-effect",
+            payloadObject: {
+              type: "connectionTimeoutChaos",
+              url,
+              timeoutMs,
+              probability,
+            },
+          });
+        } catch (error) {
+          logError("Chaos: Failed to write audit log", { error: error.message });
+        }
+
+        // Wait for the timeout duration then respond
+        await sleep(timeoutMs);
+        res.status(408).json({
+          ok: false,
+          error: {
+            message: "Request Timeout (Chaos Mode)",
+            code: "CHAOS_TIMEOUT",
+            chaosMode: true,
+            timeoutMs,
+          },
+        });
+
+        return { shouldContinue: false, chaosApplied };
+      }
+    }
+  }
+
+  // ==================== DATA CONSISTENCY VIOLATIONS ====================
+  if (features.dataConsistencyViolations?.enabled) {
+    const endpoints = features.dataConsistencyViolations.endpoints || [];
+    const matchedEndpoint = getMatchingEndpoint(url, endpoints);
+    if (matchedEndpoint) {
+      const probability = features.dataConsistencyViolations.probability ?? 0.1;
+      if (shouldTrigger(probability)) {
+        const violationTypes = features.dataConsistencyViolations.violationTypes || ["staleData"];
+        const violationType = violationTypes[Math.floor(Math.random() * violationTypes.length)];
+
+        chaosApplied.dataConsistencyViolation = {
+          type: violationType,
+          applied: true,
+        };
+
+        logDebug("Chaos: Data consistency violation armed", {
+          url,
+          violationType,
+          probability,
+        });
+
+        recordChaosMetric(url, "corruption");
+
+        // Wrap response to inject consistency violations
+        const originalJson = res.json.bind(res);
+        res.json = (payload) => {
+          if (!payload || payload.error) {
+            return originalJson(payload);
+          }
+
+          try {
+            let modified = JSON.parse(JSON.stringify(payload));
+
+            if (violationType === "staleData") {
+              // Mark as stale and age the data
+              if (modified.data) {
+                modified.data._chaosStale = true;
+                modified.data._chaosAge = "1 hour";
+              }
+            } else if (violationType === "conflictingVersions") {
+              // Add conflicting version info
+              if (modified.data) {
+                modified.data._chaosConflict = true;
+                modified.data._versions = [
+                  { version: 1, value: modified.data },
+                  { version: 2, value: { ...modified.data, updatedAt: new Date() } },
+                ];
+              }
+            } else if (violationType === "missingFields") {
+              // Remove critical fields
+              if (Array.isArray(modified.data)) {
+                modified.data = modified.data.map((item) => {
+                  const copy = { ...item };
+                  const fieldsToRemove = ["id", "updatedAt", "status"].filter(() => Math.random() < 0.5);
+                  fieldsToRemove.forEach((field) => delete copy[field]);
+                  copy._chaosMissingFields = fieldsToRemove;
+                  return copy;
+                });
+              } else if (modified.data) {
+                const fieldsToRemove = ["id", "updatedAt", "status"].filter(() => Math.random() < 0.5);
+                fieldsToRemove.forEach((field) => delete modified.data[field]);
+                modified.data._chaosMissingFields = fieldsToRemove;
+              }
+            }
+
+            res.set("X-Chaos-Consistency-Violation", violationType);
+            recordChaosMetric(url, "corruption");
+
+            try {
+              createGadTalkAuditLog({
+                actorUserId: req.gadTalkUserId || "anonymous",
+                eventType: "chaos-effect",
+                payloadObject: {
+                  type: "dataConsistencyViolation",
+                  url,
+                  violationType,
+                  probability,
+                },
+              }).catch((error) => {
+                logError("Chaos: Failed to write audit log", { error: error.message });
+              });
+            } catch (error) {
+              logError("Chaos: Failed to write audit log", { error: error.message });
+            }
+
+            return originalJson(modified);
+          } catch (error) {
+            logError("Chaos: Failed to apply consistency violation", { error: error.message });
+            return originalJson(payload);
+          }
+        };
+      }
+    }
+  }
+
+  // ==================== PARTIAL RESPONSE DELIVERY ====================
+  if (features.partialResponseDelivery?.enabled) {
+    const endpoints = features.partialResponseDelivery.endpoints || [];
+    const matchedEndpoint = getMatchingEndpoint(url, endpoints);
+    if (matchedEndpoint) {
+      const probability = features.partialResponseDelivery.probability ?? 0.08;
+      if (shouldTrigger(probability)) {
+        const truncateAtPercent = features.partialResponseDelivery.truncateAtPercent ?? 50;
+
+        logDebug("Chaos: Partial response delivery armed", {
+          url,
+          truncateAtPercent,
+          probability,
+        });
+
+        recordChaosMetric(url, "corruption");
+
+        // Wrap response to truncate delivery
+        const originalJson = res.json.bind(res);
+        const originalSend = res.send.bind(res);
+
+        let responseIntercepted = false;
+
+        res.json = (payload) => {
+          if (responseIntercepted || !payload || payload.error) {
+            return originalJson(payload);
+          }
+
+          try {
+            responseIntercepted = true;
+            const jsonStr = JSON.stringify(payload);
+            const truncateLength = Math.floor(jsonStr.length * (truncateAtPercent / 100));
+            const truncated = jsonStr.substring(0, truncateLength);
+
+            res.set("X-Chaos-Partial-Delivery", `truncated-at-${truncateAtPercent}%`);
+            res.set("Content-Length", String(truncated.length));
+
+            recordChaosMetric(url, "corruption");
+
+            try {
+              createGadTalkAuditLog({
+                actorUserId: req.gadTalkUserId || "anonymous",
+                eventType: "chaos-effect",
+                payloadObject: {
+                  type: "partialResponseDelivery",
+                  url,
+                  truncateAtPercent,
+                  originalSize: jsonStr.length,
+                  truncatedSize: truncated.length,
+                  probability,
+                },
+              }).catch((error) => {
+                logError("Chaos: Failed to write audit log", { error: error.message });
+              });
+            } catch (error) {
+              logError("Chaos: Failed to write audit log", { error: error.message });
+            }
+
+            // Send truncated response - will cause client parsing errors
+            return originalSend(truncated);
+          } catch (error) {
+            logError("Chaos: Failed to apply partial response delivery", { error: error.message });
+            return originalJson(payload);
+          }
+        };
+      }
     }
   }
 
@@ -496,6 +890,29 @@ function getChaosStatus() {
     });
   }
 
+  if (features.rateLimitChaos?.enabled) {
+    activeFeatures.push({
+      name: "rateLimitChaos",
+      config: {
+        endpoints: features.rateLimitChaos.endpoints,
+        windowMs: features.rateLimitChaos.windowMs,
+        limit: features.rateLimitChaos.limit,
+        perUser: features.rateLimitChaos.perUser,
+        httpStatus: features.rateLimitChaos.httpStatus,
+      },
+    });
+  }
+
+  if (features.dependencyOutage?.enabled) {
+    activeFeatures.push({
+      name: "dependencyOutage",
+      config: {
+        probability: features.dependencyOutage.probability,
+        dependencies: features.dependencyOutage.dependencies,
+      },
+    });
+  }
+
   if (features.flakyWebSocket?.enabled) {
     activeFeatures.push({
       name: "flakyWebSocket",
@@ -526,6 +943,39 @@ function getChaosStatus() {
         mode: features.featureFlagChaos.mode,
         probability: features.featureFlagChaos.probability,
         httpStatus: features.featureFlagChaos.httpStatus,
+      },
+    });
+  }
+
+  if (features.connectionTimeoutChaos?.enabled) {
+    activeFeatures.push({
+      name: "connectionTimeoutChaos",
+      config: {
+        probability: features.connectionTimeoutChaos.probability,
+        timeoutMs: features.connectionTimeoutChaos.timeoutMs,
+        endpoints: features.connectionTimeoutChaos.endpoints,
+      },
+    });
+  }
+
+  if (features.partialResponseDelivery?.enabled) {
+    activeFeatures.push({
+      name: "partialResponseDelivery",
+      config: {
+        probability: features.partialResponseDelivery.probability,
+        endpoints: features.partialResponseDelivery.endpoints,
+        truncateAtPercent: features.partialResponseDelivery.truncateAtPercent,
+      },
+    });
+  }
+
+  if (features.dataConsistencyViolations?.enabled) {
+    activeFeatures.push({
+      name: "dataConsistencyViolations",
+      config: {
+        probability: features.dataConsistencyViolations.probability,
+        endpoints: features.dataConsistencyViolations.endpoints,
+        violationTypes: features.dataConsistencyViolations.violationTypes,
       },
     });
   }

@@ -94,6 +94,15 @@ module.exports = {
       denylist: ["/api/gad-talk/admin", "/api/gad-talk/auth"],
       methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     },
+    targeting: {
+      enabled: false,
+      requireAuth: false,
+      allowRoles: [],
+      denyRoles: ["admin"],
+      allowUsers: [],
+      denyUsers: [],
+      applyToAnonymous: true,
+    },
     features: {
       randomDelays: {
         enabled: false,
@@ -105,6 +114,26 @@ module.exports = {
         enabled: false,
         probability: 0.05, // 5% fail rate
         httpStatus: 503,
+      },
+      rateLimitChaos: {
+        enabled: false,
+        endpoints: ["/api/gad-talk/search"],
+        windowMs: 15000,
+        limit: 5,
+        perUser: true,
+        httpStatus: 429,
+      },
+      dependencyOutage: {
+        enabled: false,
+        probability: 0.2,
+        dependencies: [
+          {
+            name: "timeline-service",
+            endpoints: ["/api/gad-talk/gads", "/api/gad-talk/timeline"],
+            httpStatus: 503,
+            message: "Upstream timeline service unavailable",
+          },
+        ],
       },
       partialResponseCorruption: {
         enabled: false,
@@ -129,6 +158,27 @@ module.exports = {
         mode: "require-enabled", // require-enabled | require-disabled
         probability: 0.2,
         httpStatus: 503,
+      },
+      connectionTimeoutChaos: {
+        enabled: false,
+        probability: 0.1,
+        timeoutMs: 5000, // How long to hang before timeout
+        endpoints: ["/api/gad-talk/search"],
+      },
+      partialResponseDelivery: {
+        enabled: false,
+        probability: 0.08,
+        endpoints: ["/api/gad-talk/gads", "/api/gad-talk/timeline"],
+        truncateAtPercent: 50, // Cut response at 50%
+      },
+      dataConsistencyViolations: {
+        enabled: false,
+        probability: 0.1,
+        endpoints: ["/api/gad-talk/users", "/api/gad-talk/gads"],
+        violationTypes: ["staleData", "conflictingVersions", "missingFields"],
+        // staleData: return old cached version
+        // conflictingVersions: return conflicting data from different sources
+        // missingFields: omit important fields suggesting incomplete update
       },
     },
   },

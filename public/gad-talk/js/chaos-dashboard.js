@@ -171,6 +171,26 @@
     setRange("intermittentFailures-probability", (intermittentFailures.probability || 0.05) * 100);
     setSelect("intermittentFailures-httpStatus", intermittentFailures.httpStatus || 503);
 
+    // Rate Limit Chaos
+    const rateLimitChaos = config.features.rateLimitChaos || {};
+    setToggle("toggle-rateLimitChaos", rateLimitChaos.enabled);
+    setValue("rateLimitChaos-endpoints", (rateLimitChaos.endpoints || []).join(", "));
+    setValue("rateLimitChaos-windowMs", rateLimitChaos.windowMs || 15000);
+    setValue("rateLimitChaos-limit", rateLimitChaos.limit || 5);
+    setToggle("rateLimitChaos-perUser", rateLimitChaos.perUser !== false);
+    setSelect("rateLimitChaos-httpStatus", rateLimitChaos.httpStatus || 429);
+
+    // Dependency Outage
+    const dependencyOutage = config.features.dependencyOutage || {};
+    const dependencies = dependencyOutage.dependencies || [];
+    const firstDependency = dependencies[0] || {};
+    setToggle("toggle-dependencyOutage", dependencyOutage.enabled);
+    setRange("dependencyOutage-probability", (dependencyOutage.probability || 0.2) * 100);
+    setValue("dependencyOutage-name", firstDependency.name || "");
+    setValue("dependencyOutage-endpoints", (firstDependency.endpoints || []).join(", "));
+    setSelect("dependencyOutage-httpStatus", firstDependency.httpStatus || 503);
+    setValue("dependencyOutage-message", firstDependency.message || "");
+
     // Partial Response Corruption
     const partialResponseCorruption = config.features.partialResponseCorruption || {};
     setToggle("toggle-partialResponseCorruption", partialResponseCorruption.enabled);
@@ -198,6 +218,49 @@
     setSelect("featureFlagChaos-mode", featureFlagChaos.mode || "require-enabled");
     setRange("featureFlagChaos-probability", (featureFlagChaos.probability || 0.2) * 100);
     setSelect("featureFlagChaos-httpStatus", featureFlagChaos.httpStatus || 503);
+
+    // Connection Timeout Chaos
+    const connectionTimeoutChaos = config.features.connectionTimeoutChaos || {};
+    setToggle("toggle-connectionTimeoutChaos", connectionTimeoutChaos.enabled);
+    setRange("connectionTimeoutChaos-probability", (connectionTimeoutChaos.probability || 0.1) * 100);
+    setValue("connectionTimeoutChaos-timeoutMs", connectionTimeoutChaos.timeoutMs || 5000);
+    setValue("connectionTimeoutChaos-endpoints", (connectionTimeoutChaos.endpoints || []).join(", "));
+
+    // Partial Response Delivery
+    const partialResponseDelivery = config.features.partialResponseDelivery || {};
+    setToggle("toggle-partialResponseDelivery", partialResponseDelivery.enabled);
+    setRange("partialResponseDelivery-probability", (partialResponseDelivery.probability || 0.08) * 100);
+    setValue("partialResponseDelivery-endpoints", (partialResponseDelivery.endpoints || []).join(", "));
+    setRange("partialResponseDelivery-truncateAtPercent", partialResponseDelivery.truncateAtPercent || 50);
+
+    // Data Consistency Violations
+    const dataConsistencyViolations = config.features.dataConsistencyViolations || {};
+    setToggle("toggle-dataConsistencyViolations", dataConsistencyViolations.enabled);
+    setRange("dataConsistencyViolations-probability", (dataConsistencyViolations.probability || 0.1) * 100);
+    setValue("dataConsistencyViolations-endpoints", (dataConsistencyViolations.endpoints || []).join(", "));
+    updateViolationTypeCheckboxes(
+      dataConsistencyViolations.violationTypes || ["staleData", "conflictingVersions", "missingFields"]
+    );
+  }
+
+  function updateViolationTypeCheckboxes(selectedTypes) {
+    const container = document.getElementById("dataConsistencyViolations-types");
+    if (!container) return;
+
+    container.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
+      cb.checked = selectedTypes.includes(cb.value);
+    });
+  }
+
+  function updateTargetingControls(config) {
+    const targeting = config?.targeting || {};
+    setToggle("toggle-targeting", targeting.enabled);
+    setToggle("targeting-requireAuth", targeting.requireAuth);
+    setToggle("targeting-applyToAnonymous", targeting.applyToAnonymous !== false);
+    setValue("targeting-allowRoles", (targeting.allowRoles || []).join(", "));
+    setValue("targeting-denyRoles", (targeting.denyRoles || []).join(", "));
+    setValue("targeting-allowUsers", (targeting.allowUsers || []).join(", "));
+    setValue("targeting-denyUsers", (targeting.denyUsers || []).join(", "));
   }
 
   function updateScopeControls(config) {
@@ -225,6 +288,7 @@
     updateMasterToggle(config);
     updateFeatureToggles(config);
     updateScopeControls(config);
+    updateTargetingControls(config);
     updateConfigDisplay(config);
   }
 
@@ -289,12 +353,37 @@
   }
 
   function collectCurrentConfig() {
+    const dependencyEndpoints = getListFromInput("dependencyOutage-endpoints");
+    const dependencyName = getValue("dependencyOutage-name", "string");
+    const dependencyMessage = getValue("dependencyOutage-message", "string");
+    const dependencyHttpStatus = parseInt(getValue("dependencyOutage-httpStatus", "string"), 10);
+    const dependencies =
+      dependencyEndpoints.length || dependencyName
+        ? [
+            {
+              name: dependencyName || "dependency",
+              endpoints: dependencyEndpoints,
+              httpStatus: dependencyHttpStatus || 503,
+              message: dependencyMessage || "Upstream dependency unavailable",
+            },
+          ]
+        : [];
+
     return {
       enabled: currentConfig?.enabled ?? false,
       scope: {
         allowlist: getListFromInput("scope-allowlist"),
         denylist: getListFromInput("scope-denylist"),
         methods: getListFromInput("scope-methods").map((method) => method.toUpperCase()),
+      },
+      targeting: {
+        enabled: getToggle("toggle-targeting"),
+        requireAuth: getToggle("targeting-requireAuth"),
+        applyToAnonymous: getToggle("targeting-applyToAnonymous"),
+        allowRoles: getListFromInput("targeting-allowRoles"),
+        denyRoles: getListFromInput("targeting-denyRoles"),
+        allowUsers: getListFromInput("targeting-allowUsers"),
+        denyUsers: getListFromInput("targeting-denyUsers"),
       },
       features: {
         randomDelays: {
@@ -307,6 +396,19 @@
           enabled: getToggle("toggle-intermittentFailures"),
           probability: getRange("intermittentFailures-probability"),
           httpStatus: parseInt(getValue("intermittentFailures-httpStatus", "string"), 10),
+        },
+        rateLimitChaos: {
+          enabled: getToggle("toggle-rateLimitChaos"),
+          endpoints: getListFromInput("rateLimitChaos-endpoints"),
+          windowMs: getValue("rateLimitChaos-windowMs"),
+          limit: getValue("rateLimitChaos-limit"),
+          perUser: getToggle("rateLimitChaos-perUser"),
+          httpStatus: parseInt(getValue("rateLimitChaos-httpStatus", "string"), 10),
+        },
+        dependencyOutage: {
+          enabled: getToggle("toggle-dependencyOutage"),
+          probability: getRange("dependencyOutage-probability"),
+          dependencies,
         },
         partialResponseCorruption: {
           enabled: getToggle("toggle-partialResponseCorruption"),
@@ -332,8 +434,32 @@
           probability: getRange("featureFlagChaos-probability"),
           httpStatus: parseInt(getValue("featureFlagChaos-httpStatus", "string"), 10),
         },
+        connectionTimeoutChaos: {
+          enabled: getToggle("toggle-connectionTimeoutChaos"),
+          probability: getRange("connectionTimeoutChaos-probability"),
+          timeoutMs: getValue("connectionTimeoutChaos-timeoutMs"),
+          endpoints: getListFromInput("connectionTimeoutChaos-endpoints"),
+        },
+        partialResponseDelivery: {
+          enabled: getToggle("toggle-partialResponseDelivery"),
+          probability: getRange("partialResponseDelivery-probability"),
+          endpoints: getListFromInput("partialResponseDelivery-endpoints"),
+          truncateAtPercent: getValue("partialResponseDelivery-truncateAtPercent"),
+        },
+        dataConsistencyViolations: {
+          enabled: getToggle("toggle-dataConsistencyViolations"),
+          probability: getRange("dataConsistencyViolations-probability"),
+          endpoints: getListFromInput("dataConsistencyViolations-endpoints"),
+          violationTypes: getSelectedViolationTypes(),
+        },
       },
     };
+  }
+
+  function getSelectedViolationTypes() {
+    const container = document.getElementById("dataConsistencyViolations-types");
+    if (!container) return ["staleData", "conflictingVersions", "missingFields"];
+    return Array.from(container.querySelectorAll('input[type="checkbox"]:checked')).map((cb) => cb.value);
   }
 
   function showNotification(message, type = "info") {

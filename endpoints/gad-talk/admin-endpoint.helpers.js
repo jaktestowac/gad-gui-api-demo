@@ -242,6 +242,8 @@ async function handleGetChaosStatus(_req, res) {
     if (isActive && chaos.features) {
       if (chaos.features.randomDelays?.enabled) activeFeatureCount++;
       if (chaos.features.intermittentFailures?.enabled) activeFeatureCount++;
+      if (chaos.features.rateLimitChaos?.enabled) activeFeatureCount++;
+      if (chaos.features.dependencyOutage?.enabled) activeFeatureCount++;
       if (chaos.features.partialResponseCorruption?.enabled) activeFeatureCount++;
       if (chaos.features.slowEndpoints?.enabled) activeFeatureCount++;
       if (chaos.features.flakyWebSocket?.enabled) activeFeatureCount++;
@@ -296,6 +298,12 @@ async function handleUpdateChaosConfig(req, res) {
       gadTalkConfig.chaos.scope = {
         ...gadTalkConfig.chaos.scope,
         ...updates.scope,
+      };
+    }
+    if (updates.targeting) {
+      gadTalkConfig.chaos.targeting = {
+        ...gadTalkConfig.chaos.targeting,
+        ...updates.targeting,
       };
     }
     if (updates.features) {
@@ -385,11 +393,27 @@ const CHAOS_PRESETS = {
     icon: "✅",
     config: {
       enabled: false,
+      targeting: {
+        enabled: false,
+        requireAuth: false,
+        allowRoles: [],
+        denyRoles: [],
+        allowUsers: [],
+        denyUsers: [],
+        applyToAnonymous: true,
+      },
       features: {
         randomDelays: { enabled: false },
         intermittentFailures: { enabled: false },
+        rateLimitChaos: { enabled: false },
+        dependencyOutage: { enabled: false },
+        partialResponseCorruption: { enabled: false },
         slowEndpoints: { enabled: false },
         flakyWebSocket: { enabled: false },
+        featureFlagChaos: { enabled: false },
+        connectionTimeoutChaos: { enabled: false },
+        partialResponseDelivery: { enabled: false },
+        dataConsistencyViolations: { enabled: false },
       },
     },
   },
@@ -407,10 +431,15 @@ const CHAOS_PRESETS = {
       features: {
         randomDelays: { enabled: true, minMs: 50, maxMs: 500, probability: 0.1 },
         intermittentFailures: { enabled: false },
+        rateLimitChaos: { enabled: false },
+        dependencyOutage: { enabled: false },
         partialResponseCorruption: { enabled: false },
         slowEndpoints: { enabled: false },
         flakyWebSocket: { enabled: false },
         featureFlagChaos: { enabled: false },
+        connectionTimeoutChaos: { enabled: false },
+        partialResponseDelivery: { enabled: false },
+        dataConsistencyViolations: { enabled: false },
       },
     },
   },
@@ -428,10 +457,15 @@ const CHAOS_PRESETS = {
       features: {
         randomDelays: { enabled: true, minMs: 100, maxMs: 1500, probability: 0.25 },
         intermittentFailures: { enabled: true, probability: 0.03, httpStatus: 503 },
+        rateLimitChaos: { enabled: false },
+        dependencyOutage: { enabled: false },
         partialResponseCorruption: { enabled: false },
         slowEndpoints: { enabled: true, endpoints: ["/api/gad-talk/search"], delayMs: 1500 },
         flakyWebSocket: { enabled: false },
         featureFlagChaos: { enabled: false },
+        connectionTimeoutChaos: { enabled: false },
+        partialResponseDelivery: { enabled: false },
+        dataConsistencyViolations: { enabled: false },
       },
     },
   },
@@ -449,6 +483,8 @@ const CHAOS_PRESETS = {
       features: {
         randomDelays: { enabled: true, minMs: 200, maxMs: 3000, probability: 0.4 },
         intermittentFailures: { enabled: true, probability: 0.1, httpStatus: 503 },
+        rateLimitChaos: { enabled: false },
+        dependencyOutage: { enabled: false },
         partialResponseCorruption: { enabled: true, probability: 0.05, mode: "dropFields", maxFieldsToDrop: 1 },
         slowEndpoints: {
           enabled: true,
@@ -457,6 +493,9 @@ const CHAOS_PRESETS = {
         },
         flakyWebSocket: { enabled: true, disconnectProbability: 0.05, reconnectDelayMs: 3000 },
         featureFlagChaos: { enabled: false },
+        connectionTimeoutChaos: { enabled: false },
+        partialResponseDelivery: { enabled: false },
+        dataConsistencyViolations: { enabled: false },
       },
     },
   },
@@ -474,6 +513,8 @@ const CHAOS_PRESETS = {
       features: {
         randomDelays: { enabled: true, minMs: 500, maxMs: 5000, probability: 0.6 },
         intermittentFailures: { enabled: true, probability: 0.2, httpStatus: 503 },
+        rateLimitChaos: { enabled: false },
+        dependencyOutage: { enabled: false },
         partialResponseCorruption: { enabled: true, probability: 0.15, mode: "truncateStrings", truncateLength: 40 },
         slowEndpoints: {
           enabled: true,
@@ -487,6 +528,24 @@ const CHAOS_PRESETS = {
           mode: "require-enabled",
           probability: 0.3,
           httpStatus: 503,
+        },
+        connectionTimeoutChaos: {
+          enabled: true,
+          probability: 0.15,
+          timeoutMs: 5000,
+          endpoints: ["/api/gad-talk/search", "/api/gad-talk/users"],
+        },
+        partialResponseDelivery: {
+          enabled: true,
+          probability: 0.08,
+          endpoints: ["/api/gad-talk/gads", "/api/gad-talk/timeline"],
+          truncateAtPercent: 50,
+        },
+        dataConsistencyViolations: {
+          enabled: true,
+          probability: 0.1,
+          endpoints: ["/api/gad-talk/users", "/api/gad-talk/gads"],
+          violationTypes: ["staleData", "conflictingVersions", "missingFields"],
         },
       },
     },
@@ -505,10 +564,15 @@ const CHAOS_PRESETS = {
       features: {
         randomDelays: { enabled: true, minMs: 150, maxMs: 1200, probability: 0.4 },
         intermittentFailures: { enabled: false },
+        rateLimitChaos: { enabled: false },
+        dependencyOutage: { enabled: false },
         partialResponseCorruption: { enabled: false },
         slowEndpoints: { enabled: true, endpoints: ["/api/gad-talk/search", "/api/gad-talk/gads"], delayMs: 1200 },
         flakyWebSocket: { enabled: false },
         featureFlagChaos: { enabled: false },
+        connectionTimeoutChaos: { enabled: false },
+        partialResponseDelivery: { enabled: false },
+        dataConsistencyViolations: { enabled: false },
       },
     },
   },
@@ -526,10 +590,15 @@ const CHAOS_PRESETS = {
       features: {
         randomDelays: { enabled: false },
         intermittentFailures: { enabled: false },
+        rateLimitChaos: { enabled: false },
+        dependencyOutage: { enabled: false },
         partialResponseCorruption: { enabled: true, probability: 0.2, mode: "dropFields", maxFieldsToDrop: 2 },
         slowEndpoints: { enabled: false },
         flakyWebSocket: { enabled: false },
         featureFlagChaos: { enabled: false },
+        connectionTimeoutChaos: { enabled: false },
+        partialResponseDelivery: { enabled: false },
+        dataConsistencyViolations: { enabled: false },
       },
     },
   },
@@ -547,6 +616,8 @@ const CHAOS_PRESETS = {
       features: {
         randomDelays: { enabled: false },
         intermittentFailures: { enabled: false },
+        rateLimitChaos: { enabled: false },
+        dependencyOutage: { enabled: false },
         partialResponseCorruption: { enabled: false },
         slowEndpoints: { enabled: false },
         flakyWebSocket: { enabled: false },
@@ -557,6 +628,9 @@ const CHAOS_PRESETS = {
           probability: 0.5,
           httpStatus: 503,
         },
+        connectionTimeoutChaos: { enabled: false },
+        partialResponseDelivery: { enabled: false },
+        dataConsistencyViolations: { enabled: false },
       },
     },
   },
@@ -597,6 +671,18 @@ async function handleApplyChaosPreset(req, res) {
 
     // Apply preset config
     gadTalkConfig.chaos.enabled = presetConfig.config.enabled;
+    if (presetConfig.config.scope) {
+      gadTalkConfig.chaos.scope = {
+        ...gadTalkConfig.chaos.scope,
+        ...presetConfig.config.scope,
+      };
+    }
+    if (presetConfig.config.targeting) {
+      gadTalkConfig.chaos.targeting = {
+        ...gadTalkConfig.chaos.targeting,
+        ...presetConfig.config.targeting,
+      };
+    }
     Object.assign(gadTalkConfig.chaos.features, presetConfig.config.features);
 
     logDebug("GadTalk: Chaos preset applied:", { preset });
@@ -1200,6 +1286,9 @@ async function handleChaosDashboardPage(_req, res) {
               <span class="chaos-switch-track"></span>
             </label>
           </div>
+          <div class="chaos-card-desc">
+            Adds random latency to requests. Tests timeout handling, loading states, and slow network resilience.
+          </div>
           <div class="chaos-card-body">
             <div class="chaos-row">
               <label>Min</label>
@@ -1229,6 +1318,9 @@ async function handleChaosDashboardPage(_req, res) {
               <span class="chaos-switch-track"></span>
             </label>
           </div>
+          <div class="chaos-card-desc">
+            Randomly fails requests with HTTP errors. Tests error handling, retry logic, and graceful degradation.
+          </div>
           <div class="chaos-card-body">
             <div class="chaos-row chaos-row-range">
               <label>Rate</label>
@@ -1248,6 +1340,89 @@ async function handleChaosDashboardPage(_req, res) {
           </div>
         </div>
 
+        <!-- Rate Limit Chaos -->
+        <div class="chaos-card" data-feature="rateLimitChaos">
+          <div class="chaos-card-head">
+            <span class="chaos-card-icon">🚦</span>
+            <span class="chaos-card-title">Rate Limit</span>
+            <label class="chaos-switch">
+              <input type="checkbox" id="toggle-rateLimitChaos" />
+              <span class="chaos-switch-track"></span>
+            </label>
+          </div>
+          <div class="chaos-card-desc">
+            Enforces request limits per time window. Tests throttling behavior, backoff strategies, and queue management.
+          </div>
+          <div class="chaos-card-body">
+            <div class="chaos-row">
+              <label>Endpoints</label>
+              <input type="text" id="rateLimitChaos-endpoints" placeholder="/api/gad-talk/search" />
+            </div>
+            <div class="chaos-row">
+              <label>Window</label>
+              <input type="number" id="rateLimitChaos-windowMs" min="1000" max="60000" value="15000" />
+              <span class="chaos-unit">ms</span>
+            </div>
+            <div class="chaos-row">
+              <label>Limit</label>
+              <input type="number" id="rateLimitChaos-limit" min="1" max="50" value="5" />
+            </div>
+            <div class="chaos-row">
+              <label>PerUser</label>
+              <input type="checkbox" id="rateLimitChaos-perUser" checked />
+            </div>
+            <div class="chaos-row">
+              <label>Code</label>
+              <select id="rateLimitChaos-httpStatus">
+                <option value="429" selected>429</option>
+                <option value="503">503</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dependency Outage -->
+        <div class="chaos-card" data-feature="dependencyOutage">
+          <div class="chaos-card-head">
+            <span class="chaos-card-icon">🔌</span>
+            <span class="chaos-card-title">Dependency</span>
+            <label class="chaos-switch">
+              <input type="checkbox" id="toggle-dependencyOutage" />
+              <span class="chaos-switch-track"></span>
+            </label>
+          </div>
+          <div class="chaos-card-desc">
+            Simulates upstream service failures. Tests circuit breaker patterns, fallback mechanisms, and cascading failure prevention.
+          </div>
+          <div class="chaos-card-body">
+            <div class="chaos-row chaos-row-range">
+              <label>Rate</label>
+              <input type="range" id="dependencyOutage-probability" min="0" max="100" value="20" />
+              <span class="chaos-range-val" id="dependencyOutage-probability-value">20%</span>
+            </div>
+            <div class="chaos-row">
+              <label>Name</label>
+              <input type="text" id="dependencyOutage-name" placeholder="timeline-service" />
+            </div>
+            <div class="chaos-row">
+              <label>Endpoints</label>
+              <input type="text" id="dependencyOutage-endpoints" placeholder="/api/gad-talk/timeline" />
+            </div>
+            <div class="chaos-row">
+              <label>Code</label>
+              <select id="dependencyOutage-httpStatus">
+                <option value="502">502</option>
+                <option value="503" selected>503</option>
+                <option value="504">504</option>
+              </select>
+            </div>
+            <div class="chaos-row">
+              <label>Msg</label>
+              <input type="text" id="dependencyOutage-message" placeholder="Upstream dependency unavailable" />
+            </div>
+          </div>
+        </div>
+
         <!-- Response Corruption -->
         <div class="chaos-card" data-feature="partialResponseCorruption">
           <div class="chaos-card-head">
@@ -1257,6 +1432,9 @@ async function handleChaosDashboardPage(_req, res) {
               <input type="checkbox" id="toggle-partialResponseCorruption" />
               <span class="chaos-switch-track"></span>
             </label>
+          </div>
+          <div class="chaos-card-desc">
+            Corrupts response data by dropping fields, truncating strings, or scrambling arrays. Tests data validation and error recovery.
           </div>
           <div class="chaos-card-body">
             <div class="chaos-row chaos-row-range">
@@ -1295,6 +1473,9 @@ async function handleChaosDashboardPage(_req, res) {
               <span class="chaos-switch-track"></span>
             </label>
           </div>
+          <div class="chaos-card-desc">
+            Adds consistent delays to specific endpoints. Tests endpoint-specific performance degradation and UI responsiveness.
+          </div>
           <div class="chaos-card-body chaos-card-body-row">
             <div class="chaos-row">
               <label>Delay</label>
@@ -1317,6 +1498,9 @@ async function handleChaosDashboardPage(_req, res) {
             <span class="chaos-card-icon">🎯</span>
             <span class="chaos-card-title">Scope Filters</span>
           </div>
+          <div class="chaos-card-desc">
+            Defines which requests are affected by chaos. Prevents chaos on critical paths like admin/auth endpoints.
+          </div>
           <div class="chaos-card-body">
             <div class="chaos-row">
               <label>Allow</label>
@@ -1333,15 +1517,61 @@ async function handleChaosDashboardPage(_req, res) {
           </div>
         </div>
 
+        <!-- Targeting -->
+        <div class="chaos-card chaos-card-wide" data-feature="targeting">
+          <div class="chaos-card-head">
+            <span class="chaos-card-icon">👤</span>
+            <span class="chaos-card-title">Targeting</span>
+            <label class="chaos-switch">
+              <input type="checkbox" id="toggle-targeting" />
+              <span class="chaos-switch-track"></span>
+            </label>
+          </div>
+          <div class="chaos-card-desc">
+            Target chaos to specific users/roles. Allows selective testing for individual users, roles, or test groups without affecting all users.
+          </div>
+          <div class="chaos-card-body">
+            <div class="chaos-row">
+              <label>Require</label>
+              <input type="checkbox" id="targeting-requireAuth" />
+              <span class="chaos-unit">auth</span>
+            </div>
+            <div class="chaos-row">
+              <label>Anon</label>
+              <input type="checkbox" id="targeting-applyToAnonymous" checked />
+              <span class="chaos-unit">allow</span>
+            </div>
+            <div class="chaos-row">
+              <label>Allow Roles</label>
+              <input type="text" id="targeting-allowRoles" placeholder="member, tester" />
+            </div>
+            <div class="chaos-row">
+              <label>Deny Roles</label>
+              <input type="text" id="targeting-denyRoles" placeholder="admin" />
+            </div>
+            <div class="chaos-row">
+              <label>Allow Users</label>
+              <input type="text" id="targeting-allowUsers" placeholder="user-123" />
+            </div>
+            <div class="chaos-row">
+              <label>Deny Users</label>
+              <input type="text" id="targeting-denyUsers" placeholder="user-456" />
+            </div>
+          </div>
+        </div>
+
         <!-- Flaky WebSocket -->
         <div class="chaos-card" data-feature="flakyWebSocket">
           <div class="chaos-card-head">
-            <span class="chaos-card-icon">🔌</span>
+            <span class="chaos-card-icon">⚡</span>
             <span class="chaos-card-title">WebSocket</span>
             <label class="chaos-switch">
               <input type="checkbox" id="toggle-flakyWebSocket" />
               <span class="chaos-switch-track"></span>
             </label>
+          </div>
+          <div class="chaos-card-desc">
+            Randomly disconnects WebSocket connections. Tests reconnection logic, message queuing, and real-time resilience.
           </div>
           <div class="chaos-card-body">
             <div class="chaos-row chaos-row-range">
@@ -1366,6 +1596,9 @@ async function handleChaosDashboardPage(_req, res) {
               <input type="checkbox" id="toggle-featureFlagChaos" />
               <span class="chaos-switch-track"></span>
             </label>
+          </div>
+          <div class="chaos-card-desc">
+            Chaos triggered by feature flag state. Tests feature rollout scenarios, flag-based degradation, and safe deployment patterns.
           </div>
           <div class="chaos-card-body">
             <div class="chaos-row">
@@ -1392,6 +1625,130 @@ async function handleChaosDashboardPage(_req, res) {
                 <option value="504">504</option>
                 <option value="429">429</option>
               </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Connection Timeout Chaos -->
+        <div class="chaos-card chaos-card-0-5-wide" data-feature="connectionTimeoutChaos">
+          <div class="chaos-card-head">
+            <span class="chaos-card-icon">⏱️</span>
+            <span class="chaos-card-title">Timeout</span>
+            <label class="chaos-switch">
+              <input type="checkbox" id="toggle-connectionTimeoutChaos" />
+              <span class="chaos-switch-track"></span>
+            </label>
+          </div>
+          <div class="chaos-card-desc">
+            Simulates slow/hanging connections. Tests timeout handling, request cancellation, and timeout UI feedback.
+          </div>
+          <div class="chaos-card-body">
+            <div class="chaos-row chaos-row-range">
+              <label>Rate</label>
+              <input type="range" id="connectionTimeoutChaos-probability" min="0" max="50" value="10" />
+              <span class="chaos-range-val" id="connectionTimeoutChaos-probability-value">10%</span>
+            </div>
+            <div class="chaos-row">
+              <label>Timeout</label>
+              <input type="number" id="connectionTimeoutChaos-timeoutMs" min="1000" max="30000" value="5000" />
+              <span class="chaos-unit">ms</span>
+            </div>
+            <div class="chaos-row">
+              <label>Endpoints</label>
+              <input type="text" id="connectionTimeoutChaos-endpoints" placeholder="/api/gad-talk/search" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Partial Response Delivery -->
+        <div class="chaos-card chaos-card-0-5-wide" data-feature="partialResponseDelivery">
+          <div class="chaos-card-head">
+            <span class="chaos-card-icon">📦</span>
+            <span class="chaos-card-title">Partial</span>
+            <label class="chaos-switch">
+              <input type="checkbox" id="toggle-partialResponseDelivery" />
+              <span class="chaos-switch-track"></span>
+            </label>
+          </div>
+          <div class="chaos-card-desc">
+            Truncates responses mid-stream. Tests partial failure handling, JSON parsing errors, and connection drop recovery.
+          </div>
+          <div class="chaos-card-body">
+            <div class="chaos-row chaos-row-range">
+              <label>Rate</label>
+              <input type="range" id="partialResponseDelivery-probability" min="0" max="50" value="8" />
+              <span class="chaos-range-val" id="partialResponseDelivery-probability-value">8%</span>
+            </div>
+            <div class="chaos-row">
+              <label>Endpoints</label>
+              <input type="text" id="partialResponseDelivery-endpoints" placeholder="/api/gad-talk/gads" />
+            </div>
+            <div class="chaos-row chaos-row-range">
+              <label>Truncate</label>
+              <input type="range" id="partialResponseDelivery-truncateAtPercent" min="10" max="90" value="50" />
+              <span class="chaos-range-val" id="partialResponseDelivery-truncateAtPercent-value">50%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data Consistency Violations -->
+        <div class="chaos-card chaos-card-wide" data-feature="dataConsistencyViolations">
+          <div class="chaos-card-head">
+            <span class="chaos-card-icon">🔄</span>
+            <span class="chaos-card-title">Data Consistency</span>
+            <label class="chaos-switch">
+              <input type="checkbox" id="toggle-dataConsistencyViolations" />
+              <span class="chaos-switch-track"></span>
+            </label>
+          </div>
+          <div class="chaos-card-desc">
+            Returns stale, conflicting, or incomplete data. Tests data validation, conflict resolution, and consistency recovery mechanisms.
+          </div>
+          <div class="chaos-card-body">
+            <!-- Trigger Rate -->
+            <div class="chaos-section">
+              <div class="chaos-section-label">⚡ Trigger Rate</div>
+              <div class="chaos-row chaos-row-range">
+                <label>Probability</label>
+                <input type="range" id="dataConsistencyViolations-probability" min="0" max="50" value="10" />
+                <span class="chaos-range-val" id="dataConsistencyViolations-probability-value">10%</span>
+              </div>
+            </div>
+
+            <!-- Target Endpoints -->
+            <div class="chaos-section">
+              <div class="chaos-section-label">🎯 Target Endpoints</div>
+              <div class="chaos-row">
+                <input type="text" id="dataConsistencyViolations-endpoints" placeholder="e.g. /api/gad-talk/users, /api/gad-talk/gads" />
+              </div>
+            </div>
+
+            <!-- Violation Types -->
+            <div class="chaos-section">
+              <div class="chaos-section-label">⚠️ Violation Types</div>
+              <div class="chaos-violations-types" id="dataConsistencyViolations-types">
+                <label class="chaos-chip chaos-chip-desc">
+                  <input type="checkbox" value="staleData" checked />
+                  <span>
+                    <strong>Stale Data</strong>
+                    <em>Returns cached/outdated information</em>
+                  </span>
+                </label>
+                <label class="chaos-chip chaos-chip-desc">
+                  <input type="checkbox" value="conflictingVersions" checked />
+                  <span>
+                    <strong>Conflicting Versions</strong>
+                    <em>Multiple incompatible data versions</em>
+                  </span>
+                </label>
+                <label class="chaos-chip chaos-chip-desc">
+                  <input type="checkbox" value="missingFields" checked />
+                  <span>
+                    <strong>Missing Fields</strong>
+                    <em>Critical fields randomly removed</em>
+                  </span>
+                </label>
+              </div>
             </div>
           </div>
         </div>
@@ -1550,6 +1907,7 @@ function getChaosDashboardStyles() {
     }
     .chaos-card:hover { border-color: rgba(255,255,255,0.1); }
     .chaos-card-wide { grid-column: 1 / -1; }
+    .chaos-card-0-5-wide { grid-column: 1 / span 2; }
     
     .chaos-card-head {
       display: flex;
@@ -1565,6 +1923,17 @@ function getChaosDashboardStyles() {
       font-size: 13px;
       font-weight: 600;
       color: #e7e9ea;
+    }
+
+    /* Card Description */
+    .chaos-card-desc {
+      padding: 6px 12px;
+      font-size: 11px;
+      color: #71767b;
+      background: rgba(29,155,240,0.05);
+      border-left: 2px solid rgba(29,155,240,0.2);
+      line-height: 1.4;
+      font-style: italic;
     }
 
     /* Compact Switch */
@@ -1687,6 +2056,63 @@ function getChaosDashboardStyles() {
       color: #1d9bf0;
     }
     .chaos-chip input { display: none; }
+
+    /* Section Headers */
+    .chaos-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .chaos-section:last-child { border-bottom: none; }
+    .chaos-section-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #52525b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Violation Types Container */
+    .chaos-violations-types {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    /* Enhanced Chip with Description */
+    .chaos-chip-desc {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      padding: 6px 8px;
+      min-width: 140px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .chaos-chip-desc:hover {
+      background: rgba(255,255,255,0.04);
+      border-color: rgba(255,255,255,0.1);
+    }
+    .chaos-chip-desc:has(input:checked) {
+      background: rgba(29,155,240,0.1);
+      border-color: rgba(29,155,240,0.4);
+    }
+    .chaos-chip-desc strong {
+      font-size: 11px;
+      color: #e7e9ea;
+      font-weight: 600;
+    }
+    .chaos-chip-desc em {
+      font-size: 10px;
+      color: #71767b;
+      font-style: italic;
+      font-weight: 400;
+    }
+    .chaos-chip-desc:has(input:checked) strong { color: #1d9bf0; }
+    .chaos-chip-desc:has(input:checked) em { color: #1d9bf0; opacity: 0.8; }
 
     /* Actions */
     .chaos-actions {
