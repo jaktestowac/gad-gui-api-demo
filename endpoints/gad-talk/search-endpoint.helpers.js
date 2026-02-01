@@ -6,6 +6,7 @@
 const { logError } = require("../../helpers/logger-api");
 const { HTTP_OK, HTTP_BAD_REQUEST } = require("../../helpers/response.helpers");
 const { formatErrorResponse } = require("../../helpers/helpers");
+const { sanitizeUser } = require("./users-endpoint.helpers");
 const searchService = require("./services/search.service");
 const trendingService = require("./services/trending.service");
 
@@ -85,7 +86,7 @@ async function handleCombinedSearch(req, res) {
         result = searchService.searchUsers(query.trim(), userId, { page, limit });
         res.status(HTTP_OK).json({
           type: "users",
-          users: result.users,
+          users: Array.isArray(result.users) ? result.users.map((user) => sanitizeUser(user)) : [],
           total: result.total,
           hasMore: result.hasMore,
           page,
@@ -125,7 +126,7 @@ async function handleCombinedSearch(req, res) {
         result = searchService.searchAll(query.trim(), userId, { limit: 5 });
         res.status(HTTP_OK).json({
           type: "all",
-          users: result.users,
+          users: Array.isArray(result.users) ? result.users.map((user) => sanitizeUser(user)) : [],
           gads: result.gads,
           hashtags: result.hashtags,
           query: query.trim(),
@@ -154,7 +155,7 @@ async function handleGetExplore(req, res) {
 
     res.status(HTTP_OK).json({
       trending: data.trending,
-      suggestedUsers: data.suggestedUsers,
+      suggestedUsers: Array.isArray(data.suggestedUsers) ? data.suggestedUsers.map((user) => sanitizeUser(user)) : [],
       popularGads: data.popularGads,
     });
   } catch (error) {

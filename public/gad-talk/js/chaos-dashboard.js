@@ -171,6 +171,14 @@
     setRange("intermittentFailures-probability", (intermittentFailures.probability || 0.05) * 100);
     setSelect("intermittentFailures-httpStatus", intermittentFailures.httpStatus || 503);
 
+    // Partial Response Corruption
+    const partialResponseCorruption = config.features.partialResponseCorruption || {};
+    setToggle("toggle-partialResponseCorruption", partialResponseCorruption.enabled);
+    setRange("partialResponseCorruption-probability", (partialResponseCorruption.probability || 0.05) * 100);
+    setSelect("partialResponseCorruption-mode", partialResponseCorruption.mode || "dropFields");
+    setValue("partialResponseCorruption-maxFieldsToDrop", partialResponseCorruption.maxFieldsToDrop || 2);
+    setValue("partialResponseCorruption-truncateLength", partialResponseCorruption.truncateLength || 80);
+
     // Slow Endpoints
     const slowEndpoints = config.features.slowEndpoints || {};
     setToggle("toggle-slowEndpoints", slowEndpoints.enabled);
@@ -182,6 +190,21 @@
     setToggle("toggle-flakyWebSocket", flakyWebSocket.enabled);
     setRange("flakyWebSocket-disconnectProbability", (flakyWebSocket.disconnectProbability || 0.1) * 100);
     setValue("flakyWebSocket-reconnectDelayMs", flakyWebSocket.reconnectDelayMs || 5000);
+
+    // Feature-Flag Chaos
+    const featureFlagChaos = config.features.featureFlagChaos || {};
+    setToggle("toggle-featureFlagChaos", featureFlagChaos.enabled);
+    setValue("featureFlagChaos-flagKey", featureFlagChaos.flagKey || "chaos_dashboard");
+    setSelect("featureFlagChaos-mode", featureFlagChaos.mode || "require-enabled");
+    setRange("featureFlagChaos-probability", (featureFlagChaos.probability || 0.2) * 100);
+    setSelect("featureFlagChaos-httpStatus", featureFlagChaos.httpStatus || 503);
+  }
+
+  function updateScopeControls(config) {
+    const scope = config?.scope || {};
+    setValue("scope-allowlist", (scope.allowlist || []).join(", "));
+    setValue("scope-denylist", (scope.denylist || []).join(", "));
+    setValue("scope-methods", (scope.methods || []).join(", "));
   }
 
   function updateEndpointCheckboxes(enabledEndpoints) {
@@ -201,6 +224,7 @@
   function updateUI(config) {
     updateMasterToggle(config);
     updateFeatureToggles(config);
+    updateScopeControls(config);
     updateConfigDisplay(config);
   }
 
@@ -249,6 +273,15 @@
     return el ? parseFloat(el.value) / 100 : 0;
   }
 
+  function getListFromInput(id) {
+    const el = document.getElementById(id);
+    if (!el) return [];
+    return el.value
+      .split(",")
+      .map((item) => item.trim())
+      .filter((item) => item.length > 0);
+  }
+
   function getSelectedEndpoints() {
     const container = document.getElementById("slowEndpoints-list");
     if (!container) return [];
@@ -258,6 +291,11 @@
   function collectCurrentConfig() {
     return {
       enabled: currentConfig?.enabled ?? false,
+      scope: {
+        allowlist: getListFromInput("scope-allowlist"),
+        denylist: getListFromInput("scope-denylist"),
+        methods: getListFromInput("scope-methods").map((method) => method.toUpperCase()),
+      },
       features: {
         randomDelays: {
           enabled: getToggle("toggle-randomDelays"),
@@ -270,6 +308,13 @@
           probability: getRange("intermittentFailures-probability"),
           httpStatus: parseInt(getValue("intermittentFailures-httpStatus", "string"), 10),
         },
+        partialResponseCorruption: {
+          enabled: getToggle("toggle-partialResponseCorruption"),
+          probability: getRange("partialResponseCorruption-probability"),
+          mode: getValue("partialResponseCorruption-mode", "string"),
+          maxFieldsToDrop: getValue("partialResponseCorruption-maxFieldsToDrop"),
+          truncateLength: getValue("partialResponseCorruption-truncateLength"),
+        },
         slowEndpoints: {
           enabled: getToggle("toggle-slowEndpoints"),
           endpoints: getSelectedEndpoints(),
@@ -279,6 +324,13 @@
           enabled: getToggle("toggle-flakyWebSocket"),
           disconnectProbability: getRange("flakyWebSocket-disconnectProbability"),
           reconnectDelayMs: getValue("flakyWebSocket-reconnectDelayMs"),
+        },
+        featureFlagChaos: {
+          enabled: getToggle("toggle-featureFlagChaos"),
+          flagKey: getValue("featureFlagChaos-flagKey", "string"),
+          mode: getValue("featureFlagChaos-mode", "string"),
+          probability: getRange("featureFlagChaos-probability"),
+          httpStatus: parseInt(getValue("featureFlagChaos-httpStatus", "string"), 10),
         },
       },
     };

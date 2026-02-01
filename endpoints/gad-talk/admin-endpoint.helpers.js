@@ -11,6 +11,7 @@ const {
 } = require("./db-gad-talk.operations");
 const { getAuthenticatedUser } = require("./users-endpoint.helpers");
 const gadTalkConfig = require("./gad-talk-config");
+const { getChaosMetrics } = require("./chaos-helpers");
 
 // ==================== HELPERS ====================
 
@@ -77,14 +78,6 @@ async function handleResetDb(req, res) {
  */
 async function handleGetDbStatus(req, res) {
   try {
-    // Check admin auth
-    const authCheck = checkAdminAuth(req);
-    if (!authCheck.isAdmin) {
-      const statusCode = authCheck.error.includes("Authentication") ? HTTP_UNAUTHORIZED : HTTP_FORBIDDEN;
-      res.status(statusCode).send(formatErrorResponse(authCheck.error));
-      return;
-    }
-
     const status = getGadTalkDbStatus();
 
     res.status(HTTP_OK).send({
@@ -167,14 +160,6 @@ async function handleInitDb(req, res) {
  */
 async function handleGetLogs(req, res) {
   try {
-    // Check admin auth
-    const authCheck = checkAdminAuth(req);
-    if (!authCheck.isAdmin) {
-      const statusCode = authCheck.error.includes("Authentication") ? HTTP_UNAUTHORIZED : HTTP_FORBIDDEN;
-      res.status(statusCode).send(formatErrorResponse(authCheck.error));
-      return;
-    }
-
     const { actorUserId, eventType, limit = 100 } = req.query;
 
     let logs = getGadTalkAuditLogs({
@@ -204,14 +189,6 @@ async function handleGetLogs(req, res) {
  */
 async function handleGetMetrics(req, res) {
   try {
-    // Check admin auth
-    const authCheck = checkAdminAuth(req);
-    if (!authCheck.isAdmin) {
-      const statusCode = authCheck.error.includes("Authentication") ? HTTP_UNAUTHORIZED : HTTP_FORBIDDEN;
-      res.status(statusCode).send(formatErrorResponse(authCheck.error));
-      return;
-    }
-
     const dbStatus = getGadTalkDbStatus();
 
     // Basic metrics
@@ -265,8 +242,10 @@ async function handleGetChaosStatus(_req, res) {
     if (isActive && chaos.features) {
       if (chaos.features.randomDelays?.enabled) activeFeatureCount++;
       if (chaos.features.intermittentFailures?.enabled) activeFeatureCount++;
+      if (chaos.features.partialResponseCorruption?.enabled) activeFeatureCount++;
       if (chaos.features.slowEndpoints?.enabled) activeFeatureCount++;
       if (chaos.features.flakyWebSocket?.enabled) activeFeatureCount++;
+      if (chaos.features.featureFlagChaos?.enabled) activeFeatureCount++;
     }
 
     res.status(HTTP_OK).send({
@@ -313,6 +292,12 @@ async function handleUpdateChaosConfig(req, res) {
     if (updates.enabled !== undefined) {
       gadTalkConfig.chaos.enabled = updates.enabled;
     }
+    if (updates.scope) {
+      gadTalkConfig.chaos.scope = {
+        ...gadTalkConfig.chaos.scope,
+        ...updates.scope,
+      };
+    }
     if (updates.features) {
       Object.assign(gadTalkConfig.chaos.features, updates.features);
     }
@@ -326,6 +311,22 @@ async function handleUpdateChaosConfig(req, res) {
   } catch (error) {
     logError("GadTalk admin chaos config update error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to update chaos config"));
+  }
+}
+
+/**
+ * Get chaos metrics (public)
+ * GET /api/gad-talk/admin/chaos/metrics
+ */
+async function handleGetChaosMetrics(_req, res) {
+  try {
+    res.status(HTTP_OK).send({
+      ok: true,
+      data: getChaosMetrics(),
+    });
+  } catch (error) {
+    logError("GadTalk chaos metrics error:", error);
+    res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to get chaos metrics"));
   }
 }
 
@@ -398,11 +399,18 @@ const CHAOS_PRESETS = {
     icon: "🌤️",
     config: {
       enabled: true,
+      scope: {
+        allowlist: ["/api/gad-talk"],
+        denylist: ["/api/gad-talk/admin", "/api/gad-talk/auth"],
+        methods: ["GET"],
+      },
       features: {
         randomDelays: { enabled: true, minMs: 50, maxMs: 500, probability: 0.1 },
         intermittentFailures: { enabled: false },
+        partialResponseCorruption: { enabled: false },
         slowEndpoints: { enabled: false },
         flakyWebSocket: { enabled: false },
+        featureFlagChaos: { enabled: false },
       },
     },
   },
@@ -412,11 +420,18 @@ const CHAOS_PRESETS = {
     icon: "🌥️",
     config: {
       enabled: true,
+      scope: {
+        allowlist: ["/api/gad-talk"],
+        denylist: ["/api/gad-talk/admin", "/api/gad-talk/auth"],
+        methods: ["GET", "POST"],
+      },
       features: {
         randomDelays: { enabled: true, minMs: 100, maxMs: 1500, probability: 0.25 },
         intermittentFailures: { enabled: true, probability: 0.03, httpStatus: 503 },
+        partialResponseCorruption: { enabled: false },
         slowEndpoints: { enabled: true, endpoints: ["/api/gad-talk/search"], delayMs: 1500 },
         flakyWebSocket: { enabled: false },
+        featureFlagChaos: { enabled: false },
       },
     },
   },
@@ -426,15 +441,22 @@ const CHAOS_PRESETS = {
     icon: "⛈️",
     config: {
       enabled: true,
+      scope: {
+        allowlist: ["/api/gad-talk"],
+        denylist: ["/api/gad-talk/admin", "/api/gad-talk/auth"],
+        methods: ["GET", "POST", "PUT", "DELETE"],
+      },
       features: {
         randomDelays: { enabled: true, minMs: 200, maxMs: 3000, probability: 0.4 },
         intermittentFailures: { enabled: true, probability: 0.1, httpStatus: 503 },
+        partialResponseCorruption: { enabled: true, probability: 0.05, mode: "dropFields", maxFieldsToDrop: 1 },
         slowEndpoints: {
           enabled: true,
           endpoints: ["/api/gad-talk/search", "/api/gad-talk/gads", "/api/gad-talk/users"],
           delayMs: 2500,
         },
         flakyWebSocket: { enabled: true, disconnectProbability: 0.05, reconnectDelayMs: 3000 },
+        featureFlagChaos: { enabled: false },
       },
     },
   },
@@ -444,15 +466,91 @@ const CHAOS_PRESETS = {
     icon: "💀",
     config: {
       enabled: true,
+      scope: {
+        allowlist: ["/api/gad-talk"],
+        denylist: ["/api/gad-talk/admin", "/api/gad-talk/auth"],
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+      },
       features: {
         randomDelays: { enabled: true, minMs: 500, maxMs: 5000, probability: 0.6 },
         intermittentFailures: { enabled: true, probability: 0.2, httpStatus: 503 },
+        partialResponseCorruption: { enabled: true, probability: 0.15, mode: "truncateStrings", truncateLength: 40 },
         slowEndpoints: {
           enabled: true,
           endpoints: ["/api/gad-talk/search", "/api/gad-talk/gads", "/api/gad-talk/users", "/api/gad-talk/timeline"],
           delayMs: 4000,
         },
         flakyWebSocket: { enabled: true, disconnectProbability: 0.15, reconnectDelayMs: 8000 },
+        featureFlagChaos: { enabled: true, flagKey: "chaos_dashboard", mode: "require-enabled", probability: 0.3, httpStatus: 503 },
+      },
+    },
+  },
+  latencyOnly: {
+    name: "Latency Only",
+    description: "Delays without failures",
+    icon: "🐢",
+    config: {
+      enabled: true,
+      scope: {
+        allowlist: ["/api/gad-talk"],
+        denylist: ["/api/gad-talk/admin", "/api/gad-talk/auth"],
+        methods: ["GET"],
+      },
+      features: {
+        randomDelays: { enabled: true, minMs: 150, maxMs: 1200, probability: 0.4 },
+        intermittentFailures: { enabled: false },
+        partialResponseCorruption: { enabled: false },
+        slowEndpoints: { enabled: true, endpoints: ["/api/gad-talk/search", "/api/gad-talk/gads"], delayMs: 1200 },
+        flakyWebSocket: { enabled: false },
+        featureFlagChaos: { enabled: false },
+      },
+    },
+  },
+  corruptor: {
+    name: "Corruptor",
+    description: "Inject partial response corruption",
+    icon: "🧪",
+    config: {
+      enabled: true,
+      scope: {
+        allowlist: ["/api/gad-talk"],
+        denylist: ["/api/gad-talk/admin", "/api/gad-talk/auth"],
+        methods: ["GET"],
+      },
+      features: {
+        randomDelays: { enabled: false },
+        intermittentFailures: { enabled: false },
+        partialResponseCorruption: { enabled: true, probability: 0.2, mode: "dropFields", maxFieldsToDrop: 2 },
+        slowEndpoints: { enabled: false },
+        flakyWebSocket: { enabled: false },
+        featureFlagChaos: { enabled: false },
+      },
+    },
+  },
+  flagFlip: {
+    name: "Flag-Gated",
+    description: "Chaos depends on a feature flag",
+    icon: "🚩",
+    config: {
+      enabled: true,
+      scope: {
+        allowlist: ["/api/gad-talk"],
+        denylist: ["/api/gad-talk/admin", "/api/gad-talk/auth"],
+        methods: ["GET", "POST"],
+      },
+      features: {
+        randomDelays: { enabled: false },
+        intermittentFailures: { enabled: false },
+        partialResponseCorruption: { enabled: false },
+        slowEndpoints: { enabled: false },
+        flakyWebSocket: { enabled: false },
+        featureFlagChaos: {
+          enabled: true,
+          flagKey: "chaos_dashboard",
+          mode: "require-enabled",
+          probability: 0.5,
+          httpStatus: 503,
+        },
       },
     },
   },
@@ -1142,6 +1240,43 @@ async function handleChaosDashboardPage(_req, res) {
           </div>
         </div>
 
+        <!-- Response Corruption -->
+        <div class="chaos-card" data-feature="partialResponseCorruption">
+          <div class="chaos-card-head">
+            <span class="chaos-card-icon">🧪</span>
+            <span class="chaos-card-title">Corruption</span>
+            <label class="chaos-switch">
+              <input type="checkbox" id="toggle-partialResponseCorruption" />
+              <span class="chaos-switch-track"></span>
+            </label>
+          </div>
+          <div class="chaos-card-body">
+            <div class="chaos-row chaos-row-range">
+              <label>Rate</label>
+              <input type="range" id="partialResponseCorruption-probability" min="0" max="50" value="5" />
+              <span class="chaos-range-val" id="partialResponseCorruption-probability-value">5%</span>
+            </div>
+            <div class="chaos-row">
+              <label>Mode</label>
+              <select id="partialResponseCorruption-mode">
+                <option value="dropFields">dropFields</option>
+                <option value="truncateStrings">truncateStrings</option>
+                <option value="scrambleArray">scrambleArray</option>
+              </select>
+            </div>
+            <div class="chaos-row">
+              <label>Drop</label>
+              <input type="number" id="partialResponseCorruption-maxFieldsToDrop" min="0" max="5" value="2" />
+              <span class="chaos-unit">fields</span>
+            </div>
+            <div class="chaos-row">
+              <label>Trunc</label>
+              <input type="number" id="partialResponseCorruption-truncateLength" min="10" max="200" value="80" />
+              <span class="chaos-unit">chars</span>
+            </div>
+          </div>
+        </div>
+
         <!-- Slow Endpoints -->
         <div class="chaos-card chaos-card-wide" data-feature="slowEndpoints">
           <div class="chaos-card-head">
@@ -1168,6 +1303,28 @@ async function handleChaosDashboardPage(_req, res) {
           </div>
         </div>
 
+        <!-- Scope -->
+        <div class="chaos-card chaos-card-wide" data-feature="scope">
+          <div class="chaos-card-head">
+            <span class="chaos-card-icon">🎯</span>
+            <span class="chaos-card-title">Scope Filters</span>
+          </div>
+          <div class="chaos-card-body">
+            <div class="chaos-row">
+              <label>Allow</label>
+              <input type="text" id="scope-allowlist" placeholder="/api/gad-talk" />
+            </div>
+            <div class="chaos-row">
+              <label>Deny</label>
+              <input type="text" id="scope-denylist" placeholder="/api/gad-talk/admin" />
+            </div>
+            <div class="chaos-row">
+              <label>Methods</label>
+              <input type="text" id="scope-methods" placeholder="GET,POST,PUT" />
+            </div>
+          </div>
+        </div>
+
         <!-- Flaky WebSocket -->
         <div class="chaos-card" data-feature="flakyWebSocket">
           <div class="chaos-card-head">
@@ -1188,6 +1345,45 @@ async function handleChaosDashboardPage(_req, res) {
               <label>Reconn</label>
               <input type="number" id="flakyWebSocket-reconnectDelayMs" min="0" max="30000" value="5000" />
               <span class="chaos-unit">ms</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature-Flag Chaos -->
+        <div class="chaos-card" data-feature="featureFlagChaos">
+          <div class="chaos-card-head">
+            <span class="chaos-card-icon">🚩</span>
+            <span class="chaos-card-title">Flag Chaos</span>
+            <label class="chaos-switch">
+              <input type="checkbox" id="toggle-featureFlagChaos" />
+              <span class="chaos-switch-track"></span>
+            </label>
+          </div>
+          <div class="chaos-card-body">
+            <div class="chaos-row">
+              <label>Flag</label>
+              <input type="text" id="featureFlagChaos-flagKey" placeholder="chaos_dashboard" />
+            </div>
+            <div class="chaos-row">
+              <label>Mode</label>
+              <select id="featureFlagChaos-mode">
+                <option value="require-enabled">require-enabled</option>
+                <option value="require-disabled">require-disabled</option>
+              </select>
+            </div>
+            <div class="chaos-row chaos-row-range">
+              <label>Rate</label>
+              <input type="range" id="featureFlagChaos-probability" min="0" max="100" value="20" />
+              <span class="chaos-range-val" id="featureFlagChaos-probability-value">20%</span>
+            </div>
+            <div class="chaos-row">
+              <label>Code</label>
+              <select id="featureFlagChaos-httpStatus">
+                <option value="500">500</option>
+                <option value="503" selected>503</option>
+                <option value="504">504</option>
+                <option value="429">429</option>
+              </select>
             </div>
           </div>
         </div>
@@ -1298,6 +1494,7 @@ function getChaosDashboardStyles() {
     /* Presets Bar - Horizontal compact */
     .chaos-presets-bar {
       display: flex;
+      flex-wrap: wrap;
       gap: 6px;
       padding: 8px 0 16px;
       overflow-x: auto;
@@ -1421,6 +1618,7 @@ function getChaosDashboardStyles() {
       font-weight: 500;
     }
     .chaos-row input[type="number"],
+    .chaos-row input[type="text"],
     .chaos-row select {
       flex: 1;
       min-width: 60px;
@@ -1568,6 +1766,7 @@ module.exports = {
   handleGetChaosStatus,
   handleGetChaosConfig,
   handleUpdateChaosConfig,
+  handleGetChaosMetrics,
   handleEnableChaos,
   handleDisableChaos,
   handleGetChaosPresets,

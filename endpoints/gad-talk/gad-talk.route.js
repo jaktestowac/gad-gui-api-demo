@@ -52,6 +52,7 @@ const {
   handleGetChaosStatus,
   handleGetChaosConfig,
   handleUpdateChaosConfig,
+  handleGetChaosMetrics,
   handleEnableChaos,
   handleDisableChaos,
   handleGetChaosPresets,
@@ -191,7 +192,7 @@ async function handleGadTalk(req, res) {
   try {
     // ==================== APPLY CHAOS EFFECTS ====================
     // Apply chaos effects to non-admin, non-auth routes
-    if (shouldApplyChaos(req.url)) {
+    if (shouldApplyChaos(req)) {
       const { shouldContinue, chaosApplied } = await applyChaosEffects(req, res);
 
       // If chaos caused a failure, response already sent
@@ -746,6 +747,8 @@ async function handleAdminRoutes(req, res, method, segments) {
       if (chaosAction === "config") {
         if (method === "GET") return handleGetChaosConfig(req, res);
         if (method === "PUT") return handleUpdateChaosConfig(req, res);
+      } else if (chaosAction === "metrics" && method === "GET") {
+        return handleGetChaosMetrics(req, res);
       } else if (chaosAction === "presets") {
         const presetName = segments[3];
         if (!presetName && method === "GET") {

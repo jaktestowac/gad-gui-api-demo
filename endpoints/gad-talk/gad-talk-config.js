@@ -89,6 +89,11 @@ module.exports = {
   // Chaos mode settings (for testing education)
   chaos: {
     enabled: false,
+    scope: {
+      allowlist: ["/api/gad-talk"],
+      denylist: ["/api/gad-talk/admin", "/api/gad-talk/auth"],
+      methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    },
     features: {
       randomDelays: {
         enabled: false,
@@ -101,6 +106,13 @@ module.exports = {
         probability: 0.05, // 5% fail rate
         httpStatus: 503,
       },
+      partialResponseCorruption: {
+        enabled: false,
+        probability: 0.05, // 5% responses get corrupted
+        mode: "dropFields", // dropFields | truncateStrings | scrambleArray
+        maxFieldsToDrop: 2,
+        truncateLength: 80,
+      },
       slowEndpoints: {
         enabled: false,
         endpoints: ["/api/gad-talk/search"],
@@ -110,6 +122,13 @@ module.exports = {
         enabled: false,
         disconnectProbability: 0.1,
         reconnectDelayMs: 5000,
+      },
+      featureFlagChaos: {
+        enabled: false,
+        flagKey: "chaos_dashboard",
+        mode: "require-enabled", // require-enabled | require-disabled
+        probability: 0.2,
+        httpStatus: 503,
       },
     },
   },
