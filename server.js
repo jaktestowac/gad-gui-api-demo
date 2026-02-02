@@ -210,7 +210,15 @@ server.use((req, res, next) => {
 });
 server.use(jsonServer.bodyParser);
 
-server.use(helmet());
+server.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        scriptSrc: ["'self'", "https://cdnjs.cloudflare.com"],
+      },
+    },
+  })
+);
 server.use(cookieparser());
 
 server.use(healthCheckRoutes);

@@ -7,6 +7,7 @@ const gadTalkCharts = (function () {
   const COLORS = ["#1d9bf0", "#f91880", "#00ba7c", "#ffd400", "#8b5cf6", "#f97316", "#38bdf8", "#22c55e"];
   let currentUserId = null;
   let currentRangeDays = 90;
+  const chartDataStore = {}; // Store data for export/table features
 
   function $(id) {
     return document.getElementById(id);
@@ -32,21 +33,218 @@ const gadTalkCharts = (function () {
         if (currentUserId) loadUserCharts(currentUserId);
       });
     }
-  }
-
-  function setLoading(container, message = "Loading chart...") {
-    if (!container) return;
-    container.innerHTML = `
-      <div class="gt-chart-loading">
-        <div class="gt-spinner gt-spinner-sm"></div>
-        <span class="gt-text-secondary gt-text-sm">${message}</span>
-      </div>
-    `;
+    setupExportButtons();
+    setupTableToggles();
   }
 
   function setEmpty(container, message = "No data yet") {
     if (!container) return;
     container.innerHTML = `<div class="gt-chart-empty gt-text-secondary">${message}</div>`;
+  }
+
+  function showSkeleton(chartId) {
+    const skeleton = $(`skeleton-${chartId}`);
+    const body = $(
+      `chart-${
+        chartId === "activity"
+          ? "activity-heatmap"
+          : chartId === "hashtags"
+          ? "hashtag-donut"
+          : chartId === "engagement"
+          ? "engagement-line"
+          : "follower-growth"
+      }`
+    );
+    if (skeleton && body) {
+      skeleton.classList.remove("gt-hidden");
+      skeleton.classList.add("show");
+      body.style.display = "none";
+    }
+  }
+
+  function hideSkeleton(chartId) {
+    const skeleton = $(`skeleton-${chartId}`);
+    const body = $(
+      `chart-${
+        chartId === "activity"
+          ? "activity-heatmap"
+          : chartId === "hashtags"
+          ? "hashtag-donut"
+          : chartId === "engagement"
+          ? "engagement-line"
+          : "follower-growth"
+      }`
+    );
+    if (skeleton && body) {
+      skeleton.classList.add("gt-hidden");
+      skeleton.classList.remove("show");
+      body.style.display = "";
+    }
+  }
+
+  function buildSkeletonHeatmap() {
+    const skeleton = document.createElement("div");
+    skeleton.className = "gt-skeleton-heatmap";
+    for (let i = 0; i < 70; i++) {
+      const item = document.createElement("div");
+      item.className = "gt-skeleton-item";
+      skeleton.appendChild(item);
+    }
+    return skeleton;
+  }
+
+  function buildSkeletonDonut() {
+    const skeleton = document.createElement("div");
+    skeleton.className = "gt-skeleton-donut";
+    const circle = document.createElement("div");
+    circle.className = "gt-skeleton-circle";
+    skeleton.appendChild(circle);
+    return skeleton;
+  }
+
+  function buildSkeletonLine() {
+    const skeleton = document.createElement("div");
+    skeleton.className = "gt-skeleton-line";
+    for (let i = 0; i < 5; i++) {
+      const bar = document.createElement("div");
+      bar.className = "gt-skeleton-bar";
+      skeleton.appendChild(bar);
+    }
+    return skeleton;
+  }
+
+  function initSkeletons() {
+    const skeletonActivity = $("skeleton-activity");
+    const skeletonHashtags = $("skeleton-hashtags");
+    const skeletonEngagement = $("skeleton-engagement");
+    const skeletonFollowers = $("skeleton-followers");
+
+    if (skeletonActivity && !skeletonActivity.firstChild) {
+      skeletonActivity.appendChild(buildSkeletonHeatmap());
+    }
+    if (skeletonHashtags && !skeletonHashtags.firstChild) {
+      skeletonHashtags.appendChild(buildSkeletonDonut());
+    }
+    if (skeletonEngagement && !skeletonEngagement.firstChild) {
+      skeletonEngagement.appendChild(buildSkeletonLine());
+    }
+    if (skeletonFollowers && !skeletonFollowers.firstChild) {
+      skeletonFollowers.appendChild(buildSkeletonLine());
+    }
+  }
+
+  function setupExportButtons() {
+    document.querySelectorAll(".gt-chart-export-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const chartId = btn.dataset.chart;
+        exportChart(chartId);
+      });
+    });
+  }
+
+  function setupTableToggles() {
+    document.querySelectorAll(".gt-chart-table-toggle").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const chartId = btn.dataset.chart;
+        const tableEl = $(`table-${chartId}`);
+        if (tableEl) {
+          tableEl.classList.toggle("gt-hidden");
+        }
+      });
+    });
+  }
+
+  function exportChart(chartId) {
+    const data = chartDataStore[chartId];
+    if (!data) {
+      alert("No data available for export");
+      return;
+    }
+    exportAsPNG(chartId);
+  }
+
+  async function exportAsPNG(chartId) {
+    try {
+      const container = $(
+        `chart-${
+          chartId === "activity"
+            ? "activity-heatmap"
+            : chartId === "hashtags"
+            ? "hashtag-donut"
+            : chartId === "engagement"
+            ? "engagement-line"
+            : "follower-growth"
+        }`
+      );
+
+      if (!container) {
+        alert("Chart container not found");
+        return;
+      }
+
+      // Load html2canvas dynamically if not already loaded
+      if (!window.html2canvas) {
+        const script = document.createElement("script");
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+        script.onload = () => {
+          captureChartAsPNG(container, chartId);
+        };
+        script.onerror = () => {
+          alert("Failed to load PNG export library");
+        };
+        document.head.appendChild(script);
+      } else {
+        captureChartAsPNG(container, chartId);
+      }
+    } catch (error) {
+      alert("Failed to export PNG: " + error.message);
+    }
+  }
+
+  async function captureChartAsPNG(container, chartId) {
+    try {
+      const canvas = await window.html2canvas(container, { backgroundColor: "#16181c" });
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/png");
+      link.download = `analytics-${chartId}-${new Date().toISOString().slice(0, 10)}.png`;
+      link.click();
+    } catch (error) {
+      alert("Failed to capture chart: " + error.message);
+    }
+  }
+
+  function renderDataTable(chartId, data) {
+    const tableEl = $(`table-${chartId}`);
+    if (!tableEl) return;
+
+    let html = "<table>";
+
+    if (chartId === "activity" && data.heatmapData) {
+      html += "<thead><tr><th>Date</th><th>Posts</th></tr></thead><tbody>";
+      data.heatmapData.forEach((entry) => {
+        html += `<tr><td>${entry.date}</td><td>${entry.count}</td></tr>`;
+      });
+    } else if (chartId === "engagement" && data.timelineData) {
+      html += "<thead><tr><th>Date</th><th>Likes</th><th>Replies</th><th>Reposts</th></tr></thead><tbody>";
+      data.timelineData.dates.forEach((date, idx) => {
+        html += `<tr><td>${date}</td><td>${data.timelineData.likes[idx]}</td><td>${data.timelineData.replies[idx]}</td><td>${data.timelineData.reposts[idx]}</td></tr>`;
+      });
+    } else if (chartId === "followers" && data.growthData) {
+      html += "<thead><tr><th>Week</th><th>Followers</th></tr></thead><tbody>";
+      data.growthData.dates.forEach((date, idx) => {
+        html += `<tr><td>${date}</td><td>${data.growthData.counts[idx]}</td></tr>`;
+      });
+    } else if (chartId === "hashtags" && data.hashtagData) {
+      html += "<thead><tr><th>Hashtag</th><th>Count</th><th>Percent</th></tr></thead><tbody>";
+      data.hashtagData.forEach((tag) => {
+        html += `<tr><td>#${tag.tag}</td><td>${tag.count}</td><td>${tag.percent}%</td></tr>`;
+      });
+    }
+
+    html += "</tbody></table>";
+    tableEl.innerHTML = html;
   }
 
   function getHeatmapLevel(count, maxCount) {
@@ -88,6 +286,11 @@ const gadTalkCharts = (function () {
     container.innerHTML = "";
     container.appendChild(grid);
     container.appendChild(legend);
+    hideSkeleton("activity");
+
+    // Store for export/table
+    chartDataStore.activity = { heatmapData: heatmap.data };
+    renderDataTable("activity", chartDataStore.activity);
   }
 
   function createSvgElement(tag) {
@@ -202,6 +405,30 @@ const gadTalkCharts = (function () {
     container.appendChild(legend);
   }
 
+  function renderLineChartWithData(container, chartId, labels, seriesList, options = {}) {
+    renderLineChart(container, labels, seriesList, options);
+    hideSkeleton(chartId);
+
+    // Store for export/table
+    const dates = labels || [];
+    if (chartId === "engagement") {
+      chartDataStore.engagement = {
+        timelineData: {
+          dates: dates,
+          likes: (seriesList[0] && seriesList[0].data) || [],
+          replies: (seriesList[1] && seriesList[1].data) || [],
+          reposts: (seriesList[2] && seriesList[2].data) || [],
+        },
+      };
+      renderDataTable("engagement", chartDataStore.engagement);
+    } else if (chartId === "followers") {
+      chartDataStore.followers = {
+        growthData: { dates: dates, counts: (seriesList[0] && seriesList[0].data) || [] },
+      };
+      renderDataTable("followers", chartDataStore.followers);
+    }
+  }
+
   function renderDonutChart(container, data) {
     if (!container) return;
     if (!data || !Array.isArray(data.hashtags) || data.hashtags.length === 0) {
@@ -266,6 +493,11 @@ const gadTalkCharts = (function () {
 
     container.innerHTML = "";
     container.appendChild(wrapper);
+    hideSkeleton("hashtags");
+
+    // Store for export/table
+    chartDataStore.hashtags = { hashtagData: data.hashtags };
+    renderDataTable("hashtags", chartDataStore.hashtags);
   }
 
   async function loadUserCharts(userId) {
@@ -278,10 +510,12 @@ const gadTalkCharts = (function () {
     const growthContainer = $("chart-follower-growth");
     const hashtagsContainer = $("chart-hashtag-donut");
 
-    setLoading(heatmapContainer, "Loading heatmap...");
-    setLoading(engagementContainer, "Loading engagement...");
-    setLoading(growthContainer, "Loading growth...");
-    setLoading(hashtagsContainer, "Loading hashtags...");
+    // Initialize skeletons first
+    initSkeletons();
+    showSkeleton("activity");
+    showSkeleton("engagement");
+    showSkeleton("followers");
+    showSkeleton("hashtags");
 
     try {
       const [heatmapRes, timelineRes, growthRes, hashtagsRes] = await Promise.all([
@@ -294,8 +528,9 @@ const gadTalkCharts = (function () {
       renderHeatmap(heatmapContainer, heatmapRes.heatmap);
 
       if (timelineRes && timelineRes.timeline) {
-        renderLineChart(
+        renderLineChartWithData(
           engagementContainer,
+          "engagement",
           timelineRes.timeline.labels,
           [
             { label: "Likes", data: timelineRes.timeline.series.likes, color: "#f91880" },
@@ -306,17 +541,20 @@ const gadTalkCharts = (function () {
         );
       } else {
         setEmpty(engagementContainer, "No engagement yet");
+        hideSkeleton("engagement");
       }
 
       if (growthRes && growthRes.growth) {
-        renderLineChart(
+        renderLineChartWithData(
           growthContainer,
+          "followers",
           growthRes.growth.labels,
           [{ label: "Followers", data: growthRes.growth.counts, color: "#1d9bf0" }],
           { height: 200 }
         );
       } else {
         setEmpty(growthContainer, "No follower data yet");
+        hideSkeleton("followers");
       }
 
       renderDonutChart(hashtagsContainer, hashtagsRes.hashtags);
@@ -377,6 +615,10 @@ const gadTalkCharts = (function () {
       setEmpty(engagementContainer, "Failed to load engagement");
       setEmpty(growthContainer, "Failed to load growth");
       setEmpty(hashtagsContainer, "Failed to load hashtags");
+      hideSkeleton("activity");
+      hideSkeleton("engagement");
+      hideSkeleton("followers");
+      hideSkeleton("hashtags");
     }
   }
 

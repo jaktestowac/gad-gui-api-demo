@@ -170,38 +170,71 @@
 
                 <div class="gt-charts-grid">
                     <div class="gt-chart-card" data-testid="chart-activity" aria-describedby="chart-activity-desc">
-                        <div class="gt-chart-header">
-                            <h3>Activity Heatmap</h3>
-                            <span class="gt-text-secondary gt-text-sm">Posts per day</span>
+                        <div class="gt-chart-header gt-flex gt-justify-between gt-items-center">
+                            <div>
+                                <h3>Activity Heatmap</h3>
+                                <span class="gt-text-secondary gt-text-sm">Posts per day</span>
+                            </div>
+                            <div class="gt-chart-actions">
+                                <button class="gt-icon-btn gt-chart-export-btn" data-chart="activity" title="Export data"><i class="fa-solid fa-download"></i></button>
+                                <button class="gt-icon-btn gt-chart-table-toggle" data-chart="activity" title="Toggle data table"><i class="fa-solid fa-table"></i></button>
+                            </div>
                         </div>
-                        <div class="gt-chart-body" id="chart-activity-heatmap"></div>
+                        <div class="gt-chart-body gt-chart-body-responsive" id="chart-activity-heatmap"></div>
+                        <div class="gt-chart-skeleton gt-skeleton-heatmap gt-hidden" id="skeleton-activity"></div>
                         <div id="chart-activity-desc" class="gt-chart-footer gt-text-secondary gt-text-sm">Shows days with highest posting activity.</div>
+                        <div class="gt-chart-table gt-hidden" id="table-activity"></div>
                     </div>
 
                     <div class="gt-chart-card" data-testid="chart-hashtags" aria-describedby="chart-hashtags-desc">
-                        <div class="gt-chart-header">
-                            <h3>Top Hashtags</h3>
-                            <span class="gt-text-secondary gt-text-sm">Most-used tags</span>
+                        <div class="gt-chart-header gt-flex gt-justify-between gt-items-center">
+                            <div>
+                                <h3>Top Hashtags</h3>
+                                <span class="gt-text-secondary gt-text-sm">Most-used tags</span>
+                            </div>
+                            <div class="gt-chart-actions">
+                                <button class="gt-icon-btn gt-chart-export-btn" data-chart="hashtags" title="Export data"><i class="fa-solid fa-download"></i></button>
+                                <button class="gt-icon-btn gt-chart-table-toggle" data-chart="hashtags" title="Toggle data table"><i class="fa-solid fa-table"></i></button>
+                            </div>
                         </div>
-                        <div class="gt-chart-body" id="chart-hashtag-donut"></div>
+                        <div class="gt-chart-body gt-chart-body-responsive" id="chart-hashtag-donut"></div>
+                        <div class="gt-chart-skeleton gt-skeleton-donut gt-hidden" id="skeleton-hashtags"></div>
                         <div id="chart-hashtags-desc" class="gt-chart-footer gt-text-secondary gt-text-sm">Share of tag usage in selected range.</div>
+                        <div class="gt-chart-table gt-hidden" id="table-hashtags"></div>
                     </div>
+
                     <div class="gt-chart-card gt-chart-card--wide" data-testid="chart-engagement">
-                        <div class="gt-chart-header">
-                            <h3>Engagement Timeline</h3>
-                            <span class="gt-text-secondary gt-text-sm">Likes, replies, reposts</span>
+                        <div class="gt-chart-header gt-flex gt-justify-between gt-items-center">
+                            <div>
+                                <h3>Engagement Timeline</h3>
+                                <span class="gt-text-secondary gt-text-sm">Likes, replies, reposts</span>
+                            </div>
+                            <div class="gt-chart-actions">
+                                <button class="gt-icon-btn gt-chart-export-btn" data-chart="engagement" title="Export data"><i class="fa-solid fa-download"></i></button>
+                                <button class="gt-icon-btn gt-chart-table-toggle" data-chart="engagement" title="Toggle data table"><i class="fa-solid fa-table"></i></button>
+                            </div>
                         </div>
-                        <div class="gt-chart-body" id="chart-engagement-line"></div>
+                        <div class="gt-chart-body gt-chart-body-responsive" id="chart-engagement-line"></div>
+                        <div class="gt-chart-skeleton gt-skeleton-line gt-hidden" id="skeleton-engagement"></div>
                         <div id="chart-engagement-desc" class="gt-chart-footer gt-text-secondary gt-text-sm">Trends of engagement over time.</div>
+                        <div class="gt-chart-table gt-hidden" id="table-engagement"></div>
                     </div>
 
                     <div class="gt-chart-card gt-chart-card--wide" data-testid="chart-followers">
-                        <div class="gt-chart-header">
-                            <h3>Follower Growth</h3>
-                            <span class="gt-text-secondary gt-text-sm">Weekly progression</span>
+                        <div class="gt-chart-header gt-flex gt-justify-between gt-items-center">
+                            <div>
+                                <h3>Follower Growth</h3>
+                                <span class="gt-text-secondary gt-text-sm">Weekly progression</span>
+                            </div>
+                            <div class="gt-chart-actions">
+                                <button class="gt-icon-btn gt-chart-export-btn" data-chart="followers" title="Export data"><i class="fa-solid fa-download"></i></button>
+                                <button class="gt-icon-btn gt-chart-table-toggle" data-chart="followers" title="Toggle data table"><i class="fa-solid fa-table"></i></button>
+                            </div>
                         </div>
-                        <div class="gt-chart-body" id="chart-follower-growth"></div>
+                        <div class="gt-chart-body gt-chart-body-responsive" id="chart-follower-growth"></div>
+                        <div class="gt-chart-skeleton gt-skeleton-line gt-hidden" id="skeleton-followers"></div>
                         <div id="chart-followers-desc" class="gt-chart-footer gt-text-secondary gt-text-sm">Net followers gained or lost per week.</div>
+                        <div class="gt-chart-table gt-hidden" id="table-followers"></div>
                     </div>
 
                 </div>
@@ -385,6 +418,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="/gad-talk/js/api.js"></script>
     <script src="/gad-talk/js/ui.js"></script>
     <script src="/gad-talk/js/auth.js"></script>
