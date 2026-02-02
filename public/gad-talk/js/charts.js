@@ -15,6 +15,7 @@ const gadTalkCharts = (function () {
   function init() {
     const rangeSelect = $("analytics-range");
     const rangeLabel = $("analytics-range-label");
+    const refreshBtn = $("analytics-refresh");
     if (rangeSelect) {
       currentRangeDays = parseInt(rangeSelect.value, 10) || currentRangeDays;
       if (rangeLabel) rangeLabel.textContent = currentRangeDays;
@@ -24,6 +25,11 @@ const gadTalkCharts = (function () {
         if (currentUserId) {
           loadUserCharts(currentUserId);
         }
+      });
+    }
+    if (refreshBtn) {
+      refreshBtn.addEventListener("click", () => {
+        if (currentUserId) loadUserCharts(currentUserId);
       });
     }
   }
@@ -314,6 +320,58 @@ const gadTalkCharts = (function () {
       }
 
       renderDonutChart(hashtagsContainer, hashtagsRes.hashtags);
+
+      // Compute and populate summary metrics
+      try {
+        const totalPostsEl = $("analytics-total-posts");
+        const avgEngEl = $("analytics-avg-engagement");
+        const peakDayEl = $("analytics-peak-day");
+        const topHashtagEl = $("analytics-top-hashtag");
+        const emptyEl = $("analytics-empty");
+        const chartsGrid = chartsRoot.querySelector(".gt-charts-grid");
+        const summary = chartsRoot.querySelector(".gt-analytics-summary");
+
+        const heatData =
+          heatmapRes && heatmapRes.heatmap && Array.isArray(heatmapRes.heatmap.data) ? heatmapRes.heatmap.data : [];
+        const totalPosts = heatData.reduce((s, e) => s + (e.count || 0), 0);
+
+        let totalEngagement = 0;
+        if (timelineRes && timelineRes.timeline && timelineRes.timeline.series) {
+          const series = timelineRes.timeline.series;
+          const likes = Array.isArray(series.likes) ? series.likes.reduce((s, v) => s + (v || 0), 0) : 0;
+          const replies = Array.isArray(series.replies) ? series.replies.reduce((s, v) => s + (v || 0), 0) : 0;
+          const reposts = Array.isArray(series.reposts) ? series.reposts.reduce((s, v) => s + (v || 0), 0) : 0;
+          totalEngagement = likes + replies + reposts;
+        }
+        const avgEngagement = totalPosts > 0 ? Math.round(totalEngagement / totalPosts) : 0;
+
+        const peakEntry = heatData.reduce((best, e) => (e.count > (best.count || 0) ? e : best), {});
+        const peakDayText =
+          peakEntry && peakEntry.date ? `${new Date(peakEntry.date).toLocaleDateString()} (${peakEntry.count})` : "—";
+        const topHashtag =
+          hashtagsRes && Array.isArray(hashtagsRes.hashtags) && hashtagsRes.hashtags.length
+            ? `#${hashtagsRes.hashtags[0].tag} (${hashtagsRes.hashtags[0].count})`
+            : "—";
+
+        if (totalPostsEl) totalPostsEl.textContent = totalPosts || "0";
+        if (avgEngEl) avgEngEl.textContent = totalPosts > 0 ? `${avgEngagement}` : "—";
+        if (peakDayEl) peakDayEl.textContent = totalPosts > 0 ? peakDayText : "—";
+        if (topHashtagEl) topHashtagEl.textContent = topHashtag;
+
+        // Show/hide empty state depending on whether we have posts
+        if (totalPosts === 0) {
+          if (emptyEl) emptyEl.classList.remove("gt-hidden");
+          if (chartsGrid) chartsGrid.classList.add("gt-hidden");
+          if (summary) summary.classList.add("gt-hidden");
+        } else {
+          if (emptyEl) emptyEl.classList.add("gt-hidden");
+          if (chartsGrid) chartsGrid.classList.remove("gt-hidden");
+          if (summary) summary.classList.remove("gt-hidden");
+        }
+      } catch (e) {
+        // ignore metric population errors
+        // leave charts rendered
+      }
     } catch (error) {
       setEmpty(heatmapContainer, "Failed to load heatmap");
       setEmpty(engagementContainer, "Failed to load engagement");
