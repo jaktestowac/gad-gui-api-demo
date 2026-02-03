@@ -13,6 +13,9 @@ const gadTalkNetworkGraph = (function () {
   let isDragging = false;
   let dragStart = { x: 0, y: 0 };
   let showLabels = true;
+  let hoveredNode = null;
+  let selectedNode = null;
+  let tooltip = null;
 
   const nodeRadius = 25;
   const centralNodeRadius = 35;
@@ -20,6 +23,8 @@ const gadTalkNetworkGraph = (function () {
     central: "#4a90e2",
     following: "#7ed321",
     followers: "#f5a623",
+    hover: "#ffffff",
+    selected: "#ff6b6b",
   };
 
   /**
@@ -66,6 +71,14 @@ const gadTalkNetworkGraph = (function () {
     canvas.addEventListener("touchstart", onTouchStart);
     canvas.addEventListener("touchmove", onTouchMove);
     canvas.addEventListener("touchend", onTouchEnd);
+    canvas.addEventListener("dblclick", onDoubleClick);
+    canvas.addEventListener("contextmenu", onContextMenu);
+
+    // Create tooltip element
+    createTooltip();
+
+    // Keyboard navigation
+    document.addEventListener("keydown", onKeyDown);
 
     // Setup modal close handlers
     const modal = document.getElementById("network-user-details-modal");
@@ -109,19 +122,19 @@ const gadTalkNetworkGraph = (function () {
       networkData = {
         central: {
           id: userId,
-          name: displayName,
+          name: displayName || "Unknown",
           type: "central",
         },
         following: following.slice(0, 15).map((user) => ({
           ...user,
           id: user.id || user.userId,
-          name: user.displayName || user.username || user.name,
+          name: user.user.username ? `@${user.user.username}` : user.user.displayName || user.name || "Unknown",
           type: "following",
         })),
         followers: followers.slice(0, 15).map((user) => ({
           ...user,
           id: user.id || user.userId,
-          name: user.displayName || user.username || user.name,
+          name: user.user.username ? `@${user.user.username}` : user.user.displayName || user.name || "Unknown",
           type: "follower",
         })),
       };
@@ -333,10 +346,25 @@ const gadTalkNetworkGraph = (function () {
    * Draw a single node
    */
   function drawNode(node, radius, color) {
+    let finalColor = color;
+    let finalRadius = radius;
+
+    // Highlight hovered node
+    if (hoveredNode && hoveredNode.id === node.id) {
+      finalColor = colors.hover;
+      finalRadius = radius + 3;
+    }
+
+    // Highlight selected node
+    if (selectedNode && selectedNode.id === node.id) {
+      finalColor = colors.selected;
+      finalRadius = radius + 5;
+    }
+
     // Draw circle
-    ctx.fillStyle = color;
+    ctx.fillStyle = finalColor;
     ctx.beginPath();
-    ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
+    ctx.arc(node.x, node.y, finalRadius, 0, Math.PI * 2);
     ctx.fill();
 
     // Draw border
@@ -344,8 +372,17 @@ const gadTalkNetworkGraph = (function () {
     ctx.lineWidth = 2;
     ctx.stroke();
 
+    // Draw selection ring for selected node
+    if (selectedNode && selectedNode.id === node.id) {
+      ctx.strokeStyle = colors.selected;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, finalRadius + 2, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
     // Draw label if enabled
-    if (showLabels && node.name) {
+    if (showLabels && node.name && typeof node.name === "string") {
       ctx.fillStyle = "#fff"; // light text for dark background
       ctx.strokeStyle = "rgba(0,0,0,0.6)"; // subtle outline for readability
       ctx.lineWidth = 3;
@@ -389,11 +426,309 @@ const gadTalkNetworkGraph = (function () {
       panX = (e.clientX - rect.left) * scaleX - dragStart.x;
       panY = (e.clientY - rect.top) * scaleY - dragStart.y;
       draw();
+    } else {
+      // Handle hover
+      updateHover(e);
     }
   }
 
   function onMouseUp() {
     isDragging = false;
+  }
+
+  /**
+   * Handle mouse hover for tooltips and highlighting
+   */
+  function updateHover(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const canvasX = (e.clientX - rect.left) * scaleX;
+    const canvasY = (e.clientY - rect.top) * scaleY;
+
+    const w = canvas.width;
+    const h = canvas.height;
+    const x = (canvasX - w / 2 - panX * scaleX) / zoomLevel + w / 2;
+    const y = (canvasY - h / 2 - panY * scaleY) / zoomLevel + h / 2;
+
+    const hitNode = getNodeAtPosition(x, y);
+
+    if (hitNode !== hoveredNode) {
+      hoveredNode = hitNode;
+      draw();
+
+      if (hitNode) {
+        showTooltip(hitNode, e.clientX, e.clientY);
+      } else {
+        hideTooltip();
+      }
+    }
+  }
+
+  /**
+   * Handle double-click to center on node
+   */
+  function onDoubleClick(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const canvasX = (e.clientX - rect.left) * scaleX;
+    const canvasY = (e.clientY - rect.top) * scaleY;
+
+    const w = canvas.width;
+    const h = canvas.height;
+    const x = (canvasX - w / 2 - panX * scaleX) / zoomLevel + w / 2;
+    const y = (canvasY - h / 2 - panY * scaleY) / zoomLevel + h / 2;
+
+    const hitNode = getNodeAtPosition(x, y);
+    if (hitNode) {
+      centerOnNode(hitNode);
+    }
+  }
+
+  /**
+   * Handle right-click context menu
+   */
+  function onContextMenu(e) {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const canvasX = (e.clientX - rect.left) * scaleX;
+    const canvasY = (e.clientY - rect.top) * scaleY;
+
+    const w = canvas.width;
+    const h = canvas.height;
+    const x = (canvasX - w / 2 - panX * scaleX) / zoomLevel + w / 2;
+    const y = (canvasY - h / 2 - panY * scaleY) / zoomLevel + h / 2;
+
+    const hitNode = getNodeAtPosition(x, y);
+    if (hitNode) {
+      selectedNode = hitNode;
+      draw();
+      showContextMenu(hitNode, e.clientX, e.clientY);
+    }
+  }
+
+  /**
+   * Create tooltip element
+   */
+  function createTooltip() {
+    tooltip = document.createElement("div");
+    tooltip.className = "gt-network-tooltip";
+    tooltip.style.cssText = `
+      position: absolute;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      pointer-events: none;
+      z-index: 1000;
+      display: none;
+      max-width: 200px;
+      word-wrap: break-word;
+    `;
+    document.body.appendChild(tooltip);
+  }
+
+  /**
+   * Show tooltip for a node
+   */
+  function showTooltip(node, x, y) {
+    if (!tooltip) return;
+
+    tooltip.innerHTML = `
+      <div style="font-weight: bold;">${node.name || "Unknown"}</div>
+      <div style="font-size: 11px; opacity: 0.8;">${
+        node.type === "central" ? "Current User" : node.type === "following" ? "Following" : "Follower"
+      }</div>
+    `;
+
+    tooltip.style.left = x + 10 + "px";
+    tooltip.style.top = y - 10 + "px";
+    tooltip.style.display = "block";
+  }
+
+  /**
+   * Hide tooltip
+   */
+  function hideTooltip() {
+    if (tooltip) {
+      tooltip.style.display = "none";
+    }
+  }
+
+  /**
+   * Center view on a specific node
+   */
+  function centerOnNode(node) {
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+
+    panX = centerX - node.x;
+    panY = centerY - node.y;
+    zoomLevel = 1.5; // Slight zoom for better focus
+
+    draw();
+  }
+
+  /**
+   * Show context menu for a node
+   */
+  function showContextMenu(node, x, y) {
+    // Create context menu
+    const menu = document.createElement("div");
+    menu.className = "gt-network-context-menu";
+    menu.style.cssText = `
+      position: absolute;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      z-index: 1001;
+      min-width: 120px;
+    `;
+
+    const profileUrl = node.username
+      ? `/gad-talk/@${encodeURIComponent(node.username)}`
+      : node.type === "central"
+      ? "/gad-talk/profile"
+      : "#";
+    const viewProfileItem =
+      node.type === "central"
+        ? ""
+        : `<div class="menu-item" style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #eee;" onclick="window.open('${profileUrl}', '_blank')">View Profile</div>`;
+
+    menu.innerHTML = `
+      ${viewProfileItem}
+      <div class="menu-item" style="padding: 8px 12px; cursor: pointer;" onclick="this.parentElement.remove()">Close</div>
+    `;
+
+    menu.style.left = x + "px";
+    menu.style.top = y + "px";
+    document.body.appendChild(menu);
+
+    // Remove menu when clicking elsewhere
+    const removeMenu = (e) => {
+      if (!menu.contains(e.target)) {
+        menu.remove();
+        document.removeEventListener("click", removeMenu);
+      }
+    };
+    setTimeout(() => document.addEventListener("click", removeMenu), 10);
+  }
+
+  /**
+   * Handle keyboard navigation
+   */
+  function onKeyDown(e) {
+    // Only handle keyboard when canvas is focused or visible
+    if (!canvas || canvas.parentElement.classList.contains("gt-hidden")) return;
+
+    switch (e.key) {
+      case "Escape":
+        selectedNode = null;
+        hoveredNode = null;
+        hideTooltip();
+        draw();
+        break;
+      case "Enter":
+      case " ":
+        if (selectedNode) {
+          e.preventDefault();
+          showUserDetails(selectedNode);
+        }
+        break;
+      case "ArrowUp":
+      case "ArrowDown":
+      case "ArrowLeft":
+      case "ArrowRight":
+        e.preventDefault();
+        navigateNodes(e.key);
+        break;
+      case "+":
+      case "=":
+        e.preventDefault();
+        zoomIn();
+        break;
+      case "-":
+      case "_":
+        e.preventDefault();
+        zoomOut();
+        break;
+      case "0":
+        e.preventDefault();
+        resetView();
+        break;
+    }
+  }
+
+  /**
+   * Navigate between nodes with arrow keys
+   */
+  function navigateNodes(direction) {
+    if (!networkData) return;
+
+    const allNodes = [networkData.central, ...networkData.followers, ...networkData.following];
+    if (allNodes.length === 0) return;
+
+    let currentIndex = -1;
+    if (selectedNode) {
+      currentIndex = allNodes.findIndex((node) => node.id === selectedNode.id);
+    }
+
+    let nextIndex;
+    switch (direction) {
+      case "ArrowRight": {
+        nextIndex = currentIndex + 1;
+        if (nextIndex >= allNodes.length) nextIndex = 0;
+        break;
+      }
+      case "ArrowLeft": {
+        nextIndex = currentIndex - 1;
+        if (nextIndex < 0) nextIndex = allNodes.length - 1;
+        break;
+      }
+      case "ArrowUp":
+      case "ArrowDown": {
+        // For up/down, try to find nodes in similar horizontal position
+        const currentX = selectedNode ? selectedNode.x : canvas.width / 2;
+        let minDistance = Infinity;
+
+        allNodes.forEach((node, index) => {
+          if (selectedNode && node.id === selectedNode.id) return;
+
+          const distance = Math.abs(node.x - currentX);
+          if (distance < minDistance) {
+            minDistance = distance;
+            nextIndex = index;
+          }
+        });
+        break;
+      }
+    }
+
+    if (nextIndex !== undefined && allNodes[nextIndex]) {
+      selectedNode = allNodes[nextIndex];
+      centerOnNode(selectedNode);
+    }
+  }
+
+  /**
+   * Zoom in
+   */
+  function zoomIn() {
+    zoomLevel = Math.min(3, zoomLevel + 0.2);
+    draw();
+  }
+
+  /**
+   * Zoom out
+   */
+  function zoomOut() {
+    zoomLevel = Math.max(0.5, zoomLevel - 0.2);
+    draw();
   }
 
   /**
@@ -446,20 +781,38 @@ const gadTalkNetworkGraph = (function () {
 
     // Check central node
     const centralNode = networkData.central;
-    if (distanceBetween(x, y, centralNode.x, centralNode.y) <= centralNodeRadius + 6) {
+    const centralRadius =
+      selectedNode && selectedNode.id === centralNode.id
+        ? centralNodeRadius + 5
+        : hoveredNode && hoveredNode.id === centralNode.id
+        ? centralNodeRadius + 3
+        : centralNodeRadius;
+    if (distanceBetween(x, y, centralNode.x, centralNode.y) <= centralRadius + 6) {
       return centralNode;
     }
 
     // Check followers
     for (const follower of networkData.followers) {
-      if (distanceBetween(x, y, follower.x, follower.y) <= nodeRadius + 4) {
+      const followerRadius =
+        selectedNode && selectedNode.id === follower.id
+          ? nodeRadius + 5
+          : hoveredNode && hoveredNode.id === follower.id
+          ? nodeRadius + 3
+          : nodeRadius;
+      if (distanceBetween(x, y, follower.x, follower.y) <= followerRadius + 4) {
         return follower;
       }
     }
 
     // Check following
     for (const follow of networkData.following) {
-      if (distanceBetween(x, y, follow.x, follow.y) <= nodeRadius + 4) {
+      const followRadius =
+        selectedNode && selectedNode.id === follow.id
+          ? nodeRadius + 5
+          : hoveredNode && hoveredNode.id === follow.id
+          ? nodeRadius + 3
+          : nodeRadius;
+      if (distanceBetween(x, y, follow.x, follow.y) <= followRadius + 4) {
         return follow;
       }
     }

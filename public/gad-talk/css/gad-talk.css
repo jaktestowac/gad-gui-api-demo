@@ -4712,6 +4712,82 @@ body.gt-modal-open {
   border-radius: 50%;
 }
 
+/* Network Graph Interactive Elements */
+.gt-network-tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  pointer-events: none;
+  z-index: 1000;
+  display: none;
+  max-width: 200px;
+  word-wrap: break-word;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gt-network-context-menu {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1001;
+  min-width: 140px;
+  overflow: hidden;
+}
+
+.gt-network-context-menu .menu-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s ease;
+  font-size: 13px;
+}
+
+.gt-network-context-menu .menu-item:last-child {
+  border-bottom: none;
+}
+
+.gt-network-context-menu .menu-item:hover {
+  background-color: #f8f9fa;
+}
+
+/* Enhanced canvas interaction feedback */
+.gt-network-canvas-container {
+  position: relative;
+  cursor: grab;
+}
+
+.gt-network-canvas-container:active {
+  cursor: grabbing;
+}
+
+.gt-network-canvas-container canvas {
+  transition: none; /* Disable transitions for smooth panning */
+}
+
+/* Keyboard navigation hint */
+.gt-network-keyboard-hint {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  display: none;
+  z-index: 100;
+}
+
+.gt-network-canvas-container:focus .gt-network-keyboard-hint {
+  display: block;
+}
+
 .gt-mb-lg {
   margin-bottom: var(--gt-spacing-lg);
 }

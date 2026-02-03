@@ -142,7 +142,10 @@
                     </label>
                 </div>
                 <div class="gt-network-canvas-container">
-                    <canvas id="network-graph-canvas"></canvas>
+                    <canvas id="network-graph-canvas" tabindex="0" aria-label="Interactive network graph of followers and following relationships"></canvas>
+                    <div class="gt-network-keyboard-hint">
+                        Use arrow keys to navigate • Enter to view profile • +/- to zoom • 0 to reset • Esc to deselect
+                    </div>
                     <div class="gt-network-loading gt-hidden" id="network-loading">
                         <div class="gt-spinner"></div>
                         <p>Loading network data...</p>
