@@ -124,8 +124,49 @@
                 <button class="gt-tab gt-tab-active" data-tab="gads" data-testid="tab-gads">Gads</button>
                 <button class="gt-tab" data-tab="replies" data-testid="tab-replies">Replies</button>
                 <button class="gt-tab" data-tab="likes" data-testid="tab-likes">Likes</button>
+                <button class="gt-tab" data-tab="network" data-testid="tab-network">Network</button>
                 <button class="gt-tab" data-tab="analytics" data-testid="tab-analytics">Analytics</button>
             </div>
+
+            <!-- Network graph visualization -->
+            <section class="gt-network-section gt-hidden" id="profile-network" aria-labelledby="network-heading">
+                <div class="gt-network-header">
+                    <h2 class="gt-card-title" id="network-heading">Network Graph</h2>
+                    <p class="gt-text-secondary gt-text-sm">Visualization of followers and following relationships</p>
+                </div>
+                <div class="gt-network-controls gt-mb-lg">
+                    <button class="gt-btn gt-btn-secondary gt-btn-sm" id="network-reset-zoom" title="Reset zoom">Reset View</button>
+                    <label class="gt-checkbox-label">
+                        <input type="checkbox" id="network-show-labels" checked />
+                        <span>Show labels</span>
+                    </label>
+                </div>
+                <div class="gt-network-canvas-container">
+                    <canvas id="network-graph-canvas"></canvas>
+                    <div class="gt-network-loading gt-hidden" id="network-loading">
+                        <div class="gt-spinner"></div>
+                        <p>Loading network data...</p>
+                    </div>
+                    <div class="gt-network-empty gt-hidden" id="network-empty">
+                        <p class="gt-text-lg">No network data</p>
+                        <p class="gt-text-secondary">This user has no followers or following yet.</p>
+                    </div>
+                </div>
+                <div class="gt-network-legend gt-text-sm gt-text-secondary">
+                    <div class="gt-legend-item">
+                        <span class="gt-legend-color" style="background: #4a90e2;"></span>
+                        <span>Current User</span>
+                    </div>
+                    <div class="gt-legend-item">
+                        <span class="gt-legend-color" style="background: #7ed321;"></span>
+                        <span>Following</span>
+                    </div>
+                    <div class="gt-legend-item">
+                        <span class="gt-legend-color" style="background: #f5a623;"></span>
+                        <span>Followers</span>
+                    </div>
+                </div>
+            </section>
 
             <!-- Analytics charts (tab content) -->
             <section class="gt-analytics-section gt-hidden" id="profile-charts" aria-labelledby="analytics-heading">
@@ -417,6 +458,44 @@
         </div>
     </div>
 
+    <!-- Network User Details Modal -->
+    <div class="gt-modal gt-hidden" id="network-user-details-modal">
+        <div class="gt-modal-overlay" data-close-modal></div>
+        <div class="gt-modal-content gt-card gt-modal-md">
+            <div class="gt-modal-header">
+                <button type="button" class="gt-icon-btn gt-modal-close" data-close-modal><i class="fa-solid fa-xmark"></i></button>
+                <h2>User Details</h2>
+            </div>
+            <div class="gt-network-user-details">
+                <div class="gt-user-details-avatar">
+                    <div id="network-user-avatar" class="gt-avatar gt-avatar-lg"></div>
+                </div>
+                <div class="gt-user-details-info">
+                    <h3 id="network-user-display-name" class="gt-user-display-name"></h3>
+                    <p id="network-user-username" class="gt-user-username gt-text-secondary"></p>
+                    <p id="network-user-bio" class="gt-user-bio gt-text-secondary gt-mt-md"></p>
+                </div>
+                <div class="gt-user-details-stats gt-mt-lg">
+                    <div class="gt-stat-item">
+                        <span class="gt-stat-count" id="network-user-gads">0</span>
+                        <span class="gt-stat-label">Gads</span>
+                    </div>
+                    <div class="gt-stat-item">
+                        <span class="gt-stat-count" id="network-user-followers">0</span>
+                        <span class="gt-stat-label">Followers</span>
+                    </div>
+                    <div class="gt-stat-item">
+                        <span class="gt-stat-count" id="network-user-following">0</span>
+                        <span class="gt-stat-label">Following</span>
+                    </div>
+                </div>
+                <div class="gt-user-details-actions gt-mt-lg">
+                    <a href="#" id="network-user-profile-link" class="gt-btn gt-btn-primary gt-btn-block">View Profile</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="/gad-talk/js/api.js"></script>
@@ -427,6 +506,7 @@
     <script src="/gad-talk/js/footer.js"></script>
     <script src="/gad-talk/js/nav.js"></script>
     <script src="/gad-talk/js/charts.js"></script>
+    <script src="/gad-talk/js/network-graph.js"></script>
     <script src="/gad-talk/js/profile.js"></script>
 </body>
 

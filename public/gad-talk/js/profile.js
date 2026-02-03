@@ -661,16 +661,29 @@ const gadTalkProfile = (function () {
     }
 
     const chartsSection = document.getElementById("profile-charts");
+    const networkSection = document.getElementById("profile-network");
     const profileFeed = document.getElementById("profile-feed");
 
     if (currentTab === "analytics") {
       if (profileFeed) profileFeed.classList.add("gt-hidden");
+      if (networkSection) networkSection.classList.add("gt-hidden");
       if (chartsSection) chartsSection.classList.remove("gt-hidden");
       await loadProfileCharts();
       return;
     }
 
+    if (currentTab === "network") {
+      if (profileFeed) profileFeed.classList.add("gt-hidden");
+      if (chartsSection) chartsSection.classList.add("gt-hidden");
+      if (networkSection) networkSection.classList.remove("gt-hidden");
+      if (window.gadTalkNetworkGraph) {
+        window.gadTalkNetworkGraph.loadNetworkData(profileUser.id, profileUser.displayName || profileUser.username);
+      }
+      return;
+    }
+
     if (chartsSection) chartsSection.classList.add("gt-hidden");
+    if (networkSection) networkSection.classList.add("gt-hidden");
     if (profileFeed) profileFeed.classList.remove("gt-hidden");
 
     currentPage = 1;

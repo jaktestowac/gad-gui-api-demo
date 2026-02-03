@@ -1964,6 +1964,83 @@ a:hover {
   margin-bottom: var(--gt-spacing-lg);
 }
 
+/* ==================== NETWORK USER DETAILS MODAL ==================== */
+
+.gt-network-user-details {
+  padding: var(--gt-spacing-lg);
+  text-align: center;
+}
+
+.gt-user-details-avatar {
+  margin-bottom: var(--gt-spacing-lg);
+}
+
+.gt-user-details-info {
+  margin-bottom: var(--gt-spacing-md);
+}
+
+.gt-user-display-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--gt-text-primary);
+  margin: 0 0 var(--gt-spacing-xs) 0;
+}
+
+.gt-user-username {
+  display: block;
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.gt-user-bio {
+  font-size: 0.875rem;
+  margin: var(--gt-spacing-md) 0 0 0;
+  line-height: 1.5;
+}
+
+.gt-user-details-stats {
+  display: flex;
+  justify-content: space-around;
+  padding: var(--gt-spacing-md);
+  border-top: 1px solid var(--gt-border);
+  border-bottom: 1px solid var(--gt-border);
+}
+
+.gt-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gt-stat-count {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--gt-primary);
+}
+
+.gt-stat-label {
+  font-size: 0.75rem;
+  color: var(--gt-text-secondary);
+  margin-top: var(--gt-spacing-xs);
+}
+
+.gt-user-details-actions {
+  display: flex;
+  gap: var(--gt-spacing-md);
+}
+
+.gt-mt-md {
+  margin-top: var(--gt-spacing-md);
+}
+
+.gt-mt-lg {
+  margin-top: var(--gt-spacing-lg);
+}
+
+.gt-modal-md {
+  max-width: 400px;
+}
+
 .gt-p-sm {
   padding: var(--gt-spacing-sm);
 }
@@ -4541,4 +4618,100 @@ body.gt-modal-open {
 .gt-who-modal-error .gt-icon {
   font-size: 2rem;
   margin-bottom: var(--gt-spacing-sm);
+}
+/* ==================== NETWORK GRAPH VISUALIZATION ==================== */
+
+.gt-network-section {
+  padding: var(--gt-spacing-lg);
+  border-top: 1px solid var(--gt-border);
+}
+
+.gt-network-header {
+  margin-bottom: var(--gt-spacing-lg);
+}
+
+.gt-network-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-spacing-md);
+  margin-bottom: var(--gt-spacing-lg);
+  flex-wrap: wrap;
+}
+
+.gt-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-spacing-xs);
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: var(--gt-text-secondary);
+}
+
+.gt-checkbox-label input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.gt-network-canvas-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: var(--gt-spacing-lg);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-md);
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--gt-bg-secondary) 0%, var(--gt-bg-tertiary) 100%);
+}
+
+#network-graph-canvas {
+  display: block;
+  width: 100%;
+  height: 360px;
+  cursor: grab;
+  background-color: var(--gt-bg-secondary);
+}
+
+#network-graph-canvas:active {
+  cursor: grabbing;
+}
+
+.gt-network-loading,
+.gt-network-empty {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gt-spacing-md);
+}
+
+.gt-network-loading p,
+.gt-network-empty p {
+  margin: 0;
+}
+
+.gt-network-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gt-spacing-lg);
+  padding: var(--gt-spacing-md);
+  border-top: 1px solid var(--gt-border);
+}
+
+.gt-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-spacing-sm);
+}
+
+.gt-legend-color {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.gt-mb-lg {
+  margin-bottom: var(--gt-spacing-lg);
 }
