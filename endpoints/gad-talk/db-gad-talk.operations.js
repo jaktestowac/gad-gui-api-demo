@@ -883,7 +883,7 @@ async function resetGadTalkDatabaseWithDemoData() {
 
 /**
  * Restore GadTalk database from a specific dataset (admin function)
- * @param {string} datasetKey - Dataset key: default|init|demo
+ * @param {string} datasetKey - Dataset key: default|init|demo|demo-v2|empty
  * @returns {Promise<Object>} Result object
  */
 async function restoreGadTalkDatabaseFromDataset(datasetKey = "default") {
@@ -902,6 +902,16 @@ async function restoreGadTalkDatabaseFromDataset(datasetKey = "default") {
     } else if (normalized === "demo") {
       seedSource = "demo";
       seedData = readGadTalkDemoDb();
+    } else if (normalized === "demo-v2" || normalized === "demov2" || normalized === "v2") {
+      seedSource = "demo-v2";
+      const v2Path = require.resolve("./gad-talk-demo-data-v2.js");
+      delete require.cache[v2Path];
+      seedData = require("./gad-talk-demo-data-v2.js");
+    } else if (normalized === "empty" || normalized === "demo-empty" || normalized === "empty-demo") {
+      seedSource = "empty";
+      const emptyPath = require.resolve("./gad-talk-demo-data-empty.js");
+      delete require.cache[emptyPath];
+      seedData = require("./gad-talk-demo-data-empty.js");
     } else {
       throw new Error(`Unknown dataset: ${datasetKey}`);
     }

@@ -102,6 +102,8 @@
   const actions = {
     "gad-restore-default": { method: "POST", url: "/api/gad-talk/admin/restore-db", body: { dataset: "default" } },
     "gad-restore-demo": { method: "POST", url: "/api/gad-talk/admin/restore-db", body: { dataset: "demo" } },
+    "gad-restore-demo-v2": { method: "POST", url: "/api/gad-talk/admin/restore-db", body: { dataset: "demo-v2" } },
+    "gad-restore-empty": { method: "POST", url: "/api/gad-talk/admin/restore-db", body: { dataset: "empty" } },
     "gad-reset-demo": { method: "POST", url: "/api/gad-talk/admin/reset-db" },
     "gad-seed-demo": { method: "POST", url: "/api/gad-talk/admin/seed-demo-data" },
     "gad-init": { method: "POST", url: "/api/gad-talk/admin/init-db" },

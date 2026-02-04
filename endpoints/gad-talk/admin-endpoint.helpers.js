@@ -1199,8 +1199,9 @@ async function handleAdminDbToolsPage(_req, res) {
         <div class="gt-admin-item">
           <div class="gt-admin-item-title">🧠 GadTalk Database</div>
           <div class="gt-admin-item-desc">Reset or restore GadTalk datasets and check DB status.</div>
-          <div class="row"><span>Restore default dataset</span><button data-action="gad-restore-default" data-label="Restore" data-confirm="Restore GadTalk default dataset?">Restore</button></div>
           <div class="row"><span>Restore demo dataset</span><button data-action="gad-restore-demo" data-label="Restore" data-confirm="Restore GadTalk demo dataset?">Restore</button></div>
+          <div class="row"><span>Restore demo dataset v2</span><button data-action="gad-restore-demo-v2" data-label="Restore" data-confirm="Restore GadTalk demo v2 dataset?">Restore</button></div>
+          <div class="row"><span>Restore empty dataset</span><button data-action="gad-restore-empty" data-label="Restore" data-confirm="Restore GadTalk empty dataset?">Restore</button></div>
           <div class="row"><span>Reset demo data (full)</span><button data-action="gad-reset-demo" data-label="Reset" data-confirm="Reset GadTalk DB with demo data?">Reset</button></div>
           <div class="row"><span>Seed demo data</span><button data-action="gad-seed-demo" data-label="Seed" data-confirm="Seed GadTalk demo data?">Seed</button></div>
           <div class="row"><span>Initialize DBs</span><button data-action="gad-init" data-label="Initialize">Initialize</button></div>
