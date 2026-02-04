@@ -263,11 +263,30 @@ const gadTalkCharts = (function () {
     const grid = document.createElement("div");
     grid.className = "gt-heatmap-grid";
 
-    heatmap.data.forEach((entry) => {
+    heatmap.data.forEach((entry, index) => {
       const cell = document.createElement("div");
       const level = getHeatmapLevel(entry.count, maxCount);
+      const tooltipText = `${entry.date}: ${entry.count} gad${entry.count === 1 ? "" : "s"}`;
+
       cell.className = `gt-heatmap-cell gt-heatmap-level-${level}`;
-      cell.title = `${entry.date}: ${entry.count} gad${entry.count === 1 ? "" : "s"}`;
+      cell.setAttribute("data-tooltip", tooltipText);
+      cell.style.setProperty("--heatmap-index", index);
+      cell.role = "button";
+      cell.tabIndex = 0;
+      cell.setAttribute("aria-label", tooltipText);
+
+      // Add interactivity
+      cell.addEventListener("click", () => {
+        handleHeatmapCellClick(entry);
+      });
+
+      cell.addEventListener("keypress", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleHeatmapCellClick(entry);
+        }
+      });
+
       grid.appendChild(cell);
     });
 
@@ -275,11 +294,11 @@ const gadTalkCharts = (function () {
     legend.className = "gt-heatmap-legend";
     legend.innerHTML = `
       <span class="gt-text-secondary gt-text-sm">Less</span>
-      <span class="gt-heatmap-swatch gt-heatmap-level-0"></span>
-      <span class="gt-heatmap-swatch gt-heatmap-level-1"></span>
-      <span class="gt-heatmap-swatch gt-heatmap-level-2"></span>
-      <span class="gt-heatmap-swatch gt-heatmap-level-3"></span>
-      <span class="gt-heatmap-swatch gt-heatmap-level-4"></span>
+      <span class="gt-heatmap-swatch gt-heatmap-level-0" title="No activity"></span>
+      <span class="gt-heatmap-swatch gt-heatmap-level-1" title="Low activity"></span>
+      <span class="gt-heatmap-swatch gt-heatmap-level-2" title="Moderate activity"></span>
+      <span class="gt-heatmap-swatch gt-heatmap-level-3" title="High activity"></span>
+      <span class="gt-heatmap-swatch gt-heatmap-level-4" title="Very high activity"></span>
       <span class="gt-text-secondary gt-text-sm">More</span>
     `;
 
@@ -291,6 +310,12 @@ const gadTalkCharts = (function () {
     // Store for export/table
     chartDataStore.activity = { heatmapData: heatmap.data };
     renderDataTable("activity", chartDataStore.activity);
+  }
+
+  function handleHeatmapCellClick(entry) {
+    // Placeholder for future enhancements like filtering or highlighting
+    // entry parameter allows expansion for interactive features
+    void entry; // Mark as intentionally unused
   }
 
   function createSvgElement(tag) {

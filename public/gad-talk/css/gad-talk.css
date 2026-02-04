@@ -1610,52 +1610,150 @@ a:hover {
 .gt-heatmap-grid {
   display: grid;
   grid-auto-flow: column;
-  grid-template-rows: repeat(7, 12px);
-  gap: 4px;
+  grid-template-rows: repeat(7, 14px);
+  gap: 3px;
   width: 100%;
-  overflow-x: auto;
-  padding-bottom: 4px;
+  padding-bottom: 8px;
+  padding-left: 2px;
+  padding-right: 2px;
 }
 
 .gt-heatmap-cell {
-  width: 12px;
-  height: 12px;
-  border-radius: 3px;
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
   background-color: var(--gt-bg-tertiary);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+  position: relative;
+  animation: heatmapFadeIn 0.4s ease-out forwards;
+  animation-delay: calc(var(--heatmap-index) * 0.02s);
+}
+
+@keyframes heatmapFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.gt-heatmap-cell:hover {
+  transform: scale(1.5) translateZ(0);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 12px currentColor, 0 0 20px currentColor;
+  z-index: 10;
+}
+
+.gt-heatmap-cell::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.95);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+  z-index: 1000;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.gt-heatmap-cell::after {
+  content: "";
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid rgba(0, 0, 0, 0.95);
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+  z-index: 999;
+  pointer-events: none;
+}
+
+.gt-heatmap-cell:hover::before,
+.gt-heatmap-cell:hover::after {
+  opacity: 1;
 }
 
 .gt-heatmap-level-0 {
   background-color: #1f2226;
+  color: #1f2226;
 }
 
 .gt-heatmap-level-1 {
-  background-color: rgba(29, 155, 240, 0.25);
+  background: linear-gradient(135deg, rgba(29, 155, 240, 0.2), rgba(29, 155, 240, 0.35));
+  color: rgba(29, 155, 240, 0.35);
+}
+
+.gt-heatmap-level-1:hover {
+  box-shadow: 0 0 12px rgba(29, 155, 240, 0.5), 0 0 20px rgba(29, 155, 240, 0.3);
 }
 
 .gt-heatmap-level-2 {
-  background-color: rgba(29, 155, 240, 0.45);
+  background: linear-gradient(135deg, rgba(29, 155, 240, 0.4), rgba(29, 155, 240, 0.55));
+  color: rgba(29, 155, 240, 0.55);
+}
+
+.gt-heatmap-level-2:hover {
+  box-shadow: 0 0 12px rgba(29, 155, 240, 0.65), 0 0 20px rgba(29, 155, 240, 0.45);
 }
 
 .gt-heatmap-level-3 {
-  background-color: rgba(29, 155, 240, 0.7);
+  background: linear-gradient(135deg, rgba(29, 155, 240, 0.65), rgba(29, 155, 240, 0.8));
+  color: rgba(29, 155, 240, 0.8);
+}
+
+.gt-heatmap-level-3:hover {
+  box-shadow: 0 0 12px rgba(29, 155, 240, 0.85), 0 0 20px rgba(29, 155, 240, 0.65);
 }
 
 .gt-heatmap-level-4 {
-  background-color: rgba(29, 155, 240, 0.95);
+  background: linear-gradient(135deg, rgba(29, 155, 240, 0.9), rgba(29, 155, 240, 1));
+  color: rgba(29, 155, 240, 1);
+}
+
+.gt-heatmap-level-4:hover {
+  box-shadow: 0 0 12px rgba(29, 155, 240, 1), 0 0 24px rgba(29, 155, 240, 0.7);
 }
 
 .gt-heatmap-legend {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-top: var(--gt-spacing-sm);
+  gap: 8px;
+  margin-top: var(--gt-spacing-md);
   font-size: 0.75rem;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .gt-heatmap-swatch {
-  width: 12px;
-  height: 12px;
-  border-radius: 3px;
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+  cursor: default;
+}
+
+.gt-heatmap-swatch:hover {
+  transform: scale(1.2);
 }
 
 /* Donut chart */
