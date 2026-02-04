@@ -881,6 +881,75 @@ async function resetGadTalkDatabaseWithDemoData() {
   }
 }
 
+/**
+ * Restore GadTalk database from a specific dataset (admin function)
+ * @param {string} datasetKey - Dataset key: default|init|demo
+ * @returns {Promise<Object>} Result object
+ */
+async function restoreGadTalkDatabaseFromDataset(datasetKey = "default") {
+  try {
+    const normalized = String(datasetKey || "")
+      .trim()
+      .toLowerCase();
+    let seedSource = "default";
+    let seedData;
+
+    if (!normalized || normalized === "default" || normalized === "init" || normalized === "initial") {
+      seedSource = "init";
+      const initPath = require.resolve("./gad-talk-init-data.js");
+      delete require.cache[initPath];
+      seedData = require("./gad-talk-init-data.js");
+    } else if (normalized === "demo") {
+      seedSource = "demo";
+      seedData = readGadTalkDemoDb();
+    } else {
+      throw new Error(`Unknown dataset: ${datasetKey}`);
+    }
+
+    logDebug("Force restoring GadTalk database from dataset...", { dataset: seedSource });
+
+    const restoredDb = {
+      users: (seedData && seedData.users) || [],
+      gads: (seedData && seedData.gads) || [],
+      follows: (seedData && seedData.follows) || [],
+      likes: (seedData && seedData.likes) || [],
+      notifications: (seedData && seedData.notifications) || [],
+      blocks: (seedData && seedData.blocks) || [],
+      mutes: (seedData && seedData.mutes) || [],
+      bookmarks: (seedData && seedData.bookmarks) || [],
+      hashtags: (seedData && seedData.hashtags) || [],
+      featureFlags: (seedData && seedData.featureFlags) || [],
+      outbox: (seedData && seedData.outbox) || [],
+      missions: (seedData && seedData.missions) || [],
+      missionCompletions: (seedData && seedData.missionCompletions) || [],
+    };
+
+    ensureFeatureFlagsInDb(restoredDb);
+
+    await writeGadTalkDb(restoredDb);
+    await writeAuditDb({ audit: [] });
+
+    logDebug("Database restore completed successfully", { dataset: seedSource });
+
+    return {
+      success: true,
+      dataset: seedSource,
+      message: `Database restored from ${seedSource} dataset`,
+      stats: {
+        users: restoredDb.users.length,
+        gads: restoredDb.gads.length,
+        follows: restoredDb.follows.length,
+        likes: restoredDb.likes.length,
+        notifications: restoredDb.notifications.length,
+        hashtags: restoredDb.hashtags.length,
+      },
+    };
+  } catch (error) {
+    logError("Error restoring database:", error);
+    throw error;
+  }
+}
+
 // ==================== GENERIC MUTATOR ====================
 
 /**
@@ -2958,6 +3027,7 @@ module.exports = {
   initializeGadTalkAuditDb,
   initializeAllGadTalkDatabases,
   resetGadTalkDatabaseWithDemoData,
+  restoreGadTalkDatabaseFromDataset,
 
   // Users
   gadTalkUsersDb,

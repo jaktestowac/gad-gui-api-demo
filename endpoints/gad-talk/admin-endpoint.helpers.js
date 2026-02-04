@@ -1,8 +1,9 @@
 const { logError, logDebug } = require("../../helpers/logger-api");
 const { formatErrorResponse } = require("../../helpers/helpers");
-const { HTTP_OK, HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED, HTTP_FORBIDDEN } = require("../../helpers/response.helpers");
+const { HTTP_OK, HTTP_BAD_REQUEST } = require("../../helpers/response.helpers");
 const {
   resetGadTalkDatabaseWithDemoData,
+  restoreGadTalkDatabaseFromDataset,
   getGadTalkDbStatus,
   initializeAllGadTalkDatabases,
   getGadTalkAuditLogs,
@@ -50,17 +51,9 @@ function getActorUserId(req) {
  */
 async function handleResetDb(req, res) {
   try {
-    // Check admin auth
-    const authCheck = checkAdminAuth(req);
-    if (!authCheck.isAdmin) {
-      const statusCode = authCheck.error.includes("Authentication") ? HTTP_UNAUTHORIZED : HTTP_FORBIDDEN;
-      res.status(statusCode).send(formatErrorResponse(authCheck.error));
-      return;
-    }
-
     const result = await resetGadTalkDatabaseWithDemoData();
 
-    logDebug("GadTalk: Database reset by admin:", { userId: authCheck.user?.id });
+    logDebug("GadTalk: Database reset via admin endpoint");
 
     res.status(HTTP_OK).send({
       ok: true,
@@ -96,17 +89,9 @@ async function handleGetDbStatus(req, res) {
  */
 async function handleSeedDemoData(req, res) {
   try {
-    // Check admin auth
-    const authCheck = checkAdminAuth(req);
-    if (!authCheck.isAdmin) {
-      const statusCode = authCheck.error.includes("Authentication") ? HTTP_UNAUTHORIZED : HTTP_FORBIDDEN;
-      res.status(statusCode).send(formatErrorResponse(authCheck.error));
-      return;
-    }
-
     const result = await resetGadTalkDatabaseWithDemoData();
 
-    logDebug("GadTalk: Demo data seeded by admin:", { userId: authCheck.user?.id });
+    logDebug("GadTalk: Demo data seeded via admin endpoint");
 
     res.status(HTTP_OK).send({
       ok: true,
@@ -127,19 +112,11 @@ async function handleSeedDemoData(req, res) {
  */
 async function handleInitDb(req, res) {
   try {
-    // Check admin auth
-    const authCheck = checkAdminAuth(req);
-    if (!authCheck.isAdmin) {
-      const statusCode = authCheck.error.includes("Authentication") ? HTTP_UNAUTHORIZED : HTTP_FORBIDDEN;
-      res.status(statusCode).send(formatErrorResponse(authCheck.error));
-      return;
-    }
-
     await initializeAllGadTalkDatabases();
 
     const status = getGadTalkDbStatus();
 
-    logDebug("GadTalk: Databases initialized by admin:", { userId: authCheck.user?.id });
+    logDebug("GadTalk: Databases initialized via admin endpoint");
 
     res.status(HTTP_OK).send({
       ok: true,
@@ -151,6 +128,27 @@ async function handleInitDb(req, res) {
   } catch (error) {
     logError("GadTalk admin init-db error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to initialize databases"));
+  }
+}
+
+/**
+ * Restore database from selected dataset
+ * POST /api/gad-talk/admin/restore-db
+ */
+async function handleRestoreDb(req, res) {
+  try {
+    const { dataset } = req.body || {};
+    const result = await restoreGadTalkDatabaseFromDataset(dataset || "default");
+
+    logDebug("GadTalk: Database restored via admin endpoint", { dataset: result.dataset });
+
+    res.status(HTTP_OK).send({
+      ok: true,
+      data: result,
+    });
+  } catch (error) {
+    logError("GadTalk admin restore-db error:", error);
+    res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to restore database"));
   }
 }
 
@@ -1120,6 +1118,13 @@ async function handleAdminBackendPage(_req, res) {
           <a href="/api/gad-talk/admin/features" class="gt-admin-item-link">Open Feature Flags</a>
         </div>
 
+        <!-- Database Tools -->
+        <div class="gt-admin-item">
+          <div class="gt-admin-item-title">🧰 Database Tools</div>
+          <div class="gt-admin-item-desc">Reset or restore GadTalk datasets without authentication.</div>
+          <a href="/api/gad-talk/admin/db-tools" class="gt-admin-item-link">Open DB Tools</a>
+        </div>
+
         <!-- Swagger -->
         <div class="gt-admin-item">
           <div class="gt-admin-item-title">📚 API Documentation</div>
@@ -1158,6 +1163,63 @@ async function handleAdminBackendPage(_req, res) {
     <script src="/gad-talk/js/admin-backend-health.js" defer></script>
   </body>
   </html>`;
+  res.status(HTTP_OK).send(html);
+}
+
+// Database tools page (public)
+// GET /api/gad-talk/admin/db-tools
+async function handleAdminDbToolsPage(_req, res) {
+  const html = `<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GadTalk Database Tools</title>
+    <link rel="stylesheet" href="/gad-talk/css/gad-talk.css" />
+    <style>${getAdminPageStyles()}</style>
+  </head>
+  <body>
+    <!-- Header -->
+    <div class="gt-admin-header">
+      <div class="gt-admin-header-content">
+        <div class="gt-header-brand">
+          🧰 Database Tools
+        </div>
+        <a href="/api/gad-talk/admin/backend" class="gt-header-back-link">← Backend</a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="gt-admin-container">
+      <h1 class="gt-admin-title">Database Reset & Restore</h1>
+      <p class="gt-admin-subtitle">These tools are public and do not require authentication. Use with care.</p>
+      <a href="/api/gad-talk/admin/backend" style="color: #1d9bf0; text-decoration: none; margin-bottom: 24px; display: inline-block;">← Backend</a>
+
+      <div class="gt-admin-grid">
+        <div class="gt-admin-item">
+          <div class="gt-admin-item-title">🧠 GadTalk Database</div>
+          <div class="gt-admin-item-desc">Reset or restore GadTalk datasets and check DB status.</div>
+          <div class="row"><span>Restore default dataset</span><button data-action="gad-restore-default" data-label="Restore" data-confirm="Restore GadTalk default dataset?">Restore</button></div>
+          <div class="row"><span>Restore demo dataset</span><button data-action="gad-restore-demo" data-label="Restore" data-confirm="Restore GadTalk demo dataset?">Restore</button></div>
+          <div class="row"><span>Reset demo data (full)</span><button data-action="gad-reset-demo" data-label="Reset" data-confirm="Reset GadTalk DB with demo data?">Reset</button></div>
+          <div class="row"><span>Seed demo data</span><button data-action="gad-seed-demo" data-label="Seed" data-confirm="Seed GadTalk demo data?">Seed</button></div>
+          <div class="row"><span>Initialize DBs</span><button data-action="gad-init" data-label="Initialize">Initialize</button></div>
+          <div class="row"><span>DB status</span><button data-action="gad-status" data-label="Check">Check</button></div>
+        </div>
+
+      </div>
+
+      <div style="margin-top: 16px;">
+        <div id="db-tools-output" style="display: none; max-width: 900px; background: linear-gradient(180deg, rgba(22,24,28,0.92), rgba(14,15,18,0.92)); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px; color: #e7e9ea; white-space: pre-wrap; font-family: monospace; font-size: 12px;"></div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    ${getAdminPageFooter()}
+    <script src="/gad-talk/js/db-tools.js" defer></script>
+  </body>
+  </html>`;
+
   res.status(HTTP_OK).send(html);
 }
 
@@ -2198,6 +2260,7 @@ module.exports = {
   handleGetDbStatus,
   handleSeedDemoData,
   handleInitDb,
+  handleRestoreDb,
   handleGetLogs,
   handleGetMetrics,
   handleGetChaosStatus,
@@ -2215,6 +2278,7 @@ module.exports = {
   handleDisableFeatureFlag,
   handleFeatureFlagsPage,
   handleAdminBackendPage,
+  handleAdminDbToolsPage,
   handleSwaggerPlaceholder,
   handleFeaturesDescriptionPage,
 

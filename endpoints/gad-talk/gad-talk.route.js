@@ -47,6 +47,7 @@ const {
   handleGetDbStatus,
   handleSeedDemoData,
   handleInitDb,
+  handleRestoreDb,
   handleGetLogs,
   handleGetMetrics,
   handleGetChaosStatus,
@@ -64,6 +65,7 @@ const {
   handleDisableFeatureFlag,
   handleFeatureFlagsPage,
   handleAdminBackendPage,
+  handleAdminDbToolsPage,
   handleSwaggerPlaceholder,
   handleFeaturesDescriptionPage,
 } = require("./admin-endpoint.helpers");
@@ -707,6 +709,10 @@ async function handleAdminRoutes(req, res, method, segments) {
       if (method === "POST") return handleInitDb(req, res);
       break;
 
+    case "restore-db":
+      if (method === "POST") return handleRestoreDb(req, res);
+      break;
+
     case "logs":
       if (method === "GET") return handleGetLogs(req, res);
       break;
@@ -721,6 +727,10 @@ async function handleAdminRoutes(req, res, method, segments) {
 
     case "backend":
       if (method === "GET") return handleAdminBackendPage(req, res);
+      break;
+
+    case "db-tools":
+      if (method === "GET") return handleAdminDbToolsPage(req, res);
       break;
 
     case "swagger":
