@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>📖 Features Guide - GadTalk</title>
+    <link rel="stylesheet" href="/gad-talk/css/gad-talk.css" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+    <style>
+        .gt-features-hero {
+            background: linear-gradient(135deg, rgba(29, 155, 240, 0.1) 0%, rgba(29, 155, 240, 0.05) 100%);
+            border-bottom: 1px solid var(--gt-border);
+            padding: var(--gt-spacing-lg) var(--gt-spacing-md);
+            margin-bottom: var(--gt-spacing-lg);
+            border-radius: var(--gt-radius-lg);
+        }
+
+        .gt-features-hero h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0 0 var(--gt-spacing-sm) 0;
+            background: linear-gradient(135deg, var(--gt-primary) 0%, #0088cc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .gt-features-hero p {
+            color: var(--gt-text-secondary);
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .gt-features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--gt-spacing-md);
+            margin-bottom: var(--gt-spacing-lg);
+        }
+
+        .gt-feature-card {
+            background-color: var(--gt-bg-secondary);
+            border: 1px solid var(--gt-border);
+            border-radius: var(--gt-radius-md);
+            padding: var(--gt-spacing-md);
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .gt-feature-card:hover {
+            border-color: var(--gt-primary);
+            background-color: var(--gt-bg-tertiary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(29, 155, 240, 0.1);
+        }
+
+        .gt-feature-icon {
+            font-size: 2rem;
+            margin-bottom: var(--gt-spacing-sm);
+            display: inline-block;
+        }
+
+        .gt-feature-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gt-text-primary);
+            margin-bottom: var(--gt-spacing-xs);
+            display: flex;
+            align-items: center;
+            gap: var(--gt-spacing-xs);
+        }
+
+        .gt-feature-desc {
+            font-size: 0.9rem;
+            color: var(--gt-text-secondary);
+            margin-bottom: var(--gt-spacing-sm);
+            line-height: 1.4;
+        }
+
+        .gt-feature-items {
+            font-size: 0.85rem;
+            color: var(--gt-text-muted);
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--gt-spacing-xs);
+        }
+
+        .gt-feature-tag {
+            background-color: var(--gt-primary-light);
+            color: var(--gt-primary);
+            padding: 2px 8px;
+            border-radius: var(--gt-radius-full);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .gt-category-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--gt-text-primary);
+            margin-top: var(--gt-spacing-xl);
+            margin-bottom: var(--gt-spacing-md);
+            padding-bottom: var(--gt-spacing-md);
+            border-bottom: 2px solid var(--gt-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--gt-spacing-sm);
+        }
+
+        .gt-category-icon {
+            font-size: 1.5rem;
+        }
+
+        .gt-two-col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--gt-spacing-md);
+        }
+
+        .gt-endpoint-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .gt-endpoint-item {
+            padding: var(--gt-spacing-sm);
+            margin-bottom: var(--gt-spacing-sm);
+            background-color: var(--gt-bg-tertiary);
+            border-left: 3px solid var(--gt-primary);
+            border-radius: var(--gt-radius-sm);
+            font-size: 0.9rem;
+        }
+
+        .gt-endpoint-method {
+            display: inline-block;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            margin-right: var(--gt-spacing-xs);
+            text-transform: uppercase;
+        }
+
+        .gt-method-get {
+            background-color: rgba(0, 186, 124, 0.2);
+            color: var(--gt-success);
+        }
+
+        .gt-method-post {
+            background-color: rgba(29, 155, 240, 0.2);
+            color: var(--gt-primary);
+        }
+
+        .gt-method-put {
+            background-color: rgba(255, 212, 0, 0.2);
+            color: var(--gt-warning);
+        }
+
+        .gt-method-delete {
+            background-color: rgba(244, 33, 46, 0.2);
+            color: var(--gt-error);
+        }
+
+        .gt-endpoint-path {
+            font-family: 'Monaco', 'Menlo', monospace;
+            color: var(--gt-text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .gt-stats-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--gt-spacing-md);
+            margin: var(--gt-spacing-lg) 0;
+        }
+
+        .gt-stat {
+            background-color: var(--gt-bg-secondary);
+            border: 1px solid var(--gt-border);
+            border-radius: var(--gt-radius-md);
+            padding: var(--gt-spacing-md);
+            text-align: center;
+        }
+
+        .gt-stat-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--gt-primary);
+        }
+
+        .gt-stat-label {
+            font-size: 0.85rem;
+            color: var(--gt-text-secondary);
+            margin-top: var(--gt-spacing-xs);
+        }
+
+        .gt-badge {
+            display: inline-block;
+            background-color: var(--gt-primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: var(--gt-radius-full);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: var(--gt-spacing-sm);
+        }
+
+        .gt-alert-info {
+            background-color: rgba(29, 155, 240, 0.1);
+            border-left: 4px solid var(--gt-primary);
+            padding: var(--gt-spacing-md);
+            border-radius: var(--gt-radius-md);
+            margin-bottom: var(--gt-spacing-md);
+            color: var(--gt-text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .gt-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--gt-spacing-sm);
+            margin: var(--gt-spacing-md) 0 var(--gt-spacing-lg);
+        }
+
+        .gt-legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--gt-spacing-xs);
+            background-color: var(--gt-bg-secondary);
+            border: 1px solid var(--gt-border);
+            border-radius: var(--gt-radius-full);
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            color: var(--gt-text-secondary);
+        }
+
+        .gt-feature-panel {
+            background-color: var(--gt-bg-secondary);
+            border: 1px solid var(--gt-border);
+            border-radius: var(--gt-radius-md);
+            padding: var(--gt-spacing-md);
+            margin-bottom: var(--gt-spacing-lg);
+        }
+
+        .gt-feature-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--gt-spacing-sm);
+            margin-bottom: var(--gt-spacing-md);
+            flex-wrap: wrap;
+        }
+
+        .gt-feature-panel-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gt-text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--gt-spacing-sm);
+        }
+
+        .gt-feature-panel-desc {
+            color: var(--gt-text-secondary);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .gt-endpoint-desc {
+            display: block;
+            margin-top: 6px;
+            color: var(--gt-text-secondary);
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .gt-note-tag {
+            background-color: rgba(255, 212, 0, 0.15);
+            color: var(--gt-warning);
+            padding: 2px 8px;
+            border-radius: var(--gt-radius-full);
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .gt-muted-tag {
+            background-color: rgba(120, 120, 120, 0.15);
+            color: var(--gt-text-muted);
+            padding: 2px 8px;
+            border-radius: var(--gt-radius-full);
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .gt-flag-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: var(--gt-spacing-sm);
+        }
+
+        .gt-flag-item {
+            background-color: var(--gt-bg-tertiary);
+            border: 1px dashed var(--gt-border);
+            border-radius: var(--gt-radius-sm);
+            padding: var(--gt-spacing-sm);
+            font-size: 0.85rem;
+            color: var(--gt-text-secondary);
+        }
+
+        .gt-flag-key {
+            font-family: 'Monaco', 'Menlo', monospace;
+            color: var(--gt-text-primary);
+            font-weight: 600;
+        }
+
+        .gt-section-kicker {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--gt-text-muted);
+            margin-bottom: var(--gt-spacing-xs);
+        }
+
+        .gt-feature-list {
+            margin: 0;
+            padding-left: 1rem;
+            color: var(--gt-text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .gt-feature-list li {
+            margin-bottom: 6px;
+        }
+
+        @media (max-width: 768px) {
+            .gt-features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gt-features-hero h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="gt-app-layout">
+    <!-- Navbar -->
+    <nav class="gt-navbar">
+        <div class="gt-container-wide gt-flex gt-justify-between gt-items-center">
+            <a href="/" class="gt-link-muted">🦎 GAD</a>
+            <a href="/gad-talk/" class="gt-navbar-brand">
+                <span class="gt-logo"><i class="fa-solid fa-comments"></i></span>
+                <span>GadTalk</span>
+            </a>
+            <div class="gt-flex gt-gap-sm gt-items-center" id="nav-user-section"></div>
+        </div>
+    </nav>
+
+    <div class="gt-main-container">
+        <!-- Left sidebar -->
+        <aside class="gt-sidebar gt-sidebar-left">
+            <nav class="gt-nav-menu" id="main-nav">
+                <a href="/gad-talk/index.html" class="gt-nav-item" data-testid="nav-home">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-house"></i></span>
+                    <span class="gt-nav-text">Home</span>
+                </a>
+                <a href="/gad-talk/explore.html" class="gt-nav-item" data-testid="nav-explore">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <span class="gt-nav-text">Explore</span>
+                </a>
+                <a href="/gad-talk/notifications.html" class="gt-nav-item" data-testid="nav-notifications">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-bell"></i></span>
+                    <span class="gt-nav-text">Notifications</span>
+                </a>
+                <a href="/gad-talk/bookmarks.html" class="gt-nav-item" data-testid="nav-bookmarks">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-bookmark"></i></span>
+                    <span class="gt-nav-text">Bookmarks</span>
+                </a>
+                <a href="#" class="gt-nav-item" id="nav-profile" data-testid="nav-profile">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-user"></i></span>
+                    <span class="gt-nav-text">Profile</span>
+                </a>
+                <a href="/gad-talk/index.html" class="gt-btn gt-btn-primary gt-btn-block gt-mt-lg">
+                    Gad
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <main class="gt-content">
+            <header class="gt-page-header">
+                <a href="javascript:history.back()" class="gt-icon-btn gt-mr-sm">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <h1 class="gt-page-title gt-page-title-compact">Features Guide</h1>
+            </header>
+
+            <div class="gt-p-sm">
+                <!-- Hero Section -->
+                <div class="gt-features-hero">
+                    <h1>📖 GadTalk — What You Can Do</h1>
+                    <p>This is a user-focused view of what’s currently implemented in GadTalk (UI + behavior). Use it to plan test coverage without digging into endpoints.</p>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="gt-stats-box">
+                    <div class="gt-stat">
+                        <div class="gt-stat-value">Social</div>
+                        <div class="gt-stat-label">Posting + Graph</div>
+                    </div>
+                    <div class="gt-stat">
+                        <div class="gt-stat-value">Testing</div>
+                        <div class="gt-stat-label">Admin + Chaos</div>
+                    </div>
+                    <div class="gt-stat">
+                        <div class="gt-stat-value">13</div>
+                        <div class="gt-stat-label">Feature Flags</div>
+                    </div>
+                </div>
+
+                <div class="gt-legend">
+                    <span class="gt-legend-item"><span class="gt-note-tag">Flag</span> Feature-flagged</span>
+                    <span class="gt-legend-item"><span class="gt-note-tag">Login</span> Requires sign-in</span>
+                    <span class="gt-legend-item"><span class="gt-muted-tag">Placeholder</span> Stub or simulated</span>
+                </div>
+
+                <div class="gt-category-title">
+                    <span class="gt-category-icon">🚀</span>
+                    <span>Quick Testing Flow</span>
+                </div>
+                <div class="gt-alert-info">
+                    <strong>Suggested path:</strong> Demo login → Create a gad → Like/regad → Follow user → Search → Notifications → Admin tools.
+                </div>
+
+                <!-- Core Features -->
+                <div class="gt-category-title">
+                    <span class="gt-category-icon">⭐</span>
+                    <span>Core Features</span>
+                </div>
+                <div class="gt-features-grid">
+                    <div class="gt-feature-card">
+                        <div class="gt-feature-icon">🔐</div>
+                        <div class="gt-feature-title">Authentication & Access</div>
+                        <div class="gt-feature-desc">Create accounts, sign in/out, refresh sessions, and use demo access.</div>
+                        <ul class="gt-feature-list">
+                            <li>Sign up with validation</li>
+                            <li>Login / logout</li>
+                            <li>Demo login for quick testing</li>
+                            <li>Password reset flow</li>
+                            <li><span class="gt-muted-tag">Placeholder</span> Simulated Google OAuth</li>
+                        </ul>
+                    </div>
+                    <div class="gt-feature-card">
+                        <div class="gt-feature-icon">👥</div>
+                        <div class="gt-feature-title">Profiles & Identity</div>
+                        <div class="gt-feature-desc">Profile pages with bio, links, avatars, and badges.</div>
+                        <ul class="gt-feature-list">
+                            <li>Edit display name, bio, website, location</li>
+                            <li>Public avatar gallery</li>
+                            <li><span class="gt-note-tag">Flag</span> Profile badges</li>
+                            <li>Profile stats (followers, following, gads, likes)</li>
+                            <li><span class="gt-muted-tag">Placeholder</span> Avatar/header upload stubs</li>
+                        </ul>
+                    </div>
+                    <div class="gt-feature-card">
+                        <div class="gt-feature-icon">🧩</div>
+                        <div class="gt-feature-title">Social Graph & Safety</div>
+                        <div class="gt-feature-desc">Follow, block, mute, and discover people.</div>
+                        <ul class="gt-feature-list">
+                            <li><span class="gt-note-tag">Login</span> Follow/unfollow users</li>
+                            <li>Followers / following lists</li>
+                            <li>Suggestions & recommendations</li>
+                            <li><span class="gt-note-tag">Login</span> Block / mute controls</li>
+                            <li>User search by name</li>
+                        </ul>
+                    </div>
+                    <div class="gt-feature-card">
+                        <div class="gt-feature-icon">💬</div>
+                        <div class="gt-feature-title">Gads & Interactions</div>
+                        <div class="gt-feature-desc">Create, edit, reply, like, regad, and bookmark.</div>
+                        <ul class="gt-feature-list">
+                            <li><span class="gt-note-tag">Login</span> Create, edit, delete gads</li>
+                            <li><span class="gt-note-tag">Login</span> Reply threads</li>
+                            <li><span class="gt-note-tag">Login</span> Like / unlike</li>
+                            <li><span class="gt-note-tag">Flag</span> Who-liked modal</li>
+                            <li><span class="gt-note-tag">Login</span> Regad / unregad</li>
+                            <li><span class="gt-note-tag">Flag</span> Who-regadded modal</li>
+                            <li><span class="gt-note-tag">Login</span> Bookmarks (+ filters flag)</li>
+                            <li>Mentions & hashtags</li>
+                        </ul>
+                    </div>
+                    <div class="gt-feature-card">
+                        <div class="gt-feature-icon">🗺️</div>
+                        <div class="gt-feature-title">Feeds & Discovery</div>
+                        <div class="gt-feature-desc">Explore content with feeds, hashtags, and search.</div>
+                        <ul class="gt-feature-list">
+                            <li>For You feed (global)</li>
+                            <li><span class="gt-note-tag">Login</span> Following timeline</li>
+                            <li>Popular gads + explore hub</li>
+                            <li>Trending hashtags & hashtag feeds</li>
+                            <li>Combined search + suggestions <span class="gt-note-tag">Flag</span></li>
+                        </ul>
+                    </div>
+                    <div class="gt-feature-card">
+                        <div class="gt-feature-icon">🔔</div>
+                        <div class="gt-feature-title">Notifications</div>
+                        <div class="gt-feature-desc">Stay updated with likes, regads, replies, mentions, and follows.</div>
+                        <ul class="gt-feature-list">
+                            <li><span class="gt-note-tag">Login</span> Notification center</li>
+                            <li><span class="gt-note-tag">Login</span> Unread count</li>
+                            <li><span class="gt-note-tag">Login</span> Mark one/all as read</li>
+                        </ul>
+                    </div>
+                    <div class="gt-feature-card">
+                        <div class="gt-feature-icon">📊</div>
+                        <div class="gt-feature-title">Analytics</div>
+                        <div class="gt-feature-desc">Profile analytics and engagement insights.</div>
+                        <ul class="gt-feature-list">
+                            <li><span class="gt-note-tag">Flag</span> Activity heatmap</li>
+                            <li><span class="gt-note-tag">Flag</span> Engagement timeline</li>
+                            <li><span class="gt-note-tag">Flag</span> Follower growth</li>
+                            <li><span class="gt-note-tag">Flag</span> Hashtag distribution</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Admin & Testing -->
+                <div class="gt-category-title">
+                    <span class="gt-category-icon">🧪</span>
+                    <span>Admin & Testing Tools</span>
+                </div>
+                <div class="gt-features-grid">
+                    <div class="gt-feature-card">
+                        <div class="gt-feature-icon">⚙️</div>
+                        <div class="gt-feature-title">Admin Toolkit</div>
+                        <div class="gt-feature-desc">Reset, seed, and inspect the system for repeatable tests.</div>
+                        <ul class="gt-feature-list">
+                            <li>Reset or seed the demo database</li>
+                            <li>Database health/status snapshot</li>
+                            <li>Audit logs</li>
+                            <li><span class="gt-muted-tag">Placeholder</span> Metrics snapshot</li>
+                            <li>Admin backend UI</li>
+                            <li>Feature flags management</li>
+                        </ul>
+                    </div>
+                    <div class="gt-feature-card">
+                        <div class="gt-feature-icon">⚡</div>
+                        <div class="gt-feature-title">Chaos Engineering</div>
+                        <div class="gt-feature-desc">Inject latency, errors, and instability for resilience testing.</div>
+                        <ul class="gt-feature-list">
+                            <li><span class="gt-note-tag">Flag</span> Chaos dashboard</li>
+                            <li>Presets and enable/disable controls</li>
+                            <li>Public chaos status + metrics</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Support & Utilities -->
+                <div class="gt-category-title">
+                    <span class="gt-category-icon">🧾</span>
+                    <span>Support & Utilities</span>
+                </div>
+                <div class="gt-features-grid">
+                    <div class="gt-feature-card">
+                        <div class="gt-feature-icon">✉️</div>
+                        <div class="gt-feature-title">Contact & Feedback</div>
+                        <div class="gt-feature-desc">Rate-limited contact form for testing submissions.</div>
+                        <ul class="gt-feature-list">
+                            <li>Contact form with audit logging</li>
+                        </ul>
+                    </div>
+                    <div class="gt-feature-card">
+                        <div class="gt-feature-icon">🧩</div>
+                        <div class="gt-feature-title">Compose Enhancements</div>
+                        <div class="gt-feature-desc">Quality-of-life tools for creating gads.</div>
+                        <ul class="gt-feature-list">
+                            <li><span class="gt-note-tag">Flag</span> Emoji picker</li>
+                            <li><span class="gt-note-tag">Flag</span> Mention autocomplete</li>
+                            <li><span class="gt-note-tag">Flag</span> Hashtag autocomplete</li>
+                            <li><span class="gt-note-tag">Flag</span> Character ring</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Feature Flags -->
+                <div class="gt-category-title">
+                    <span class="gt-category-icon">🚩</span>
+                    <span>Feature Flags (Toggle List)</span>
+                </div>
+                <div class="gt-flag-grid">
+                    <div class="gt-flag-item"><span class="gt-flag-key">charts</span> — profile analytics charts</div>
+                    <div class="gt-flag-item"><span class="gt-flag-key">search_history</span> — recent search history</div>
+                    <div class="gt-flag-item"><span class="gt-flag-key">hashtag_hash_url</span> — hashtag hash routing</div>
+                    <div class="gt-flag-item"><span class="gt-flag-key">bookmark_filters</span> — bookmark search/sort</div>
+                    <div class="gt-flag-item"><span class="gt-flag-key">followers_sorting</span> — followers sorting controls</div>
+                    <div class="gt-flag-item"><span class="gt-flag-key">emoji_picker</span> — emoji picker in compose</div>
+                    <div class="gt-flag-item"><span class="gt-flag-key">mention_autocomplete</span> — @mention autocomplete</div>
+                    <div class="gt-flag-item"><span class="gt-flag-key">hashtag_autocomplete</span> — #hashtag autocomplete</div>
+                    <div class="gt-flag-item"><span class="gt-flag-key">char_ring</span> — character count ring</div>
+                    <div class="gt-flag-item"><span class="gt-flag-key">who_liked</span> — who liked modal</div>
+                    <div class="gt-flag-item"><span class="gt-flag-key">who_regadded</span> — who regadded modal</div>
+                    <div class="gt-flag-item"><span class="gt-flag-key">profile_badges</span> — profile badges</div>
+                    <div class="gt-flag-item"><span class="gt-flag-key">chaos_dashboard</span> — chaos UI access</div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right sidebar -->
+        <aside class="gt-sidebar gt-sidebar-right">
+            <div class="gt-widget-card">
+                <h3 class="gt-widget-title">What's happening</h3>
+                <div class="gt-trending-item">
+                    <div class="gt-trending-label">Testing Community</div>
+                    <div class="gt-trending-title">GadTalk Features</div>
+                    <div class="gt-trending-count">Explore 40+ API routes</div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Footer -->
+    <footer class="gt-footer">
+        <div class="gt-container-wide">
+            <p>© 2024 GadTalk - Testing & QA Platform</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/gad-talk/js/common-helpers.js"></script>
+    <script src="/gad-talk/js/auth-state.js"></script>
+    <script src="/gad-talk/js/sidebar-helpers.js"></script>
+</body>
+
+</html>

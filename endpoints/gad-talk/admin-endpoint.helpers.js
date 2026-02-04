@@ -1131,7 +1131,7 @@ async function handleAdminBackendPage(_req, res) {
         <div class="gt-admin-item">
           <div class="gt-admin-item-title">📖 Features Guide</div>
           <div class="gt-admin-item-desc">Detailed description of all platform features and capabilities.</div>
-          <a href="/api/gad-talk/admin/features-description" class="gt-admin-item-link disabled">Coming Soon</a>
+          <a href="/gad-talk/features.html" class="gt-admin-item-link">Open Features Guide</a>
         </div>
 
         <!-- Chaos Engineering -->
