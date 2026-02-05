@@ -120,7 +120,7 @@ async function handleContactForm(req, res) {
         payloadObject: auditPayload,
       });
 
-      logTrace("GadTalk contact form submitted", { email, source, userId: req.gadTalkUserId || null });
+      logTrace("[GadTalk] Contact form submitted", { email, source, userId: req.gadTalkUserId || null });
 
       return res.status(HTTP_OK).send({
         ok: true,
@@ -129,7 +129,7 @@ async function handleContactForm(req, res) {
         },
       });
     } catch (auditErr) {
-      logError("GadTalk contact form audit log failed", { error: auditErr?.message || auditErr, email, source });
+      logError("[GadTalk] Contact form audit log failed", { error: auditErr?.message || auditErr, email, source });
       // Still return success but indicate a warning so callers can surface it if needed
       return res.status(HTTP_OK).send({
         ok: true,
@@ -140,7 +140,7 @@ async function handleContactForm(req, res) {
       });
     }
   } catch (error) {
-    logError("GadTalk contact form error:", error);
+    logError("[GadTalk] Contact form error:", error);
     return res
       .status(HTTP_INTERNAL_SERVER_ERROR)
       .send(formatErrorResponse(error.message || "Unable to submit contact form"));

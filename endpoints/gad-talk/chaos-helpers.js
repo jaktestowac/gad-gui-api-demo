@@ -260,7 +260,7 @@ function wrapResponseForCorruption(res, config, chaosApplied, url) {
       recordChaosMetric(url, "corruption");
       return originalJson(corrupted);
     } catch (error) {
-      logError("Chaos: Failed to corrupt response", { error: error.message });
+      logError("[GadTalk] Chaos: Failed to corrupt response", { error: error.message });
       return originalJson(payload);
     }
   };
@@ -297,7 +297,7 @@ async function applyChaosEffects(req, res) {
   const url = req.url || req.originalUrl || "";
   const features = chaos.features || {};
 
-  logTrace("Chaos: Evaluating effects for", { url });
+  logTrace("[GadTalk] Chaos: Evaluating effects for", { url });
   recordChaosMetric(url, "evaluated");
 
   // ==================== DEPENDENCY OUTAGE ====================
@@ -314,7 +314,7 @@ async function applyChaosEffects(req, res) {
         chaosApplied.failureStatus = httpStatus;
         chaosApplied.failureReason = "dependencyOutage";
 
-        logDebug("Chaos: Simulating dependency outage", {
+        logDebug("[GadTalk] Chaos: Simulating dependency outage", {
           url,
           dependency: matchedDependency.name,
           httpStatus,
@@ -336,7 +336,7 @@ async function applyChaosEffects(req, res) {
             },
           });
         } catch (error) {
-          logError("Chaos: Failed to write audit log", { error: error.message });
+          logError("[GadTalk] Chaos: Failed to write audit log", { error: error.message });
         }
 
         res.status(httpStatus).json({
@@ -378,7 +378,7 @@ async function applyChaosEffects(req, res) {
         chaosApplied.failureStatus = httpStatus;
         chaosApplied.failureReason = "rateLimitChaos";
 
-        logDebug("Chaos: Triggering rate limit", {
+        logDebug("[GadTalk] Chaos: Triggering rate limit", {
           url,
           matchedEndpoint,
           actorKey,
@@ -402,7 +402,7 @@ async function applyChaosEffects(req, res) {
             },
           });
         } catch (error) {
-          logError("Chaos: Failed to write audit log", { error: error.message });
+          logError("[GadTalk] Chaos: Failed to write audit log", { error: error.message });
         }
 
         res.set("Retry-After", String(Math.max(1, Math.ceil((rateCheck.resetAt - Date.now()) / 1000))));
@@ -434,7 +434,7 @@ async function applyChaosEffects(req, res) {
       chaosApplied.failureStatus = httpStatus;
       chaosApplied.failureReason = "featureFlagChaos";
 
-      logDebug("Chaos: Triggering feature-flag failure", {
+      logDebug("[GadTalk] Chaos: Triggering feature-flag failure", {
         url,
         httpStatus,
         probability,
@@ -457,7 +457,7 @@ async function applyChaosEffects(req, res) {
           },
         });
       } catch (error) {
-        logError("Chaos: Failed to write audit log", { error: error.message });
+        logError("[GadTalk] Chaos: Failed to write audit log", { error: error.message });
       }
 
       res.status(httpStatus).json({
@@ -485,7 +485,7 @@ async function applyChaosEffects(req, res) {
         chaosApplied.failureStatus = 408; // Request Timeout
         chaosApplied.failureReason = "connectionTimeoutChaos";
 
-        logDebug("Chaos: Simulating connection timeout", {
+        logDebug("[GadTalk] Chaos: Simulating connection timeout", {
           url,
           timeoutMs,
           probability,
@@ -505,7 +505,7 @@ async function applyChaosEffects(req, res) {
             },
           });
         } catch (error) {
-          logError("Chaos: Failed to write audit log", { error: error.message });
+          logError("[GadTalk] Chaos: Failed to write audit log", { error: error.message });
         }
 
         // Wait for the timeout duration then respond
@@ -540,7 +540,7 @@ async function applyChaosEffects(req, res) {
           applied: true,
         };
 
-        logDebug("Chaos: Data consistency violation armed", {
+        logDebug("[GadTalk] Chaos: Data consistency violation armed", {
           url,
           violationType,
           probability,
@@ -604,15 +604,15 @@ async function applyChaosEffects(req, res) {
                   probability,
                 },
               }).catch((error) => {
-                logError("Chaos: Failed to write audit log", { error: error.message });
+                logError("[GadTalk] Chaos: Failed to write audit log", { error: error.message });
               });
             } catch (error) {
-              logError("Chaos: Failed to write audit log", { error: error.message });
+              logError("[GadTalk] Chaos: Failed to write audit log", { error: error.message });
             }
 
             return originalJson(modified);
           } catch (error) {
-            logError("Chaos: Failed to apply consistency violation", { error: error.message });
+            logError("[GadTalk] Chaos: Failed to apply consistency violation", { error: error.message });
             return originalJson(payload);
           }
         };
@@ -629,7 +629,7 @@ async function applyChaosEffects(req, res) {
       if (shouldTrigger(probability)) {
         const truncateAtPercent = features.partialResponseDelivery.truncateAtPercent ?? 50;
 
-        logDebug("Chaos: Partial response delivery armed", {
+        logDebug("[GadTalk] Chaos: Partial response delivery armed", {
           url,
           truncateAtPercent,
           probability,
@@ -672,16 +672,16 @@ async function applyChaosEffects(req, res) {
                   probability,
                 },
               }).catch((error) => {
-                logError("Chaos: Failed to write audit log", { error: error.message });
+                logError("[GadTalk] Chaos: Failed to write audit log", { error: error.message });
               });
             } catch (error) {
-              logError("Chaos: Failed to write audit log", { error: error.message });
+              logError("[GadTalk] Chaos: Failed to write audit log", { error: error.message });
             }
 
             // Send truncated response - will cause client parsing errors
             return originalSend(truncated);
           } catch (error) {
-            logError("Chaos: Failed to apply partial response delivery", { error: error.message });
+            logError("[GadTalk] Chaos: Failed to apply partial response delivery", { error: error.message });
             return originalJson(payload);
           }
         };
@@ -700,7 +700,7 @@ async function applyChaosEffects(req, res) {
       chaosApplied.failureStatus = httpStatus;
       chaosApplied.failureReason = "intermittentFailures";
 
-      logDebug("Chaos: Triggering intermittent failure", {
+      logDebug("[GadTalk] Chaos: Triggering intermittent failure", {
         url,
         httpStatus,
         probability,
@@ -720,7 +720,7 @@ async function applyChaosEffects(req, res) {
           },
         });
       } catch (error) {
-        logError("Chaos: Failed to write audit log", { error: error.message });
+        logError("[GadTalk] Chaos: Failed to write audit log", { error: error.message });
       }
 
       // Send error response
@@ -752,7 +752,7 @@ async function applyChaosEffects(req, res) {
       chaosApplied.corruptResponse = true;
       wrapResponseForCorruption(res, features.partialResponseCorruption, chaosApplied, url);
 
-      logDebug("Chaos: Response corruption armed", {
+      logDebug("[GadTalk] Chaos: Response corruption armed", {
         url,
         mode: features.partialResponseCorruption.mode,
         probability,
@@ -770,7 +770,7 @@ async function applyChaosEffects(req, res) {
           },
         });
       } catch (error) {
-        logError("Chaos: Failed to write audit log", { error: error.message });
+        logError("[GadTalk] Chaos: Failed to write audit log", { error: error.message });
       }
     }
   }
@@ -784,7 +784,7 @@ async function applyChaosEffects(req, res) {
     if (matchesSlowEndpoint(url, endpoints)) {
       chaosApplied.slowEndpointDelay = delayMs;
 
-      logDebug("Chaos: Applying slow endpoint delay", {
+      logDebug("[GadTalk] Chaos: Applying slow endpoint delay", {
         url,
         delayMs,
       });
@@ -804,7 +804,7 @@ async function applyChaosEffects(req, res) {
       const delayMs = getRandomDelay(features.randomDelays);
       chaosApplied.randomDelay = delayMs;
 
-      logDebug("Chaos: Applying random delay", {
+      logDebug("[GadTalk] Chaos: Applying random delay", {
         url,
         delayMs,
         probability,
@@ -835,7 +835,7 @@ async function applyChaosEffects(req, res) {
         },
       });
     } catch (error) {
-      logError("Chaos: Failed to write audit log", { error: error.message });
+      logError("[GadTalk] Chaos: Failed to write audit log", { error: error.message });
     }
   }
 

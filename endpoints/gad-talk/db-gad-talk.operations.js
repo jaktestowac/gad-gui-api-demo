@@ -219,14 +219,14 @@ function readGadTalkDb() {
     let db;
 
     if (!fs.existsSync(DB_PATH)) {
-      logDebug("GadTalk DB file not found, will seed with demo data");
+      logDebug("[GadTalk] DB file not found, will seed with demo data");
       shouldSeed = true;
     } else {
       const data = fs.readFileSync(DB_PATH, "utf8");
       db = JSON.parse(data);
       // Check if DB is empty or missing core data
       if (!Array.isArray(db.gads) || db.gads.length === 0) {
-        logDebug("GadTalk DB is empty, will seed with demo data");
+        logDebug("[GadTalk] DB is empty, will seed with demo data");
         shouldSeed = true;
       }
     }
@@ -251,12 +251,12 @@ function readGadTalkDb() {
       };
       ensureFeatureFlagsInDb(db);
       fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2));
-      logDebug("GadTalk DB seeded with demo data");
+      logDebug("[GadTalk] DB seeded with demo data");
     }
 
     return db;
   } catch (error) {
-    logError("Error reading GadTalk DB:", error);
+    logError("[GadTalk] Error reading GadTalk DB:", error);
     throw error;
   }
 }
@@ -276,9 +276,9 @@ async function writeGadTalkDb(data) {
     // Atomic rename
     fs.renameSync(tmpPath, DB_PATH);
 
-    logTrace("GadTalk DB written successfully");
+    logTrace("[GadTalk] DB written successfully");
   } catch (error) {
-    logError("Error writing GadTalk DB:", error);
+    logError("[GadTalk] Error writing GadTalk DB:", error);
     throw error;
   } finally {
     release();
@@ -314,14 +314,14 @@ function readGadTalkDemoDb() {
     if (shouldWrite) {
       try {
         fs.writeFileSync(DEMO_DB_PATH, JSON.stringify(demoDb, null, 2));
-        logTrace("> Demo DB seeded from gad-talk-demo-data.js");
+        logTrace("[GadTalk] Demo DB seeded from gad-talk-demo-data.js");
       } catch (e) {
-        logError("Failed to write demo DB seed", e);
+        logError("[GadTalk] Failed to write demo DB seed", e);
       }
     }
     return demoDb;
   } catch (error) {
-    logError("Error reading Demo GadTalk DB:", error);
+    logError("[GadTalk] Error reading Demo GadTalk DB:", error);
     return {
       users: [],
       gads: [],
@@ -349,7 +349,7 @@ function readGadTalkDemoDb() {
 function readAuditDb() {
   try {
     if (!fs.existsSync(AUDIT_DB_PATH)) {
-      logError("Audit GadTalk DB file not found, creating new one");
+      logError("[GadTalk] Audit GadTalk DB file not found, creating new one");
       const emptyDb = {
         audit: [],
       };
@@ -359,7 +359,7 @@ function readAuditDb() {
     const data = fs.readFileSync(AUDIT_DB_PATH, "utf8");
     return JSON.parse(data);
   } catch (error) {
-    logError("Error reading Audit GadTalk DB:", error);
+    logError("[GadTalk] Error reading Audit GadTalk DB:", error);
     throw error;
   }
 }
@@ -379,9 +379,9 @@ async function writeAuditDb(data) {
     // Atomic rename
     fs.renameSync(tmpPath, AUDIT_DB_PATH);
 
-    logTrace("Audit GadTalk DB written successfully");
+    logTrace("[GadTalk] Audit GadTalk DB written successfully");
   } catch (error) {
-    logError("Error writing Audit GadTalk DB:", error);
+    logError("[GadTalk] Error writing Audit GadTalk DB:", error);
     throw error;
   } finally {
     release();
@@ -657,17 +657,17 @@ async function seedGadsFromSource(existingDb) {
     const initData = require("./gad-talk-demo-data.js");
     if (initData && Array.isArray(initData.gads) && initData.gads.length > 0) {
       seed = initData;
-      logTrace("> Using init dataset for gads seeding");
+      logTrace("[GadTalk] Using init dataset for gads seeding");
     }
   } catch (e) {
-    logTrace("Init dataset not available for gads seeding", { error: e.message });
+    logTrace("[GadTalk] Init dataset not available for gads seeding", { error: e.message });
   }
 
   // Fall back to demo data
   if (!seed) {
     const demoDb = readGadTalkDemoDb();
     seed = demoDb;
-    logTrace("> Using demo dataset for gads seeding");
+    logTrace("[GadTalk] Using demo dataset for gads seeding");
   }
 
   // Merge gads and related collections from seed into existing DB
@@ -705,13 +705,13 @@ async function initializeGadTalkDb() {
       const hasUsers = existingDb.users && existingDb.users.length > 0;
       const hasGads = existingDb.gads && existingDb.gads.length > 0;
       if (hasUsers && hasGads) {
-        logTrace("> GadTalk DB already exists with data (users and gads), skipping initialization");
+        logTrace("[GadTalk] DB already exists with data (users and gads), skipping initialization");
         return existingDb;
       }
-      logTrace("> GadTalk DB exists but missing users or gads, will re-seed");
+      logTrace("[GadTalk] DB exists but missing users or gads, will re-seed");
     }
 
-    logTrace("Initializing GadTalk database...");
+    logTrace("[GadTalk] Initializing GadTalk database...");
 
     // Try loading init dataset
     let initData;
@@ -720,7 +720,7 @@ async function initializeGadTalkDb() {
       delete require.cache[initPath];
       initData = require("./gad-talk-demo-data.js");
     } catch (e) {
-      logTrace("No explicit init dataset or failed to load, will fallback to demo dataset", { error: e.message });
+      logTrace("[GadTalk] No explicit init dataset or failed to load, will fallback to demo dataset", { error: e.message });
       initData = null;
     }
 
@@ -737,7 +737,7 @@ async function initializeGadTalkDb() {
       seed = demoDb;
     }
 
-    logTrace(`> Using ${seedSourceName} dataset for initial GadTalk DB seeding`);
+    logTrace(`[GadTalk] Using ${seedSourceName} dataset for initial GadTalk DB seeding`);
 
     const initialDb = {
       users: (seed && seed.users) || [],
@@ -760,10 +760,10 @@ async function initializeGadTalkDb() {
     // Write to database
     await writeGadTalkDb(initialDb);
 
-    logDebug("GadTalk database initialized successfully");
+    logDebug("[GadTalk] Database initialized successfully");
     return initialDb;
   } catch (error) {
-    logError("Error initializing GadTalk DB:", error);
+    logError("[GadTalk] Error initializing GadTalk DB:", error);
     throw error;
   }
 }
@@ -775,11 +775,11 @@ async function initializeGadTalkDb() {
 async function initializeGadTalkAuditDb() {
   try {
     if (fs.existsSync(AUDIT_DB_PATH)) {
-      logTrace("> Audit GadTalk DB already exists, skipping initialization");
+      logTrace("[GadTalk] Audit GadTalk DB already exists, skipping initialization");
       return readAuditDb();
     }
 
-    logTrace("> Initializing Audit GadTalk database...");
+    logTrace("[GadTalk] Initializing Audit GadTalk database...");
 
     const initialAuditDb = {
       audit: [],
@@ -787,10 +787,10 @@ async function initializeGadTalkAuditDb() {
 
     await writeAuditDb(initialAuditDb);
 
-    logTrace("> Audit GadTalk database initialized successfully");
+    logTrace("[GadTalk] Audit GadTalk database initialized successfully");
     return initialAuditDb;
   } catch (error) {
-    logError("Error initializing Audit GadTalk DB:", error);
+    logError("[GadTalk] Error initializing Audit GadTalk DB:", error);
     throw error;
   }
 }
@@ -836,7 +836,7 @@ async function initializeAllGadTalkDatabases() {
  */
 async function resetGadTalkDatabaseWithDemoData() {
   try {
-    logDebug("Force resetting GadTalk database with demo data...");
+    logDebug("[GadTalk] Force resetting GadTalk database with demo data...");
 
     const demoDb = readGadTalkDemoDb();
 
@@ -861,7 +861,7 @@ async function resetGadTalkDatabaseWithDemoData() {
     await writeGadTalkDb(resetDb);
     await writeAuditDb({ audit: [] });
 
-    logDebug("Database reset completed successfully");
+    logDebug("[GadTalk] Database reset completed successfully");
 
     return {
       success: true,
@@ -876,7 +876,7 @@ async function resetGadTalkDatabaseWithDemoData() {
       },
     };
   } catch (error) {
-    logError("Error resetting database:", error);
+    logError("[GadTalk] Error resetting database:", error);
     throw error;
   }
 }
@@ -916,7 +916,7 @@ async function restoreGadTalkDatabaseFromDataset(datasetKey = "default") {
       throw new Error(`Unknown dataset: ${datasetKey}`);
     }
 
-    logDebug("Force restoring GadTalk database from dataset...", { dataset: seedSource });
+    logDebug("[GadTalk] Force restoring GadTalk database from dataset...", { dataset: seedSource });
 
     const restoredDb = {
       users: (seedData && seedData.users) || [],

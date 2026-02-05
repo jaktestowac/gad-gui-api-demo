@@ -169,14 +169,14 @@ function extractUserFromToken(req) {
     if (decoded && decoded.userId) {
       req.gadTalkUserId = decoded.userId;
       req.gadTalkUserData = decoded;
-      logTrace("GadTalk: User extracted from token:", { userId: decoded.userId });
+      logTrace("[GadTalk] User extracted from token:", { userId: decoded.userId });
     } else {
       req.gadTalkUserId = null;
     }
   } catch (error) {
     // Invalid token - treat as unauthenticated
     req.gadTalkUserId = null;
-    logTrace("GadTalk: Invalid token, treating as unauthenticated");
+    logTrace("[GadTalk] Invalid token, treating as unauthenticated");
   }
 }
 
@@ -192,7 +192,7 @@ async function handleGadTalk(req, res) {
   // Extract user from token (optional auth for most endpoints)
   extractUserFromToken(req);
 
-  logTrace("GadTalk request:", { method, segments, url: req.url, userId: req.gadTalkUserId });
+  logTrace("[GadTalk] request:", { method, segments, url: req.url, userId: req.gadTalkUserId });
 
   // Public health endpoint - bypass chaos effects and return module status
   if (segments[0] === "health" && method === "GET") {
@@ -207,7 +207,7 @@ async function handleGadTalk(req, res) {
 
       // If chaos caused a failure, response already sent
       if (!shouldContinue) {
-        logDebug("Chaos: Request terminated by chaos effect", {
+        logDebug("[GadTalk] Chaos: Request terminated by chaos effect", {
           url: req.url,
           chaosApplied,
         });
@@ -216,7 +216,7 @@ async function handleGadTalk(req, res) {
 
       // Log any delays that were applied
       if (chaosApplied.randomDelay > 0 || chaosApplied.slowEndpointDelay > 0) {
-        logDebug("Chaos: Delays applied", {
+        logDebug("[GadTalk] Chaos: Delays applied", {
           url: req.url,
           randomDelay: chaosApplied.randomDelay,
           slowEndpointDelay: chaosApplied.slowEndpointDelay,
@@ -285,7 +285,7 @@ async function handleGadTalk(req, res) {
     // ==================== NOT FOUND ====================
     res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Endpoint not found"));
   } catch (error) {
-    logError("GadTalk route error:", error);
+    logError("[GadTalk] Route error:", error);
     res.status(500).send(formatErrorResponse(error.message || "Internal server error"));
   }
 }
@@ -809,11 +809,11 @@ async function handleAdminRoutes(req, res, method, segments) {
  */
 async function initializeGadTalkModule() {
   try {
-    logDebug("Initializing GadTalk module...");
+    logDebug("[GadTalk] Initializing GadTalk module...");
     await initializeAllGadTalkDatabases();
-    logDebug("GadTalk module initialized successfully");
+    logDebug("[GadTalk] GadTalk module initialized successfully");
   } catch (error) {
-    logError("Failed to initialize GadTalk module:", error);
+    logError("[GadTalk] Failed to initialize GadTalk module:", error);
     throw error;
   }
 }

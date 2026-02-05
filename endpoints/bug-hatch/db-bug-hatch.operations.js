@@ -99,9 +99,9 @@ async function writeBugHatchDb(data) {
     // Atomic rename
     fs.renameSync(tmpPath, DB_PATH);
 
-    logTrace("BugHatch DB written successfully");
+    logTrace("[BugHatch] DB written successfully");
   } catch (error) {
-    logError("Error writing BugHatch DB:", error);
+    logError("[BugHatch] Error writing BugHatch DB:", error);
     throw error;
   } finally {
     release();
@@ -133,14 +133,14 @@ function readBugHatchDemoDb() {
     if (shouldWrite) {
       try {
         fs.writeFileSync(DEMO_DB_PATH, JSON.stringify(demoDb, null, 2));
-        logTrace("> Demo DB seeded from bug-hatch-demo-data.js");
+        logTrace("[BugHatch] Demo DB seeded from bug-hatch-demo-data.js");
       } catch (e) {
-        logError("Failed to write demo DB seed", e);
+        logError("[BugHatch] Failed to write demo DB seed", e);
       }
     }
     return demoDb;
   } catch (error) {
-    logError("Error reading Demo BugHatch DB:", error);
+    logError("[BugHatch] Error reading Demo BugHatch DB:", error);
     return {
       users: [],
       projects: [],
@@ -191,7 +191,7 @@ function acquireAuditLock() {
 function readAuditDb() {
   try {
     if (!fs.existsSync(AUDIT_DB_PATH)) {
-      logError("Audit BugHatch DB file not found, creating new one");
+      logError("[BugHatch] Audit BugHatch DB file not found, creating new one");
       const emptyDb = {
         audit: [],
       };
@@ -201,7 +201,7 @@ function readAuditDb() {
     const data = fs.readFileSync(AUDIT_DB_PATH, "utf8");
     return JSON.parse(data);
   } catch (error) {
-    logError("Error reading Audit BugHatch DB:", error);
+    logError("[BugHatch] Error reading Audit BugHatch DB:", error);
     throw error;
   }
 }
@@ -221,9 +221,9 @@ async function writeAuditDb(data) {
     // Atomic rename
     fs.renameSync(tmpPath, AUDIT_DB_PATH);
 
-    logTrace("Audit BugHatch DB written successfully");
+    logTrace("[BugHatch] Audit BugHatch DB written successfully");
   } catch (error) {
-    logError("Error writing Audit BugHatch DB:", error);
+    logError("[BugHatch] Error writing Audit BugHatch DB:", error);
     throw error;
   } finally {
     release();
@@ -249,36 +249,8 @@ async function createBugHatchAuditLog(auditData) {
   db.audit.push(auditEntry);
   await writeAuditDb(db);
 
-  logTrace("BugHatch audit log created:", { id: auditEntry.id, eventType: auditEntry.eventType });
+  logTrace("[BugHatch] Audit log created:", { id: auditEntry.id, eventType: auditEntry.eventType });
   return auditEntry;
-}
-
-/**
- * Get audit logs with optional filtering
- * @param {Object} filters - Optional filters
- * @param {string} filters.actorUserId - Filter by user
- * @param {string} filters.eventType - Filter by event type
- * @param {Object} filters.payloadObject - Filter by payload content
- * @returns {Array} Array of audit entries
- */
-function getBugHatchAuditLogs(filters = {}) {
-  const db = readAuditDb();
-  let logs = db.audit || [];
-  if (filters.actorUserId) {
-    logs = logs.filter((log) => areIdsEqual(log.actorUserId, filters.actorUserId));
-  }
-  if (filters.eventType) {
-    logs = logs.filter((log) => log.eventType === filters.eventType);
-  }
-  if (filters.payloadObject) {
-    logs = logs.filter((log) => {
-      for (const [key, value] of Object.entries(filters.payloadObject)) {
-        if (log.payloadObject[key] !== value) return false;
-      }
-      return true;
-    });
-  }
-  return logs;
 }
 
 // ==================== DATABASE INITIALIZATION ====================
@@ -292,11 +264,11 @@ async function initializeBugHatchDb() {
   try {
     // Check if database already exists
     if (fs.existsSync(DB_PATH)) {
-      logTrace("> BugHatch DB already exists, skipping initialization");
+      logTrace("[BugHatch] DB already exists, skipping initialization");
       return readBugHatchDb();
     }
 
-    logTrace("Initializing BugHatch database (preferring init dataset)...");
+    logTrace("[BugHatch] Initializing database (preferring init dataset)...");
 
     // Try loading init dataset (non-demo canonical starter data)
     let initData;
@@ -306,7 +278,9 @@ async function initializeBugHatchDb() {
       delete require.cache[initPath];
       initData = require("./bug-hatch-init-data.js");
     } catch (e) {
-      logTrace("No explicit init dataset or failed to load, will fallback to demo dataset", { error: e.message });
+      logTrace("[BugHatch] No explicit init dataset or failed to load, will fallback to demo dataset", {
+        error: e.message,
+      });
       initData = null;
     }
 
@@ -324,7 +298,7 @@ async function initializeBugHatchDb() {
       seed = demoDb;
     }
 
-    logTrace(`> Using ${seedSourceName} dataset for initial BugHatch DB seeding`);
+    logTrace(`[BugHatch] Using ${seedSourceName} dataset for initial BugHatch DB seeding`);
 
     const initialDb = {
       users: (seed && seed.users) || [],
@@ -341,10 +315,10 @@ async function initializeBugHatchDb() {
     // Write to database
     await writeBugHatchDb(initialDb);
 
-    logDebug("BugHatch database initialized successfully");
+    logDebug("[BugHatch] Database initialized successfully");
     return initialDb;
   } catch (error) {
-    logError("Error initializing BugHatch DB:", error);
+    logError("[BugHatch] Error initializing BugHatch DB:", error);
     throw error;
   }
 }
@@ -357,11 +331,11 @@ async function initializeBugHatchAuditDb() {
   try {
     // Check if audit database already exists
     if (fs.existsSync(AUDIT_DB_PATH)) {
-      logTrace("> Audit BugHatch DB already exists, skipping initialization");
+      logTrace("[BugHatch] Audit BugHatch DB already exists, skipping initialization");
       return readAuditDb();
     }
 
-    logTrace("> Initializing Audit BugHatch database...");
+    logTrace("[BugHatch] Initializing Audit BugHatch database...");
 
     // Create empty audit database
     const initialAuditDb = {
@@ -371,10 +345,10 @@ async function initializeBugHatchAuditDb() {
     // Write to database
     await writeAuditDb(initialAuditDb);
 
-    logTrace("> Audit BugHatch database initialized successfully");
+    logTrace("[BugHatch] Audit BugHatch database initialized successfully");
     return initialAuditDb;
   } catch (error) {
-    logError("Error initializing Audit BugHatch DB:", error);
+    logError("[BugHatch] Error initializing Audit BugHatch DB:", error);
     throw error;
   }
 }
@@ -386,7 +360,7 @@ async function initializeBugHatchAuditDb() {
  */
 async function initializeAllBugHatchDatabases() {
   try {
-    logTrace("> Checking BugHatch Module databases...");
+    logTrace("[BugHatch] Checking BugHatch Module databases...");
 
     // Initialize main database if needed
     await initializeBugHatchDb();
@@ -394,9 +368,9 @@ async function initializeAllBugHatchDatabases() {
     // Initialize audit database if needed
     await initializeBugHatchAuditDb();
 
-    logTrace("> All BugHatch Module databases ready");
+    logTrace("[BugHatch] All BugHatch Module databases ready");
   } catch (error) {
-    logError("Error initializing databases:", error);
+    logError("[BugHatch] Error initializing databases:", error);
     throw error;
   }
 }
@@ -409,7 +383,7 @@ async function initializeAllBugHatchDatabases() {
  */
 async function resetBugHatchDatabaseWithDemoData() {
   try {
-    logDebug("Force resetting BugHatch database with demo data...");
+    logDebug("[BugHatch] Force resetting BugHatch database with demo data...");
 
     // Read demo database
     const demoDb = readBugHatchDemoDb();
@@ -433,7 +407,7 @@ async function resetBugHatchDatabaseWithDemoData() {
     // Reset audit database
     await writeAuditDb({ audit: [] });
 
-    logDebug("Database reset completed successfully");
+    logDebug("[BugHatch] Database reset completed successfully");
 
     return {
       success: true,
@@ -447,7 +421,7 @@ async function resetBugHatchDatabaseWithDemoData() {
       },
     };
   } catch (error) {
-    logError("Error resetting database:", error);
+    logError("[BugHatch] Error resetting database:", error);
     throw error;
   }
 }
@@ -511,7 +485,7 @@ async function createBugHatchUser(userData) {
   db.users.push(newUser);
   await writeBugHatchDb(db);
 
-  logTrace("BugHatch user created:", { id: newUser.id, email: newUser.email });
+  logTrace("[BugHatch] User created:", { id: newUser.id, email: newUser.email });
   return newUser;
 }
 
@@ -700,6 +674,33 @@ async function updateBugHatchUser(userId, updates) {
 
 // ==================== AUDIT OPERATIONS ====================
 
+/**
+ * Get audit logs with optional filtering
+ * @param {Object} filters - Optional filters
+ * @param {string} filters.actorUserId - Filter by user
+ * @param {string} filters.eventType - Filter by event type
+ * @param {Object} filters.payloadObject - Filter by payload content
+ * @returns {Array} Array of audit entries
+ */
+function getBugHatchAuditLogs(filters = {}) {
+  const db = readAuditDb();
+  let logs = db.audit || [];
+  if (filters.actorUserId) {
+    logs = logs.filter((log) => areIdsEqual(log.actorUserId, filters.actorUserId));
+  }
+  if (filters.eventType) {
+    logs = logs.filter((log) => log.eventType === filters.eventType);
+  }
+  if (filters.payloadObject) {
+    logs = logs.filter((log) => {
+      for (const [key, value] of Object.entries(filters.payloadObject)) {
+        if (log.payloadObject[key] !== value) return false;
+      }
+      return true;
+    });
+  }
+  return logs;
+}
 /**
  * Get audit logs with optional filters
  * @param {Object} filters - Filter criteria

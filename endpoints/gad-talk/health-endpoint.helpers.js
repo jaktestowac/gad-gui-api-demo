@@ -91,7 +91,7 @@ async function handleGetHealth(_req, res) {
       },
     });
   } catch (error) {
-    logError("GadTalk health endpoint error:", error);
+    logError("[GadTalk] health endpoint error:", error);
     res.status(HTTP_SERVICE_UNAVAILABLE).send(formatErrorResponse(error.message || "GadTalk health check failed"));
   }
 }

@@ -62,7 +62,7 @@ async function handleSignup(req, res) {
       token: result.token,
     });
   } catch (error) {
-    logError("GadTalk signup error:", error);
+    logError("[GadTalk] Signup error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Signup failed"));
   }
 }
@@ -104,7 +104,7 @@ async function handleLogin(req, res) {
       token: result.token,
     });
   } catch (error) {
-    logError("GadTalk login error:", error);
+    logError("[GadTalk] Login error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Login failed"));
   }
 }
@@ -129,7 +129,7 @@ async function handleLogout(req, res) {
       data: { message: result.message || "Logged out successfully" },
     });
   } catch (error) {
-    logError("GadTalk logout error:", error);
+    logError("[GadTalk] Logout error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Logout failed"));
   }
 }
@@ -162,7 +162,7 @@ async function handleDemoLogin(req, res) {
       token: result.token,
     });
   } catch (error) {
-    logError("Error in demo login:", error);
+    logError("[GadTalk] Demo login error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Demo login failed"));
   }
 }
@@ -203,7 +203,7 @@ async function handleGetMe(req, res) {
       user: result.user,
     });
   } catch (error) {
-    logError("GadTalk get me error:", error);
+    logError("[GadTalk] Get me error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to get current user"));
   }
 }
@@ -251,7 +251,7 @@ async function handleRefresh(req, res) {
       },
     });
   } catch (error) {
-    logError("GadTalk refresh error:", error);
+    logError("[GadTalk] Refresh error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to refresh token"));
   }
 }
@@ -281,7 +281,7 @@ async function handleForgotPassword(req, res) {
       },
     });
   } catch (error) {
-    logError("GadTalk forgot password error:", error);
+    logError("[GadTalk] Forgot password error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to process request"));
   }
 }
@@ -310,7 +310,7 @@ async function handleResetPassword(req, res) {
       data: { message: result.message || "Password reset successfully" },
     });
   } catch (error) {
-    logError("GadTalk reset password error:", error);
+    logError("[GadTalk] Reset password error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to reset password"));
   }
 }
@@ -330,7 +330,7 @@ async function handleOAuthGoogle(req, res) {
       },
     });
   } catch (error) {
-    logError("GadTalk OAuth error:", error);
+    logError("[GadTalk] OAuth error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "OAuth failed"));
   }
 }
