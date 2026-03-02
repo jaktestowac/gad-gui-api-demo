@@ -1,4 +1,5 @@
 const { assertPackageDependencies } = require("./helpers/package.checker");
+console.log("Starting GAD... Checking package dependencies...");
 assertPackageDependencies();
 
 const jsonServer = require("./json-server");
