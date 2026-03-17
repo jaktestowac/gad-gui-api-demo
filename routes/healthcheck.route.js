@@ -62,6 +62,11 @@ const healthCheckRoutes = (req, res, next) => {
       res.status(HTTP_OK).json({ ...app });
       return;
     }
+    if (req.method === "GET" && (urlEnds === "/api" || urlEnds === "/api/")) {
+      logTrace("healthCheck:api response:", app);
+      res.status(HTTP_OK).json({ ...app });
+      return;
+    }
     if (req.method === "GET" && urlEnds.endsWith("api/ping")) {
       const response = { response: "pong", status: appStatuses.ok.status };
       logTrace("healthCheck:api/ping response:", response);
