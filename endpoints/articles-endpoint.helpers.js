@@ -201,6 +201,14 @@ function handleArticles(req, res, { isAdmin }) {
       return;
     }
 
+    if (!isAdmin) {
+      // always preserve article owner on patch, ignore supplied user_id in request body
+      req.body["user_id"] = foundUser.id;
+    } else if (!isUndefined(foundArticle)) {
+      // admin should keep original ownership when editing
+      req.body["user_id"] = foundArticle.user_id;
+    }
+
     const isFeatureEnabled = getFeatureFlagConfigValue(FeatureFlagConfigKeys.FEATURE_VALIDATE_ARTICLE_TITLE);
     if (isFeatureEnabled === true) {
       const foundArticles = searchForArticlesWithTitleWithoutId(req.body?.title, articleId);
