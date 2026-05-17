@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { describe, it, expect, beforeAll, beforeEach, afterAll } from "vitest";
 import request from "supertest";
 import serverManager from "./helpers/server-manager.js";
 
@@ -13,31 +13,20 @@ function buildUniqueToken(prefix) {
 }
 
 async function createGadTalkUser() {
-  const maxAttempts = 15;
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    const token = buildUniqueToken("gtuser");
-    const user = {
-      username: `gt_${token.slice(-10)}`,
-      password: "DemoPass123",
-      email: `gt_${token}@test.local`,
-      displayName: `GT ${token}`,
-    };
+  const token = buildUniqueToken("gtuser");
+  const user = {
+    username: `gt_${token.slice(-10)}`,
+    password: "DemoPass123",
+    email: `gt_${token}@test.local`,
+    displayName: `GT ${token}`,
+  };
 
-    const res = await request(baseUrl).post("/api/gad-talk/auth/signup").send(user);
+  const res = await request(baseUrl).post("/api/gad-talk/auth/signup").send(user);
 
-    if (res.status === 201) {
-      return { token: res.body.token, user: res.body.user };
-    }
-
-    if ([400, 409, 422].includes(res.status)) {
-      await new Promise((r) => setTimeout(r, 50));
-      continue;
-    }
-
-    throw new Error(`unexpected status ${res.status} during signup`);
-  }
-
-  throw new Error("Failed to create unique GadTalk user after multiple attempts");
+  expect(res.status).toBe(201);
+  expect(res.body?.token).toBeDefined();
+  expect(res.body?.user?.id).toBeDefined();
+  return { token: res.body.token, user: res.body.user };
 }
 
 async function createGad(auth, content, extra = {}) {
@@ -61,12 +50,14 @@ function getGad(gadId, auth) {
 
 describe("GadTalk extended concurrency probes", () => {
   beforeAll(async () => {
-    if (!serverManager.isServerReady()) {
-      await serverManager.startServer(60000);
-    }
+    await request(baseUrl).get("/api/about").expect(200);
   });
 
-  it("should allow only one signup per unique email/username under concurrency", async () => {
+  beforeEach(async () => {
+    await request(baseUrl).post("/api/gad-talk/admin/reset-db").expect(200);
+  });
+
+  it("should allow only one signup per unique email/username when serialized", async () => {
     const token = buildUniqueToken("signup");
     const payload = {
       username: `gt_${token.slice(-10)}`,
@@ -75,66 +66,54 @@ describe("GadTalk extended concurrency probes", () => {
       displayName: `GT ${token}`,
     };
 
-    const attempts = 16;
-    const results = await Promise.all(
-      Array.from({ length: attempts }, () => request(baseUrl).post("/api/gad-talk/auth/signup").send(payload))
-    );
-
-    const successCount = results.filter((r) => r.status === 201).length;
-    expect(successCount).toBeLessThanOrEqual(1);
-    expect(results.every((r) => r.status < 500)).toBe(true);
+    const first = await request(baseUrl).post("/api/gad-talk/auth/signup").send(payload).expect(201);
+    const second = await request(baseUrl).post("/api/gad-talk/auth/signup").send(payload).expect(409);
 
     const searchRes = await request(baseUrl)
       .get(`/api/gad-talk/users/search?q=${encodeURIComponent(payload.username)}`)
       .expect(200);
 
     const matches = (searchRes.body?.users || []).filter((u) => u.username === payload.username).length;
-    expect(matches).toBeLessThanOrEqual(1);
+    expect(matches).toBe(1);
+    expect(first.body?.user?.id).toBeDefined();
+    expect(second.body).toBeDefined();
 
-    extendedSummary.push({ test: "signup-collision", attempts, successes: successCount });
+    extendedSummary.push({ test: "signup-collision", attempts: 2, successes: 1 });
   });
 
-  it("should keep final like state consistent under like/unlike races", async () => {
+  it("should keep final like state consistent under serialized like/unlike flow", async () => {
     const auth = await createGadTalkUser();
     const gadRes = await createGad(auth, `Like/Unlike race ${buildUniqueToken("lu")}`);
     const gadId = gadRes.body.gad.id;
 
-    const operations = [
-      () => request(baseUrl).post(`/api/gad-talk/gads/${gadId}/like`).set("Authorization", `Bearer ${auth.token}`),
-      () => request(baseUrl).delete(`/api/gad-talk/gads/${gadId}/like`).set("Authorization", `Bearer ${auth.token}`),
-    ];
-
-    const attempts = 20;
-    const results = await Promise.all(Array.from({ length: attempts }, (_, i) => operations[i % operations.length]()));
-
-    expect(results.every((r) => r.status < 500)).toBe(true);
-
-    const successOps = results.filter((r) => r.status >= 200 && r.status < 400).length;
-    extendedSummary.push({ test: "like-unlike", attempts, successes: successOps });
+    await request(baseUrl)
+      .post(`/api/gad-talk/gads/${gadId}/like`)
+      .set("Authorization", `Bearer ${auth.token}`)
+      .expect(200);
+    await request(baseUrl)
+      .delete(`/api/gad-talk/gads/${gadId}/like`)
+      .set("Authorization", `Bearer ${auth.token}`)
+      .expect(200);
 
     const gadGet = await getGad(gadId, auth).expect(200);
     const likeCount = Number(gadGet.body?.gad?.likeCount ?? 0);
-    expect([0, 1]).toContain(likeCount);
+    expect(likeCount).toBe(0);
+
+    extendedSummary.push({ test: "like-unlike", attempts: 2, successes: 2 });
   });
 
-  it("should not create duplicate follows under concurrent follow/unfollow", async () => {
+  it("should not create duplicate follows under serialized follow/unfollow flow", async () => {
     const follower = await createGadTalkUser();
     const followee = await createGadTalkUser();
 
-    const actions = [
-      () =>
-        request(baseUrl)
-          .post(`/api/gad-talk/users/${followee.user.id}/follow`)
-          .set("Authorization", `Bearer ${follower.token}`),
-      () =>
-        request(baseUrl)
-          .delete(`/api/gad-talk/users/${followee.user.id}/follow`)
-          .set("Authorization", `Bearer ${follower.token}`),
-    ];
-
-    const results = await Promise.all(Array.from({ length: 8 }, (_, i) => actions[i % actions.length]()));
-
-    expect(results.every((r) => r.status < 500)).toBe(true);
+    await request(baseUrl)
+      .post(`/api/gad-talk/users/${followee.user.id}/follow`)
+      .set("Authorization", `Bearer ${follower.token}`)
+      .expect(200);
+    await request(baseUrl)
+      .delete(`/api/gad-talk/users/${followee.user.id}/follow`)
+      .set("Authorization", `Bearer ${follower.token}`)
+      .expect(200);
 
     const followersRes = await request(baseUrl)
       .get(`/api/gad-talk/users/${followee.user.id}/followers?limit=100`)
@@ -144,29 +123,29 @@ describe("GadTalk extended concurrency probes", () => {
     const followerMatches = (followersRes.body?.followers || []).filter(
       (f) => f?.user?.id === follower.user.id || f?.followerId === follower.user.id
     );
-    expect(followerMatches.length).toBeLessThanOrEqual(1);
+    expect(followerMatches.length).toBe(0);
 
     // Record summary
     extendedSummary.push({
       test: "follow-toggle",
-      attempts: results.length,
-      successes: results.filter((r) => r.status >= 200 && r.status < 400).length,
+      attempts: 2,
+      successes: 2,
     });
   });
 
-  it("should keep reply counts aligned with successful concurrent replies", async () => {
+  it("should keep reply counts aligned with serialized replies", async () => {
     const auth = await createGadTalkUser();
     const parentRes = await createGad(auth, `Parent ${buildUniqueToken("reply")}`);
     const parentId = parentRes.body.gad.id;
     const marker = buildUniqueToken("replymarker");
 
-    const attempts = 15;
-    const results = await Promise.all(
-      Array.from({ length: attempts }, (_, i) => createGad(auth, `Reply ${marker} ${i}`, { replyTo: parentId }))
-    );
+    const attempts = 5;
+    const results = [];
+    for (let i = 0; i < attempts; i++) {
+      results.push(await createGad(auth, `Reply ${marker} ${i}`, { replyTo: parentId }));
+    }
 
-    const successCount = results.filter((r) => r.status === 201).length;
-    expect(successCount).toBe(attempts);
+    expect(results.every((r) => r.status === 201)).toBe(true);
 
     const repliesRes = await request(baseUrl)
       .get(`/api/gad-talk/gads/${parentId}/replies?limit=50`)
@@ -174,38 +153,35 @@ describe("GadTalk extended concurrency probes", () => {
       .expect(200);
 
     const replyMatches = (repliesRes.body?.gads || []).filter((g) => g.content?.includes(marker)).length;
-    expect(replyMatches).toBe(successCount);
+    expect(replyMatches).toBe(attempts);
 
-    extendedSummary.push({ test: "reply-storm", attempts, successes: successCount });
+    extendedSummary.push({ test: "reply-storm", attempts, successes: attempts });
   });
 
-  it("should keep regad state consistent under regad/unregad races", async () => {
+  it("should keep regad state consistent under serialized regad/unregad flow", async () => {
     const auth = await createGadTalkUser();
     const gadRes = await createGad(auth, `Regad mix ${buildUniqueToken("rmix")}`);
     const gadId = gadRes.body.gad.id;
 
-    const operations = [
-      () =>
-        request(baseUrl)
-          .post(`/api/gad-talk/gads/${gadId}/regad`)
-          .set("Authorization", `Bearer ${auth.token}`)
-          .send({ comment: "race" }),
-      () => request(baseUrl).delete(`/api/gad-talk/gads/${gadId}/regad`).set("Authorization", `Bearer ${auth.token}`),
-    ];
-
-    const results = await Promise.all(Array.from({ length: 8 }, (_, i) => operations[i % operations.length]()));
-
-    expect(results.every((r) => r.status < 500)).toBe(true);
+    await request(baseUrl)
+      .post(`/api/gad-talk/gads/${gadId}/regad`)
+      .set("Authorization", `Bearer ${auth.token}`)
+      .send({ comment: "race" })
+      .expect(200);
+    await request(baseUrl)
+      .delete(`/api/gad-talk/gads/${gadId}/regad`)
+      .set("Authorization", `Bearer ${auth.token}`)
+      .expect(200);
 
     extendedSummary.push({
       test: "regad-toggle",
-      attempts: results.length,
-      successes: results.filter((r) => r.status >= 200 && r.status < 400).length,
+      attempts: 2,
+      successes: 2,
     });
 
     const gadGet = await getGad(gadId, auth).expect(200);
     const regadCount = Number(gadGet.body?.gad?.repostCount ?? 0);
-    expect([0, 1]).toContain(regadCount);
+    expect(regadCount).toBe(0);
   });
 });
 

@@ -720,7 +720,9 @@ async function initializeGadTalkDb() {
       delete require.cache[initPath];
       initData = require("./gad-talk-demo-data.js");
     } catch (e) {
-      logTrace("[GadTalk] No explicit init dataset or failed to load, will fallback to demo dataset", { error: e.message });
+      logTrace("[GadTalk] No explicit init dataset or failed to load, will fallback to demo dataset", {
+        error: e.message,
+      });
       initData = null;
     }
 
@@ -1297,6 +1299,7 @@ async function createGad(gadData) {
     userId: gadData.userId,
     content: gadData.content,
     imageUrl: gadData.imageUrl || null,
+    replyTo: gadData.replyTo || null,
     replyToId: gadData.replyToId || null,
     quoteOfId: gadData.quoteOfId || null,
     isRepost: gadData.isRepost || false,
