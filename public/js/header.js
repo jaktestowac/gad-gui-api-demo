@@ -224,6 +224,8 @@ const footerHTML = (date) => {
     </a>
     <br />
     <a href="https://aitesters.pl" target="_blank" rel="noopener" style="margin-left: 4px; margin-right: 4px; ">AI_Testers</a> 
+      <span aria-hidden="true">|</span>
+      <a href="https://github.com/AI-Testers-pl" target="_blank" rel="noopener" aria-label="GitHub AI_Testers"><i class="fab fa-github"></i><span class="sr-only">GitHub AI_Testers</span></a>
     <span aria-hidden="true">|</span>
     <a href="https://www.youtube.com/@AITesterspl?sub_confirmation=1" target="_blank" rel="noopener" aria-label="YouTube AI_Testers" data-testid="footer-youtube" class="footer-youtube-link" style="margin-left: 4px; margin-right: 4px; ">
       <i class="fab fa-youtube" aria-hidden="true"></i><span class="sr-only">YouTube AI_Testers</span>
