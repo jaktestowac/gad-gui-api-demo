@@ -1,0 +1,19 @@
+#!/bin/sh
+
+set -eu
+
+current_branch="$(git symbolic-ref --quiet --short HEAD 2>/dev/null || true)"
+
+if [ "$current_branch" != "main" ]; then
+  exit 0
+fi
+
+repo_root="$(git rev-parse --show-toplevel)"
+cd "$repo_root"
+
+echo "[pre-commit] main branch detected; bumping patch version..."
+node tools/release/update-version.js patch --yes
+
+git add -- package.json package-lock.json app.json public/version.js tools/release/README.md
+
+echo "[pre-commit] version bump staged successfully."
