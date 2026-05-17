@@ -208,12 +208,33 @@ const rightMenu = (path = "", withUserMenu = true, customHtmlCode = "") => {
 const footerHTML = (date) => {
   return `
     <footer >
-    <div class="container" id="footer-container">
+    <div class="container" id="footer-container" style="line-height: 1.75; font-size: 12px; text-align: center; padding: 20px; color: #888;">
     Version: <span id="version" aria-label="Version number"></span>
     <span id="copyright-sign">&copy;</span> Copyright ${date}
     <a href="https://jaktestowac.pl" target="_blank" rel="noopener" aria-label="Visit jaktestowac.pl (opens in a new tab)">jaktestowac.pl</a>
-    |
-    <a href="https://github.com/jaktestowac/gad-gui-api-demo" target="_blank" rel="noopener" aria-label="Visit GitHub Repository (opens in a new tab)"><i class="fab fa-github"></i> GitHub Repository</a>
+    <span aria-hidden="true">|</span>
+    <a href="https://github.com/jaktestowac/gad-gui-api-demo" target="_blank" rel="noopener" aria-label="Visit GitHub Repository (opens in a new tab)"><i class="fab fa-github"></i></a>
+    <span aria-hidden="true">|</span>
+    <a href="https://www.youtube.com/@jaktestowac?sub_confirmation=1" target="_blank" rel="noopener" aria-label="YouTube jaktestowac.pl" data-testid="footer-youtube" class="footer-youtube-link" style="margin-left: 4px; margin-right: 4px; ">
+      <i class="fab fa-youtube" aria-hidden="true"></i><span class="sr-only">YouTube jaktestowac.pl</span>
+    </a>        
+    <span aria-hidden="true">|</span>
+    <a href="https://www.linkedin.com/company/jaktestowac" target="_blank" rel="noopener" aria-label="LinkedIn jaktestowac.pl" data-testid="footer-linkedin" class="footer-linkedin-link" style="margin-left: 4px; margin-right: 4px; ">
+      <i class="fab fa-linkedin" aria-hidden="true"></i><span class="sr-only">LinkedIn jaktestowac.pl</span>
+    </a>
+    <br />
+    <a href="https://aitesters.pl" target="_blank" rel="noopener" style="margin-left: 4px; margin-right: 4px; ">AI_Testers</a> 
+      <span aria-hidden="true">|</span>
+      <a href="https://github.com/AI-Testers-pl" target="_blank" rel="noopener" aria-label="GitHub AI_Testers"><i class="fab fa-github"></i><span class="sr-only">GitHub AI_Testers</span></a>
+    <span aria-hidden="true">|</span>
+    <a href="https://www.youtube.com/@AITesterspl?sub_confirmation=1" target="_blank" rel="noopener" aria-label="YouTube AI_Testers" data-testid="footer-youtube" class="footer-youtube-link" style="margin-left: 4px; margin-right: 4px; ">
+      <i class="fab fa-youtube" aria-hidden="true"></i><span class="sr-only">YouTube AI_Testers</span>
+    </a>
+    <span aria-hidden="true">|</span>
+    <a href="https://www.linkedin.com/company/aitesters" target="_blank" rel="noopener" aria-label="LinkedIn AI_Testers" data-testid="footer-linkedin" class="footer-linkedin-link" style="margin-left: 4px; margin-right: 4px; ">
+      <i class="fab fa-linkedin" aria-hidden="true"></i><span class="sr-only">LinkedIn AI_Testers</span>
+    </a>
+
     </div>
   </footer>
   `;

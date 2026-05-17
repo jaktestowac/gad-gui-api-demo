@@ -6,12 +6,121 @@
 const gadTalkApp = (function () {
   let currentUser = null;
   let currentFeed = "for-you";
+  let currentSort = "latest";
   let currentPage = 1;
   let isLoading = false;
   let hasMore = true;
   let isGuestMode = false;
   let guestRedirectTimer = null;
   let guestScrollHandler = null;
+  let featureFlags = {};
+  let hashtagHashEnabled = true;
+
+  function showFollowMessage(container, message) {
+    if (!container) return;
+    let msgEl = container.querySelector(".gt-follow-message");
+    if (!msgEl) {
+      msgEl = document.createElement("span");
+      msgEl.className = "gt-text-secondary gt-text-sm gt-follow-message";
+      msgEl.setAttribute("role", "status");
+      container.appendChild(msgEl);
+    }
+    msgEl.textContent = message;
+
+    clearTimeout(msgEl._gtHideTimer);
+    msgEl._gtHideTimer = setTimeout(() => {
+      if (msgEl && msgEl.parentElement) {
+        msgEl.parentElement.removeChild(msgEl);
+      }
+    }, 3000);
+  }
+
+  async function getFollowingIds() {
+    const followingIds = new Set();
+    if (!currentUser || !window.GadTalkAPI?.users?.getFollowing) return followingIds;
+
+    try {
+      const followingResponse = await window.GadTalkAPI.users.getFollowing(currentUser.id, 1, 200);
+      const followingUsers = followingResponse?.users || followingResponse?.following || followingResponse?.data || [];
+      followingUsers.forEach((user) => {
+        if (user && user.id) {
+          followingIds.add(user.id);
+        }
+      });
+    } catch (error) {
+      // Silently ignore follow list fetch errors to avoid console noise
+    }
+
+    return followingIds;
+  }
+
+  function scoreSuggestedUser(user) {
+    if (!user) return -Infinity;
+    let score = 0;
+
+    score += (user.followersCount || 0) * 2;
+    score += user.gadsCount || 0;
+    if (user.role === "admin") score += 25;
+
+    if (user.lastLoginAt) {
+      const lastLogin = Date.parse(user.lastLoginAt);
+      if (!Number.isNaN(lastLogin)) {
+        const daysAgo = (Date.now() - lastLogin) / (1000 * 60 * 60 * 24);
+        if (daysAgo <= 1) score += 15;
+        else if (daysAgo <= 7) score += 8;
+      }
+    }
+
+    return score + Math.random();
+  }
+
+  function mergeUniqueUsers(existing, incoming) {
+    const byId = new Map(existing.map((user) => [user.id, user]));
+    incoming.forEach((user) => {
+      if (user && user.id && !byId.has(user.id)) {
+        byId.set(user.id, user);
+      }
+    });
+    return Array.from(byId.values());
+  }
+
+  async function getSuggestedUsers(limit = 3) {
+    let candidates = [];
+
+    try {
+      const response = await window.GadTalkAPI.users.getSuggestions(limit * 2);
+      candidates = mergeUniqueUsers(candidates, response?.users || []);
+    } catch (error) {
+      // Ignore to allow other sources
+    }
+
+    try {
+      if (window.GadTalkAPI?.explore?.getData) {
+        const explore = await window.GadTalkAPI.explore.getData();
+        candidates = mergeUniqueUsers(candidates, explore?.suggestedUsers || []);
+      }
+    } catch (error) {
+      // Ignore to allow other sources
+    }
+
+    const searchQueries = ["a", "e", "i", "o", "u", "test", "qa", "dev", "auto"];
+    for (const query of searchQueries) {
+      if (candidates.length >= limit * 3) break;
+      try {
+        const response = await window.GadTalkAPI.users.search(query, 1, 10);
+        candidates = mergeUniqueUsers(candidates, response?.users || []);
+      } catch (error) {
+        // Ignore and continue
+      }
+    }
+
+    const followingIds = await getFollowingIds();
+    const filtered = candidates.filter(
+      (user) => user && user.id && !followingIds.has(user.id) && (!currentUser || user.id !== currentUser.id)
+    );
+
+    return filtered.sort((a, b) => scoreSuggestedUser(b) - scoreSuggestedUser(a)).slice(0, limit);
+  }
 
   // Guest mode settings
   const GUEST_REDIRECT_DELAY = 30000; // 30 seconds
@@ -21,6 +130,13 @@ const gadTalkApp = (function () {
    * Initialize the app
    */
   async function init() {
+    await loadFeatureFlags();
+    applyFeatureFlags();
+
+    if (hashtagHashEnabled && handleHashtagHashRedirect()) {
+      return;
+    }
+
     // Use optional auth - allow guests to view content
     currentUser = await window.gadTalkAuth.optionalAuth();
     isGuestMode = !currentUser;
@@ -35,6 +151,7 @@ const gadTalkApp = (function () {
 
     // Common setup for both modes
     setupFeedTabs();
+    setupSortOptions();
     setupSearch();
 
     // Load initial feed (works for both guest and authenticated)
@@ -53,6 +170,61 @@ const gadTalkApp = (function () {
         dropdown.classList.add("gt-hidden");
       });
     });
+  }
+
+  async function loadFeatureFlags() {
+    if (!window.GadTalkAPI || !window.GadTalkAPI.featureFlags) return;
+    try {
+      const response = await window.GadTalkAPI.featureFlags.getAll();
+      const flags = response?.data || response?.flags || response || [];
+      featureFlags = flags.reduce((acc, flag) => {
+        acc[String(flag.key || "").toLowerCase()] = !!flag.enabled;
+        return acc;
+      }, {});
+    } catch (error) {
+      featureFlags = {};
+    }
+  }
+
+  function applyFeatureFlags() {
+    hashtagHashEnabled = featureFlags.hashtag_hash_url !== false;
+
+    // Initialize interaction modals with feature flags
+    if (window.GadTalkInteractionModals) {
+      window.GadTalkInteractionModals.init(featureFlags);
+    }
+
+    // Initialize compose enhancements with feature flags
+    if (window.GadTalkComposeEnhancements) {
+      window.GadTalkComposeEnhancements.setFeatureFlags(featureFlags);
+    }
+  }
+
+  function handleHashtagHashRedirect() {
+    const hashtag = getHashtagFromHash();
+    if (!hashtag) return false;
+
+    const target = `/gad-talk/explore.html?hashtag=${encodeURIComponent(hashtag)}`;
+    window.location.replace(target);
+    return true;
+  }
+
+  function getHashtagFromHash() {
+    const raw = window.location.hash || "";
+    if (!raw || raw === "#") return null;
+
+    let decoded = "";
+    try {
+      decoded = decodeURIComponent(raw.slice(1));
+    } catch (error) {
+      decoded = raw.slice(1);
+    }
+
+    const trimmed = decoded.trim().replace(/^#/, "");
+    if (!trimmed) return null;
+
+    const match = trimmed.match(/[a-zA-Z0-9_]+/);
+    return match ? match[0] : null;
   }
 
   /**
@@ -168,6 +340,13 @@ const gadTalkApp = (function () {
       }
     );
 
+    // Initialize compose enhancements (emoji picker, autocomplete, char ring)
+    if (window.GadTalkComposeEnhancements) {
+      window.GadTalkComposeEnhancements.init("compose-textarea", "char-count", "add-emoji-btn");
+      window.GadTalkComposeEnhancements.init("modal-compose-textarea", "modal-char-count", "modal-add-emoji-btn");
+      window.GadTalkComposeEnhancements.init("quote-compose-textarea", "quote-char-count", null);
+    }
+
     // Setup compose modal
     setupComposeModal();
 
@@ -180,7 +359,7 @@ const gadTalkApp = (function () {
     // Setup nav profile link
     const navProfile = document.getElementById("nav-profile");
     if (navProfile) {
-      navProfile.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+      navProfile.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
     }
 
     // Check for unread notifications
@@ -329,7 +508,7 @@ const gadTalkApp = (function () {
               text: "Profile",
               icon: '<i class="fa-solid fa-user"></i>',
               onClick: () => {
-                window.location.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+                window.location.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
               },
             },
             {
@@ -361,7 +540,7 @@ const gadTalkApp = (function () {
     } else if (dropdownBtn) {
       // Fallback: navigate to profile on click
       dropdownBtn.addEventListener("click", () => {
-        window.location.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+        window.location.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
       });
     }
   }
@@ -526,6 +705,29 @@ const gadTalkApp = (function () {
   }
 
   /**
+   * Setup sort options (Latest/Top)
+   */
+  function setupSortOptions() {
+    const sortBtns = document.querySelectorAll(".gt-sort-btn[data-sort]");
+    sortBtns.forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const sortType = btn.dataset.sort;
+        if (sortType === currentSort) return;
+
+        // Update active sort button
+        sortBtns.forEach((b) => b.classList.remove("gt-sort-active"));
+        btn.classList.add("gt-sort-active");
+
+        // Load feed with new sort
+        currentSort = sortType;
+        currentPage = 1;
+        hasMore = true;
+        await loadFeed();
+      });
+    });
+  }
+
+  /**
    * Setup search
    */
   function setupSearch() {
@@ -582,9 +784,9 @@ const gadTalkApp = (function () {
     try {
       let response;
       if (currentFeed === "following") {
-        response = await window.GadTalkAPI.gads.getTimeline(currentPage);
+        response = await window.GadTalkAPI.gads.getTimeline(currentPage, 20, currentSort);
       } else {
-        response = await window.GadTalkAPI.gads.getForYou(currentPage);
+        response = await window.GadTalkAPI.gads.getForYou(currentPage, 20, currentSort);
       }
 
       const gads = response.gads || [];
@@ -690,11 +892,10 @@ const gadTalkApp = (function () {
     if (!suggestionsList) return;
 
     try {
-      const response = await window.GadTalkAPI.users.getSuggestions(3);
-      const users = response.users || [];
+      const users = await getSuggestedUsers(3);
 
       if (users.length === 0) {
-        suggestionsList.innerHTML = '<p class="gt-text-secondary gt-text-sm">No suggestions</p>';
+        suggestionsList.innerHTML = '<p class="gt-text-secondary gt-text-sm">No suggestions right now</p>';
         return;
       }
 
@@ -702,17 +903,19 @@ const gadTalkApp = (function () {
         .map(
           (user) => `
         <div class="gt-suggestion-item">
-          <a href="/gad-talk/profile.html?user=${user.username}" class="gt-suggestion-user">
+          <a href="/gad-talk/@${encodeURIComponent(user.username)}" class="gt-suggestion-user">
             ${window.gadTalkGads.getAvatarHtml(user, "sm")}
             <div class="gt-suggestion-info">
               <span class="gt-suggestion-name">${user.displayName || user.username}</span>
               <span class="gt-suggestion-username">@${user.username}</span>
             </div>
           </a>
-          <button class="gt-btn gt-btn-primary gt-btn-sm" data-follow="${user.id}" data-testid="follow-${
+          <button class="gt-btn ${
+            user.isFollowing ? "gt-btn-secondary gt-following" : "gt-btn-primary"
+          } gt-btn-sm" data-follow="${user.id}" data-following="${user.isFollowing}" data-testid="follow-${
             user.username
           }">
-            Follow
+            ${user.isFollowing ? "Following" : "Follow"}
           </button>
         </div>
       `
@@ -723,19 +926,34 @@ const gadTalkApp = (function () {
       suggestionsList.querySelectorAll("[data-follow]").forEach((btn) => {
         btn.addEventListener("click", async () => {
           const userId = btn.dataset.follow;
+          const isFollowing = btn.dataset.following === "true";
+          if (isFollowing) {
+            showFollowMessage(btn.parentElement, "Already following");
+            return;
+          }
           try {
             await window.GadTalkAPI.users.follow(userId);
             btn.textContent = "Following";
             btn.classList.remove("gt-btn-primary");
             btn.classList.add("gt-btn-secondary");
             btn.disabled = true;
+            btn.dataset.following = "true";
+            showFollowMessage(btn.parentElement, "Now following");
           } catch (error) {
-            console.error("Error following user:", error);
+            if (error && error.message && /already following/i.test(error.message)) {
+              btn.textContent = "Following";
+              btn.classList.remove("gt-btn-primary");
+              btn.classList.add("gt-btn-secondary");
+              btn.disabled = true;
+              btn.dataset.following = "true";
+              showFollowMessage(btn.parentElement, "Already following");
+            } else {
+              showFollowMessage(btn.parentElement, "Could not follow user");
+            }
           }
         });
       });
     } catch (error) {
-      console.error("Error loading suggestions:", error);
       suggestionsList.innerHTML = '<p class="gt-text-secondary gt-text-sm">Failed to load suggestions</p>';
     }
   }
@@ -769,6 +987,49 @@ const gadTalkApp = (function () {
     init();
   }
 
+  // Debug / Console helpers
+  function listFeatureFlags() {
+    return featureFlags;
+  }
+
+  function listEnabledFeatureFlags() {
+    return Object.keys(featureFlags).filter((k) => featureFlags[k]);
+  }
+
+  function whoami() {
+    return currentUser || "(guest)";
+  }
+
+  function showState() {
+    return {
+      currentFeed,
+      currentSort,
+      currentPage,
+      isGuestMode,
+      hashtagHashEnabled,
+    };
+  }
+
+  async function reloadFeatureFlags() {
+    await loadFeatureFlags();
+    applyFeatureFlags();
+    return featureFlags;
+  }
+
+  function debugHelp() {
+    return {
+      description: "GadTalk console commands",
+      commands: {
+        help: "GadTalk.debug.help() - show this help (returns object)",
+        listFeatureFlags: "GadTalk.debug.listFeatureFlags() - list all flags (object)",
+        listEnabledFeatureFlags: "GadTalk.debug.listEnabledFeatureFlags() - list enabled flags (array)",
+        whoami: "GadTalk.debug.whoami() - show current user or '(guest)'",
+        showState: "GadTalk.debug.showState() - show app state (object)",
+        reloadFeatureFlags: "GadTalk.debug.reloadFeatureFlags() - reload flags from API (async)",
+      },
+    };
+  }
+
   // Public API
   return {
     init,
@@ -779,8 +1040,24 @@ const gadTalkApp = (function () {
     checkNotifications,
     showLoginPrompt,
     isGuest: () => isGuestMode,
+
+    // Expose debug helpers for console use
+    debug: {
+      help: debugHelp,
+      listFeatureFlags,
+      listEnabledFeatureFlags,
+      whoami,
+      showState,
+      reloadFeatureFlags,
+    },
   };
 })();
 
 // Export for use in other scripts
 window.gadTalkApp = gadTalkApp;
+
+// Export console-friendly debug object for use on any page
+window.GadTalk = window.GadTalk || {};
+window.GadTalk.debug = window.gadTalkApp.debug;
+// Backwards-compatible shorthand
+window.GadTalkDebug = window.gadTalkApp.debug;

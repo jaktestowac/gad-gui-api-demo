@@ -168,6 +168,26 @@ const gadTalkAuth = (function () {
       return;
     }
 
+    // Check username availability with backend
+    try {
+      const availRes = await fetch(`/api/gad-talk/users/available/${encodeURIComponent(username)}`);
+      if (availRes.status === 422) {
+        const err = await availRes.json();
+        showError(err.error || "Invalid username");
+        return;
+      }
+      if (availRes.ok) {
+        const json = await availRes.json();
+        if (!json.available) {
+          showError("Username is already taken");
+          return;
+        }
+      }
+    } catch (e) {
+      // Ignore availability check failure and proceed with signup (server will still enforce uniqueness)
+      console.warn("Username availability check failed", e);
+    }
+
     setButtonLoading(submitBtn, true);
 
     try {
@@ -188,6 +208,115 @@ const gadTalkAuth = (function () {
       showError(error.message || "Signup failed. Please try again.");
     } finally {
       setButtonLoading(submitBtn, false);
+    }
+  }
+
+  /**
+   * Handle forgot password form submission
+   */
+  async function handleForgotPassword(event) {
+    event.preventDefault();
+    clearMessages();
+
+    const form = event.target;
+    const email = form.email.value.trim();
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    if (!email) {
+      showError("Please enter your email");
+      return;
+    }
+
+    setButtonLoading(submitBtn, true);
+
+    try {
+      const response = await window.GadTalkAPI.auth.forgotPassword(email);
+      const message =
+        response?.data?.message || "If an account exists with this email, a password reset link has been sent.";
+      showSuccess(message);
+
+      const resetUrl = response?.data?.resetUrl;
+      const resetUrlEl = document.getElementById("reset-url-output");
+      const resetUrlWrap = document.getElementById("reset-url-container");
+      if (resetUrl && resetUrlEl && resetUrlWrap) {
+        resetUrlEl.textContent = resetUrl;
+        resetUrlEl.href = resetUrl;
+        resetUrlWrap.classList.remove("gt-hidden");
+      }
+    } catch (error) {
+      showError(error.message || "Failed to request password reset.");
+    } finally {
+      setButtonLoading(submitBtn, false);
+    }
+  }
+
+  /**
+   * Handle reset password form submission
+   */
+  async function handleResetPassword(event) {
+    event.preventDefault();
+    clearMessages();
+
+    const form = event.target;
+    const token = form.token.value.trim();
+    const password = form.password.value;
+    const confirmPassword = form.confirmPassword?.value || "";
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    if (!token) {
+      showError("Reset token is missing. Please use the reset link from your email.");
+      return;
+    }
+
+    if (!password) {
+      showError("Please enter a new password");
+      return;
+    }
+
+    if (confirmPassword && password !== confirmPassword) {
+      showError("Passwords do not match");
+      return;
+    }
+
+    setButtonLoading(submitBtn, true);
+
+    try {
+      const response = await window.GadTalkAPI.auth.resetPassword(token, password);
+      const message = response?.data?.message || "Password reset successfully. Redirecting to login...";
+      showSuccess(message);
+      setTimeout(() => {
+        window.location.href = "/gad-talk/login.html";
+      }, 800);
+    } catch (error) {
+      showError(error.message || "Failed to reset password.");
+    } finally {
+      setButtonLoading(submitBtn, false);
+    }
+  }
+
+  /**
+   * Handle OAuth Google simulated login
+   */
+  async function handleOAuthGoogle(event) {
+    if (event) event.preventDefault();
+    clearMessages();
+
+    const submitBtn = document.querySelector("[data-oauth-google]");
+    if (submitBtn) setButtonLoading(submitBtn, true);
+
+    try {
+      const response = await window.GadTalkAPI.auth.oauthGoogle();
+      const message = response?.data?.message || "OAuth login simulated.";
+      showSuccess(message);
+      const hintEl = document.getElementById("oauth-hint");
+      if (hintEl && response?.data?.hint) {
+        hintEl.textContent = response.data.hint;
+        hintEl.classList.remove("gt-hidden");
+      }
+    } catch (error) {
+      showError(error.message || "OAuth login failed.");
+    } finally {
+      if (submitBtn) setButtonLoading(submitBtn, false);
     }
   }
 
@@ -256,6 +385,30 @@ const gadTalkAuth = (function () {
     const signupForm = document.getElementById("signup-form");
     if (signupForm) {
       signupForm.addEventListener("submit", handleSignup);
+    }
+
+    // Forgot password form
+    const forgotForm = document.getElementById("forgot-password-form");
+    if (forgotForm) {
+      forgotForm.addEventListener("submit", handleForgotPassword);
+    }
+
+    // Reset password form
+    const resetForm = document.getElementById("reset-password-form");
+    if (resetForm) {
+      const tokenInput = resetForm.querySelector("input[name=token]");
+      if (tokenInput && !tokenInput.value) {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get("token");
+        if (token) tokenInput.value = token;
+      }
+      resetForm.addEventListener("submit", handleResetPassword);
+    }
+
+    // OAuth Google button
+    const oauthBtn = document.querySelector("[data-oauth-google]");
+    if (oauthBtn) {
+      oauthBtn.addEventListener("click", handleOAuthGoogle);
     }
 
     // Demo login buttons

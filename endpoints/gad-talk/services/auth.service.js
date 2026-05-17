@@ -6,8 +6,10 @@ const {
   findGadTalkUserById,
   createGadTalkUser,
   updateGadTalkUserLastLogin,
+  updateGadTalkUserPassword,
   generateGadTalkId,
   createGadTalkAuditLog,
+  getGadTalkAuditLogs,
 } = require("../db-gad-talk.operations");
 const { createToken, prepareCookieMaxAge, verifyToken } = require("../../../helpers/jwtauth");
 const gadTalkConfig = require("../gad-talk-config");
@@ -404,31 +406,114 @@ async function requestPasswordReset(email) {
       return { success: false, error: "Email is required" };
     }
 
-    const user = findGadTalkUserByEmail(email);
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const user = findGadTalkUserByEmail(normalizedEmail);
+
+    const resetToken = generateGadTalkId("reset");
+    const ttlMinutes = gadTalkConfig.auth.passwordResetTtlMinutes || 15;
+    const expiresAt = new Date(Date.now() + ttlMinutes * 60 * 1000).toISOString();
+    const resetUrl = `/gad-talk/reset-password.html?token=${encodeURIComponent(resetToken)}`;
 
     // Always return success to prevent email enumeration
     // Even if user doesn't exist, we pretend we sent the email
-    if (user) {
-      // Generate reset token
-      const resetToken = generateGadTalkId("reset");
+    await createGadTalkAuditLog({
+      actorUserId: user ? user.id : "anonymous",
+      eventType: "user.password_reset_requested",
+      payloadObject: {
+        email: normalizedEmail,
+        resetToken,
+        resetUrl,
+        expiresAt,
+        userExists: !!user,
+      },
+    });
 
-      // Create audit log
-      await createGadTalkAuditLog({
-        actorUserId: user.id,
-        eventType: "user.password_reset_requested",
-        payloadObject: { email: user.email, resetToken },
-      });
-
-      logDebug("GadTalk: Password reset requested for:", { email: user.email });
-    }
+    logDebug("GadTalk: Password reset requested for:", { email: normalizedEmail });
 
     return {
       success: true,
       message: "If an account exists with this email, a password reset link has been sent.",
+      resetUrl,
+      expiresAt,
     };
   } catch (error) {
     logError("GadTalk password reset request error:", error);
     return { success: false, error: error.message || "Failed to request password reset" };
+  }
+}
+
+function getLatestResetRequestByToken(token) {
+  const logs = getGadTalkAuditLogs({ eventType: "user.password_reset_requested" });
+  const matches = logs.filter((log) => log.payloadObject && log.payloadObject.resetToken === token);
+  if (matches.length === 0) return null;
+  return matches.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+}
+
+/**
+ * Reset password with a token
+ * @param {string} token - Reset token
+ * @param {string} password - New password
+ * @returns {Promise<object>} { success: boolean, message?: string, error?: string, errorType?: string }
+ */
+async function resetPasswordWithToken(token, password) {
+  try {
+    if (!token) {
+      return { success: false, error: "Reset token is required" };
+    }
+
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.valid) {
+      return { success: false, error: passwordValidation.error, errorType: "validation" };
+    }
+
+    const resetRequest = getLatestResetRequestByToken(token);
+    if (!resetRequest) {
+      await createGadTalkAuditLog({
+        actorUserId: "anonymous",
+        eventType: "user.password_reset_attempted",
+        payloadObject: { resetToken: token, success: false, reason: "not_found" },
+      });
+      return { success: false, error: "Invalid or expired reset token", errorType: "invalid_token" };
+    }
+
+    const expiresAt = resetRequest.payloadObject?.expiresAt;
+    if (!expiresAt || new Date(expiresAt).getTime() < Date.now()) {
+      await createGadTalkAuditLog({
+        actorUserId: resetRequest.actorUserId || "anonymous",
+        eventType: "user.password_reset_attempted",
+        payloadObject: { resetToken: token, success: false, reason: "expired" },
+      });
+      return { success: false, error: "Invalid or expired reset token", errorType: "invalid_token" };
+    }
+
+    const userId = resetRequest.actorUserId;
+    if (!userId || userId === "anonymous") {
+      await createGadTalkAuditLog({
+        actorUserId: "anonymous",
+        eventType: "user.password_reset_attempted",
+        payloadObject: { resetToken: token, success: false, reason: "user_missing" },
+      });
+      return { success: false, error: "Invalid user", errorType: "invalid_token" };
+    }
+
+    await updateGadTalkUserPassword(userId, password);
+
+    await createGadTalkAuditLog({
+      actorUserId: userId,
+      eventType: "user.password_reset_attempted",
+      payloadObject: { resetToken: token, success: true },
+    });
+
+    await createGadTalkAuditLog({
+      actorUserId: userId,
+      eventType: "user.password_reset_completed",
+      payloadObject: { resetToken: token },
+    });
+
+    return { success: true, message: "Password reset successfully" };
+  } catch (error) {
+    logError("GadTalk password reset error:", error);
+    return { success: false, error: error.message || "Failed to reset password" };
   }
 }
 
@@ -470,5 +555,6 @@ module.exports = {
   getCurrentUser,
   refreshToken,
   requestPasswordReset,
+  resetPasswordWithToken,
   verifyGadTalkToken,
 };

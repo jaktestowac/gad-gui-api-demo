@@ -70,23 +70,18 @@
                 </div>
             </header>
 
-            <!-- Profile banner and avatar -->
+            <!-- Profile banner -->
             <div class="gt-profile-header" id="profile-header">
                 <div class="gt-profile-banner" id="profile-banner">
                     <!-- Banner image or default gradient -->
-                </div>
-                <div class="gt-profile-avatar-container">
-                    <div class="gt-avatar gt-avatar-xl gt-profile-avatar" id="profile-avatar">
-                        <!-- Avatar populated by JS -->
-                    </div>
-                </div>
-                <div class="gt-profile-actions" id="profile-actions">
-                    <!-- Follow/Edit button populated by JS -->
                 </div>
             </div>
 
             <!-- Profile info -->
             <div class="gt-profile-info gt-card">
+                <div class="gt-profile-actions" id="profile-actions">
+                    <!-- Follow/Edit button populated by JS -->
+                </div>
                 <h2 class="gt-profile-display-name" id="display-name" data-testid="display-name">Loading...</h2>
                 <span class="gt-profile-username gt-text-secondary" id="username" data-testid="username">@...</span>
 
@@ -107,6 +102,11 @@
                     </span>
                 </div>
 
+                <!-- Profile badges -->
+                <div class="gt-profile-badges gt-hidden" id="profile-badges" data-testid="profile-badges">
+                    <!-- Populated by JS -->
+                </div>
+
                 <div class="gt-profile-stats">
                     <a href="#" class="gt-profile-stat" id="following-link" data-testid="following-stat">
                         <span class="gt-stat-count" id="following-count">0</span>
@@ -124,7 +124,170 @@
                 <button class="gt-tab gt-tab-active" data-tab="gads" data-testid="tab-gads">Gads</button>
                 <button class="gt-tab" data-tab="replies" data-testid="tab-replies">Replies</button>
                 <button class="gt-tab" data-tab="likes" data-testid="tab-likes">Likes</button>
+                <button class="gt-tab" data-tab="network" data-testid="tab-network">Network</button>
+                <button class="gt-tab" data-tab="analytics" data-testid="tab-analytics">Analytics</button>
             </div>
+
+            <!-- Network graph visualization -->
+            <section class="gt-network-section gt-hidden" id="profile-network" aria-labelledby="network-heading">
+                <div class="gt-network-header">
+                    <h2 class="gt-card-title" id="network-heading">Network Graph</h2>
+                    <p class="gt-text-secondary gt-text-sm">Visualization of followers and following relationships</p>
+                </div>
+                <div class="gt-network-controls gt-mb-lg">
+                    <button class="gt-btn gt-btn-secondary gt-btn-sm" id="network-reset-zoom" title="Reset zoom">Reset View</button>
+                    <label class="gt-checkbox-label">
+                        <input type="checkbox" id="network-show-labels" checked />
+                        <span>Show labels</span>
+                    </label>
+                </div>
+                <div class="gt-network-canvas-container">
+                    <canvas id="network-graph-canvas" tabindex="0" aria-label="Interactive network graph of followers and following relationships"></canvas>
+                    <div class="gt-network-keyboard-hint">
+                        Use arrow keys to navigate • Enter to view profile • +/- to zoom • 0 to reset • Esc to deselect
+                    </div>
+                    <div class="gt-network-loading gt-hidden" id="network-loading">
+                        <div class="gt-spinner"></div>
+                        <p>Loading network data...</p>
+                    </div>
+                    <div class="gt-network-empty gt-hidden" id="network-empty">
+                        <p class="gt-text-lg">No network data</p>
+                        <p class="gt-text-secondary">This user has no followers or following yet.</p>
+                    </div>
+                </div>
+                <div class="gt-network-legend gt-text-sm gt-text-secondary">
+                    <div class="gt-legend-item">
+                        <span class="gt-legend-color" style="background: #4a90e2;"></span>
+                        <span>Current User</span>
+                    </div>
+                    <div class="gt-legend-item">
+                        <span class="gt-legend-color" style="background: #7ed321;"></span>
+                        <span>Following</span>
+                    </div>
+                    <div class="gt-legend-item">
+                        <span class="gt-legend-color" style="background: #f5a623;"></span>
+                        <span>Followers</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics charts (tab content) -->
+            <section class="gt-analytics-section gt-hidden" id="profile-charts" aria-labelledby="analytics-heading">
+                <div class="gt-analytics-header">
+                    <div>
+                        <h2 class="gt-card-title" id="analytics-heading">Analytics</h2>
+                        <p class="gt-text-secondary gt-text-sm">Last <span id="analytics-range-label">90</span> days — insights into activity and engagement</p>
+                    </div>
+                    <div class="gt-chart-controls">
+                        <select id="analytics-range" class="gt-input gt-input-sm" data-testid="analytics-range" aria-label="Analytics range">
+                            <option value="30">Last 30 days</option>
+                            <option value="90" selected>Last 90 days</option>
+                            <option value="365">Last 365 days</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="gt-analytics-summary">
+                    <div class="gt-metric-card" data-testid="metric-total-posts">
+                        <div class="gt-metric-label">Total posts</div>
+                        <div class="gt-metric-value" id="analytics-total-posts">—</div>
+                        <div class="gt-text-secondary gt-text-sm">in selected range</div>
+                    </div>
+                    <div class="gt-metric-card" data-testid="metric-avg-engagement">
+                        <div class="gt-metric-label">Avg engagement</div>
+                        <div class="gt-metric-value" id="analytics-avg-engagement">—</div>
+                        <div class="gt-text-secondary gt-text-sm">likes + replies / post</div>
+                    </div>
+                    <div class="gt-metric-card" data-testid="metric-peak-day">
+                        <div class="gt-metric-label">Peak day</div>
+                        <div class="gt-metric-value" id="analytics-peak-day">—</div>
+                        <div class="gt-text-secondary gt-text-sm">most posts</div>
+                    </div>
+                    <div class="gt-metric-card" data-testid="metric-top-hashtag">
+                        <div class="gt-metric-label">Top hashtag</div>
+                        <div class="gt-metric-value" id="analytics-top-hashtag">—</div>
+                        <div class="gt-text-secondary gt-text-sm">most-used tag</div>
+                    </div>
+                </div>
+
+                <p class="gt-help-note gt-text-secondary gt-text-sm">Tip: change the time range to compare activity and reach. Charts load automatically; use <button class="gt-btn gt-btn-secondary gt-btn-sm" id="analytics-refresh">Refresh</button></p>
+
+                <div class="gt-charts-grid">
+                    <div class="gt-chart-card" data-testid="chart-activity" aria-describedby="chart-activity-desc">
+                        <div class="gt-chart-header gt-flex gt-justify-between gt-items-center">
+                            <div>
+                                <h3>Activity Heatmap</h3>
+                                <span class="gt-text-secondary gt-text-sm">Posts per day</span>
+                            </div>
+                            <div class="gt-chart-actions">
+                                <button class="gt-icon-btn gt-chart-export-btn" data-chart="activity" title="Export data"><i class="fa-solid fa-download"></i></button>
+                                <button class="gt-icon-btn gt-chart-table-toggle" data-chart="activity" title="Toggle data table"><i class="fa-solid fa-table"></i></button>
+                            </div>
+                        </div>
+                        <div class="gt-chart-body gt-chart-body-responsive" id="chart-activity-heatmap"></div>
+                        <div class="gt-chart-skeleton gt-skeleton-heatmap gt-hidden" id="skeleton-activity"></div>
+                        <div id="chart-activity-desc" class="gt-chart-footer gt-text-secondary gt-text-sm">Shows days with highest posting activity.</div>
+                        <div class="gt-chart-table gt-hidden" id="table-activity"></div>
+                    </div>
+
+                    <div class="gt-chart-card" data-testid="chart-hashtags" aria-describedby="chart-hashtags-desc">
+                        <div class="gt-chart-header gt-flex gt-justify-between gt-items-center">
+                            <div>
+                                <h3>Top Hashtags</h3>
+                                <span class="gt-text-secondary gt-text-sm">Most-used tags</span>
+                            </div>
+                            <div class="gt-chart-actions">
+                                <button class="gt-icon-btn gt-chart-export-btn" data-chart="hashtags" title="Export data"><i class="fa-solid fa-download"></i></button>
+                                <button class="gt-icon-btn gt-chart-table-toggle" data-chart="hashtags" title="Toggle data table"><i class="fa-solid fa-table"></i></button>
+                            </div>
+                        </div>
+                        <div class="gt-chart-body gt-chart-body-responsive" id="chart-hashtag-donut"></div>
+                        <div class="gt-chart-skeleton gt-skeleton-donut gt-hidden" id="skeleton-hashtags"></div>
+                        <div id="chart-hashtags-desc" class="gt-chart-footer gt-text-secondary gt-text-sm">Share of tag usage in selected range.</div>
+                        <div class="gt-chart-table gt-hidden" id="table-hashtags"></div>
+                    </div>
+
+                    <div class="gt-chart-card gt-chart-card--wide" data-testid="chart-engagement">
+                        <div class="gt-chart-header gt-flex gt-justify-between gt-items-center">
+                            <div>
+                                <h3>Engagement Timeline</h3>
+                                <span class="gt-text-secondary gt-text-sm">Likes, replies, reposts</span>
+                            </div>
+                            <div class="gt-chart-actions">
+                                <button class="gt-icon-btn gt-chart-export-btn" data-chart="engagement" title="Export data"><i class="fa-solid fa-download"></i></button>
+                                <button class="gt-icon-btn gt-chart-table-toggle" data-chart="engagement" title="Toggle data table"><i class="fa-solid fa-table"></i></button>
+                            </div>
+                        </div>
+                        <div class="gt-chart-body gt-chart-body-responsive" id="chart-engagement-line"></div>
+                        <div class="gt-chart-skeleton gt-skeleton-line gt-hidden" id="skeleton-engagement"></div>
+                        <div id="chart-engagement-desc" class="gt-chart-footer gt-text-secondary gt-text-sm">Trends of engagement over time.</div>
+                        <div class="gt-chart-table gt-hidden" id="table-engagement"></div>
+                    </div>
+
+                    <div class="gt-chart-card gt-chart-card--wide" data-testid="chart-followers">
+                        <div class="gt-chart-header gt-flex gt-justify-between gt-items-center">
+                            <div>
+                                <h3>Follower Growth</h3>
+                                <span class="gt-text-secondary gt-text-sm">Weekly progression</span>
+                            </div>
+                            <div class="gt-chart-actions">
+                                <button class="gt-icon-btn gt-chart-export-btn" data-chart="followers" title="Export data"><i class="fa-solid fa-download"></i></button>
+                                <button class="gt-icon-btn gt-chart-table-toggle" data-chart="followers" title="Toggle data table"><i class="fa-solid fa-table"></i></button>
+                            </div>
+                        </div>
+                        <div class="gt-chart-body gt-chart-body-responsive" id="chart-follower-growth"></div>
+                        <div class="gt-chart-skeleton gt-skeleton-line gt-hidden" id="skeleton-followers"></div>
+                        <div id="chart-followers-desc" class="gt-chart-footer gt-text-secondary gt-text-sm">Net followers gained or lost per week.</div>
+                        <div class="gt-chart-table gt-hidden" id="table-followers"></div>
+                    </div>
+
+                </div>
+
+                <div class="gt-analytics-empty gt-empty-state gt-hidden" id="analytics-empty">
+                    <p class="gt-text-lg">No analytics available</p>
+                    <p class="gt-text-secondary">This user hasn't posted in the selected period.</p>
+                </div>
+            </section>
 
             <!-- Profile gads feed -->
             <div class="gt-feed" id="profile-feed" data-testid="profile-feed">
@@ -172,12 +335,7 @@
             </div>
 
             <!-- Footer -->
-            <footer class="gt-sidebar-footer">
-                <a href="/gad-talk/terms.html" class="gt-link-muted">Terms</a>
-                <a href="/gad-talk/privacy.html" class="gt-link-muted">Privacy</a>
-                <a href="/gad-talk/about.html" class="gt-link-muted">About</a>
-                <span class="gt-text-muted">© 2025 GadTalk</span>
-            </footer>
+            <footer class="gt-sidebar-footer" data-auto-footer></footer>
         </aside>
     </div>
 
@@ -297,12 +455,55 @@
         </div>
     </div>
 
+    <!-- Network User Details Modal -->
+    <div class="gt-modal gt-hidden" id="network-user-details-modal">
+        <div class="gt-modal-overlay" data-close-modal></div>
+        <div class="gt-modal-content gt-card gt-modal-md">
+            <div class="gt-modal-header">
+                <button type="button" class="gt-icon-btn gt-modal-close" data-close-modal><i class="fa-solid fa-xmark"></i></button>
+                <h2>User Details</h2>
+            </div>
+            <div class="gt-network-user-details">
+                <div class="gt-user-details-avatar">
+                    <div id="network-user-avatar" class="gt-avatar gt-avatar-lg"></div>
+                </div>
+                <div class="gt-user-details-info">
+                    <h3 id="network-user-display-name" class="gt-user-display-name"></h3>
+                    <p id="network-user-username" class="gt-user-username gt-text-secondary"></p>
+                    <p id="network-user-bio" class="gt-user-bio gt-text-secondary gt-mt-md"></p>
+                </div>
+                <div class="gt-user-details-stats gt-mt-lg">
+                    <div class="gt-stat-item">
+                        <span class="gt-stat-count" id="network-user-gads">0</span>
+                        <span class="gt-stat-label">Gads</span>
+                    </div>
+                    <div class="gt-stat-item">
+                        <span class="gt-stat-count" id="network-user-followers">0</span>
+                        <span class="gt-stat-label">Followers</span>
+                    </div>
+                    <div class="gt-stat-item">
+                        <span class="gt-stat-count" id="network-user-following">0</span>
+                        <span class="gt-stat-label">Following</span>
+                    </div>
+                </div>
+                <div class="gt-user-details-actions gt-mt-lg">
+                    <a href="#" id="network-user-profile-link" class="gt-btn gt-btn-primary gt-btn-block">View Profile</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="/gad-talk/js/api.js"></script>
     <script src="/gad-talk/js/ui.js"></script>
     <script src="/gad-talk/js/auth.js"></script>
     <script src="/gad-talk/js/gads.js"></script>
+    <script src="/gad-talk/js/interaction-modals.js"></script>
+    <script src="/gad-talk/js/footer.js"></script>
     <script src="/gad-talk/js/nav.js"></script>
+    <script src="/gad-talk/js/charts.js"></script>
+    <script src="/gad-talk/js/network-graph.js"></script>
     <script src="/gad-talk/js/profile.js"></script>
 </body>
 

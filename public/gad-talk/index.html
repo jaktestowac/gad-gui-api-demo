@@ -66,6 +66,17 @@
                     <button class="gt-tab gt-tab-active" data-feed="for-you" data-testid="tab-for-you">For You</button>
                     <button class="gt-tab" data-feed="following" data-testid="tab-following">Following</button>
                 </div>
+                <!-- Sort options -->
+                <div class="gt-sort-options" id="sort-options">
+                    <button class="gt-sort-btn gt-sort-active" data-sort="latest" data-testid="sort-latest" title="Latest gads first">
+                        <i class="fa-solid fa-clock"></i>
+                        <span>Latest</span>
+                    </button>
+                    <button class="gt-sort-btn" data-sort="top" data-testid="sort-top" title="Most popular gads">
+                        <i class="fa-solid fa-fire"></i>
+                        <span>Top</span>
+                    </button>
+                </div>
             </header>
 
             <!-- Compose gad section -->
@@ -95,7 +106,7 @@
                             <button type="button" class="gt-icon-btn" title="Add image" id="add-image-btn" data-testid="add-image-btn">
                                 <i class="fa-solid fa-image"></i>
                             </button>
-                            <button type="button" class="gt-icon-btn" title="Add emoji" data-testid="add-emoji-btn">
+                            <button type="button" class="gt-icon-btn" title="Add emoji" id="add-emoji-btn" data-testid="add-emoji-btn">
                                 <i class="fa-solid fa-face-smile"></i>
                             </button>
                             <button type="button" class="gt-icon-btn" title="Add poll" data-testid="add-poll-btn">
@@ -172,12 +183,7 @@
             </div>
 
             <!-- Footer -->
-            <footer class="gt-sidebar-footer">
-                <a href="/gad-talk/terms.html" class="gt-link-muted">Terms</a>
-                <a href="/gad-talk/privacy.html" class="gt-link-muted">Privacy</a>
-                <a href="/gad-talk/about.html" class="gt-link-muted">About</a>
-                <span class="gt-text-muted">© 2025 GadTalk</span>
-            </footer>
+            <footer class="gt-sidebar-footer" data-auto-footer></footer>
         </aside>
     </div>
 
@@ -214,7 +220,7 @@
                         <button type="button" class="gt-icon-btn" title="Add image" id="modal-add-image-btn" data-testid="modal-add-image-btn">
                             <i class="fa-solid fa-image"></i>
                         </button>
-                        <button type="button" class="gt-icon-btn" title="Add emoji"><i class="fa-solid fa-face-smile"></i></button>
+                        <button type="button" class="gt-icon-btn" title="Add emoji" id="modal-add-emoji-btn" data-testid="modal-add-emoji-btn"><i class="fa-solid fa-face-smile"></i></button>
                         <button type="button" class="gt-icon-btn" title="Add poll"><i class="fa-solid fa-chart-bar"></i></button>
                     </div>
                     <div class="gt-compose-submit">
@@ -295,7 +301,10 @@
     <script src="/gad-talk/js/ui.js"></script>
     <script src="/gad-talk/js/auth.js"></script>
     <script src="/gad-talk/js/gads.js"></script>
+    <script src="/gad-talk/js/compose-enhancements.js"></script>
+    <script src="/gad-talk/js/interaction-modals.js"></script>
     <script src="/gad-talk/js/app.js"></script>
+    <script src="/gad-talk/js/footer.js"></script>
 </body>
 
 </html>

@@ -139,6 +139,15 @@ module.exports = {
       lastCalculated: now,
     },
   ],
+  featureFlags: [
+    {
+      key: "charts",
+      enabled: true,
+      description: "Profile analytics charts",
+      updatedAt: now,
+      updatedBy: "system",
+    },
+  ],
   outbox: [],
   missions: [],
   missionCompletions: [],

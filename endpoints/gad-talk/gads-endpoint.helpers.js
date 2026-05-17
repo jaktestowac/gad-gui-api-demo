@@ -386,7 +386,9 @@ async function handleDeleteGad(req, res) {
 }
 
 /**
- * Get "For You" feed (all gads, sorted by recency)
+ * Get "For You" feed (all gads, with sorting options)
+ * Supports sort parameter: 'latest' (default), 'top', 'media'
+ * Supports cursor-based pagination via cursor query param
  */
 async function handleGetForYouFeed(req, res) {
   try {
@@ -396,17 +398,29 @@ async function handleGetForYouFeed(req, res) {
       parseInt(req.query.limit) || config.pagination.defaultPageSize,
       config.pagination.maxPageSize
     );
+    const sort = req.query.sort || "latest"; // 'latest', 'top', 'media'
+    const cursor = req.query.cursor || null; // Cursor for cursor-based pagination
 
     // Get following IDs for visibility filtering
     let followingIds = [];
+    let blockedUserIds = [];
+    let mutedUserIds = [];
+
     if (userId) {
       const following = await dbOps.getFollowing(userId);
       followingIds = following.map((f) => f.followingId);
+      // Get blocked and muted users to filter out their content
+      blockedUserIds = dbOps.getBlockedUserIds(userId);
+      mutedUserIds = dbOps.getMutedUserIds(userId);
     }
 
-    const { gads, total } = await dbOps.getGadsForYou(page, limit, {
+    const { gads, total, nextCursor } = await dbOps.getGadsForYou(page, limit, {
       currentUserId: userId,
       followingIds,
+      sort,
+      blockedUserIds,
+      mutedUserIds,
+      cursor,
     });
 
     // Enrich gads with user data and interaction status
@@ -417,7 +431,9 @@ async function handleGetForYouFeed(req, res) {
       page,
       limit,
       total,
-      hasMore: page * limit < total,
+      sort,
+      hasMore: nextCursor !== null || page * limit < total,
+      nextCursor,
     });
   } catch (error) {
     logError("[GadTalk] Error getting for-you feed:", error);
@@ -427,6 +443,8 @@ async function handleGetForYouFeed(req, res) {
 
 /**
  * Get timeline (gads from followed users)
+ * Supports sort parameter: 'latest' (default), 'top', 'media'
+ * Supports cursor-based pagination via cursor query param
  */
 async function handleGetTimeline(req, res) {
   try {
@@ -439,17 +457,27 @@ async function handleGetTimeline(req, res) {
       parseInt(req.query.limit) || config.pagination.defaultPageSize,
       config.pagination.maxPageSize
     );
+    const sort = req.query.sort || "latest"; // 'latest', 'top', 'media'
+    const cursor = req.query.cursor || null; // Cursor for cursor-based pagination
 
     // Get users the current user follows
     const following = await dbOps.getFollowing(userId);
     const followingIds = following.map((f) => f.followingId);
 
+    // Get blocked and muted users to filter out their content
+    const blockedUserIds = dbOps.getBlockedUserIds(userId);
+    const mutedUserIds = dbOps.getMutedUserIds(userId);
+
     // Include user's own gads in timeline
     const userIdsForTimeline = [...followingIds, userId];
 
-    const { gads, total } = await dbOps.getGadsByUsers(userIdsForTimeline, page, limit, {
+    const { gads, total, nextCursor } = await dbOps.getGadsByUsers(userIdsForTimeline, page, limit, {
       currentUserId: userId,
       followingIds,
+      sort,
+      blockedUserIds,
+      mutedUserIds,
+      cursor,
     });
 
     // Enrich gads
@@ -460,7 +488,9 @@ async function handleGetTimeline(req, res) {
       page,
       limit,
       total,
-      hasMore: page * limit < total,
+      sort,
+      hasMore: nextCursor !== null || page * limit < total,
+      nextCursor,
     });
   } catch (error) {
     logError("[GadTalk] Error getting timeline:", error);
@@ -516,6 +546,100 @@ async function handleGetUserGads(req, res) {
 }
 
 /**
+ * Get replies by a specific user
+ */
+async function handleGetUserReplies(req, res) {
+  try {
+    const { userId: targetUserId } = req.params;
+    const currentUserId = req.gadTalkUserId;
+    const page = parseInt(req.query.page) || 1;
+    const limit = Math.min(
+      parseInt(req.query.limit) || config.pagination.defaultPageSize,
+      config.pagination.maxPageSize
+    );
+
+    // Verify user exists
+    const user = await dbOps.getUserById(targetUserId);
+    if (!user) {
+      return res.status(HTTP_NOT_FOUND).json(formatErrorResponse("User not found"));
+    }
+
+    // Get following IDs for visibility filtering
+    let followingIds = [];
+    if (currentUserId) {
+      const following = await dbOps.getFollowing(currentUserId);
+      followingIds = following.map((f) => f.followingId);
+    }
+
+    const { gads, total } = await dbOps.getUserReplies(targetUserId, page, limit, {
+      currentUserId,
+      followingIds,
+    });
+
+    // Enrich gads
+    const enrichedGads = await enrichGads(gads, currentUserId);
+
+    res.status(HTTP_OK).json({
+      gads: enrichedGads,
+      page,
+      limit,
+      total,
+      hasMore: page * limit < total,
+    });
+  } catch (error) {
+    logError("[GadTalk] Error getting user replies:", error);
+    res.status(HTTP_INTERNAL_SERVER_ERROR).json(formatErrorResponse("Failed to get user replies"));
+  }
+}
+
+/**
+ * Get gads liked by a specific user
+ */
+async function handleGetUserLikes(req, res) {
+  try {
+    const { userId: targetUserId } = req.params;
+    const currentUserId = req.gadTalkUserId;
+    const page = parseInt(req.query.page) || 1;
+    const limit = Math.min(
+      parseInt(req.query.limit) || config.pagination.defaultPageSize,
+      config.pagination.maxPageSize
+    );
+
+    // Verify user exists
+    const user = await dbOps.getUserById(targetUserId);
+    if (!user) {
+      return res.status(HTTP_NOT_FOUND).json(formatErrorResponse("User not found"));
+    }
+
+    // Get following IDs for visibility filtering
+    let followingIds = [];
+    if (currentUserId) {
+      const following = await dbOps.getFollowing(currentUserId);
+      followingIds = following.map((f) => f.followingId);
+    }
+
+    const { gads, total } = await dbOps.getUserLikedGads(targetUserId, page, limit, {
+      currentUserId,
+      followingIds,
+    });
+
+    // Enrich gads
+    const enrichedGads = await enrichGads(gads, currentUserId);
+
+    res.status(HTTP_OK).json({
+      gads: enrichedGads,
+      page,
+      limit,
+      total,
+      hasMore: page * limit < total,
+    });
+  } catch (error) {
+    logError("[GadTalk] Error getting user likes:", error);
+    res.status(HTTP_INTERNAL_SERVER_ERROR).json(formatErrorResponse("Failed to get user likes"));
+  }
+}
+
+/**
  * Like a gad
  */
 async function handleLikeGad(req, res) {
@@ -537,7 +661,7 @@ async function handleLikeGad(req, res) {
       return res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Already liked this gad"));
     }
 
-    await dbOps.createLike({ userId, gadId });
+    await dbOps.createLike(userId, gadId);
     await dbOps.incrementGadLikeCount(gadId);
 
     // Create notification if not liking own gad
@@ -584,6 +708,72 @@ async function handleUnlikeGad(req, res) {
   } catch (error) {
     logError("[GadTalk] Error unliking gad:", error);
     res.status(HTTP_INTERNAL_SERVER_ERROR).json(formatErrorResponse("Failed to unlike gad"));
+  }
+}
+
+/**
+ * Get users who liked a gad
+ */
+async function handleGetWhoLiked(req, res) {
+  try {
+    const { gadId } = req.params;
+    const limit = parseInt(req.query.limit) || 50;
+    const offset = parseInt(req.query.offset) || 0;
+
+    // Check if feature is enabled
+    const featureFlags = await dbOps.getFeatureFlagsMap();
+    if (!featureFlags.who_liked) {
+      return res.status(HTTP_NOT_FOUND).json(formatErrorResponse("Feature not available"));
+    }
+
+    const gad = await dbOps.getGadById(gadId);
+    if (!gad) {
+      return res.status(HTTP_NOT_FOUND).json(formatErrorResponse("Gad not found"));
+    }
+
+    const result = await dbOps.getLikesForGad(gadId, { limit, offset });
+
+    res.status(HTTP_OK).json({
+      users: result.users,
+      total: result.total,
+      hasMore: result.hasMore,
+    });
+  } catch (error) {
+    logError("[GadTalk] Error getting who liked:", error);
+    res.status(HTTP_INTERNAL_SERVER_ERROR).json(formatErrorResponse("Failed to get users who liked"));
+  }
+}
+
+/**
+ * Get users who regadded a gad
+ */
+async function handleGetWhoRegadded(req, res) {
+  try {
+    const { gadId } = req.params;
+    const limit = parseInt(req.query.limit) || 50;
+    const offset = parseInt(req.query.offset) || 0;
+
+    // Check if feature is enabled
+    const featureFlags = await dbOps.getFeatureFlagsMap();
+    if (!featureFlags.who_regadded) {
+      return res.status(HTTP_NOT_FOUND).json(formatErrorResponse("Feature not available"));
+    }
+
+    const gad = await dbOps.getGadById(gadId);
+    if (!gad) {
+      return res.status(HTTP_NOT_FOUND).json(formatErrorResponse("Gad not found"));
+    }
+
+    const result = dbOps.getRegadsForGad(gadId, { limit, offset });
+
+    res.status(HTTP_OK).json({
+      users: result.users,
+      total: result.total,
+      hasMore: result.hasMore,
+    });
+  } catch (error) {
+    logError("[GadTalk] Error getting who regadded:", error);
+    res.status(HTTP_INTERNAL_SERVER_ERROR).json(formatErrorResponse("Failed to get users who regadded"));
   }
 }
 
@@ -683,7 +873,7 @@ async function handleBookmarkGad(req, res) {
       return res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Already bookmarked this gad"));
     }
 
-    await dbOps.createBookmark({ userId, gadId });
+    await dbOps.createBookmark(userId, gadId);
 
     res.status(HTTP_OK).json({ message: "Gad bookmarked successfully" });
   } catch (error) {
@@ -730,7 +920,7 @@ async function handleGetBookmarks(req, res) {
       config.pagination.maxPageSize
     );
 
-    const { bookmarks, total } = await dbOps.getBookmarks(userId, page, limit);
+    const { bookmarks, total } = await dbOps.getBookmarksPaginated(userId, page, limit);
 
     // Get gads for bookmarks
     const gadIds = bookmarks.map((b) => b.gadId);
@@ -821,16 +1011,19 @@ async function handleSearchGads(req, res) {
       return res.status(HTTP_BAD_REQUEST).json(formatErrorResponse("Search query is required"));
     }
 
-    // Get following IDs for visibility filtering
+    // Get following IDs for visibility filtering and blocked users
     let followingIds = [];
+    let blockedUserIds = [];
     if (userId) {
       const following = await dbOps.getFollowing(userId);
       followingIds = following.map((f) => f.followingId);
+      blockedUserIds = dbOps.getBlockedUserIds(userId);
     }
 
     const { gads, total } = await dbOps.searchGads(query.trim(), page, limit, {
       currentUserId: userId,
       followingIds,
+      blockedUserIds,
     });
 
     // Enrich gads
@@ -863,6 +1056,49 @@ async function handleGetTrendingHashtags(req, res) {
   } catch (error) {
     logError("[GadTalk] Error getting trending hashtags:", error);
     res.status(HTTP_INTERNAL_SERVER_ERROR).json(formatErrorResponse("Failed to get trending hashtags"));
+  }
+}
+
+/**
+ * Get popular gads sorted by engagement
+ */
+async function handleGetPopularGads(req, res) {
+  try {
+    const userId = req.gadTalkUserId;
+    const page = parseInt(req.query.page) || 1;
+    const limit = Math.min(
+      parseInt(req.query.limit) || config.pagination.defaultPageSize,
+      config.pagination.maxPageSize
+    );
+
+    // Get following IDs for visibility filtering and blocked users
+    let followingIds = [];
+    let blockedUserIds = [];
+    if (userId) {
+      const following = await dbOps.getFollowing(userId);
+      followingIds = following.map((f) => f.followingId);
+      blockedUserIds = dbOps.getBlockedUserIds(userId);
+    }
+
+    const { gads, total } = await dbOps.getPopularGads(page, limit, {
+      currentUserId: userId,
+      followingIds,
+      blockedUserIds,
+    });
+
+    // Enrich gads
+    const enrichedGads = await enrichGads(gads, userId);
+
+    res.status(HTTP_OK).json({
+      gads: enrichedGads,
+      page,
+      limit,
+      total,
+      hasMore: page * limit < total,
+    });
+  } catch (error) {
+    logError("[GadTalk] Error getting popular gads:", error);
+    res.status(HTTP_INTERNAL_SERVER_ERROR).json(formatErrorResponse("Failed to get popular gads"));
   }
 }
 
@@ -1000,8 +1236,12 @@ module.exports = {
   handleGetForYouFeed,
   handleGetTimeline,
   handleGetUserGads,
+  handleGetUserReplies,
+  handleGetUserLikes,
   handleLikeGad,
   handleUnlikeGad,
+  handleGetWhoLiked,
+  handleGetWhoRegadded,
   handleRegad,
   handleUnregad,
   handleBookmarkGad,
@@ -1010,5 +1250,6 @@ module.exports = {
   handleGetReplies,
   handleSearchGads,
   handleGetTrendingHashtags,
+  handleGetPopularGads,
   handleGetGadsByHashtag,
 };

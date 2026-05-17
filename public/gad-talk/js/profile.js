@@ -11,6 +11,113 @@ const gadTalkProfile = (function () {
   let currentPage = 1;
   let isLoading = false;
   let hasMore = true;
+  let featureFlags = {};
+
+  function showFollowMessage(container, message) {
+    if (!container) return;
+    let msgEl = container.querySelector(".gt-follow-message");
+    if (!msgEl) {
+      msgEl = document.createElement("span");
+      msgEl.className = "gt-text-secondary gt-text-sm gt-follow-message";
+      msgEl.setAttribute("role", "status");
+      container.appendChild(msgEl);
+    }
+    msgEl.textContent = message;
+
+    clearTimeout(msgEl._gtHideTimer);
+    msgEl._gtHideTimer = setTimeout(() => {
+      if (msgEl && msgEl.parentElement) {
+        msgEl.parentElement.removeChild(msgEl);
+      }
+    }, 3000);
+  }
+
+  async function getFollowingIds() {
+    const followingIds = new Set();
+    if (!currentUser || !window.GadTalkAPI?.users?.getFollowing) return followingIds;
+
+    try {
+      const followingResponse = await window.GadTalkAPI.users.getFollowing(currentUser.id, 1, 200);
+      const followingUsers = followingResponse?.users || followingResponse?.following || followingResponse?.data || [];
+      followingUsers.forEach((user) => {
+        if (user && user.id) {
+          followingIds.add(user.id);
+        }
+      });
+    } catch (error) {
+      // Silently ignore follow list fetch errors to avoid console noise
+    }
+
+    return followingIds;
+  }
+
+  function scoreSuggestedUser(user) {
+    if (!user) return -Infinity;
+    let score = 0;
+
+    score += (user.followersCount || 0) * 2;
+    score += user.gadsCount || 0;
+    if (user.role === "admin") score += 25;
+
+    if (user.lastLoginAt) {
+      const lastLogin = Date.parse(user.lastLoginAt);
+      if (!Number.isNaN(lastLogin)) {
+        const daysAgo = (Date.now() - lastLogin) / (1000 * 60 * 60 * 24);
+        if (daysAgo <= 1) score += 15;
+        else if (daysAgo <= 7) score += 8;
+      }
+    }
+
+    return score + Math.random();
+  }
+
+  function mergeUniqueUsers(existing, incoming) {
+    const byId = new Map(existing.map((user) => [user.id, user]));
+    incoming.forEach((user) => {
+      if (user && user.id && !byId.has(user.id)) {
+        byId.set(user.id, user);
+      }
+    });
+    return Array.from(byId.values());
+  }
+
+  async function getSuggestedUsers(limit = 3) {
+    let candidates = [];
+
+    try {
+      const response = await window.GadTalkAPI.users.getSuggestions(limit * 2);
+      candidates = mergeUniqueUsers(candidates, response?.users || []);
+    } catch (error) {
+      // Ignore to allow other sources
+    }
+
+    try {
+      if (window.GadTalkAPI?.explore?.getData) {
+        const explore = await window.GadTalkAPI.explore.getData();
+        candidates = mergeUniqueUsers(candidates, explore?.suggestedUsers || []);
+      }
+    } catch (error) {
+      // Ignore to allow other sources
+    }
+
+    const searchQueries = ["a", "e", "i", "o", "u", "test", "qa", "dev", "auto"];
+    for (const query of searchQueries) {
+      if (candidates.length >= limit * 3) break;
+      try {
+        const response = await window.GadTalkAPI.users.search(query, 1, 10);
+        candidates = mergeUniqueUsers(candidates, response?.users || []);
+      } catch (error) {
+        // Ignore and continue
+      }
+    }
+
+    const followingIds = await getFollowingIds();
+    const filtered = candidates.filter(
+      (user) => user && user.id && !followingIds.has(user.id) && (!currentUser || user.id !== currentUser.id)
+    );
+
+    return filtered.sort((a, b) => scoreSuggestedUser(b) - scoreSuggestedUser(a)).slice(0, limit);
+  }
 
   /**
    * Initialize the profile page
@@ -22,13 +129,23 @@ const gadTalkProfile = (function () {
 
     // Update nav user section
     updateNavUser();
+    // Load sidebar suggestions
+    loadSidebarSuggestions();
 
-    // Get username from URL
+    // Get username from URL or pathname (/gad-talk/@username)
     const params = new URLSearchParams(window.location.search);
-    const username = params.get("user") || currentUser.username;
+    let username = params.get("user");
+    if (!username) {
+      const m = window.location.pathname.match(/@([^/]+)/);
+      if (m) username = decodeURIComponent(m[1]);
+    }
+    username = username || currentUser.username;
 
     // Load profile
     await loadProfile(username);
+
+    // Load feature flags
+    await loadFeatureFlags();
 
     // Setup tabs
     setupTabs();
@@ -42,7 +159,41 @@ const gadTalkProfile = (function () {
     // Setup nav profile link
     const navProfile = document.getElementById("nav-profile");
     if (navProfile) {
-      navProfile.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+      navProfile.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
+    }
+  }
+
+  async function loadFeatureFlags() {
+    if (!window.GadTalkAPI || !window.GadTalkAPI.featureFlags) return;
+    try {
+      const response = await window.GadTalkAPI.featureFlags.getAll();
+      const flags = response?.data || response?.flags || response || [];
+      featureFlags = flags.reduce((acc, flag) => {
+        acc[String(flag.key || "").toLowerCase()] = !!flag.enabled;
+        return acc;
+      }, {});
+
+      applyFeatureFlags();
+    } catch (error) {
+      featureFlags = {};
+      applyFeatureFlags();
+    }
+  }
+
+  function applyFeatureFlags() {
+    const analyticsTab = document.querySelector('.gt-tab[data-tab="analytics"]');
+    const chartsSection = document.getElementById("profile-charts");
+    const chartsEnabled = featureFlags.charts !== false;
+
+    if (analyticsTab) {
+      analyticsTab.classList.toggle("gt-hidden", !chartsEnabled);
+    }
+    if (chartsSection) {
+      chartsSection.classList.toggle("gt-hidden", !chartsEnabled || currentTab !== "analytics");
+    }
+
+    if (!chartsEnabled && currentTab === "analytics") {
+      setActiveTab("gads");
     }
   }
 
@@ -76,7 +227,7 @@ const gadTalkProfile = (function () {
               text: "Profile",
               icon: '<i class="fa-solid fa-user"></i>',
               onClick: () => {
-                window.location.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+                window.location.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
               },
             },
             {
@@ -106,8 +257,85 @@ const gadTalkProfile = (function () {
       });
     } else if (dropdownBtn) {
       dropdownBtn.addEventListener("click", () => {
-        window.location.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+        window.location.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
       });
+    }
+  }
+
+  async function loadSidebarSuggestions() {
+    const suggestionsList = document.getElementById("suggestions-list");
+    if (!suggestionsList) return;
+
+    try {
+      const users = await getSuggestedUsers(3);
+
+      if (users.length === 0) {
+        suggestionsList.innerHTML = '<p class="gt-text-secondary gt-text-sm">No suggestions right now</p>';
+        return;
+      }
+
+      suggestionsList.innerHTML = users
+        .map(
+          (user) => `
+        <div class="gt-suggestion-item">
+          <a href="/gad-talk/@${encodeURIComponent(user.username)}" class="gt-suggestion-user">
+            ${window.gadTalkGads.getAvatarHtml(user, "sm")}
+            <div class="gt-suggestion-info">
+              <span class="gt-suggestion-name">${user.displayName || user.username}</span>
+              <span class="gt-suggestion-username">@${user.username}</span>
+            </div>
+          </a>
+          <button class="gt-btn ${
+            user.isFollowing ? "gt-btn-secondary gt-following" : "gt-btn-primary"
+          } gt-btn-sm" data-follow="${user.id}" data-following="${user.isFollowing}" data-testid="follow-${
+            user.username
+          }">
+            ${user.isFollowing ? "Following" : "Follow"}
+          </button>
+        </div>
+      `
+        )
+        .join("");
+
+      // Attach follow handlers
+      suggestionsList.querySelectorAll("[data-follow]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const userId = btn.dataset.follow;
+          const isFollowing = btn.dataset.following === "true";
+          if (btn.dataset.loading === "true") return;
+          if (isFollowing) {
+            showFollowMessage(btn.parentElement, "Already following");
+            return;
+          }
+
+          btn.dataset.loading = "true";
+          btn.disabled = true;
+
+          try {
+            await window.GadTalkAPI.users.follow(userId);
+            btn.textContent = "Following";
+            btn.classList.remove("gt-btn-primary");
+            btn.classList.add("gt-btn-secondary", "gt-following");
+            btn.dataset.following = "true";
+            showFollowMessage(btn.parentElement, "Now following");
+          } catch (error) {
+            if (error && error.message && /already following/i.test(error.message)) {
+              btn.textContent = "Following";
+              btn.classList.remove("gt-btn-primary");
+              btn.classList.add("gt-btn-secondary", "gt-following");
+              btn.dataset.following = "true";
+              showFollowMessage(btn.parentElement, "Already following");
+            } else {
+              showFollowMessage(btn.parentElement, "Could not follow user");
+            }
+          } finally {
+            btn.dataset.loading = "false";
+            btn.disabled = false;
+          }
+        });
+      });
+    } catch (error) {
+      suggestionsList.innerHTML = '<p class="gt-text-secondary gt-text-sm">Failed to load suggestions</p>';
     }
   }
 
@@ -122,9 +350,35 @@ const gadTalkProfile = (function () {
       updateProfileUI();
       await loadProfileGads();
     } catch (error) {
-      console.error("Error loading profile:", error);
       window.gadTalkGads.showToast("Failed to load profile", "error");
     }
+  }
+
+  /**
+   * Render profile badges
+   */
+  function renderProfileBadges(badges) {
+    const container = document.getElementById("profile-badges");
+    if (!container) return;
+
+    if (!badges || badges.length === 0) {
+      container.classList.add("gt-hidden");
+      return;
+    }
+
+    const badgesHtml = badges
+      .map(
+        (badge) => `
+        <span class="gt-badge-item gt-badge-${badge.id}" title="${badge.description || badge.name}">
+          <span class="gt-badge-item-icon"><i class="${badge.icon}"></i></span>
+          <span>${badge.name}</span>
+        </span>
+      `
+      )
+      .join("");
+
+    container.innerHTML = badgesHtml;
+    container.classList.remove("gt-hidden");
   }
 
   /**
@@ -146,18 +400,18 @@ const gadTalkProfile = (function () {
 
     // Update banner (stored as header in backend)
     const profileBanner = document.getElementById("profile-banner");
-    if (profileBanner) {
+    const profileHeaderEl = document.getElementById("profile-header");
+    if (profileBanner && profileHeaderEl) {
       if (profileUser.header) {
+        profileHeaderEl.classList.remove("gt-profile-header--no-banner");
         profileBanner.style.backgroundImage = `url(${profileUser.header})`;
+        profileBanner.style.background = "";
       } else {
-        profileBanner.style.background = "linear-gradient(135deg, var(--gt-primary), var(--gt-secondary))";
+        // No banner: hide the banner element and collapse header spacing
+        profileHeaderEl.classList.add("gt-profile-header--no-banner");
+        profileBanner.style.backgroundImage = "";
+        profileBanner.style.background = "none";
       }
-    }
-
-    // Update avatar
-    const profileAvatar = document.getElementById("profile-avatar");
-    if (profileAvatar) {
-      profileAvatar.innerHTML = window.gadTalkGads.getAvatarHtml(profileUser, "xl");
     }
 
     // Update actions
@@ -242,6 +496,9 @@ const gadTalkProfile = (function () {
         "Joined " + joinedDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
     }
 
+    // Render profile badges
+    renderProfileBadges(profileUser.badges);
+
     // Update stats
     const followingCount = document.getElementById("following-count");
     const followersCount = document.getElementById("followers-count");
@@ -283,8 +540,15 @@ const gadTalkProfile = (function () {
       const followersCount = document.getElementById("followers-count");
       if (followersCount) followersCount.textContent = profileUser.followersCount;
     } catch (error) {
-      console.error("Error toggling follow:", error);
-      window.gadTalkGads.showToast("Failed to update follow status", "error");
+      if (error && error.message && /already following/i.test(error.message)) {
+        btn.textContent = "Following";
+        btn.classList.remove("gt-btn-primary");
+        btn.classList.add("gt-btn-secondary");
+        profileUser.isFollowing = true;
+        showFollowMessage(btn.parentElement, "Already following");
+      } else {
+        showFollowMessage(btn.parentElement, "Could not update follow status");
+      }
     }
   }
 
@@ -384,18 +648,54 @@ const gadTalkProfile = (function () {
         tabs.forEach((t) => t.classList.remove("gt-tab-active"));
         tab.classList.add("gt-tab-active");
 
-        currentTab = tab.dataset.tab;
-        currentPage = 1;
-        hasMore = true;
-        await loadProfileGads();
+        await setActiveTab(tab.dataset.tab);
       });
     });
+  }
+
+  async function setActiveTab(tabName) {
+    currentTab = tabName;
+
+    if (currentTab === "analytics" && featureFlags.charts === false) {
+      currentTab = "gads";
+    }
+
+    const chartsSection = document.getElementById("profile-charts");
+    const networkSection = document.getElementById("profile-network");
+    const profileFeed = document.getElementById("profile-feed");
+
+    if (currentTab === "analytics") {
+      if (profileFeed) profileFeed.classList.add("gt-hidden");
+      if (networkSection) networkSection.classList.add("gt-hidden");
+      if (chartsSection) chartsSection.classList.remove("gt-hidden");
+      await loadProfileCharts();
+      return;
+    }
+
+    if (currentTab === "network") {
+      if (profileFeed) profileFeed.classList.add("gt-hidden");
+      if (chartsSection) chartsSection.classList.add("gt-hidden");
+      if (networkSection) networkSection.classList.remove("gt-hidden");
+      if (window.gadTalkNetworkGraph) {
+        window.gadTalkNetworkGraph.loadNetworkData(profileUser.id, profileUser.displayName || profileUser.username);
+      }
+      return;
+    }
+
+    if (chartsSection) chartsSection.classList.add("gt-hidden");
+    if (networkSection) networkSection.classList.add("gt-hidden");
+    if (profileFeed) profileFeed.classList.remove("gt-hidden");
+
+    currentPage = 1;
+    hasMore = true;
+    await loadProfileGads();
   }
 
   /**
    * Load profile gads
    */
   async function loadProfileGads() {
+    if (currentTab === "analytics") return;
     if (!profileUser || isLoading) return;
     isLoading = true;
 
@@ -412,8 +712,19 @@ const gadTalkProfile = (function () {
 
     try {
       let response;
-      // For now, all tabs load user's gads (can be expanded later)
-      response = await window.GadTalkAPI.gads.getByUser(profileUser.id, currentPage);
+      // Load different content based on current tab
+      switch (currentTab) {
+        case "replies":
+          response = await window.GadTalkAPI.gads.getUserReplies(profileUser.id, currentPage);
+          break;
+        case "likes":
+          response = await window.GadTalkAPI.gads.getUserLikes(profileUser.id, currentPage);
+          break;
+        case "gads":
+        default:
+          response = await window.GadTalkAPI.gads.getByUser(profileUser.id, currentPage);
+          break;
+      }
 
       const gads = response.gads || [];
 
@@ -434,12 +745,19 @@ const gadTalkProfile = (function () {
         }
       }
     } catch (error) {
-      console.error("Error loading profile gads:", error);
       profileLoading.classList.add("gt-hidden");
       window.gadTalkGads.showToast("Failed to load gads", "error");
     } finally {
       isLoading = false;
     }
+  }
+
+  /**
+   * Load analytics charts for the profile
+   */
+  async function loadProfileCharts() {
+    if (!profileUser || !window.gadTalkCharts || !window.gadTalkCharts.loadUserCharts) return;
+    await window.gadTalkCharts.loadUserCharts(profileUser.id);
   }
 
   /**
@@ -538,7 +856,7 @@ const gadTalkProfile = (function () {
           });
         }
       } catch (error) {
-        console.error("Failed to load avatar options:", error);
+        window.gadTalkGads.showToast("Failed to load avatar options", "error");
       }
     }
 
@@ -602,7 +920,7 @@ const gadTalkProfile = (function () {
               avatarGalleryList.appendChild(img);
             });
           } catch (error) {
-            console.error("Failed to load avatar gallery", error);
+            window.gadTalkGads.showToast("Failed to load avatar gallery", "error");
           }
         }
       });
@@ -729,7 +1047,6 @@ const gadTalkProfile = (function () {
       document.getElementById("edit-profile-modal").classList.add("gt-hidden");
       window.gadTalkGads.showToast("Profile updated!");
     } catch (error) {
-      console.error("Error updating profile:", error);
       window.gadTalkGads.showToast("Failed to update profile", "error");
     }
   }
@@ -746,6 +1063,8 @@ const gadTalkProfile = (function () {
     init,
     loadProfile,
     loadProfileGads,
+    loadProfileCharts,
+    setActiveTab,
   };
 })();
 

@@ -119,6 +119,35 @@ const GadTalkAPI = (function () {
     },
 
     /**
+     * Request password reset
+     */
+    async forgotPassword(email) {
+      return request("/auth/forgot-password", {
+        method: "POST",
+        body: { email },
+      });
+    },
+
+    /**
+     * Reset password with token
+     */
+    async resetPassword(token, password) {
+      return request("/auth/reset-password", {
+        method: "POST",
+        body: { token, password },
+      });
+    },
+
+    /**
+     * Simulated OAuth Google login
+     */
+    async oauthGoogle() {
+      return request("/auth/oauth/google", {
+        method: "POST",
+      });
+    },
+
+    /**
      * Login as demo user
      */
     async loginDemo() {
@@ -331,16 +360,53 @@ const GadTalkAPI = (function () {
 
     /**
      * Get home timeline (gads from followed users)
+     * @param {number} page - Page number (for page-based pagination)
+     * @param {number} limit - Items per page
+     * @param {string} sort - Sort type: 'latest', 'top', 'media'
+     * @param {string} cursor - Cursor for cursor-based pagination
      */
-    async getTimeline(page = 1, limit = 20) {
-      return request(`/gads/timeline?page=${page}&limit=${limit}`);
+    async getTimeline(page = 1, limit = 20, sort = "latest", cursor = null) {
+      let url = `/gads/timeline?page=${page}&limit=${limit}&sort=${sort}`;
+      if (cursor) url += `&cursor=${encodeURIComponent(cursor)}`;
+      return request(url);
     },
 
     /**
      * Get for-you feed (all gads)
+     * @param {number} page - Page number (for page-based pagination)
+     * @param {number} limit - Items per page
+     * @param {string} sort - Sort type: 'latest', 'top', 'media'
+     * @param {string} cursor - Cursor for cursor-based pagination
      */
-    async getForYou(page = 1, limit = 20) {
-      return request(`/gads/foryou?page=${page}&limit=${limit}`);
+    async getForYou(page = 1, limit = 20, sort = "latest", cursor = null) {
+      let url = `/gads/foryou?page=${page}&limit=${limit}&sort=${sort}`;
+      if (cursor) url += `&cursor=${encodeURIComponent(cursor)}`;
+      return request(url);
+    },
+
+    /**
+     * Get popular gads sorted by engagement
+     * @param {number} page - Page number
+     * @param {number} limit - Items per page
+     */
+    async getPopular(page = 1, limit = 20) {
+      return request(`/gads/popular?page=${page}&limit=${limit}`);
+    },
+
+    /**
+     * Get trending hashtags (alias)
+     * @param {number} limit - Number of hashtags
+     */
+    async getTrending(limit = 10) {
+      return request(`/hashtags/trending?limit=${limit}`);
+    },
+
+    /**
+     * Get gads by hashtag (alias)
+     * @param {string} hashtag - Hashtag without #
+     */
+    async getByHashtag(hashtag, page = 1, limit = 20) {
+      return request(`/hashtags/${encodeURIComponent(hashtag)}?page=${page}&limit=${limit}`);
     },
 
     /**
@@ -348,6 +414,20 @@ const GadTalkAPI = (function () {
      */
     async getByUser(userId, page = 1, limit = 20) {
       return request(`/users/${encodeURIComponent(userId)}/gads?page=${page}&limit=${limit}`);
+    },
+
+    /**
+     * Get replies by a specific user
+     */
+    async getUserReplies(userId, page = 1, limit = 20) {
+      return request(`/users/${encodeURIComponent(userId)}/replies?page=${page}&limit=${limit}`);
+    },
+
+    /**
+     * Get gads liked by a specific user
+     */
+    async getUserLikes(userId, page = 1, limit = 20) {
+      return request(`/users/${encodeURIComponent(userId)}/likes?page=${page}&limit=${limit}`);
     },
 
     /**
@@ -366,6 +446,26 @@ const GadTalkAPI = (function () {
       return request(`/gads/${encodeURIComponent(gadId)}/like`, {
         method: "DELETE",
       });
+    },
+
+    /**
+     * Get users who liked a gad
+     * @param {string} gadId - Gad ID
+     * @param {number} limit - Max results (default 50)
+     * @param {number} offset - Offset (default 0)
+     */
+    async getWhoLiked(gadId, limit = 50, offset = 0) {
+      return request(`/gads/${encodeURIComponent(gadId)}/likes?limit=${limit}&offset=${offset}`);
+    },
+
+    /**
+     * Get users who regadded a gad
+     * @param {string} gadId - Gad ID
+     * @param {number} limit - Max results (default 50)
+     * @param {number} offset - Offset (default 0)
+     */
+    async getWhoRegadded(gadId, limit = 50, offset = 0) {
+      return request(`/gads/${encodeURIComponent(gadId)}/regads?limit=${limit}&offset=${offset}`);
     },
 
     /**
@@ -448,6 +548,13 @@ const GadTalkAPI = (function () {
     },
 
     /**
+     * Get all notifications (alias for get)
+     */
+    async getAll(page = 1, limit = 20) {
+      return request(`/notifications?page=${page}&limit=${limit}`);
+    },
+
+    /**
      * Get unread count
      */
     async getUnreadCount() {
@@ -511,6 +618,203 @@ const GadTalkAPI = (function () {
     },
   };
 
+  // ==================== Feature Flags API ====================
+
+  const featureFlags = {
+    /**
+     * Get all feature flags
+     */
+    async getAll() {
+      return request("/admin/feature-flags");
+    },
+
+    /**
+     * Update feature flag
+     */
+    async update(flagKey, enabled) {
+      return request(`/admin/feature-flags/${encodeURIComponent(flagKey)}`, {
+        method: "PUT",
+        body: { enabled },
+      });
+    },
+
+    /**
+     * Enable feature flag
+     */
+    async enable(flagKey) {
+      return request(`/admin/feature-flags/${encodeURIComponent(flagKey)}/enable`, {
+        method: "POST",
+      });
+    },
+
+    /**
+     * Disable feature flag
+     */
+    async disable(flagKey) {
+      return request(`/admin/feature-flags/${encodeURIComponent(flagKey)}/disable`, {
+        method: "POST",
+      });
+    },
+  };
+
+  // ==================== Search API ====================
+
+  const search = {
+    /**
+     * Get search suggestions (autocomplete)
+     */
+    async getSuggestions(query, limit = 8) {
+      return request(`/search/suggestions?q=${encodeURIComponent(query)}&limit=${limit}`);
+    },
+
+    /**
+     * Combined search for gads, users, and hashtags
+     */
+    async all(query, page = 1, limit = 20) {
+      return request(`/search?q=${encodeURIComponent(query)}&page=${page}&limit=${limit}`);
+    },
+
+    /**
+     * Search gads only
+     */
+    async gads(query, page = 1, limit = 20) {
+      return request(`/search/gads?q=${encodeURIComponent(query)}&page=${page}&limit=${limit}`);
+    },
+
+    /**
+     * Search users only
+     */
+    async users(query, page = 1, limit = 20) {
+      return request(`/search/users?q=${encodeURIComponent(query)}&page=${page}&limit=${limit}`);
+    },
+  };
+
+  // ==================== Explore API ====================
+
+  const explore = {
+    /**
+     * Get explore page data (trending content, popular users, etc.)
+     */
+    async getData() {
+      return request("/explore");
+    },
+
+    /**
+     * Get trending content
+     */
+    async getTrending(limit = 10) {
+      return request(`/explore/trending?limit=${limit}`);
+    },
+
+    /**
+     * Get popular gads
+     */
+    async getPopularGads(page = 1, limit = 20) {
+      return request(`/explore/gads?page=${page}&limit=${limit}`);
+    },
+
+    /**
+     * Get suggested users to follow
+     */
+    async getSuggestedUsers(limit = 10) {
+      return request(`/explore/users?limit=${limit}`);
+    },
+  };
+
+  // ==================== Analytics API ====================
+
+  const analytics = {
+    /**
+     * Get activity heatmap data
+     */
+    async getActivityHeatmap(userId, days = 365) {
+      return request(`/analytics/user/${encodeURIComponent(userId)}/activity-heatmap?days=${days}`);
+    },
+
+    /**
+     * Get engagement timeline data
+     */
+    async getEngagementTimeline(userId, days = 30) {
+      return request(`/analytics/user/${encodeURIComponent(userId)}/engagement-timeline?days=${days}`);
+    },
+
+    /**
+     * Get follower growth data
+     */
+    async getFollowerGrowth(userId, weeks = 12) {
+      return request(`/analytics/user/${encodeURIComponent(userId)}/follower-growth?weeks=${weeks}`);
+    },
+
+    /**
+     * Get hashtag distribution data
+     */
+    async getHashtagDistribution(userId, limit = 8) {
+      return request(`/analytics/user/${encodeURIComponent(userId)}/hashtag-distribution?limit=${limit}`);
+    },
+  };
+
+  // ==================== Contact API ====================
+
+  const contact = {
+    /**
+     * Submit contact form with timeout and retry support
+     * options: { timeoutMs: number, retries: number }
+     */
+    async submit(payload, options = {}) {
+      const timeoutMs = options.timeoutMs || 8000;
+      const retries = typeof options.retries === "number" ? options.retries : 2;
+      const url = `${BASE_URL}/contact`;
+
+      const token = getToken();
+
+      async function attempt(remainingRetries, attemptNum) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+        const headers = {
+          "Content-Type": "application/json",
+        };
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+
+        try {
+          const res = await fetch(url, {
+            method: "POST",
+            headers,
+            body: JSON.stringify(payload),
+            signal: controller.signal,
+          });
+
+          clearTimeout(timer);
+
+          const data = await res.json().catch(() => ({}));
+
+          if (!res.ok) {
+            const errorMessage =
+              (data && data.error && (typeof data.error === "string" ? data.error : data.error.message)) ||
+              data.message ||
+              "Request failed";
+            const err = new Error(errorMessage);
+            err.status = res.status;
+            throw err;
+          }
+
+          return data;
+        } catch (err) {
+          clearTimeout(timer);
+          // If aborted or network error, attempt retry
+          if ((err.name === "AbortError" || !err.status) && remainingRetries > 0) {
+            const backoff = 300 * Math.pow(2, attemptNum);
+            await new Promise((r) => setTimeout(r, backoff));
+            return attempt(remainingRetries - 1, attemptNum + 1);
+          }
+          throw err;
+        }
+      }
+
+      return attempt(retries, 0);
+    },
+  };
+
   // Public API
   return {
     auth,
@@ -519,6 +823,11 @@ const GadTalkAPI = (function () {
     notifications,
     hashtags,
     admin,
+    featureFlags,
+    search,
+    explore,
+    analytics,
+    contact,
     getToken,
     setToken,
     clearToken,

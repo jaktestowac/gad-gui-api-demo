@@ -20,6 +20,117 @@ const auditDbLock = {
   queue: [],
 };
 
+// ==================== FEATURE FLAGS ====================
+
+const DEFAULT_FEATURE_FLAGS = [
+  {
+    key: "charts",
+    enabled: true,
+    description: "Profile analytics charts",
+  },
+  {
+    key: "search_history",
+    enabled: true,
+    description: "Search page recent history",
+  },
+  {
+    key: "hashtag_hash_url",
+    enabled: true,
+    description: "Enable /gad-talk/#hashtag URL routing",
+  },
+  {
+    key: "bookmark_filters",
+    enabled: true,
+    description: "Bookmarks search and sorting controls",
+  },
+  {
+    key: "followers_sorting",
+    enabled: true,
+    description: "Followers/Following sorting controls",
+  },
+  {
+    key: "emoji_picker",
+    enabled: true,
+    description: "Emoji picker in compose form",
+  },
+  {
+    key: "mention_autocomplete",
+    enabled: true,
+    description: "Autocomplete dropdown when typing @username",
+  },
+  {
+    key: "hashtag_autocomplete",
+    enabled: true,
+    description: "Autocomplete dropdown when typing #hashtag",
+  },
+  {
+    key: "char_ring",
+    enabled: true,
+    description: "Circular character countdown indicator",
+  },
+  {
+    key: "who_liked",
+    enabled: true,
+    description: "Modal showing users who liked a gad",
+  },
+  {
+    key: "who_regadded",
+    enabled: true,
+    description: "Modal showing users who regadded a gad",
+  },
+  {
+    key: "profile_badges",
+    enabled: true,
+    description: "Achievement badges on user profiles",
+  },
+  {
+    key: "chaos_dashboard",
+    enabled: true,
+    description: "Chaos mode dashboard for testing resilience",
+  },
+];
+
+let featureFlagsCache = null;
+
+function normalizeFeatureFlagKey(key) {
+  return String(key || "")
+    .trim()
+    .toLowerCase();
+}
+
+function buildFeatureFlagEntry(flag, existing = {}) {
+  const now = new Date().toISOString();
+  return {
+    key: normalizeFeatureFlagKey(flag.key || existing.key),
+    enabled: existing.enabled ?? flag.enabled ?? false,
+    description: flag.description || existing.description || "",
+    updatedAt: existing.updatedAt || now,
+    updatedBy: existing.updatedBy || "system",
+  };
+}
+
+function ensureFeatureFlagsInDb(db) {
+  let updated = false;
+  if (!Array.isArray(db.featureFlags)) {
+    db.featureFlags = [];
+    updated = true;
+  }
+
+  for (const flag of DEFAULT_FEATURE_FLAGS) {
+    const key = normalizeFeatureFlagKey(flag.key);
+    const existingIndex = db.featureFlags.findIndex((entry) => normalizeFeatureFlagKey(entry.key) === key);
+    if (existingIndex === -1) {
+      db.featureFlags.push({
+        ...buildFeatureFlagEntry(flag),
+        updatedAt: new Date().toISOString(),
+      });
+      updated = true;
+    }
+  }
+
+  return updated;
+}
+
 // ==================== LOCK FUNCTIONS ====================
 
 /**
@@ -108,14 +219,14 @@ function readGadTalkDb() {
     let db;
 
     if (!fs.existsSync(DB_PATH)) {
-      logDebug("GadTalk DB file not found, will seed with demo data");
+      logDebug("[GadTalk] DB file not found, will seed with demo data");
       shouldSeed = true;
     } else {
       const data = fs.readFileSync(DB_PATH, "utf8");
       db = JSON.parse(data);
       // Check if DB is empty or missing core data
       if (!Array.isArray(db.gads) || db.gads.length === 0) {
-        logDebug("GadTalk DB is empty, will seed with demo data");
+        logDebug("[GadTalk] DB is empty, will seed with demo data");
         shouldSeed = true;
       }
     }
@@ -133,17 +244,19 @@ function readGadTalkDb() {
         mutes: demoData.mutes || [],
         bookmarks: demoData.bookmarks || [],
         hashtags: demoData.hashtags || [],
+        featureFlags: demoData.featureFlags || [],
         outbox: [],
         missions: [],
         missionCompletions: [],
       };
+      ensureFeatureFlagsInDb(db);
       fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2));
-      logDebug("GadTalk DB seeded with demo data");
+      logDebug("[GadTalk] DB seeded with demo data");
     }
 
     return db;
   } catch (error) {
-    logError("Error reading GadTalk DB:", error);
+    logError("[GadTalk] Error reading GadTalk DB:", error);
     throw error;
   }
 }
@@ -163,9 +276,9 @@ async function writeGadTalkDb(data) {
     // Atomic rename
     fs.renameSync(tmpPath, DB_PATH);
 
-    logTrace("GadTalk DB written successfully");
+    logTrace("[GadTalk] DB written successfully");
   } catch (error) {
-    logError("Error writing GadTalk DB:", error);
+    logError("[GadTalk] Error writing GadTalk DB:", error);
     throw error;
   } finally {
     release();
@@ -201,14 +314,14 @@ function readGadTalkDemoDb() {
     if (shouldWrite) {
       try {
         fs.writeFileSync(DEMO_DB_PATH, JSON.stringify(demoDb, null, 2));
-        logTrace("> Demo DB seeded from gad-talk-demo-data.js");
+        logTrace("[GadTalk] Demo DB seeded from gad-talk-demo-data.js");
       } catch (e) {
-        logError("Failed to write demo DB seed", e);
+        logError("[GadTalk] Failed to write demo DB seed", e);
       }
     }
     return demoDb;
   } catch (error) {
-    logError("Error reading Demo GadTalk DB:", error);
+    logError("[GadTalk] Error reading Demo GadTalk DB:", error);
     return {
       users: [],
       gads: [],
@@ -219,6 +332,7 @@ function readGadTalkDemoDb() {
       mutes: [],
       bookmarks: [],
       hashtags: [],
+      featureFlags: [],
       outbox: [],
       missions: [],
       missionCompletions: [],
@@ -235,7 +349,7 @@ function readGadTalkDemoDb() {
 function readAuditDb() {
   try {
     if (!fs.existsSync(AUDIT_DB_PATH)) {
-      logError("Audit GadTalk DB file not found, creating new one");
+      logError("[GadTalk] Audit GadTalk DB file not found, creating new one");
       const emptyDb = {
         audit: [],
       };
@@ -245,7 +359,7 @@ function readAuditDb() {
     const data = fs.readFileSync(AUDIT_DB_PATH, "utf8");
     return JSON.parse(data);
   } catch (error) {
-    logError("Error reading Audit GadTalk DB:", error);
+    logError("[GadTalk] Error reading Audit GadTalk DB:", error);
     throw error;
   }
 }
@@ -265,9 +379,9 @@ async function writeAuditDb(data) {
     // Atomic rename
     fs.renameSync(tmpPath, AUDIT_DB_PATH);
 
-    logTrace("Audit GadTalk DB written successfully");
+    logTrace("[GadTalk] Audit GadTalk DB written successfully");
   } catch (error) {
-    logError("Error writing Audit GadTalk DB:", error);
+    logError("[GadTalk] Error writing Audit GadTalk DB:", error);
     throw error;
   } finally {
     release();
@@ -337,6 +451,7 @@ const REQUIRED_COLLECTIONS = [
   "mutes",
   "bookmarks",
   "hashtags",
+  "featureFlags",
   "outbox",
   "missions",
   "missionCompletions",
@@ -484,6 +599,7 @@ async function checkAndRepairGadTalkDb() {
       const repairedIntegrity = checkDbIntegrity(repairedDb);
 
       if (repairedIntegrity.valid) {
+        ensureFeatureFlagsInDb(repairedDb);
         logDebug("[GadTalk] Database repaired successfully");
         await writeGadTalkDb(repairedDb);
         return { status: "repaired", db: repairedDb, repairs: integrity.errors };
@@ -506,6 +622,12 @@ async function checkAndRepairGadTalkDb() {
     }
 
     logDebug("[GadTalk] Database integrity check passed");
+
+    const flagsUpdated = ensureFeatureFlagsInDb(db);
+    if (flagsUpdated) {
+      logDebug("[GadTalk] Feature flags updated with defaults");
+      await writeGadTalkDb(db);
+    }
 
     // Even if integrity passes, check if gads collection is empty and needs seeding
     if (!Array.isArray(db.gads) || db.gads.length === 0) {
@@ -535,17 +657,17 @@ async function seedGadsFromSource(existingDb) {
     const initData = require("./gad-talk-demo-data.js");
     if (initData && Array.isArray(initData.gads) && initData.gads.length > 0) {
       seed = initData;
-      logTrace("> Using init dataset for gads seeding");
+      logTrace("[GadTalk] Using init dataset for gads seeding");
     }
   } catch (e) {
-    logTrace("Init dataset not available for gads seeding", { error: e.message });
+    logTrace("[GadTalk] Init dataset not available for gads seeding", { error: e.message });
   }
 
   // Fall back to demo data
   if (!seed) {
     const demoDb = readGadTalkDemoDb();
     seed = demoDb;
-    logTrace("> Using demo dataset for gads seeding");
+    logTrace("[GadTalk] Using demo dataset for gads seeding");
   }
 
   // Merge gads and related collections from seed into existing DB
@@ -583,13 +705,13 @@ async function initializeGadTalkDb() {
       const hasUsers = existingDb.users && existingDb.users.length > 0;
       const hasGads = existingDb.gads && existingDb.gads.length > 0;
       if (hasUsers && hasGads) {
-        logTrace("> GadTalk DB already exists with data (users and gads), skipping initialization");
+        logTrace("[GadTalk] DB already exists with data (users and gads), skipping initialization");
         return existingDb;
       }
-      logTrace("> GadTalk DB exists but missing users or gads, will re-seed");
+      logTrace("[GadTalk] DB exists but missing users or gads, will re-seed");
     }
 
-    logTrace("Initializing GadTalk database...");
+    logTrace("[GadTalk] Initializing GadTalk database...");
 
     // Try loading init dataset
     let initData;
@@ -598,7 +720,9 @@ async function initializeGadTalkDb() {
       delete require.cache[initPath];
       initData = require("./gad-talk-demo-data.js");
     } catch (e) {
-      logTrace("No explicit init dataset or failed to load, will fallback to demo dataset", { error: e.message });
+      logTrace("[GadTalk] No explicit init dataset or failed to load, will fallback to demo dataset", {
+        error: e.message,
+      });
       initData = null;
     }
 
@@ -615,7 +739,7 @@ async function initializeGadTalkDb() {
       seed = demoDb;
     }
 
-    logTrace(`> Using ${seedSourceName} dataset for initial GadTalk DB seeding`);
+    logTrace(`[GadTalk] Using ${seedSourceName} dataset for initial GadTalk DB seeding`);
 
     const initialDb = {
       users: (seed && seed.users) || [],
@@ -627,18 +751,21 @@ async function initializeGadTalkDb() {
       mutes: (seed && seed.mutes) || [],
       bookmarks: (seed && seed.bookmarks) || [],
       hashtags: (seed && seed.hashtags) || [],
+      featureFlags: (seed && seed.featureFlags) || [],
       outbox: (seed && seed.outbox) || [],
       missions: (seed && seed.missions) || [],
       missionCompletions: (seed && seed.missionCompletions) || [],
     };
 
+    ensureFeatureFlagsInDb(initialDb);
+
     // Write to database
     await writeGadTalkDb(initialDb);
 
-    logDebug("GadTalk database initialized successfully");
+    logDebug("[GadTalk] Database initialized successfully");
     return initialDb;
   } catch (error) {
-    logError("Error initializing GadTalk DB:", error);
+    logError("[GadTalk] Error initializing GadTalk DB:", error);
     throw error;
   }
 }
@@ -650,11 +777,11 @@ async function initializeGadTalkDb() {
 async function initializeGadTalkAuditDb() {
   try {
     if (fs.existsSync(AUDIT_DB_PATH)) {
-      logTrace("> Audit GadTalk DB already exists, skipping initialization");
+      logTrace("[GadTalk] Audit GadTalk DB already exists, skipping initialization");
       return readAuditDb();
     }
 
-    logTrace("> Initializing Audit GadTalk database...");
+    logTrace("[GadTalk] Initializing Audit GadTalk database...");
 
     const initialAuditDb = {
       audit: [],
@@ -662,10 +789,10 @@ async function initializeGadTalkAuditDb() {
 
     await writeAuditDb(initialAuditDb);
 
-    logTrace("> Audit GadTalk database initialized successfully");
+    logTrace("[GadTalk] Audit GadTalk database initialized successfully");
     return initialAuditDb;
   } catch (error) {
-    logError("Error initializing Audit GadTalk DB:", error);
+    logError("[GadTalk] Error initializing Audit GadTalk DB:", error);
     throw error;
   }
 }
@@ -711,7 +838,7 @@ async function initializeAllGadTalkDatabases() {
  */
 async function resetGadTalkDatabaseWithDemoData() {
   try {
-    logDebug("Force resetting GadTalk database with demo data...");
+    logDebug("[GadTalk] Force resetting GadTalk database with demo data...");
 
     const demoDb = readGadTalkDemoDb();
 
@@ -725,15 +852,18 @@ async function resetGadTalkDatabaseWithDemoData() {
       mutes: demoDb.mutes || [],
       bookmarks: demoDb.bookmarks || [],
       hashtags: demoDb.hashtags || [],
+      featureFlags: demoDb.featureFlags || [],
       outbox: demoDb.outbox || [],
       missions: demoDb.missions || [],
       missionCompletions: demoDb.missionCompletions || [],
     };
 
+    ensureFeatureFlagsInDb(resetDb);
+
     await writeGadTalkDb(resetDb);
     await writeAuditDb({ audit: [] });
 
-    logDebug("Database reset completed successfully");
+    logDebug("[GadTalk] Database reset completed successfully");
 
     return {
       success: true,
@@ -748,7 +878,86 @@ async function resetGadTalkDatabaseWithDemoData() {
       },
     };
   } catch (error) {
-    logError("Error resetting database:", error);
+    logError("[GadTalk] Error resetting database:", error);
+    throw error;
+  }
+}
+
+/**
+ * Restore GadTalk database from a specific dataset (admin function)
+ * @param {string} datasetKey - Dataset key: default|init|demo|demo-v2|empty
+ * @returns {Promise<Object>} Result object
+ */
+async function restoreGadTalkDatabaseFromDataset(datasetKey = "default") {
+  try {
+    const normalized = String(datasetKey || "")
+      .trim()
+      .toLowerCase();
+    let seedSource = "default";
+    let seedData;
+
+    if (!normalized || normalized === "default" || normalized === "init" || normalized === "initial") {
+      seedSource = "init";
+      const initPath = require.resolve("./gad-talk-init-data.js");
+      delete require.cache[initPath];
+      seedData = require("./gad-talk-init-data.js");
+    } else if (normalized === "demo") {
+      seedSource = "demo";
+      seedData = readGadTalkDemoDb();
+    } else if (normalized === "demo-v2" || normalized === "demov2" || normalized === "v2") {
+      seedSource = "demo-v2";
+      const v2Path = require.resolve("./gad-talk-demo-data-v2.js");
+      delete require.cache[v2Path];
+      seedData = require("./gad-talk-demo-data-v2.js");
+    } else if (normalized === "empty" || normalized === "demo-empty" || normalized === "empty-demo") {
+      seedSource = "empty";
+      const emptyPath = require.resolve("./gad-talk-demo-data-empty.js");
+      delete require.cache[emptyPath];
+      seedData = require("./gad-talk-demo-data-empty.js");
+    } else {
+      throw new Error(`Unknown dataset: ${datasetKey}`);
+    }
+
+    logDebug("[GadTalk] Force restoring GadTalk database from dataset...", { dataset: seedSource });
+
+    const restoredDb = {
+      users: (seedData && seedData.users) || [],
+      gads: (seedData && seedData.gads) || [],
+      follows: (seedData && seedData.follows) || [],
+      likes: (seedData && seedData.likes) || [],
+      notifications: (seedData && seedData.notifications) || [],
+      blocks: (seedData && seedData.blocks) || [],
+      mutes: (seedData && seedData.mutes) || [],
+      bookmarks: (seedData && seedData.bookmarks) || [],
+      hashtags: (seedData && seedData.hashtags) || [],
+      featureFlags: (seedData && seedData.featureFlags) || [],
+      outbox: (seedData && seedData.outbox) || [],
+      missions: (seedData && seedData.missions) || [],
+      missionCompletions: (seedData && seedData.missionCompletions) || [],
+    };
+
+    ensureFeatureFlagsInDb(restoredDb);
+
+    await writeGadTalkDb(restoredDb);
+    await writeAuditDb({ audit: [] });
+
+    logDebug("Database restore completed successfully", { dataset: seedSource });
+
+    return {
+      success: true,
+      dataset: seedSource,
+      message: `Database restored from ${seedSource} dataset`,
+      stats: {
+        users: restoredDb.users.length,
+        gads: restoredDb.gads.length,
+        follows: restoredDb.follows.length,
+        likes: restoredDb.likes.length,
+        notifications: restoredDb.notifications.length,
+        hashtags: restoredDb.hashtags.length,
+      },
+    };
+  } catch (error) {
+    logError("Error restoring database:", error);
     throw error;
   }
 }
@@ -926,6 +1135,23 @@ async function updateGadTalkUserProfile(userId, updates) {
 }
 
 /**
+ * Update user's password
+ * @param {string} userId - User ID
+ * @param {string} newPassword - New password (plain text for educational purposes)
+ * @returns {Promise<Object>} Updated user
+ */
+async function updateGadTalkUserPassword(userId, newPassword) {
+  let updatedUser;
+  await mutateAndWriteDb((db) => {
+    const idx = db.users.findIndex((u) => areIdsEqual(u.id, userId));
+    if (idx === -1) throw new Error("User not found");
+    db.users[idx].password = newPassword;
+    updatedUser = db.users[idx];
+  });
+  return updatedUser;
+}
+
+/**
  * Get user stats (followers, following, posts counts)
  * @param {string} userId - User ID
  * @returns {Object} Stats object
@@ -944,6 +1170,96 @@ function getGadTalkUserStats(userId) {
     gadsCount,
     likesCount,
   };
+}
+
+/**
+ * Get user badges based on their profile and activity
+ * @param {string} userId - User ID
+ * @returns {Array} Array of badge objects
+ */
+function getUserBadges(userId) {
+  const db = readGadTalkDb();
+  const user = db.users.find((u) => areIdsEqual(u.id, userId));
+  if (!user) return [];
+
+  const badges = [];
+
+  // Check for verified badge
+  if (user.verified) {
+    badges.push({
+      id: "verified",
+      name: "Verified",
+      icon: "fa-solid fa-circle-check",
+      description: "Verified account",
+    });
+  }
+
+  // Check for admin badge
+  if (user.role === "admin") {
+    badges.push({
+      id: "admin",
+      name: "Admin",
+      icon: "fa-solid fa-shield",
+      description: "Platform administrator",
+    });
+  }
+
+  // Beta tester - users who joined early (first 20 users)
+  const userIndex = db.users.findIndex((u) => areIdsEqual(u.id, userId));
+  if (userIndex < 20) {
+    badges.push({
+      id: "beta_tester",
+      name: "Beta Tester",
+      icon: "fa-solid fa-flask",
+      description: "Early beta tester of GadTalk",
+    });
+  }
+
+  // Early adopter - users who joined in the first 100
+  if (userIndex >= 20 && userIndex < 100) {
+    badges.push({
+      id: "early_adopter",
+      name: "Early Adopter",
+      icon: "fa-solid fa-seedling",
+      description: "Early adopter of GadTalk",
+    });
+  }
+
+  // Power user - more than 100 gads
+  const gadsCount = db.gads.filter((g) => areIdsEqual(g.userId, userId) && !g.deleted).length;
+  if (gadsCount >= 100) {
+    badges.push({
+      id: "power_user",
+      name: "Power User",
+      icon: "fa-solid fa-bolt",
+      description: "Posted 100+ gads",
+    });
+  }
+
+  // Top contributor - more than 1000 total likes received
+  const userGadIds = db.gads.filter((g) => areIdsEqual(g.userId, userId) && !g.deleted).map((g) => g.id);
+  const totalLikesReceived = db.likes.filter((l) => userGadIds.some((gId) => areIdsEqual(l.gadId, gId))).length;
+  if (totalLikesReceived >= 1000) {
+    badges.push({
+      id: "top_contributor",
+      name: "Top Contributor",
+      icon: "fa-solid fa-crown",
+      description: "Received 1000+ likes",
+    });
+  }
+
+  // Social butterfly - more than 500 followers
+  const followersCount = db.follows.filter((f) => areIdsEqual(f.followingId, userId)).length;
+  if (followersCount >= 500) {
+    badges.push({
+      id: "influencer",
+      name: "Influencer",
+      icon: "fa-solid fa-star",
+      description: "500+ followers",
+    });
+  }
+
+  return badges;
 }
 
 // ==================== GAD (POST) OPERATIONS ====================
@@ -983,6 +1299,7 @@ async function createGad(gadData) {
     userId: gadData.userId,
     content: gadData.content,
     imageUrl: gadData.imageUrl || null,
+    replyTo: gadData.replyTo || null,
     replyToId: gadData.replyToId || null,
     quoteOfId: gadData.quoteOfId || null,
     isRepost: gadData.isRepost || false,
@@ -1189,6 +1506,49 @@ function isFollowing(followerId, followingId) {
 // ==================== LIKE OPERATIONS ====================
 
 /**
+ * Get users who liked a gad
+ * @param {string} gadId - Gad ID
+ * @param {Object} options - Pagination options
+ * @param {number} options.limit - Max results (default 50)
+ * @param {number} options.offset - Offset (default 0)
+ * @returns {Promise<Object>} Users who liked with pagination info
+ */
+async function getLikesForGad(gadId, options = {}) {
+  const { limit = 50, offset = 0 } = options;
+  const db = readGadTalkDb();
+
+  // Get all likes for this gad
+  const likes = db.likes
+    .filter((l) => areIdsEqual(l.gadId, gadId))
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  const total = likes.length;
+  const paginatedLikes = likes.slice(offset, offset + limit);
+
+  // Get user info for each like
+  const usersWhoLiked = [];
+  for (const like of paginatedLikes) {
+    const user = db.users.find((u) => areIdsEqual(u.id, like.userId));
+    if (user) {
+      usersWhoLiked.push({
+        id: user.id,
+        username: user.username,
+        displayName: user.displayName,
+        avatar: user.avatar,
+        verified: user.verified || false,
+        likedAt: like.createdAt,
+      });
+    }
+  }
+
+  return {
+    users: usersWhoLiked,
+    total,
+    hasMore: offset + limit < total,
+  };
+}
+
+/**
  * Create a like
  * @param {string} userId - User ID
  * @param {string} gadId - Gad ID
@@ -1269,27 +1629,29 @@ async function createNotification(notifData) {
 }
 
 /**
- * Get notifications for a user
+ * Get notifications for a user with pagination
  * @param {string} userId - User ID
- * @param {Object} options - Options (limit, unreadOnly)
- * @returns {Array} Array of notifications
+ * @param {number} page - Page number (default 1)
+ * @param {number} limit - Items per page (default 20)
+ * @param {Object} options - Additional options (unreadOnly)
+ * @returns {Object} { notifications: Array, total: number }
  */
-function getNotifications(userId, options = {}) {
+function getNotifications(userId, page = 1, limit = 20, options = {}) {
   const db = readGadTalkDb();
-  let notifications = db.notifications.filter((n) => areIdsEqual(n.userId, userId));
+  let allNotifications = db.notifications.filter((n) => areIdsEqual(n.userId, userId));
 
   if (options.unreadOnly) {
-    notifications = notifications.filter((n) => !n.read);
+    allNotifications = allNotifications.filter((n) => !n.read);
   }
 
   // Sort by createdAt desc
-  notifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  allNotifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-  if (options.limit) {
-    notifications = notifications.slice(0, options.limit);
-  }
+  const total = allNotifications.length;
+  const start = (page - 1) * limit;
+  const notifications = allNotifications.slice(start, start + limit);
 
-  return notifications;
+  return { notifications, total };
 }
 
 /**
@@ -1435,6 +1797,39 @@ function hasBlocked(blockerId, blockedId) {
 function hasMuted(muterId, mutedId) {
   const db = readGadTalkDb();
   return db.mutes.some((m) => areIdsEqual(m.muterId, muterId) && areIdsEqual(m.mutedId, mutedId));
+}
+
+/**
+ * Get all user IDs blocked by a user
+ * @param {string} userId - The user who did the blocking
+ * @returns {string[]} Array of blocked user IDs
+ */
+function getBlockedUserIds(userId) {
+  if (!userId) return [];
+  const db = readGadTalkDb();
+  return db.blocks.filter((b) => areIdsEqual(b.blockerId, userId)).map((b) => b.blockedId);
+}
+
+/**
+ * Get all user IDs who blocked a user
+ * @param {string} userId - The user who was blocked
+ * @returns {string[]} Array of user IDs who blocked this user
+ */
+function getBlockedByUserIds(userId) {
+  if (!userId) return [];
+  const db = readGadTalkDb();
+  return db.blocks.filter((b) => areIdsEqual(b.blockedId, userId)).map((b) => b.blockerId);
+}
+
+/**
+ * Get all user IDs muted by a user
+ * @param {string} userId - The user who did the muting
+ * @returns {string[]} Array of muted user IDs
+ */
+function getMutedUserIds(userId) {
+  if (!userId) return [];
+  const db = readGadTalkDb();
+  return db.mutes.filter((m) => areIdsEqual(m.muterId, userId)).map((m) => m.mutedId);
 }
 
 // ==================== BOOKMARK OPERATIONS ====================
@@ -1667,30 +2062,107 @@ async function deleteRegad(userId, gadId) {
 }
 
 /**
- * Get "For You" feed - all gads sorted by recency
- * @param {number} page - Page number
+ * Get users who regadded a gad
+ * @param {string} gadId - Gad ID
+ * @param {Object} options - Pagination options
+ * @param {number} options.limit - Max results (default 50)
+ * @param {number} options.offset - Offset (default 0)
+ * @returns {Promise<Object>} Users who regadded with pagination info
+ */
+function getRegadsForGad(gadId, options = {}) {
+  const { limit = 50, offset = 0 } = options;
+  const db = readGadTalkDb();
+
+  // Get all regads for this gad from outbox
+  const regads = db.outbox
+    .filter((o) => o.type === "regad" && areIdsEqual(o.gadId, gadId))
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  const total = regads.length;
+  const paginatedRegads = regads.slice(offset, offset + limit);
+
+  // Get user info for each regad
+  const usersWhoRegadded = [];
+  for (const regad of paginatedRegads) {
+    const user = db.users.find((u) => areIdsEqual(u.id, regad.userId));
+    if (user) {
+      usersWhoRegadded.push({
+        id: user.id,
+        username: user.username,
+        displayName: user.displayName,
+        avatar: user.avatar,
+        verified: user.verified || false,
+        regaddedAt: regad.createdAt,
+        comment: regad.comment || null,
+      });
+    }
+  }
+
+  return {
+    users: usersWhoRegadded,
+    total,
+    hasMore: offset + limit < total,
+  };
+}
+
+/**
+ * Get "For You" feed - all gads with sorting support
+ * Supports both page-based and cursor-based pagination
+ * @param {number} page - Page number (for page-based pagination)
  * @param {number} limit - Items per page
  * @param {Object} options - Filter options
  * @param {string} options.currentUserId - Current user ID for visibility filtering
  * @param {string[]} options.followingIds - IDs of users the current user follows
+ * @param {string} options.sort - Sort type: 'latest', 'top', 'media'
+ * @param {string} options.cursor - Cursor for cursor-based pagination (ID of last item)
  */
 function getGadsForYou(page = 1, limit = 20, options = {}) {
   const db = readGadTalkDb();
-  const { currentUserId, followingIds = [] } = options;
+  const {
+    currentUserId,
+    followingIds = [],
+    sort = "latest",
+    blockedUserIds = [],
+    mutedUserIds = [],
+    cursor = null,
+  } = options;
 
-  const allGads = db.gads
-    .filter((g) => {
-      if (g.deleted) return false;
-      // Apply visibility filtering
-      return isGadVisibleToUser(g, currentUserId, followingIds);
-    })
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  // Combine blocked and muted users for filtering
+  const excludedUserIds = [...new Set([...blockedUserIds, ...mutedUserIds])];
+
+  let allGads = db.gads.filter((g) => {
+    if (g.deleted) return false;
+    // Filter out gads from blocked/muted users
+    if (excludedUserIds.some((id) => areIdsEqual(id, g.userId))) return false;
+    // Apply visibility filtering
+    if (!isGadVisibleToUser(g, currentUserId, followingIds)) return false;
+    // Filter by media if sort type is 'media'
+    if (sort === "media" && !g.imageUrl) return false;
+    return true;
+  });
+
+  // Apply sorting
+  allGads = sortGadsBy(allGads, sort);
 
   const total = allGads.length;
+
+  // Cursor-based pagination
+  if (cursor) {
+    const cursorIndex = allGads.findIndex((g) => areIdsEqual(g.id, cursor));
+    if (cursorIndex !== -1) {
+      allGads = allGads.slice(cursorIndex + 1);
+    }
+    const gads = allGads.slice(0, limit);
+    const nextCursor = gads.length === limit && gads.length > 0 ? gads[gads.length - 1].id : null;
+    return { gads, total, nextCursor };
+  }
+
+  // Page-based pagination
   const start = (page - 1) * limit;
   const gads = allGads.slice(start, start + limit);
+  const nextCursor = start + limit < total && gads.length > 0 ? gads[gads.length - 1].id : null;
 
-  return { gads, total };
+  return { gads, total, nextCursor };
 }
 
 /**
@@ -1730,31 +2202,135 @@ function isGadVisibleToUser(gad, currentUserId, followingIds = []) {
 }
 
 /**
- * Get gads by multiple users
- * @param {string[]} userIds - User IDs to get gads from
+ * Sort gads by specified type
+ * @param {Array} gads - Array of gads
+ * @param {string} sortType - 'latest', 'top', or 'media'
+ * @returns {Array} Sorted gads
+ */
+function sortGadsBy(gads, sortType) {
+  switch (sortType) {
+    case "top":
+      // Sort by engagement score (likes + reposts + replies)
+      return gads.sort((a, b) => {
+        const scoreA = (a.likeCount || 0) + (a.regadCount || 0) * 3 + (a.replyCount || 0) * 2;
+        const scoreB = (b.likeCount || 0) + (b.regadCount || 0) * 3 + (b.replyCount || 0) * 2;
+        // Secondary sort by date for ties
+        if (scoreB === scoreA) {
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        }
+        return scoreB - scoreA;
+      });
+
+    case "media":
+    case "latest":
+    default:
+      // Sort by creation date, newest first
+      return gads.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }
+}
+
+/**
+ * Get popular gads sorted by engagement
  * @param {number} page - Page number
  * @param {number} limit - Items per page
  * @param {Object} options - Filter options
  * @param {string} options.currentUserId - Current user ID for visibility filtering
  * @param {string[]} options.followingIds - IDs of users the current user follows
+ * @param {string[]} options.blockedUserIds - IDs of users blocked by current user
+ * @returns {Object} { gads, total }
  */
-function getGadsByUsers(userIds, page = 1, limit = 20, options = {}) {
+function getPopularGads(page = 1, limit = 20, options = {}) {
   const db = readGadTalkDb();
-  const { currentUserId, followingIds = [] } = options;
+  const { currentUserId, followingIds = [], blockedUserIds = [] } = options;
 
-  const allGads = db.gads
-    .filter((g) => {
-      if (g.deleted) return false;
-      if (!userIds.some((uid) => areIdsEqual(g.userId, uid))) return false;
-      return isGadVisibleToUser(g, currentUserId, followingIds);
-    })
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  let allGads = db.gads.filter((g) => {
+    if (g.deleted) return false;
+    // Filter out gads from blocked users
+    if (blockedUserIds.some((id) => areIdsEqual(id, g.userId))) return false;
+    // Apply visibility filtering
+    if (!isGadVisibleToUser(g, currentUserId, followingIds)) return false;
+    return true;
+  });
+
+  // Sort by engagement score (likes + reposts*3 + replies*2)
+  allGads = allGads.sort((a, b) => {
+    const scoreA = (a.likeCount || 0) + (a.regadCount || 0) * 3 + (a.replyCount || 0) * 2;
+    const scoreB = (b.likeCount || 0) + (b.regadCount || 0) * 3 + (b.replyCount || 0) * 2;
+    // Secondary sort by date for ties
+    if (scoreB === scoreA) {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    }
+    return scoreB - scoreA;
+  });
 
   const total = allGads.length;
   const start = (page - 1) * limit;
   const gads = allGads.slice(start, start + limit);
 
   return { gads, total };
+}
+
+/**
+ * Get gads by multiple users
+ * Supports both page-based and cursor-based pagination
+ * @param {string[]} userIds - User IDs to get gads from
+ * @param {number} page - Page number
+ * @param {number} limit - Items per page
+ * @param {Object} options - Filter options
+ * @param {string} options.currentUserId - Current user ID for visibility filtering
+ * @param {string[]} options.followingIds - IDs of users the current user follows
+ * @param {string} options.sort - Sort type: 'latest', 'top', 'media'
+ * @param {string[]} options.blockedUserIds - IDs of users blocked by current user
+ * @param {string[]} options.mutedUserIds - IDs of users muted by current user
+ * @param {string} options.cursor - Cursor for cursor-based pagination (ID of last item)
+ */
+function getGadsByUsers(userIds, page = 1, limit = 20, options = {}) {
+  const db = readGadTalkDb();
+  const {
+    currentUserId,
+    followingIds = [],
+    sort = "latest",
+    blockedUserIds = [],
+    mutedUserIds = [],
+    cursor = null,
+  } = options;
+
+  // Combine blocked and muted users for filtering
+  const excludedUserIds = [...new Set([...blockedUserIds, ...mutedUserIds])];
+
+  let allGads = db.gads.filter((g) => {
+    if (g.deleted) return false;
+    if (!userIds.some((uid) => areIdsEqual(g.userId, uid))) return false;
+    // Filter out gads from blocked/muted users
+    if (excludedUserIds.some((id) => areIdsEqual(id, g.userId))) return false;
+    if (!isGadVisibleToUser(g, currentUserId, followingIds)) return false;
+    // Filter by media if sort type is 'media'
+    if (sort === "media" && !g.imageUrl) return false;
+    return true;
+  });
+
+  // Apply sorting
+  allGads = sortGadsBy(allGads, sort);
+
+  const total = allGads.length;
+
+  // Cursor-based pagination
+  if (cursor) {
+    const cursorIndex = allGads.findIndex((g) => areIdsEqual(g.id, cursor));
+    if (cursorIndex !== -1) {
+      allGads = allGads.slice(cursorIndex + 1);
+    }
+    const gads = allGads.slice(0, limit);
+    const nextCursor = gads.length === limit && gads.length > 0 ? gads[gads.length - 1].id : null;
+    return { gads, total, nextCursor };
+  }
+
+  // Page-based pagination
+  const start = (page - 1) * limit;
+  const gads = allGads.slice(start, start + limit);
+  const nextCursor = start + limit < total && gads.length > 0 ? gads[gads.length - 1].id : null;
+
+  return { gads, total, nextCursor };
 }
 
 /**
@@ -1781,6 +2357,67 @@ function getGadsByUser(userId, page = 1, limit = 20, options = {}) {
   const total = allGads.length;
   const start = (page - 1) * limit;
   const gads = allGads.slice(start, start + limit);
+
+  return { gads, total };
+}
+
+/**
+ * Get replies made by a user (gads that are replies to other gads)
+ * @param {string} userId - User ID
+ * @param {number} page - Page number
+ * @param {number} limit - Items per page
+ * @param {Object} options - Filter options
+ */
+function getUserReplies(userId, page = 1, limit = 20, options = {}) {
+  const db = readGadTalkDb();
+  const { currentUserId, followingIds = [] } = options;
+
+  const allReplies = db.gads
+    .filter((g) => {
+      if (g.deleted) return false;
+      if (!areIdsEqual(g.userId, userId)) return false;
+      // Must be a reply (has replyTo or replyToId)
+      if (!g.replyTo && !g.replyToId) return false;
+      return isGadVisibleToUser(g, currentUserId, followingIds);
+    })
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  const total = allReplies.length;
+  const start = (page - 1) * limit;
+  const gads = allReplies.slice(start, start + limit);
+
+  return { gads, total };
+}
+
+/**
+ * Get gads liked by a user
+ * @param {string} userId - User ID
+ * @param {number} page - Page number
+ * @param {number} limit - Items per page
+ * @param {Object} options - Filter options
+ */
+function getUserLikedGads(userId, page = 1, limit = 20, options = {}) {
+  const db = readGadTalkDb();
+  const { currentUserId, followingIds = [] } = options;
+
+  // Get all likes by this user
+  const userLikes = db.likes
+    .filter((l) => areIdsEqual(l.userId, userId))
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  // Get the gads for these likes
+  const allLikedGads = userLikes
+    .map((like) => {
+      const gad = db.gads.find((g) => areIdsEqual(g.id, like.gadId));
+      if (!gad || gad.deleted) return null;
+      if (!isGadVisibleToUser(gad, currentUserId, followingIds)) return null;
+      return gad;
+    })
+    .filter(Boolean);
+
+  const total = allLikedGads.length;
+  const start = (page - 1) * limit;
+  const gads = allLikedGads.slice(start, start + limit);
 
   return { gads, total };
 }
@@ -1822,16 +2459,19 @@ function getReplies(gadId, page = 1, limit = 20, options = {}) {
  * @param {Object} options - Filter options
  * @param {string} options.currentUserId - Current user ID for visibility filtering
  * @param {string[]} options.followingIds - IDs of users the current user follows
+ * @param {string[]} options.blockedUserIds - IDs of users blocked by current user
  */
 function searchGads(query, page = 1, limit = 20, options = {}) {
   const db = readGadTalkDb();
-  const { currentUserId, followingIds = [] } = options;
+  const { currentUserId, followingIds = [], blockedUserIds = [] } = options;
   const lowerQuery = query.toLowerCase();
 
   const allGads = db.gads
     .filter((g) => {
       if (g.deleted) return false;
       if (!g.content || !g.content.toLowerCase().includes(lowerQuery)) return false;
+      // Filter out gads from blocked users
+      if (blockedUserIds.some((id) => areIdsEqual(id, g.userId))) return false;
       return isGadVisibleToUser(g, currentUserId, followingIds);
     })
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -1850,16 +2490,23 @@ function searchGads(query, page = 1, limit = 20, options = {}) {
  * @param {number} limit - Items per page
  * @param {Object} options - Filter options
  * @param {string} options.currentUserId - Current user ID (to exclude from results)
+ * @param {string[]} options.blockedUserIds - IDs of users blocked by current user
+ * @param {string[]} options.blockedByUserIds - IDs of users who blocked current user
  */
 function searchUsers(query, page = 1, limit = 20, options = {}) {
   const db = readGadTalkDb();
-  const { currentUserId } = options;
+  const { currentUserId, blockedUserIds = [], blockedByUserIds = [] } = options;
   const lowerQuery = query.toLowerCase();
+
+  // Combine blocked users for filtering
+  const excludedUserIds = [...new Set([...blockedUserIds, ...blockedByUserIds])];
 
   const allUsers = db.users
     .filter((u) => {
       // Exclude current user from search results
       if (currentUserId && areIdsEqual(u.id, currentUserId)) return false;
+      // Exclude blocked users
+      if (excludedUserIds.some((id) => areIdsEqual(id, u.id))) return false;
       // Match username or display name
       const usernameMatch = u.username && u.username.toLowerCase().includes(lowerQuery);
       const displayNameMatch = u.displayName && u.displayName.toLowerCase().includes(lowerQuery);
@@ -2056,6 +2703,7 @@ function getGadTalkDbStatus() {
       mutes: db.mutes.length,
       bookmarks: db.bookmarks.length,
       hashtags: db.hashtags.length,
+      featureFlags: db.featureFlags.length,
       outbox: db.outbox.length,
       missions: db.missions.length,
       missionCompletions: db.missionCompletions.length,
@@ -2065,6 +2713,305 @@ function getGadTalkDbStatus() {
     auditDbPath: AUDIT_DB_PATH,
     timestamp: new Date().toISOString(),
   };
+}
+
+// ==================== ANALYTICS (CHARTS) ====================
+
+function clampNumber(value, min, max, fallback) {
+  const parsed = Number.parseInt(value, 10);
+  if (Number.isNaN(parsed)) return fallback;
+  return Math.max(min, Math.min(max, parsed));
+}
+
+function normalizeToUtcDate(date) {
+  const d = new Date(date);
+  if (Number.isNaN(d.getTime())) return null;
+  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+}
+
+function toDateKey(value) {
+  const d = normalizeToUtcDate(value);
+  if (!d) return null;
+  return d.toISOString().slice(0, 10);
+}
+
+function buildDateKeys(days, endDate = new Date()) {
+  const end = normalizeToUtcDate(endDate) || new Date();
+  const keys = [];
+  for (let i = days - 1; i >= 0; i -= 1) {
+    const d = new Date(end);
+    d.setUTCDate(end.getUTCDate() - i);
+    keys.push(d.toISOString().slice(0, 10));
+  }
+  return keys;
+}
+
+function formatLabelFromDateKey(dateKey) {
+  try {
+    const date = new Date(`${dateKey}T00:00:00Z`);
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  } catch (e) {
+    return dateKey;
+  }
+}
+
+function startOfUtcWeek(date) {
+  const normalized = normalizeToUtcDate(date) || new Date();
+  const day = normalized.getUTCDay();
+  const diff = (day + 6) % 7; // Monday = 0
+  const start = new Date(normalized);
+  start.setUTCDate(normalized.getUTCDate() - diff);
+  return start;
+}
+
+function getUserActivityHeatmap(userId, options = {}) {
+  const db = readGadTalkDb();
+  const days = clampNumber(options.days, 7, 366, 365);
+  const dateKeys = buildDateKeys(days, options.endDate || new Date());
+  const counts = Object.fromEntries(dateKeys.map((key) => [key, 0]));
+
+  db.gads
+    .filter((g) => !g.deleted && areIdsEqual(g.userId, userId))
+    .forEach((gad) => {
+      const key = toDateKey(gad.createdAt);
+      if (key && Object.prototype.hasOwnProperty.call(counts, key)) {
+        counts[key] += 1;
+      }
+    });
+
+  const data = dateKeys.map((key) => ({ date: key, count: counts[key] || 0 }));
+  const maxCount = data.reduce((max, entry) => Math.max(max, entry.count), 0);
+
+  return {
+    range: {
+      from: dateKeys[0],
+      to: dateKeys[dateKeys.length - 1],
+      days,
+    },
+    data,
+    maxCount,
+  };
+}
+
+function getUserEngagementTimeline(userId, options = {}) {
+  const db = readGadTalkDb();
+  const days = clampNumber(options.days, 7, 180, 30);
+  const dateKeys = buildDateKeys(days, options.endDate || new Date());
+  const likes = Object.fromEntries(dateKeys.map((key) => [key, 0]));
+  const replies = Object.fromEntries(dateKeys.map((key) => [key, 0]));
+  const reposts = Object.fromEntries(dateKeys.map((key) => [key, 0]));
+
+  const userGadIds = new Set(db.gads.filter((g) => !g.deleted && areIdsEqual(g.userId, userId)).map((g) => g.id));
+
+  db.likes.forEach((like) => {
+    if (!userGadIds.has(like.gadId)) return;
+    const key = toDateKey(like.createdAt);
+    if (key && Object.prototype.hasOwnProperty.call(likes, key)) {
+      likes[key] += 1;
+    }
+  });
+
+  db.gads.forEach((gad) => {
+    if (gad.deleted) return;
+    const replyToId = gad.replyToId || gad.replyTo;
+    if (!replyToId || !userGadIds.has(replyToId)) return;
+    const key = toDateKey(gad.createdAt);
+    if (key && Object.prototype.hasOwnProperty.call(replies, key)) {
+      replies[key] += 1;
+    }
+  });
+
+  db.outbox.forEach((entry) => {
+    if (entry.type !== "regad" || !userGadIds.has(entry.gadId)) return;
+    const key = toDateKey(entry.createdAt);
+    if (key && Object.prototype.hasOwnProperty.call(reposts, key)) {
+      reposts[key] += 1;
+    }
+  });
+
+  db.gads.forEach((gad) => {
+    if (gad.deleted || !gad.isRepost || !gad.repostOfId) return;
+    if (!userGadIds.has(gad.repostOfId)) return;
+    const key = toDateKey(gad.createdAt);
+    if (key && Object.prototype.hasOwnProperty.call(reposts, key)) {
+      reposts[key] += 1;
+    }
+  });
+
+  const labels = dateKeys.map((key) => formatLabelFromDateKey(key));
+
+  return {
+    range: {
+      from: dateKeys[0],
+      to: dateKeys[dateKeys.length - 1],
+      days,
+    },
+    labels,
+    dateKeys,
+    series: {
+      likes: dateKeys.map((key) => likes[key] || 0),
+      replies: dateKeys.map((key) => replies[key] || 0),
+      reposts: dateKeys.map((key) => reposts[key] || 0),
+    },
+    totals: {
+      likes: Object.values(likes).reduce((sum, val) => sum + val, 0),
+      replies: Object.values(replies).reduce((sum, val) => sum + val, 0),
+      reposts: Object.values(reposts).reduce((sum, val) => sum + val, 0),
+    },
+  };
+}
+
+function getUserFollowerGrowth(userId, options = {}) {
+  const db = readGadTalkDb();
+  const weeks = clampNumber(options.weeks, 4, 52, 12);
+  const endDate = normalizeToUtcDate(options.endDate || new Date()) || new Date();
+  const endWeekStart = startOfUtcWeek(endDate);
+  const weekStarts = [];
+
+  for (let i = weeks - 1; i >= 0; i -= 1) {
+    const d = new Date(endWeekStart);
+    d.setUTCDate(endWeekStart.getUTCDate() - i * 7);
+    weekStarts.push(d);
+  }
+
+  const followerDates = db.follows
+    .filter((f) => areIdsEqual(f.followingId, userId))
+    .map((f) => normalizeToUtcDate(f.createdAt))
+    .filter(Boolean)
+    .sort((a, b) => a - b);
+
+  const counts = [];
+  let runningTotal = 0;
+  let cursor = 0;
+
+  for (const weekStart of weekStarts) {
+    const weekEnd = new Date(weekStart);
+    weekEnd.setUTCDate(weekStart.getUTCDate() + 6);
+
+    while (cursor < followerDates.length && followerDates[cursor] <= weekEnd) {
+      runningTotal += 1;
+      cursor += 1;
+    }
+
+    counts.push(runningTotal);
+  }
+
+  return {
+    range: {
+      from: weekStarts[0].toISOString().slice(0, 10),
+      to: weekStarts[weekStarts.length - 1].toISOString().slice(0, 10),
+      weeks,
+    },
+    labels: weekStarts.map((date) => formatLabelFromDateKey(date.toISOString().slice(0, 10))),
+    dateKeys: weekStarts.map((date) => date.toISOString().slice(0, 10)),
+    counts,
+  };
+}
+
+function getUserHashtagDistribution(userId, options = {}) {
+  const db = readGadTalkDb();
+  const limit = clampNumber(options.limit, 3, 12, 8);
+  const counts = {};
+
+  db.gads
+    .filter((g) => !g.deleted && areIdsEqual(g.userId, userId))
+    .forEach((gad) => {
+      const tags = Array.isArray(gad.hashtags) && gad.hashtags.length > 0 ? gad.hashtags : extractHashtags(gad.content);
+      tags.forEach((tag) => {
+        const normalized = String(tag).toLowerCase();
+        counts[normalized] = (counts[normalized] || 0) + 1;
+      });
+    });
+
+  const entries = Object.entries(counts)
+    .map(([tag, count]) => ({ tag, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, limit);
+
+  const total = entries.reduce((sum, item) => sum + item.count, 0);
+  const hashtags = entries.map((item) => ({
+    ...item,
+    percent: total ? Math.round((item.count / total) * 1000) / 10 : 0,
+  }));
+
+  return {
+    total,
+    hashtags,
+  };
+}
+
+// ==================== FEATURE FLAG OPERATIONS ====================
+
+function getFeatureFlags() {
+  if (!featureFlagsCache) {
+    const db = readGadTalkDb();
+    ensureFeatureFlagsInDb(db);
+    featureFlagsCache = db.featureFlags || [];
+  }
+
+  return [...featureFlagsCache].sort((a, b) => a.key.localeCompare(b.key));
+}
+
+function getFeatureFlagsMap() {
+  const flags = getFeatureFlags();
+  return flags.reduce((acc, flag) => {
+    acc[normalizeFeatureFlagKey(flag.key)] = flag;
+    return acc;
+  }, {});
+}
+
+function isFeatureEnabled(flagKey) {
+  const key = normalizeFeatureFlagKey(flagKey);
+  const flags = getFeatureFlagsMap();
+  if (!Object.prototype.hasOwnProperty.call(flags, key)) {
+    return true;
+  }
+  return !!flags[key].enabled;
+}
+
+async function setFeatureFlag(flagKey, enabled, actorUserId = null) {
+  const key = normalizeFeatureFlagKey(flagKey);
+  if (!key) {
+    throw new Error("Feature flag key is required");
+  }
+
+  let updatedFlag;
+  let previousEnabled = null;
+
+  await mutateAndWriteDb((db) => {
+    ensureFeatureFlagsInDb(db);
+    const index = db.featureFlags.findIndex((flag) => normalizeFeatureFlagKey(flag.key) === key);
+    if (index >= 0) {
+      previousEnabled = db.featureFlags[index].enabled;
+      db.featureFlags[index].enabled = !!enabled;
+      db.featureFlags[index].updatedAt = new Date().toISOString();
+      db.featureFlags[index].updatedBy = actorUserId || "anonymous";
+      updatedFlag = db.featureFlags[index];
+    } else {
+      updatedFlag = {
+        key,
+        enabled: !!enabled,
+        description: "",
+        updatedAt: new Date().toISOString(),
+        updatedBy: actorUserId || "anonymous",
+      };
+      db.featureFlags.push(updatedFlag);
+    }
+  });
+
+  featureFlagsCache = null;
+
+  await createGadTalkAuditLog({
+    actorUserId: actorUserId || "anonymous",
+    eventType: "feature-flag-updated",
+    payloadObject: {
+      key,
+      enabled: !!enabled,
+      previousEnabled,
+    },
+  });
+
+  return updatedFlag;
 }
 
 // ==================== EXPORTS ====================
@@ -2093,6 +3040,7 @@ module.exports = {
   initializeGadTalkAuditDb,
   initializeAllGadTalkDatabases,
   resetGadTalkDatabaseWithDemoData,
+  restoreGadTalkDatabaseFromDataset,
 
   // Users
   gadTalkUsersDb,
@@ -2102,7 +3050,9 @@ module.exports = {
   createGadTalkUser,
   updateGadTalkUserLastLogin,
   updateGadTalkUserProfile,
+  updateGadTalkUserPassword,
   getGadTalkUserStats,
+  getUserBadges,
   getUserById,
   getUserByUsername,
 
@@ -2118,6 +3068,9 @@ module.exports = {
   getGadsForYou,
   getGadsByUsers,
   getGadsByUser,
+  getUserReplies,
+  getUserLikedGads,
+  getPopularGads,
   getReplies,
   searchGads,
   searchUsers,
@@ -2140,11 +3093,13 @@ module.exports = {
   createLike,
   deleteLike,
   hasUserLikedGad,
+  getLikesForGad,
 
   // Regads
   createRegad,
   deleteRegad,
   hasUserRegadded,
+  getRegadsForGad,
 
   // Notifications
   createNotification,
@@ -2158,9 +3113,12 @@ module.exports = {
   createBlock,
   deleteBlock,
   hasBlocked,
+  getBlockedUserIds,
+  getBlockedByUserIds,
   createMute,
   deleteMute,
   hasMuted,
+  getMutedUserIds,
 
   // Bookmarks
   createBookmark,
@@ -2181,4 +3139,16 @@ module.exports = {
 
   // Status
   getGadTalkDbStatus,
+
+  // Analytics
+  getUserActivityHeatmap,
+  getUserEngagementTimeline,
+  getUserFollowerGrowth,
+  getUserHashtagDistribution,
+
+  // Feature flags
+  getFeatureFlags,
+  getFeatureFlagsMap,
+  isFeatureEnabled,
+  setFeatureFlag,
 };

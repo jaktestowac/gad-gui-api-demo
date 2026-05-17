@@ -216,6 +216,77 @@
       font-size: 0.75rem;
     }
 
+    /* Chaos Engine tiny badge and dice styling */
+    .chaos-engine {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-left: 0.25rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 8px;
+      background: linear-gradient(90deg, rgba(255, 123, 0, 0.12), rgba(0, 180, 216, 0.06));
+      color: #ffb86b;
+      box-shadow: 0 4px 12px rgba(255, 123, 0, 0.06);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      cursor: default;
+      font-weight: 600;
+    }
+
+    .chaos-engine .fa-dice {
+      color: #ff7b00;
+      text-shadow: 0 0 8px rgba(255, 123, 0, 0.25);
+      transform-origin: center;
+      display: inline-block;
+      transition: transform 0.35s cubic-bezier(.2, .8, .2, 1);
+    }
+
+    .chaos-engine:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .chaos-engine:hover .fa-dice {
+      animation: dice-roll 0.6s ease;
+    }
+
+    @keyframes dice-roll {
+      0% {
+        transform: rotate(0) translateY(0);
+      }
+
+      25% {
+        transform: rotate(30deg) translateY(-4px);
+      }
+
+      50% {
+        transform: rotate(-20deg) translateY(0);
+      }
+
+      75% {
+        transform: rotate(15deg) translateY(-2px);
+      }
+
+      100% {
+        transform: rotate(0) translateY(0);
+      }
+    }
+
+    .animations-enabled .chaos-engine .fa-dice {
+      animation: dice-breathe 3s ease-in-out infinite;
+    }
+
+    @keyframes dice-breathe {
+
+      0%,
+      100% {
+        transform: translateY(0) scale(1);
+      }
+
+      50% {
+        transform: translateY(-2px) scale(1.02);
+      }
+    }
+
     .new-badge {
       position: absolute;
       top: 0.5rem;
@@ -547,9 +618,13 @@
         <div class="module-icon">
           <i class="fa-solid fa-comments"></i>
         </div>
-        <h3 class="module-title">Gad Talk</h3>
+        <h3 class="module-title">GadTalk</h3>
         <p class="module-description">
-          Share your stories and talk with others! Engage in discussions, follow users, and stay updated with notifications.
+          Share your stories and talk with others! Engage in discussions, follow users, and stay updated!
+          <span class="chaos-engine" role="img" aria-label="Chaos Engine">
+            <i class="fa-solid fa-dice"></i>
+            <span class="chaos-text">With Chaos Engine for extra fun!</span>
+          </span>
         </p>
       </a>
     </div>

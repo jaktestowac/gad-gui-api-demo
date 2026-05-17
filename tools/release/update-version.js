@@ -2,7 +2,7 @@
 
 // GAD Version Update Script (Node.js version)
 // Updates version in all relevant files: package.json, app.json, public/version.js, and tools/release/README.md
-// Usage: node update-version.js [major|minor|patch|custom] [new_version]
+// Usage: node update-version.js [major|minor|patch|custom] [new_version] [--yes]
 
 const fs = require("fs");
 const path = require("path");
@@ -269,16 +269,18 @@ function restoreBackups(backupPaths) {
 
 // Show usage information
 function showUsage() {
-  console.log("Usage: node update-version.js [major|minor|patch|custom] [new_version]");
+  console.log("Usage: node update-version.js [major|minor|patch|custom] [new_version] [--yes]");
   console.log("");
   console.log("Examples:");
   console.log("  node update-version.js patch           # Increments patch version (2.8.5 -> 2.8.6)");
   console.log("  node update-version.js minor           # Increments minor version (2.8.5 -> 2.9.0)");
   console.log("  node update-version.js major           # Increments major version (2.8.5 -> 3.0.0)");
   console.log("  node update-version.js custom 3.1.4    # Sets specific version to 3.1.4");
+  console.log("  node update-version.js patch --yes     # Skips the confirmation prompt");
   console.log("");
   console.log("Or use npm scripts:");
   console.log("  npm run version:patch");
+  console.log("  npm run version:patch:auto");
   console.log("  npm run version:minor");
   console.log("  npm run version:major");
   console.log("  npm run version:custom 3.1.4");
@@ -314,8 +316,11 @@ async function main() {
 
   // Parse command line arguments
   const args = process.argv.slice(2);
+  const confirmFlagIndexes = new Set(["--yes", "--y", "--force", "--no-confirm"]);
+  const autoConfirm = args.some((arg) => confirmFlagIndexes.has(arg)) || process.env.GAD_VERSION_AUTO_CONFIRM === "1";
+  const filteredArgs = args.filter((arg) => !confirmFlagIndexes.has(arg));
 
-  if (args.length === 0) {
+  if (filteredArgs.length === 0) {
     showUsage();
     process.exit(1);
   }
@@ -331,7 +336,7 @@ async function main() {
   printInfo(`Current version: ${currentVersion}`);
 
   // Determine new version
-  const action = args[0];
+  const action = filteredArgs[0];
   let newVersion = "";
 
   switch (action) {
@@ -341,12 +346,12 @@ async function main() {
       newVersion = incrementVersion(currentVersion, action);
       break;
     case "custom":
-      if (args.length !== 2) {
+      if (filteredArgs.length !== 2) {
         printError("Custom version requires a version number");
         showUsage();
         process.exit(1);
       }
-      newVersion = args[1];
+      newVersion = filteredArgs[1];
       validateVersion(newVersion);
       break;
     default:
@@ -358,12 +363,14 @@ async function main() {
   printInfo(`New version: ${newVersion}`);
 
   // Confirm with user
-  const confirmed = await promptConfirmation(
-    `Do you want to update version from ${currentVersion} to ${newVersion}? (y/N): `
-  );
-  if (!confirmed) {
-    printInfo("Version update cancelled");
-    process.exit(0);
+  if (!autoConfirm) {
+    const confirmed = await promptConfirmation(
+      `Do you want to update version from ${currentVersion} to ${newVersion}? (y/N): `
+    );
+    if (!confirmed) {
+      printInfo("Version update cancelled");
+      process.exit(0);
+    }
   }
 
   // Track backup files for cleanup/restore

@@ -1,4 +1,5 @@
 const { assertPackageDependencies } = require("./helpers/package.checker");
+console.log("Starting GAD... Checking package dependencies... PLEASE WAIT...");
 assertPackageDependencies();
 
 const jsonServer = require("./json-server");
@@ -210,7 +211,15 @@ server.use((req, res, next) => {
 });
 server.use(jsonServer.bodyParser);
 
-server.use(helmet());
+server.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        scriptSrc: ["'self'", "https://cdnjs.cloudflare.com"],
+      },
+    },
+  })
+);
 server.use(cookieparser());
 
 server.use(healthCheckRoutes);
@@ -314,10 +323,29 @@ server.use("/api", router);
 
 router.render = renderResponse;
 
-// GadTalk 404 handler - serve gad-talk/404.html for non-existent gad-talk pages
+// Redirect legacy /gadtalk to /gad-talk
+server.use("/gadtalk", function (req, res) {
+  const targetPath = `/gad-talk${req.originalUrl.replace(/^\/gadtalk/, "")}`;
+  res.redirect(301, targetPath);
+});
+
+// GadTalk handler - serve profile for /@username or 404.html for non-existent pages
 server.use("/gad-talk", function (req, res, next) {
-  // Only handle HTML requests for pages that don't exist
+  // Only handle HTML GET requests
   if (req.accepts("html") && req.method === "GET") {
+    // Serve profile when path is /@username or starts with /@username/
+    const reqPath = req.path || req.originalUrl.replace(/^\/gad-talk/, "");
+    const pathWithoutLeadingSlash = (reqPath || "").replace(/^\//, "");
+    const usernameMatch = pathWithoutLeadingSlash.match(/^@([^/?]+)(\/.*)?$/);
+    if (usernameMatch) {
+      const profilePath = path.join(__dirname, "public", "gad-talk", "profile.html");
+      if (fs.existsSync(profilePath)) {
+        res.sendFile(profilePath);
+        return;
+      }
+    }
+
+    // Default: serve custom 404 page if present
     const gadTalk404Path = path.join(__dirname, "public", "gad-talk", "404.html");
     if (fs.existsSync(gadTalk404Path)) {
       res.status(404).sendFile(gadTalk404Path);

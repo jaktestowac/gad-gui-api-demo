@@ -15,24 +15,72 @@ const {
   findGadTalkUserByUsername,
   updateGadTalkUserProfile,
   getGadTalkUserStats,
+  getUserBadges,
   gadTalkUsersDb,
   getFollowers,
   getFollowing,
   createFollow,
   deleteFollow,
   isFollowing,
+  getBlockedUserIds,
+  getBlockedByUserIds,
   createBlock,
   deleteBlock,
   hasBlocked,
+  getMutedUserIds,
   createMute,
   deleteMute,
   hasMuted,
   searchUsers,
+  isFeatureEnabled,
 } = require("./db-gad-talk.operations");
 const { verifyGadTalkToken } = require("./services/auth.service");
 const gadTalkConfig = require("./gad-talk-config");
 
 // ==================== HELPERS ====================
+
+function clampNumber(value, min, max, fallback) {
+  const parsed = Number.parseInt(value, 10);
+  if (Number.isNaN(parsed)) return fallback;
+  return Math.max(min, Math.min(max, parsed));
+}
+
+function toTimestamp(value) {
+  const ts = Date.parse(value);
+  return Number.isNaN(ts) ? null : ts;
+}
+
+function getRecencyBoost(dateValue) {
+  const ts = toTimestamp(dateValue);
+  if (!ts) return 0;
+  const daysAgo = (Date.now() - ts) / (1000 * 60 * 60 * 24);
+  if (daysAgo <= 1) return 15;
+  if (daysAgo <= 7) return 8;
+  if (daysAgo <= 30) return 3;
+  return 0;
+}
+
+function computeSuggestionScore(user, stats, context) {
+  if (!user) return -Infinity;
+
+  const popularityScore =
+    (stats.followersCount || 0) * 2 + (stats.gadsCount || 0) + Math.round((stats.likesCount || 0) * 0.5);
+  const activityScore = getRecencyBoost(user.lastLoginAt) + getRecencyBoost(user.createdAt);
+  const networkScore = (context.followedByCount.get(user.id) || 0) * 20 + (context.followersOfMe.has(user.id) ? 30 : 0);
+
+  let score = 0;
+  if (context.mode === "network") {
+    score = networkScore * 1.4 + popularityScore * 0.3 + activityScore * 0.3;
+  } else if (context.mode === "popular") {
+    score = popularityScore * 1.2 + activityScore * 0.4;
+  } else {
+    score = popularityScore * 0.6 + activityScore * 0.6 + networkScore * 1.0;
+  }
+
+  if (user.role === "admin") score += 20;
+
+  return score + Math.random();
+}
 
 /**
  * Get authenticated user from request
@@ -116,7 +164,7 @@ async function handleGetUser(req, res) {
       data: sanitizeUser(user),
     });
   } catch (error) {
-    logError("GadTalk get user error:", error);
+    logError("[GadTalk] Get user error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to get user"));
   }
 }
@@ -157,7 +205,7 @@ async function handleGetUserByUsername(req, res) {
       },
     });
   } catch (error) {
-    logError("GadTalk get user by username error:", error);
+    logError("[GadTalk] Get user by username error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to get user"));
   }
 }
@@ -171,16 +219,26 @@ async function handleSearchUsers(req, res) {
     const { q: query, page = 1, limit = 20 } = req.query;
 
     if (!query || query.trim().length < 2) {
-      res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Search query must be at least 2 characters"));
-      return;
+      return res.status(HTTP_OK).json({
+        users: [],
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total: 0,
+        hasMore: false,
+      });
     }
 
     // Get current user if authenticated (to exclude from results)
     const authUser = getAuthenticatedUser(req);
     const currentUserId = authUser ? authUser.id : null;
 
+    const blockedUserIds = currentUserId ? getBlockedUserIds(currentUserId) : [];
+    const blockedByUserIds = currentUserId ? getBlockedByUserIds(currentUserId) : [];
+
     const { users, total } = searchUsers(query.trim(), parseInt(page), parseInt(limit), {
       currentUserId,
+      blockedUserIds,
+      blockedByUserIds,
     });
 
     // Sanitize user data and add isFollowing info
@@ -200,8 +258,38 @@ async function handleSearchUsers(req, res) {
       hasMore: page * limit < total,
     });
   } catch (error) {
-    logError("GadTalk search users error:", error);
+    logError("[GadTalk] Search users error:", error);
     res.status(HTTP_BAD_REQUEST).json(formatErrorResponse(error.message || "Failed to search users"));
+  }
+}
+
+/**
+ * Check username availability
+ * GET /api/gad-talk/users/available/:username
+ */
+async function handleCheckUsernameAvailability(req, res) {
+  try {
+    const username = req.params?.username || req.query?.username;
+    if (!username) {
+      res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Username is required"));
+      return;
+    }
+
+    // Validate username format using auth service validator
+    const { validateUsername } = require("./services/auth.service");
+    const validation = validateUsername(username);
+    if (!validation.valid) {
+      // Use 422 Unprocessable Entity
+      const { HTTP_UNPROCESSABLE_ENTITY } = require("../../helpers/response.helpers");
+      res.status(HTTP_UNPROCESSABLE_ENTITY).send(formatErrorResponse(validation.error));
+      return;
+    }
+
+    const existing = findGadTalkUserByUsername(username);
+    res.status(HTTP_OK).json({ available: !existing });
+  } catch (error) {
+    logError("[GadTalk] Check username availability error:", error);
+    res.status(HTTP_BAD_REQUEST).json(formatErrorResponse(error.message || "Failed to check username"));
   }
 }
 
@@ -228,11 +316,16 @@ async function handleGetUserProfile(req, res) {
     const isBlockedUser = authUser && !isOwnProfile ? hasBlocked(authUser.id, id) : false;
     const isMutedUser = authUser && !isOwnProfile ? hasMuted(authUser.id, id) : false;
 
+    // Get badges if feature is enabled
+    const badgesEnabled = isFeatureEnabled("profile_badges");
+    const badges = badgesEnabled ? getUserBadges(id) : [];
+
     res.status(HTTP_OK).send({
       ok: true,
       data: {
         ...sanitizeUser(user),
         stats,
+        badges,
         isFollowing: isFollowingUser,
         isOwnProfile,
         isBlocked: isBlockedUser,
@@ -240,7 +333,7 @@ async function handleGetUserProfile(req, res) {
       },
     });
   } catch (error) {
-    logError("GadTalk get user profile error:", error);
+    logError("[GadTalk] Get user profile error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to get user profile"));
   }
 }
@@ -301,7 +394,7 @@ async function handleUpdateProfile(req, res) {
       data: sanitizeUser(updatedUser),
     });
   } catch (error) {
-    logError("GadTalk update profile error:", error);
+    logError("[GadTalk] Update profile error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to update profile"));
   }
 }
@@ -327,7 +420,7 @@ async function handleGetUserStats(req, res) {
       data: stats,
     });
   } catch (error) {
-    logError("GadTalk get user stats error:", error);
+    logError("[GadTalk] Get user stats error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to get user stats"));
   }
 }
@@ -362,7 +455,7 @@ async function handleUploadAvatar(req, res) {
       },
     });
   } catch (error) {
-    logError("GadTalk upload avatar error:", error);
+    logError("[GadTalk] Upload avatar error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to upload avatar"));
   }
 }
@@ -395,7 +488,7 @@ async function handleUploadHeader(req, res) {
       },
     });
   } catch (error) {
-    logError("GadTalk upload header error:", error);
+    logError("[GadTalk] Upload header error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to upload header"));
   }
 }
@@ -419,12 +512,12 @@ async function handleGetAvatarGallery(req, res) {
       }
     } catch (error) {
       // ignore directory read errors and return empty list
-      logDebug("avatar gallery read error", { error });
+      logDebug("[GadTalk] Avatar gallery read error", { error });
     }
 
     res.status(HTTP_OK).json({ files });
   } catch (error) {
-    logError("GadTalk avatar gallery error:", error);
+    logError("[GadTalk] Avatar gallery error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to list avatar gallery"));
   }
 }
@@ -459,16 +552,27 @@ async function handleFollow(req, res) {
       return;
     }
 
+    // Block checks
+    if (hasBlocked(authUser.id, id)) {
+      res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Cannot follow a user you have blocked"));
+      return;
+    }
+
+    if (hasBlocked(id, authUser.id)) {
+      res.status(HTTP_FORBIDDEN).send(formatErrorResponse("Cannot follow this user"));
+      return;
+    }
+
     const follow = await createFollow(authUser.id, id);
 
-    logDebug("GadTalk: User followed:", { followerId: authUser.id, followingId: id });
+    logDebug("[GadTalk] User followed:", { followerId: authUser.id, followingId: id });
 
     res.status(HTTP_OK).send({
       ok: true,
       data: follow,
     });
   } catch (error) {
-    logError("GadTalk follow error:", error);
+    logError("[GadTalk] Follow error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to follow user"));
   }
 }
@@ -490,14 +594,14 @@ async function handleUnfollow(req, res) {
 
     await deleteFollow(authUser.id, id);
 
-    logDebug("GadTalk: User unfollowed:", { followerId: authUser.id, followingId: id });
+    logDebug("[GadTalk] User unfollowed:", { followerId: authUser.id, followingId: id });
 
     res.status(HTTP_OK).send({
       ok: true,
       data: { message: "Unfollowed successfully" },
     });
   } catch (error) {
-    logError("GadTalk unfollow error:", error);
+    logError("[GadTalk] Unfollow error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to unfollow user"));
   }
 }
@@ -519,6 +623,8 @@ async function handleGetFollowers(req, res) {
 
     let followers = getFollowers(id);
 
+    const authUser = getAuthenticatedUser(req);
+
     // Sort by createdAt desc
     followers.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
@@ -536,13 +642,29 @@ async function handleGetFollowers(req, res) {
     followers = followers.slice(0, limitNum);
 
     // Get follower user details
-    const followerUsers = followers.map((f) => {
-      const followerUser = findGadTalkUserById(f.followerId);
-      return {
-        ...f,
-        user: sanitizeUser(followerUser),
-      };
-    });
+    const followerUsers = followers
+      .map((f) => {
+        const followerUser = findGadTalkUserById(f.followerId);
+        if (!followerUser) return null;
+
+        if (authUser) {
+          if (hasBlocked(authUser.id, followerUser.id) || hasBlocked(followerUser.id, authUser.id)) {
+            return null;
+          }
+        }
+
+        const sanitized = sanitizeUser(followerUser);
+        if (authUser) {
+          sanitized.isFollowing = isFollowing(authUser.id, followerUser.id);
+          sanitized.isFollower = isFollowing(followerUser.id, authUser.id);
+        }
+
+        return {
+          ...f,
+          user: sanitized,
+        };
+      })
+      .filter(Boolean);
 
     res.status(HTTP_OK).json({
       followers: followerUsers,
@@ -550,7 +672,7 @@ async function handleGetFollowers(req, res) {
       nextCursor: hasMore && followers.length > 0 ? followers[followers.length - 1].id : null,
     });
   } catch (error) {
-    logError("GadTalk get followers error:", error);
+    logError("[GadTalk] Get followers error:", error);
     res.status(HTTP_BAD_REQUEST).json(formatErrorResponse(error.message || "Failed to get followers"));
   }
 }
@@ -572,6 +694,8 @@ async function handleGetFollowing(req, res) {
 
     let following = getFollowing(id);
 
+    const authUser = getAuthenticatedUser(req);
+
     // Sort by createdAt desc
     following.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
@@ -589,13 +713,29 @@ async function handleGetFollowing(req, res) {
     following = following.slice(0, limitNum);
 
     // Get following user details
-    const followingUsers = following.map((f) => {
-      const followingUser = findGadTalkUserById(f.followingId);
-      return {
-        ...f,
-        user: sanitizeUser(followingUser),
-      };
-    });
+    const followingUsers = following
+      .map((f) => {
+        const followingUser = findGadTalkUserById(f.followingId);
+        if (!followingUser) return null;
+
+        if (authUser) {
+          if (hasBlocked(authUser.id, followingUser.id) || hasBlocked(followingUser.id, authUser.id)) {
+            return null;
+          }
+        }
+
+        const sanitized = sanitizeUser(followingUser);
+        if (authUser) {
+          sanitized.isFollowing = isFollowing(authUser.id, followingUser.id);
+          sanitized.isFollower = isFollowing(followingUser.id, authUser.id);
+        }
+
+        return {
+          ...f,
+          user: sanitized,
+        };
+      })
+      .filter(Boolean);
 
     res.status(HTTP_OK).json({
       following: followingUsers,
@@ -603,7 +743,7 @@ async function handleGetFollowing(req, res) {
       nextCursor: hasMore && following.length > 0 ? following[following.length - 1].id : null,
     });
   } catch (error) {
-    logError("GadTalk get following error:", error);
+    logError("[GadTalk] Get following error:", error);
     res.status(HTTP_BAD_REQUEST).json(formatErrorResponse(error.message || "Failed to get following"));
   }
 }
@@ -614,7 +754,11 @@ async function handleGetFollowing(req, res) {
  */
 async function handleGetSuggestions(req, res) {
   try {
-    const { limit = 5 } = req.query;
+    const { limit = 5, mode = "discover", includeFollowed = "false", includeStats = "false" } = req.query;
+    const limitNum = clampNumber(limit, 1, 50, 5);
+    const suggestionMode = String(mode || "discover").toLowerCase();
+    const allowFollowed = String(includeFollowed).toLowerCase() === "true";
+    const shouldIncludeStats = String(includeStats).toLowerCase() === "true";
 
     // Check authentication
     const authUser = getAuthenticatedUser(req);
@@ -622,24 +766,81 @@ async function handleGetSuggestions(req, res) {
     // Get all users
     const allUsers = gadTalkUsersDb();
 
-    // Filter out current user and already followed users
+    const followingIds = authUser ? new Set(getFollowing(authUser.id).map((f) => f.followingId)) : new Set();
+    const followersOfMe = authUser ? new Set(getFollowers(authUser.id).map((f) => f.followerId)) : new Set();
+    const blockedUserIds = authUser ? new Set(getBlockedUserIds(authUser.id)) : new Set();
+    const blockedByUserIds = authUser ? new Set(getBlockedByUserIds(authUser.id)) : new Set();
+    const mutedUserIds = authUser ? new Set(getMutedUserIds(authUser.id)) : new Set();
+
+    const followedByCount = new Map();
+    if (authUser && followingIds.size > 0) {
+      for (const followingId of followingIds) {
+        const secondDegree = getFollowing(followingId);
+        for (const follow of secondDegree) {
+          if (!follow?.followingId) continue;
+          followedByCount.set(follow.followingId, (followedByCount.get(follow.followingId) || 0) + 1);
+        }
+      }
+    }
+
+    // Filter out current user and shadow banned/blocked users
     let suggestions = allUsers.filter((u) => {
+      if (!u) return false;
       if (authUser && u.id === authUser.id) return false;
-      if (authUser && isFollowing(authUser.id, u.id)) return false;
       if (u.shadowBanned) return false;
+      if (authUser && (blockedUserIds.has(u.id) || blockedByUserIds.has(u.id))) return false;
+      if (authUser && mutedUserIds.has(u.id)) return false;
+      if (!allowFollowed && authUser && followingIds.has(u.id)) return false;
       return true;
     });
 
-    // Limit
-    suggestions = suggestions.slice(0, parseInt(limit, 10));
+    const context = {
+      mode: ["discover", "network", "popular"].includes(suggestionMode) ? suggestionMode : "discover",
+      followedByCount,
+      followersOfMe,
+    };
+
+    suggestions = suggestions
+      .map((user) => {
+        const stats = getGadTalkUserStats(user.id);
+        return {
+          user,
+          stats,
+          score: computeSuggestionScore(user, stats, context),
+        };
+      })
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limitNum);
 
     res.status(HTTP_OK).json({
-      users: suggestions.map(sanitizeUser),
+      users: suggestions.map(({ user, stats }) => {
+        const sanitized = sanitizeUser(user);
+        if (authUser) {
+          sanitized.isFollowing = isFollowing(authUser.id, user.id);
+        }
+        if (shouldIncludeStats) {
+          sanitized.stats = stats;
+        }
+        return sanitized;
+      }),
+      meta: {
+        mode: context.mode,
+        limit: limitNum,
+        includeFollowed: allowFollowed,
+      },
     });
   } catch (error) {
-    logError("GadTalk get suggestions error:", error);
+    logError("[GadTalk] Get suggestions error:", error);
     res.status(HTTP_BAD_REQUEST).json(formatErrorResponse(error.message || "Failed to get suggestions"));
   }
+}
+
+/**
+ * Get follow recommendations (advanced suggestions)
+ * GET /api/gad-talk/users/recommendations
+ */
+async function handleGetRecommendations(req, res) {
+  return handleGetSuggestions(req, res);
 }
 
 // ==================== BLOCK/MUTE HANDLERS ====================
@@ -671,7 +872,7 @@ async function handleBlock(req, res) {
       data: block,
     });
   } catch (error) {
-    logError("GadTalk block error:", error);
+    logError("[GadTalk] Block error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to block user"));
   }
 }
@@ -698,7 +899,7 @@ async function handleUnblock(req, res) {
       data: { message: "Unblocked successfully" },
     });
   } catch (error) {
-    logError("GadTalk unblock error:", error);
+    logError("[GadTalk] Unblock error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to unblock user"));
   }
 }
@@ -730,7 +931,7 @@ async function handleMute(req, res) {
       data: mute,
     });
   } catch (error) {
-    logError("GadTalk mute error:", error);
+    logError("[GadTalk] Mute error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to mute user"));
   }
 }
@@ -757,7 +958,7 @@ async function handleUnmute(req, res) {
       data: { message: "Unmuted successfully" },
     });
   } catch (error) {
-    logError("GadTalk unmute error:", error);
+    logError("[GadTalk] Unmute error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to unmute user"));
   }
 }
@@ -782,6 +983,7 @@ module.exports = {
   handleGetFollowers,
   handleGetFollowing,
   handleGetSuggestions,
+  handleGetRecommendations,
 
   // Block/Mute handlers
   handleBlock,

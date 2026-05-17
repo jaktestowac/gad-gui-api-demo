@@ -3,6 +3,9 @@ const { formatErrorResponse } = require("../../helpers/helpers");
 const { HTTP_NOT_FOUND, HTTP_METHOD_NOT_ALLOWED } = require("../../helpers/response.helpers");
 const { verifyToken } = require("../../helpers/jwtauth");
 
+// Import chaos helpers
+const { applyChaosEffects, shouldApplyChaos } = require("./chaos-helpers");
+
 // Import endpoint handlers
 const {
   handleSignup,
@@ -30,11 +33,13 @@ const {
   handleGetFollowers,
   handleGetFollowing,
   handleGetSuggestions,
+  handleGetRecommendations,
   handleBlock,
   handleUnblock,
   handleMute,
   handleUnmute,
   handleSearchUsers,
+  handleCheckUsernameAvailability,
 } = require("./users-endpoint.helpers");
 
 const {
@@ -42,12 +47,27 @@ const {
   handleGetDbStatus,
   handleSeedDemoData,
   handleInitDb,
+  handleRestoreDb,
   handleGetLogs,
   handleGetMetrics,
+  handleGetChaosStatus,
   handleGetChaosConfig,
   handleUpdateChaosConfig,
+  handleGetChaosMetrics,
   handleEnableChaos,
   handleDisableChaos,
+  handleGetChaosPresets,
+  handleApplyChaosPreset,
+  handleChaosDashboardPage,
+  handleGetFeatureFlags,
+  handleUpdateFeatureFlag,
+  handleEnableFeatureFlag,
+  handleDisableFeatureFlag,
+  handleFeatureFlagsPage,
+  handleAdminBackendPage,
+  handleAdminDbToolsPage,
+  handleSwaggerPlaceholder,
+  handleFeaturesDescriptionPage,
 } = require("./admin-endpoint.helpers");
 
 const {
@@ -58,8 +78,12 @@ const {
   handleGetForYouFeed,
   handleGetTimeline,
   handleGetUserGads,
+  handleGetUserReplies,
+  handleGetUserLikes,
   handleLikeGad,
   handleUnlikeGad,
+  handleGetWhoLiked,
+  handleGetWhoRegadded,
   handleRegad,
   handleUnregad,
   handleBookmarkGad,
@@ -68,6 +92,7 @@ const {
   handleGetReplies,
   handleSearchGads,
   handleGetTrendingHashtags,
+  handleGetPopularGads,
   handleGetGadsByHashtag,
 } = require("./gads-endpoint.helpers");
 
@@ -77,6 +102,24 @@ const {
   handleMarkRead,
   handleMarkAllRead,
 } = require("./notifications-endpoint.helpers");
+
+const {
+  handleSearchSuggestions,
+  handleCombinedSearch,
+  handleGetExplore,
+  handleGetExploreTopics,
+  handleGetPopularGadsSearch,
+} = require("./search-endpoint.helpers");
+
+const {
+  handleGetActivityHeatmap,
+  handleGetEngagementTimeline,
+  handleGetFollowerGrowth,
+  handleGetHashtagDistribution,
+} = require("./analytics-endpoint.helpers");
+
+const { handleGetHealth } = require("./health-endpoint.helpers");
+const { handleContactForm } = require("./contact-endpoint.helpers");
 
 const { initializeAllGadTalkDatabases } = require("./db-gad-talk.operations");
 
@@ -126,14 +169,14 @@ function extractUserFromToken(req) {
     if (decoded && decoded.userId) {
       req.gadTalkUserId = decoded.userId;
       req.gadTalkUserData = decoded;
-      logTrace("GadTalk: User extracted from token:", { userId: decoded.userId });
+      logTrace("[GadTalk] User extracted from token:", { userId: decoded.userId });
     } else {
       req.gadTalkUserId = null;
     }
   } catch (error) {
     // Invalid token - treat as unauthenticated
     req.gadTalkUserId = null;
-    logTrace("GadTalk: Invalid token, treating as unauthenticated");
+    logTrace("[GadTalk] Invalid token, treating as unauthenticated");
   }
 }
 
@@ -149,9 +192,39 @@ async function handleGadTalk(req, res) {
   // Extract user from token (optional auth for most endpoints)
   extractUserFromToken(req);
 
-  logTrace("GadTalk request:", { method, segments, url: req.url, userId: req.gadTalkUserId });
+  logTrace("[GadTalk] request:", { method, segments, url: req.url, userId: req.gadTalkUserId });
+
+  // Public health endpoint - bypass chaos effects and return module status
+  if (segments[0] === "health" && method === "GET") {
+    return handleGetHealth(req, res);
+  }
 
   try {
+    // ==================== APPLY CHAOS EFFECTS ====================
+    // Apply chaos effects to non-admin, non-auth routes
+    if (shouldApplyChaos(req)) {
+      const { shouldContinue, chaosApplied } = await applyChaosEffects(req, res);
+
+      // If chaos caused a failure, response already sent
+      if (!shouldContinue) {
+        logDebug("[GadTalk] Chaos: Request terminated by chaos effect", {
+          url: req.url,
+          chaosApplied,
+        });
+        return;
+      }
+
+      // Log any delays that were applied
+      if (chaosApplied.randomDelay > 0 || chaosApplied.slowEndpointDelay > 0) {
+        logDebug("[GadTalk] Chaos: Delays applied", {
+          url: req.url,
+          randomDelay: chaosApplied.randomDelay,
+          slowEndpointDelay: chaosApplied.slowEndpointDelay,
+          total: chaosApplied.randomDelay + chaosApplied.slowEndpointDelay,
+        });
+      }
+    }
+
     // ==================== AUTH ROUTES ====================
     if (segments[0] === "auth") {
       return await handleAuthRoutes(req, res, method, segments);
@@ -182,6 +255,28 @@ async function handleGadTalk(req, res) {
       return await handleHashtagsRoutes(req, res, method, segments);
     }
 
+    // ==================== SEARCH ROUTES ====================
+    if (segments[0] === "search") {
+      return await handleSearchRoutes(req, res, method, segments);
+    }
+
+    // ==================== EXPLORE ROUTES ====================
+    if (segments[0] === "explore") {
+      return await handleExploreRoutes(req, res, method, segments);
+    }
+
+    // ==================== ANALYTICS ROUTES ====================
+    if (segments[0] === "analytics") {
+      return await handleAnalyticsRoutes(req, res, method, segments);
+    }
+
+    // ==================== CONTACT ROUTES ====================
+    if (segments[0] === "contact") {
+      if (method === "POST") return handleContactForm(req, res);
+      res.status(HTTP_METHOD_NOT_ALLOWED).send(formatErrorResponse("Method not allowed"));
+      return;
+    }
+
     // ==================== ADMIN ROUTES ====================
     if (segments[0] === "admin") {
       return await handleAdminRoutes(req, res, method, segments);
@@ -190,7 +285,7 @@ async function handleGadTalk(req, res) {
     // ==================== NOT FOUND ====================
     res.status(HTTP_NOT_FOUND).send(formatErrorResponse("Endpoint not found"));
   } catch (error) {
-    logError("GadTalk route error:", error);
+    logError("[GadTalk] Route error:", error);
     res.status(500).send(formatErrorResponse(error.message || "Internal server error"));
   }
 }
@@ -256,6 +351,11 @@ async function handleUserRoutes(req, res, method, segments) {
     return handleGetSuggestions(req, res);
   }
 
+  // GET /api/gad-talk/users/recommendations
+  if (segments[1] === "recommendations" && method === "GET") {
+    return handleGetRecommendations(req, res);
+  }
+
   // GET /api/gad-talk/users/gallery
   if (segments[1] === "gallery" && method === "GET") {
     return handleGetAvatarGallery(req, res);
@@ -264,6 +364,14 @@ async function handleUserRoutes(req, res, method, segments) {
   // GET /api/gad-talk/users/search?q=query
   if (segments[1] === "search" && method === "GET") {
     return handleSearchUsers(req, res);
+  }
+
+  // GET /api/gad-talk/users/available/:username
+  if (segments[1] === "available" && segments[2]) {
+    req.params = { username: segments[2] };
+    if (method === "GET") return handleCheckUsernameAvailability(req, res);
+    res.status(HTTP_METHOD_NOT_ALLOWED).send(formatErrorResponse("Method not allowed"));
+    return;
   }
 
   // GET /api/gad-talk/users/username/:username
@@ -339,6 +447,20 @@ async function handleUserRoutes(req, res, method, segments) {
       }
       break;
 
+    case "replies":
+      if (method === "GET") {
+        req.params = { userId };
+        return handleGetUserReplies(req, res);
+      }
+      break;
+
+    case "likes":
+      if (method === "GET") {
+        req.params = { userId };
+        return handleGetUserLikes(req, res);
+      }
+      break;
+
     default:
       break;
   }
@@ -367,13 +489,18 @@ async function handleGadsRoutes(req, res, method, segments) {
     return handleGetForYouFeed(req, res);
   }
 
+  // GET /api/gad-talk/gads/popular - Get popular gads
+  if (gadId === "popular" && method === "GET") {
+    return handleGetPopularGads(req, res);
+  }
+
   // GET /api/gad-talk/gads/search - Search gads
   if (gadId === "search" && method === "GET") {
     return handleSearchGads(req, res);
   }
 
   // Routes with gad ID
-  if (gadId && gadId !== "timeline" && gadId !== "foryou" && gadId !== "search") {
+  if (gadId && gadId !== "timeline" && gadId !== "foryou" && gadId !== "popular" && gadId !== "search") {
     req.params = { gadId };
     const subAction = segments[2];
 
@@ -390,9 +517,19 @@ async function handleGadsRoutes(req, res, method, segments) {
         if (method === "DELETE") return handleUnlikeGad(req, res);
         break;
 
+      case "likes":
+        // GET /api/gad-talk/gads/:gadId/likes - Get who liked
+        if (method === "GET") return handleGetWhoLiked(req, res);
+        break;
+
       case "regad":
         if (method === "POST") return handleRegad(req, res);
         if (method === "DELETE") return handleUnregad(req, res);
+        break;
+
+      case "regads":
+        // GET /api/gad-talk/gads/:gadId/regads - Get who regadded
+        if (method === "GET") return handleGetWhoRegadded(req, res);
         break;
 
       case "bookmark":
@@ -419,7 +556,7 @@ async function handleGadsRoutes(req, res, method, segments) {
 /**
  * Handle bookmarks routes
  */
-async function handleBookmarksRoutes(req, res, method, _segments) {
+async function handleBookmarksRoutes(req, res, method) {
   // GET /api/gad-talk/bookmarks - Get user's bookmarks
   if (method === "GET") {
     return handleGetBookmarks(req, res);
@@ -479,6 +616,77 @@ async function handleHashtagsRoutes(req, res, method, segments) {
 }
 
 /**
+ * Handle search routes
+ */
+async function handleSearchRoutes(req, res, method, segments) {
+  const action = segments[1];
+
+  // GET /api/gad-talk/search - Combined search
+  if (!action && method === "GET") {
+    return handleCombinedSearch(req, res);
+  }
+
+  // GET /api/gad-talk/search/suggestions - Get autocomplete suggestions
+  if (action === "suggestions" && method === "GET") {
+    return handleSearchSuggestions(req, res);
+  }
+
+  res.status(HTTP_METHOD_NOT_ALLOWED).send(formatErrorResponse("Method not allowed"));
+}
+
+/**
+ * Handle explore routes
+ */
+async function handleExploreRoutes(req, res, method, segments) {
+  const action = segments[1];
+
+  // GET /api/gad-talk/explore - Get explore page data
+  if (!action && method === "GET") {
+    return handleGetExplore(req, res);
+  }
+
+  // GET /api/gad-talk/explore/topics - Get explore topics
+  if (action === "topics" && method === "GET") {
+    return handleGetExploreTopics(req, res);
+  }
+
+  // GET /api/gad-talk/explore/popular - Get popular gads
+  if (action === "popular" && method === "GET") {
+    return handleGetPopularGadsSearch(req, res);
+  }
+
+  res.status(HTTP_METHOD_NOT_ALLOWED).send(formatErrorResponse("Method not allowed"));
+}
+
+/**
+ * Handle analytics routes
+ */
+async function handleAnalyticsRoutes(req, res, method, segments) {
+  const action = segments[1];
+
+  // GET /api/gad-talk/analytics/user/:userId/:metric
+  if (action === "user" && segments[2] && segments[3] && method === "GET") {
+    req.params = { userId: segments[2] };
+    const metric = segments[3];
+
+    switch (metric) {
+      case "activity-heatmap":
+        return handleGetActivityHeatmap(req, res);
+      case "engagement-timeline":
+        return handleGetEngagementTimeline(req, res);
+      case "follower-growth":
+        return handleGetFollowerGrowth(req, res);
+      case "hashtag-distribution":
+        return handleGetHashtagDistribution(req, res);
+      default:
+        break;
+    }
+  }
+
+  res.status(HTTP_METHOD_NOT_ALLOWED).send(formatErrorResponse("Method not allowed"));
+}
+
+/**
  * Handle admin routes
  */
 async function handleAdminRoutes(req, res, method, segments) {
@@ -501,6 +709,10 @@ async function handleAdminRoutes(req, res, method, segments) {
       if (method === "POST") return handleInitDb(req, res);
       break;
 
+    case "restore-db":
+      if (method === "POST") return handleRestoreDb(req, res);
+      break;
+
     case "logs":
       if (method === "GET") return handleGetLogs(req, res);
       break;
@@ -509,11 +721,71 @@ async function handleAdminRoutes(req, res, method, segments) {
       if (method === "GET") return handleGetMetrics(req, res);
       break;
 
+    case "features":
+      if (method === "GET") return handleFeatureFlagsPage(req, res);
+      break;
+
+    case "backend":
+      if (method === "GET") return handleAdminBackendPage(req, res);
+      break;
+
+    case "db-tools":
+      if (method === "GET") return handleAdminDbToolsPage(req, res);
+      break;
+
+    case "swagger":
+      if (method === "GET") return handleSwaggerPlaceholder(req, res);
+      break;
+
+    case "features-description":
+      if (method === "GET") return handleFeaturesDescriptionPage(req, res);
+      break;
+
+    case "feature-flags": {
+      const flagKey = segments[2];
+      const flagAction = segments[3];
+
+      if (!flagKey && method === "GET") {
+        return handleGetFeatureFlags(req, res);
+      }
+
+      if (flagKey) {
+        req.params = { flag: flagKey };
+        if (!flagAction && method === "PUT") {
+          return handleUpdateFeatureFlag(req, res);
+        }
+        if (flagAction === "enable" && method === "POST") {
+          return handleEnableFeatureFlag(req, res);
+        }
+        if (flagAction === "disable" && method === "POST") {
+          return handleDisableFeatureFlag(req, res);
+        }
+      }
+      break;
+    }
+
     case "chaos": {
       const chaosAction = segments[2];
+      if (!chaosAction && method === "GET") {
+        return handleChaosDashboardPage(req, res);
+      }
       if (chaosAction === "config") {
         if (method === "GET") return handleGetChaosConfig(req, res);
         if (method === "PUT") return handleUpdateChaosConfig(req, res);
+      } else if (chaosAction === "metrics" && method === "GET") {
+        return handleGetChaosMetrics(req, res);
+      } else if (chaosAction === "presets") {
+        const presetName = segments[3];
+        if (!presetName && method === "GET") {
+          return handleGetChaosPresets(req, res);
+        }
+        if (presetName && method === "POST") {
+          req.params = { preset: presetName };
+          return handleApplyChaosPreset(req, res);
+        }
+      } else if (chaosAction === "status" && method === "GET") {
+        // Public endpoint - no auth required
+        return handleGetChaosStatus(req, res);
       } else if (chaosAction === "enable" && method === "POST") {
         return handleEnableChaos(req, res);
       } else if (chaosAction === "disable" && method === "POST") {
@@ -537,11 +809,11 @@ async function handleAdminRoutes(req, res, method, segments) {
  */
 async function initializeGadTalkModule() {
   try {
-    logDebug("Initializing GadTalk module...");
+    logDebug("[GadTalk] Initializing GadTalk module...");
     await initializeAllGadTalkDatabases();
-    logDebug("GadTalk module initialized successfully");
+    logDebug("[GadTalk] GadTalk module initialized successfully");
   } catch (error) {
-    logError("Failed to initialize GadTalk module:", error);
+    logError("[GadTalk] Failed to initialize GadTalk module:", error);
     throw error;
   }
 }

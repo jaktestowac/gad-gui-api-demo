@@ -66,6 +66,22 @@
                 </button>
             </header>
 
+            <!-- Notification Tabs -->
+            <div class="gt-tabs gt-notification-tabs">
+                <button class="gt-tab gt-tab-active" data-tab="all" data-testid="tab-all">
+                    <i class="fa-solid fa-bell"></i>
+                    <span>All</span>
+                </button>
+                <button class="gt-tab" data-tab="mentions" data-testid="tab-mentions">
+                    <i class="fa-solid fa-at"></i>
+                    <span>Mentions</span>
+                </button>
+                <button class="gt-tab" data-tab="interactions" data-testid="tab-interactions">
+                    <i class="fa-solid fa-heart"></i>
+                    <span>Interactions</span>
+                </button>
+            </div>
+
             <!-- Notifications list -->
             <div class="gt-notifications-container">
                 <div id="notifications-loading" class="gt-loading-section">
@@ -101,6 +117,8 @@
                     You'll receive notifications for likes, replies, mentions, and new followers.
                 </p>
             </div>
+
+            <footer class="gt-sidebar-footer" data-auto-footer></footer>
         </aside>
     </div>
 
@@ -110,183 +128,7 @@
     <script src="/gad-talk/js/auth.js"></script>
     <script src="/gad-talk/js/gads.js"></script>
     <script src="/gad-talk/js/nav.js"></script>
-    <script>
-        (async function () {
-            let currentUser = null;
-            let currentPage = 1;
-            let isLoading = false;
-            let hasMore = true;
-
-            // Require authentication
-            currentUser = await window.gadTalkAuth.requireAuth();
-            if (!currentUser) return;
-
-            // Update nav profile link
-            const navProfile = document.getElementById("nav-profile");
-            if (navProfile) {
-                navProfile.href = `/gad-talk/profile.html?user=${currentUser.username}`;
-            }
-
-            // nav.js populates nav-user-section and dropdown
-
-            // Load notifications
-            await loadNotifications();
-
-            // Mark all as read button
-            document.getElementById('mark-all-read').addEventListener('click', async () => {
-                try {
-                    await window.GadTalkAPI.notifications.markAllRead();
-                    // Update all notification items to show as read
-                    document.querySelectorAll('.gt-notification-item.gt-notification-unread').forEach(el => {
-                        el.classList.remove('gt-notification-unread');
-                    });
-                    window.GadTalkUI.toast.success('All notifications marked as read');
-                } catch (error) {
-                    window.GadTalkUI.toast.error('Failed to mark notifications as read');
-                }
-            });
-
-            // Load more button
-            document.getElementById('load-more-btn').addEventListener('click', () => {
-                if (!isLoading && hasMore) {
-                    currentPage++;
-                    loadNotifications(true);
-                }
-            });
-
-            async function loadNotifications(append = false) {
-                if (isLoading) return;
-                isLoading = true;
-
-                const loadingEl = document.getElementById('notifications-loading');
-                const emptyEl = document.getElementById('notifications-empty');
-                const listEl = document.getElementById('notifications-list');
-                const loadMoreSection = document.getElementById('load-more-section');
-
-                if (!append) {
-                    loadingEl.classList.remove('gt-hidden');
-                    emptyEl.classList.add('gt-hidden');
-                    listEl.innerHTML = '';
-                }
-
-                try {
-                    const response = await window.GadTalkAPI.notifications.getAll(currentPage);
-                    const notifications = response.notifications || [];
-
-                    loadingEl.classList.add('gt-hidden');
-
-                    if (notifications.length === 0 && currentPage === 1) {
-                        emptyEl.classList.remove('gt-hidden');
-                        loadMoreSection.classList.add('gt-hidden');
-                    } else {
-                        emptyEl.classList.add('gt-hidden');
-                        renderNotifications(notifications, append);
-
-                        hasMore = response.hasMore !== false && notifications.length > 0;
-                        if (hasMore) {
-                            loadMoreSection.classList.remove('gt-hidden');
-                        } else {
-                            loadMoreSection.classList.add('gt-hidden');
-                        }
-                    }
-                } catch (error) {
-                    loadingEl.innerHTML = '<span class="gt-text-error">Failed to load notifications</span>';
-                } finally {
-                    isLoading = false;
-                }
-            }
-
-            function renderNotifications(notifications, append) {
-                const listEl = document.getElementById('notifications-list');
-
-                const html = notifications.map(notif => {
-                    const icon = getNotificationIcon(notif.type);
-                    const message = getNotificationMessage(notif);
-                    const timeAgo = formatRelativeTime(notif.createdAt);
-                    const unreadClass = notif.read ? '' : 'gt-notification-unread';
-
-                    return `
-                        <div class="gt-notification-item ${unreadClass}" data-id="${notif.id}" data-testid="notification-${notif.id}">
-                            <span class="gt-notification-icon">${icon}</span>
-                            <div class="gt-notification-content">
-                                <p class="gt-notification-message">${message}</p>
-                                <span class="gt-notification-time">${timeAgo}</span>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-
-                if (append) {
-                    listEl.insertAdjacentHTML('beforeend', html);
-                } else {
-                    listEl.innerHTML = html;
-                }
-
-                // Add click handlers to mark as read
-                listEl.querySelectorAll('.gt-notification-item.gt-notification-unread').forEach(el => {
-                    el.addEventListener('click', async () => {
-                        const id = el.dataset.id;
-                        try {
-                            await window.GadTalkAPI.notifications.markRead(id);
-                            el.classList.remove('gt-notification-unread');
-                        } catch (err) {
-                            // Silent fail
-                        }
-                    });
-                });
-            }
-
-            function getNotificationIcon(type) {
-                const icons = {
-                    like: '<i class="fa-solid fa-heart"></i>',
-                    reply: '<i class="fa-solid fa-comment"></i>',
-                    mention: '@',
-                    follow: '<i class="fa-solid fa-user"></i>',
-                    repost: '<i class="fa-solid fa-retweet"></i>',
-                    quote: '<i class="fa-solid fa-quote-left"></i>'
-                };
-                return icons[type] || '<i class="fa-solid fa-bell"></i>';
-            }
-
-            function getNotificationMessage(notif) {
-                const actor = notif.actor ? `<strong>${notif.actor.displayName || notif.actor.username}</strong>` : 'Someone';
-
-                switch (notif.type) {
-                    case 'like':
-                        return `${actor} liked your Gad`;
-                    case 'reply':
-                        return `${actor} replied to your Gad`;
-                    case 'mention':
-                        return `${actor} mentioned you`;
-                    case 'follow':
-                        return `${actor} followed you`;
-                    case 'repost':
-                        return `${actor} regadded your Gad`;
-                    case 'quote':
-                        return `${actor} quoted your Gad`;
-                    default:
-                        return `${actor} interacted with your content`;
-                }
-            }
-
-            function formatRelativeTime(dateString) {
-                const date = new Date(dateString);
-                const now = new Date();
-                const diffMs = now - date;
-                const diffSecs = Math.floor(diffMs / 1000);
-                const diffMins = Math.floor(diffSecs / 60);
-                const diffHours = Math.floor(diffMins / 60);
-                const diffDays = Math.floor(diffHours / 24);
-
-                if (diffSecs < 60) return `${diffSecs}s`;
-                if (diffMins < 60) return `${diffMins}m`;
-                if (diffHours < 24) return `${diffHours}h`;
-                if (diffDays < 7) return `${diffDays}d`;
-
-                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            }
-        })();
-    </script>
+    <script src="/gad-talk/js/notifications-page.js"></script>
 </body>
 
 </html>

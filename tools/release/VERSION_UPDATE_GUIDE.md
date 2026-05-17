@@ -10,6 +10,9 @@ You can use the following npm commands to update the version:
 # Increment patch version (2.8.5 -> 2.8.6)
 npm run version:patch
 
+# Increment patch version without confirmation
+npm run version:patch:auto
+
 # Increment minor version (2.8.5 -> 2.9.0)
 npm run version:minor
 
@@ -30,6 +33,7 @@ npm run version:help
 ```bash
 # From project root
 node tools/release/update-version.js patch
+node tools/release/update-version.js patch --yes
 node tools/release/update-version.js minor
 node tools/release/update-version.js major
 node tools/release/update-version.js custom 3.1.4

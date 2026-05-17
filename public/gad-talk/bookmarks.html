@@ -65,6 +65,21 @@
                 <p class="gt-text-secondary gt-text-sm" id="username-display">@username</p>
             </header>
 
+            <!-- Filters (feature-flagged) -->
+            <div id="bookmark-filters" class="gt-bookmark-filters gt-hidden" data-testid="bookmark-filters">
+                <div class="gt-bookmark-filter-group">
+                    <span class="gt-text-secondary gt-text-sm">Search</span>
+                    <input type="search" id="bookmark-search" class="gt-input gt-input-sm gt-bookmark-filter-input" placeholder="Search bookmarks" data-testid="bookmark-search" />
+                </div>
+                <div class="gt-bookmark-filter-group">
+                    <span class="gt-text-secondary gt-text-sm">Sort</span>
+                    <select id="bookmark-sort" class="gt-input gt-input-sm gt-bookmark-filter-select" data-testid="bookmark-sort">
+                        <option value="newest">Newest</option>
+                        <option value="oldest">Oldest</option>
+                    </select>
+                </div>
+            </div>
+
             <!-- Bookmarks list -->
             <div class="gt-bookmarks-container">
                 <div id="bookmarks-loading" class="gt-loading-section">
@@ -100,6 +115,8 @@
                     Your bookmarks are private. Only you can see what you've saved.
                 </p>
             </div>
+
+            <footer class="gt-sidebar-footer" data-auto-footer></footer>
         </aside>
     </div>
 
@@ -109,16 +126,27 @@
     <script src="/gad-talk/js/auth.js"></script>
     <script src="/gad-talk/js/gads.js"></script>
     <script src="/gad-talk/js/nav.js"></script>
+    <script src="/gad-talk/js/footer.js"></script>
     <script>
         (async function () {
             let currentUser = null;
             let currentPage = 1;
             let isLoading = false;
             let hasMore = true;
+            let featureFlags = {};
+            let bookmarkFiltersEnabled = false;
+            let allGads = [];
+            let currentSearch = "";
+            let currentSort = "newest";
 
             // Require authentication
             currentUser = await window.gadTalkAuth.requireAuth();
             if (!currentUser) return;
+
+            // Load feature flags
+            await loadFeatureFlags();
+            applyFeatureFlags();
+            setupFilters();
 
             // Update username display
             document.getElementById('username-display').textContent = `@${currentUser.username}`;
@@ -126,7 +154,7 @@
             // Update nav profile link
             const navProfile = document.getElementById("nav-profile");
             if (navProfile) {
-                navProfile.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+                navProfile.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
             }
 
             // nav.js populates nav-user-section and dropdown
@@ -155,33 +183,120 @@
                     loadingEl.classList.remove('gt-hidden');
                     emptyEl.classList.add('gt-hidden');
                     listEl.innerHTML = '';
+                    allGads = [];
                 }
 
                 try {
                     const response = await window.GadTalkAPI.gads.getBookmarks(currentPage);
                     const gads = response.gads || [];
 
+                    allGads = append ? allGads.concat(gads) : gads;
+
                     loadingEl.classList.add('gt-hidden');
 
-                    if (gads.length === 0 && currentPage === 1) {
-                        emptyEl.classList.remove('gt-hidden');
-                        loadMoreSection.classList.add('gt-hidden');
-                    } else {
-                        emptyEl.classList.add('gt-hidden');
-                        window.gadTalkGads.renderGads(gads, listEl, currentUser.id, append);
+                    applyFiltersAndRender();
 
-                        hasMore = response.hasMore !== false && gads.length > 0;
-                        if (hasMore) {
-                            loadMoreSection.classList.remove('gt-hidden');
-                        } else {
-                            loadMoreSection.classList.add('gt-hidden');
-                        }
+                    hasMore = response.hasMore !== false && gads.length > 0;
+                    if (hasMore) {
+                        loadMoreSection.classList.remove('gt-hidden');
+                    } else {
+                        loadMoreSection.classList.add('gt-hidden');
                     }
                 } catch (error) {
                     loadingEl.innerHTML = '<span class="gt-text-error">Failed to load bookmarks</span>';
                 } finally {
                     isLoading = false;
                 }
+            }
+
+            async function loadFeatureFlags() {
+                if (!window.GadTalkAPI || !window.GadTalkAPI.featureFlags) return;
+                try {
+                    const response = await window.GadTalkAPI.featureFlags.getAll();
+                    const flags = response?.data || response?.flags || response || [];
+                    featureFlags = flags.reduce((acc, flag) => {
+                        acc[String(flag.key || '').toLowerCase()] = !!flag.enabled;
+                        return acc;
+                    }, {});
+                } catch (error) {
+                    featureFlags = {};
+                }
+            }
+
+            function applyFeatureFlags() {
+                bookmarkFiltersEnabled = featureFlags.bookmark_filters !== false;
+                const filtersEl = document.getElementById('bookmark-filters');
+                if (filtersEl) {
+                    filtersEl.classList.toggle('gt-hidden', !bookmarkFiltersEnabled);
+                }
+            }
+
+            function setupFilters() {
+                if (!bookmarkFiltersEnabled) return;
+
+                const searchInput = document.getElementById('bookmark-search');
+                const sortSelect = document.getElementById('bookmark-sort');
+
+                if (searchInput) {
+                    searchInput.addEventListener('input', () => {
+                        currentSearch = searchInput.value.trim().toLowerCase();
+                        applyFiltersAndRender();
+                    });
+                }
+
+                if (sortSelect) {
+                    sortSelect.addEventListener('change', () => {
+                        currentSort = sortSelect.value;
+                        applyFiltersAndRender();
+                    });
+                }
+            }
+
+            function applyFiltersAndRender() {
+                const emptyEl = document.getElementById('bookmarks-empty');
+                const listEl = document.getElementById('bookmarks-list');
+
+                let filtered = [...allGads];
+
+                if (bookmarkFiltersEnabled && currentSearch) {
+                    filtered = filtered.filter(gad => {
+                        const content = (gad.content || '').toLowerCase();
+                        const username = (gad.user?.username || '').toLowerCase();
+                        const displayName = (gad.user?.displayName || '').toLowerCase();
+                        return content.includes(currentSearch) || username.includes(currentSearch) || displayName.includes(currentSearch);
+                    });
+                }
+
+                if (bookmarkFiltersEnabled) {
+                    filtered.sort((a, b) => {
+                        const aDate = new Date(a.createdAt || 0).getTime();
+                        const bDate = new Date(b.createdAt || 0).getTime();
+                        return currentSort === 'oldest' ? aDate - bDate : bDate - aDate;
+                    });
+                }
+
+                if (allGads.length === 0 && currentPage === 1) {
+                    emptyEl.classList.remove('gt-hidden');
+                    const msg = emptyEl.querySelector('.gt-empty-message');
+                    if (msg) {
+                        msg.textContent = 'Bookmark Gads to easily find them again.';
+                    }
+                    listEl.innerHTML = '';
+                    return;
+                }
+
+                if (filtered.length === 0) {
+                    emptyEl.classList.remove('gt-hidden');
+                    const msg = emptyEl.querySelector('.gt-empty-message');
+                    if (msg) {
+                        msg.textContent = 'No bookmarks match your filters.';
+                    }
+                    listEl.innerHTML = '';
+                    return;
+                }
+
+                emptyEl.classList.add('gt-hidden');
+                window.gadTalkGads.renderGads(filtered, listEl, currentUser.id, false);
             }
         })();
     </script>

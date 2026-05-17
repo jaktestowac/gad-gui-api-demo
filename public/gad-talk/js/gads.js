@@ -61,7 +61,7 @@ const gadTalkGads = (function () {
     );
 
     // Linkify mentions
-    parsed = parsed.replace(/@(\w+)/g, '<a href="/gad-talk/profile.html?user=$1" class="gt-link gt-mention">@$1</a>');
+    parsed = parsed.replace(/@(\w+)/g, '<a href="/gad-talk/@$1" class="gt-link gt-mention">@$1</a>');
 
     return parsed;
   }
@@ -70,15 +70,10 @@ const gadTalkGads = (function () {
    * Get avatar HTML
    */
   function getAvatarHtml(user, size = "md") {
-    const avatar = user?.avatar;
+    // Always return an image element; fall back to the default avatar when user has no avatar set
     const displayName = user?.displayName || user?.username || "?";
-    const initial = displayName.charAt(0).toUpperCase();
-
-    if (avatar) {
-      return `<img src="${avatar}" alt="${displayName}" class="gt-avatar gt-avatar-${size}" />`;
-    }
-
-    return `<div class="gt-avatar gt-avatar-${size}" style="display: flex; align-items: center; justify-content: center; font-weight: bold;">${initial}</div>`;
+    const avatar = user?.avatar || "/gad-talk/images/default-avatar.png";
+    return `<img src="${avatar}" alt="${displayName}" class="gt-avatar gt-avatar-${size}" />`;
   }
 
   /**
@@ -114,7 +109,9 @@ const gadTalkGads = (function () {
       replyIndicator = `
         <div class="gt-gad-reply-indicator">
           <span class="gt-text-secondary">Replying to </span>
-          <a href="/gad-talk/profile.html?user=${gad.replyToUser.username}" class="gt-link">@${gad.replyToUser.username}</a>
+          <a href="/gad-talk/@${encodeURIComponent(gad.replyToUser.username)}" class="gt-link">@${
+        gad.replyToUser.username
+      }</a>
         </div>
       `;
     }
@@ -143,7 +140,9 @@ const gadTalkGads = (function () {
         <a href="/gad-talk/gad.html?id=${qg.id}" class="gt-quoted-gad" data-testid="quoted-gad-${qg.id}">
           <div class="gt-quoted-gad-header">
             <span class="gt-quoted-gad-author">
-              <span class="gt-gad-display-name">${qgDisplayName}</span>
+              <a href="/gad-talk/@${encodeURIComponent(
+                qgUsername
+              )}" class="gt-quoted-gad-author-link"><span class="gt-gad-display-name">${qgDisplayName}</span></a>
               <span class="gt-gad-username">@${qgUsername}</span>
             </span>
             <span class="gt-gad-separator">·</span>
@@ -160,13 +159,13 @@ const gadTalkGads = (function () {
         ${regadIndicator}
         <div class="gt-gad-content">
           <div class="gt-gad-avatar">
-            <a href="/gad-talk/profile.html?user=${username}">
+            <a href="/gad-talk/@${encodeURIComponent(username)}">
               ${avatarHtml}
             </a>
           </div>
           <div class="gt-gad-body">
             <div class="gt-gad-header">
-              <a href="/gad-talk/profile.html?user=${username}" class="gt-gad-author">
+              <a href="/gad-talk/@${encodeURIComponent(username)}" class="gt-gad-author">
                 <span class="gt-gad-display-name">${displayName}</span>
                 ${
                   user.verified
@@ -212,7 +211,9 @@ const gadTalkGads = (function () {
                   isRegadded ? "gt-active" : ""
                 }" data-action="regad-menu" data-gad-id="${gad.id}" data-testid="regad-${gad.id}">
                   <span class="gt-action-icon"><i class="fa-solid fa-retweet"></i></span>
-                  <span class="gt-action-count">${formatCount(gad.regadCount || 0)}</span>
+                  <span class="gt-action-count gt-action-count-clickable" data-action="who-regadded" data-gad-id="${
+                    gad.id
+                  }" title="See who regadded">${formatCount(gad.regadCount || 0)}</span>
                 </button>
                 <div class="gt-dropdown gt-dropdown-up gt-hidden" data-regad-dropdown="${gad.id}">
                   <button class="gt-dropdown-item" data-action="regad" data-gad-id="${gad.id}">
@@ -229,7 +230,9 @@ const gadTalkGads = (function () {
                 <span class="gt-action-icon">${
                   isLiked ? '<i class="fa-solid fa-heart"></i>' : '<i class="fa-regular fa-heart"></i>'
                 }</span>
-                <span class="gt-action-count">${formatCount(gad.likeCount || 0)}</span>
+                <span class="gt-action-count gt-action-count-clickable" data-action="who-liked" data-gad-id="${
+                  gad.id
+                }" title="See who liked">${formatCount(gad.likeCount || 0)}</span>
               </button>
               <button class="gt-gad-action gt-gad-action-bookmark ${
                 isBookmarked ? "gt-active" : ""
@@ -273,6 +276,22 @@ const gadTalkGads = (function () {
     // Action buttons
     container.querySelectorAll(".gt-gad-action").forEach((btn) => {
       btn.addEventListener("click", handleGadAction);
+    });
+
+    // Clickable count elements (who liked, who regadded)
+    container.querySelectorAll(".gt-action-count-clickable").forEach((countEl) => {
+      countEl.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const action = countEl.dataset.action;
+        const gadId = countEl.dataset.gadId;
+
+        if (action === "who-liked" && window.GadTalkInteractionModals) {
+          window.GadTalkInteractionModals.showWhoLikedModal(gadId);
+        } else if (action === "who-regadded" && window.GadTalkInteractionModals) {
+          window.GadTalkInteractionModals.showWhoRegaddedModal(gadId);
+        }
+      });
     });
 
     // Dropdown items (regad/quote menu, and delete menu)
@@ -408,13 +427,26 @@ const gadTalkGads = (function () {
    * Handle regad action
    */
   async function handleRegad(btn, gadId) {
-    const isRegadded = btn.classList.contains("gt-active");
-    const countEl = btn.querySelector(".gt-action-count");
-    let count = parseInt(countEl.textContent) || 0;
+    const regadBtn = btn.classList.contains("gt-gad-action-regad")
+      ? btn
+      : document.querySelector(`.gt-gad-action-regad[data-gad-id="${gadId}"]`);
+    const isRegadded = regadBtn ? regadBtn.classList.contains("gt-active") : false;
+    const countEl = regadBtn ? regadBtn.querySelector(".gt-action-count") : null;
+    let count = countEl ? parseInt(countEl.textContent) || 0 : 0;
 
     // Optimistic update
-    btn.classList.toggle("gt-active");
-    countEl.textContent = formatCount(isRegadded ? count - 1 : count + 1);
+    if (regadBtn) {
+      regadBtn.classList.toggle("gt-active");
+    }
+    if (countEl) {
+      countEl.textContent = formatCount(isRegadded ? count - 1 : count + 1);
+    }
+
+    const dropdown = document.querySelector(`[data-regad-dropdown="${gadId}"]`);
+    const regadItem = dropdown ? dropdown.querySelector('[data-action="regad"]') : null;
+    if (regadItem) {
+      regadItem.innerHTML = `<span><i class="fa-solid fa-retweet"></i></span> ${isRegadded ? "Regad" : "Undo Regad"}`;
+    }
 
     try {
       if (isRegadded) {
@@ -424,8 +456,15 @@ const gadTalkGads = (function () {
       }
     } catch (error) {
       // Revert on error
-      btn.classList.toggle("gt-active");
-      countEl.textContent = formatCount(count);
+      if (regadBtn) {
+        regadBtn.classList.toggle("gt-active");
+      }
+      if (countEl) {
+        countEl.textContent = formatCount(count);
+      }
+      if (regadItem) {
+        regadItem.innerHTML = `<span><i class="fa-solid fa-retweet"></i></span> ${isRegadded ? "Undo Regad" : "Regad"}`;
+      }
       throw error;
     }
   }
@@ -611,7 +650,8 @@ const gadTalkGads = (function () {
       const quotedGadId = quotedGadIdInput?.value?.trim() || null;
 
       try {
-        const gad = await window.GadTalkAPI.gads.create(content, null, imageUrl, quotedGadId);
+        const response = await window.GadTalkAPI.gads.create(content, null, imageUrl, quotedGadId);
+        const gad = response.gad || response;
 
         // Clear form
         textarea.value = "";

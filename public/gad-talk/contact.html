@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact - GadTalk</title>
+    <link rel="stylesheet" href="/gad-talk/css/gad-talk.css" />
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+</head>
+
+<body class="gt-app-layout">
+    <!-- Navbar -->
+    <nav class="gt-navbar">
+        <div class="gt-container-wide gt-flex gt-justify-between gt-items-center">
+            <a href="/" class="gt-link-muted">🦎 GAD</a>
+            <a href="/gad-talk/" class="gt-navbar-brand">
+                <span class="gt-logo"><i class="fa-solid fa-comments"></i></span>
+                <span>GadTalk</span>
+            </a>
+            <div class="gt-flex gt-gap-sm gt-items-center" id="nav-user-section"></div>
+        </div>
+    </nav>
+
+    <div class="gt-main-container">
+        <!-- Left sidebar -->
+        <aside class="gt-sidebar gt-sidebar-left">
+            <nav class="gt-nav-menu" id="main-nav">
+                <a href="/gad-talk/index.html" class="gt-nav-item" data-testid="nav-home">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-house"></i></span>
+                    <span class="gt-nav-text">Home</span>
+                </a>
+                <a href="/gad-talk/explore.html" class="gt-nav-item" data-testid="nav-explore">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <span class="gt-nav-text">Explore</span>
+                </a>
+                <a href="/gad-talk/notifications.html" class="gt-nav-item" data-testid="nav-notifications">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-bell"></i></span>
+                    <span class="gt-nav-text">Notifications</span>
+                </a>
+                <a href="/gad-talk/bookmarks.html" class="gt-nav-item" data-testid="nav-bookmarks">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-bookmark"></i></span>
+                    <span class="gt-nav-text">Bookmarks</span>
+                </a>
+                <a href="#" class="gt-nav-item" id="nav-profile" data-testid="nav-profile">
+                    <span class="gt-nav-icon"><i class="fa-solid fa-user"></i></span>
+                    <span class="gt-nav-text">Profile</span>
+                </a>
+                <a href="/gad-talk/index.html" class="gt-btn gt-btn-primary gt-btn-block gt-mt-lg">
+                    Gad
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <main class="gt-content">
+            <header class="gt-page-header">
+                <a href="javascript:history.back()" class="gt-icon-btn gt-mr-sm">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <h1 class="gt-page-title gt-page-title-compact">Contact GadTalk</h1>
+            </header>
+
+            <div class="gt-p-sm">
+                <div class="gt-card gt-card-compact gt-mb-sm">
+                    <p class="gt-text-secondary gt-mb-sm">This is a test contact page for the GadTalk demo.</p>
+                    <p class="gt-text-secondary">
+                        Messages sent here are logged in the GadTalk audit database for testing purposes.
+                        Please do not submit real personal or confidential information.
+                    </p>
+                    <p class="gt-text-secondary">
+                        Note: This is a test/demo page. Submissions are rate-limited (to prevent spam) and are stored
+                        for testing; if logging is temporarily unavailable your message will still be accepted but a
+                        warning may be returned.
+                    </p>
+                </div>
+
+                <div class="gt-card gt-card-compact">
+                    <div id="error-message" class="gt-alert gt-alert-error gt-hidden" data-testid="contact-error"></div>
+                    <div id="success-message" class="gt-alert gt-alert-success gt-hidden" data-testid="contact-success"></div>
+
+                    <form id="contact-form" data-testid="contact-form">
+                        <div class="gt-field">
+                            <label for="contact-name" class="gt-label">Name</label>
+                            <input type="text" id="contact-name" name="name" data-testid="contact-name" class="gt-input" placeholder="Your name" required maxlength="80" />
+                        </div>
+
+                        <div class="gt-field">
+                            <label for="contact-email" class="gt-label">Email</label>
+                            <input type="email" id="contact-email" name="email" data-testid="contact-email" class="gt-input" placeholder="you@example.com" required maxlength="120" />
+                        </div>
+
+                        <div class="gt-field">
+                            <label for="contact-subject" class="gt-label">Subject</label>
+                            <input type="text" id="contact-subject" name="subject" data-testid="contact-subject" class="gt-input" placeholder="What can we help with?" maxlength="120" />
+                        </div>
+
+                        <div class="gt-field">
+                            <label for="contact-message" class="gt-label">Message</label>
+                            <textarea id="contact-message" name="message" data-testid="contact-message" class="gt-textarea" rows="5" maxlength="2000" placeholder="Tell us more..." required></textarea>
+                        </div>
+
+                        <button type="submit" class="gt-btn gt-btn-primary gt-btn-block" data-testid="contact-submit">
+                            Send message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right sidebar -->
+        <aside class="gt-sidebar gt-sidebar-right">
+            <div class="gt-card">
+                <h3 class="gt-card-title">Need guidance?</h3>
+                <p class="gt-text-secondary">Share testing ideas, bug reports, or feedback with the team.</p>
+            </div>
+            <div class="gt-card">
+                <h3 class="gt-card-title">Policies</h3>
+                <div class="gt-flex gt-flex-col gt-gap-sm">
+                    <a href="/gad-talk/terms.html" class="gt-link">Terms of Service</a>
+                    <a href="/gad-talk/privacy.html" class="gt-link">Privacy Policy</a>
+                    <a href="/gad-talk/about.html" class="gt-link">About GadTalk</a>
+                </div>
+            </div>
+
+            <footer class="gt-sidebar-footer" data-auto-footer></footer>
+        </aside>
+    </div>
+
+    <script src="/gad-talk/js/api.js"></script>
+    <script src="/gad-talk/js/auth.js"></script>
+    <script src="/gad-talk/js/nav.js"></script>
+    <script src="/gad-talk/js/contact.js"></script>
+    <script src="/gad-talk/js/footer.js"></script>
+</body>
+
+</html>

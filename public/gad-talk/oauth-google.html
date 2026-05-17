@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/data/icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OAuth Google - GadTalk</title>
+    <link rel="stylesheet" href="/gad-talk/css/gad-talk.css">
+    <link href="/css/fontawesome/css/all.min.css" rel="stylesheet" />
+</head>
+
+<body class="gt-auth-layout">
+    <!-- Navbar -->
+    <nav class="gt-navbar">
+        <div class="gt-container-wide gt-flex gt-justify-between gt-items-center">
+            <a href="/" class="gt-link-muted">🦎 GAD</a>
+            <a href="/gad-talk/" class="gt-navbar-brand">
+                <span class="gt-logo"><i class="fa-solid fa-comments"></i></span>
+                <span>GadTalk</span>
+            </a>
+            <div class="gt-flex gt-gap-sm">
+                <a href="/gad-talk/login.html" data-testid="login-link" class="gt-btn gt-btn-secondary gt-btn-sm">
+                    Login
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="gt-auth-container">
+        <div class="gt-auth-card gt-card gt-card-glow">
+            <div class="gt-auth-header">
+                <a href="/gad-talk/" class="gt-navbar-brand">
+                    <span class="gt-logo"><i class="fa-solid fa-comments"></i></span>
+                    <span>GadTalk</span>
+                </a>
+                <p class="gt-auth-subtitle">Simulated Google OAuth login</p>
+            </div>
+
+            <!-- Error/Success messages -->
+            <div id="error-message" class="gt-alert gt-alert-error gt-hidden" data-testid="error-message"></div>
+            <div id="success-message" class="gt-alert gt-alert-success gt-hidden" data-testid="success-message"></div>
+
+            <div id="oauth-hint" class="gt-alert gt-alert-info gt-hidden" data-testid="oauth-hint"></div>
+
+            <button type="button" data-oauth-google data-testid="oauth-google-button" class="gt-btn gt-btn-primary gt-btn-block gt-btn-lg">
+                <i class="fa-brands fa-google"></i>
+                Continue with Google (simulated)
+            </button>
+
+            <div class="gt-text-center gt-mt-md">
+                <a href="/gad-talk/login.html" class="gt-link" data-testid="back-to-login-link">Back to login</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/gad-talk/js/api.js"></script>
+    <script src="/gad-talk/js/ui.js"></script>
+    <script src="/gad-talk/js/auth.js"></script>
+</body>
+
+</html>

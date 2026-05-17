@@ -18,6 +18,10 @@
             <a href="/gad-talk/signup.html" class="gt-btn gt-btn-primary gt-btn-sm" data-testid="nav-signup-button">Sign up</a>
           </div>
         `;
+      const navProfile = document.getElementById("nav-profile");
+      if (navProfile) {
+        navProfile.href = "/gad-talk/login.html";
+      }
       return;
     }
 
@@ -39,6 +43,11 @@
       </div>
     `;
 
+    const navProfile = document.getElementById("nav-profile");
+    if (navProfile) {
+      navProfile.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
+    }
+
     const dropdownBtn = navUserSection.querySelector("#nav-user-dropdown-btn");
     if (dropdownBtn && window.GadTalkUI) {
       dropdownBtn.addEventListener("click", (e) => {
@@ -51,7 +60,7 @@
               text: "Profile",
               icon: '<i class="fa-solid fa-user"></i>',
               onClick: () => {
-                window.location.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+                window.location.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
               },
             },
             {
@@ -83,7 +92,7 @@
       });
     } else if (dropdownBtn) {
       dropdownBtn.addEventListener("click", () => {
-        window.location.href = `/gad-talk/profile.html?user=${currentUser.username}`;
+        window.location.href = `/gad-talk/@${encodeURIComponent(currentUser.username)}`;
       });
     }
   }

@@ -16,6 +16,7 @@ const {
   getCurrentUser,
   refreshToken,
   requestPasswordReset,
+  resetPasswordWithToken,
 } = require("./services/auth.service");
 const gadTalkConfig = require("./gad-talk-config");
 
@@ -61,7 +62,7 @@ async function handleSignup(req, res) {
       token: result.token,
     });
   } catch (error) {
-    logError("GadTalk signup error:", error);
+    logError("[GadTalk] Signup error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Signup failed"));
   }
 }
@@ -103,7 +104,7 @@ async function handleLogin(req, res) {
       token: result.token,
     });
   } catch (error) {
-    logError("GadTalk login error:", error);
+    logError("[GadTalk] Login error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Login failed"));
   }
 }
@@ -128,7 +129,7 @@ async function handleLogout(req, res) {
       data: { message: result.message || "Logged out successfully" },
     });
   } catch (error) {
-    logError("GadTalk logout error:", error);
+    logError("[GadTalk] Logout error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Logout failed"));
   }
 }
@@ -161,7 +162,7 @@ async function handleDemoLogin(req, res) {
       token: result.token,
     });
   } catch (error) {
-    logError("Error in demo login:", error);
+    logError("[GadTalk] Demo login error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Demo login failed"));
   }
 }
@@ -202,7 +203,7 @@ async function handleGetMe(req, res) {
       user: result.user,
     });
   } catch (error) {
-    logError("GadTalk get me error:", error);
+    logError("[GadTalk] Get me error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to get current user"));
   }
 }
@@ -250,7 +251,7 @@ async function handleRefresh(req, res) {
       },
     });
   } catch (error) {
-    logError("GadTalk refresh error:", error);
+    logError("[GadTalk] Refresh error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to refresh token"));
   }
 }
@@ -273,10 +274,14 @@ async function handleForgotPassword(req, res) {
 
     res.status(HTTP_OK).send({
       ok: true,
-      data: { message: result.message },
+      data: {
+        message: result.message,
+        resetUrl: result.resetUrl,
+        expiresAt: result.expiresAt,
+      },
     });
   } catch (error) {
-    logError("GadTalk forgot password error:", error);
+    logError("[GadTalk] Forgot password error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to process request"));
   }
 }
@@ -287,17 +292,25 @@ async function handleForgotPassword(req, res) {
  */
 async function handleResetPassword(req, res) {
   try {
-    // eslint-disable-next-line no-unused-vars
     const { token, password } = req.body;
 
-    // For educational purposes, just return success
-    // In a real app, you would verify the reset token and update the password
+    const result = await resetPasswordWithToken(token, password);
+
+    if (!result.success) {
+      let statusCode = HTTP_BAD_REQUEST;
+      if (result.errorType === "validation") {
+        statusCode = HTTP_UNPROCESSABLE_ENTITY;
+      }
+      res.status(statusCode).send(formatErrorResponse(result.error));
+      return;
+    }
+
     res.status(HTTP_OK).send({
       ok: true,
-      data: { message: "Password reset successfully (simulated)" },
+      data: { message: result.message || "Password reset successfully" },
     });
   } catch (error) {
-    logError("GadTalk reset password error:", error);
+    logError("[GadTalk] Reset password error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "Failed to reset password"));
   }
 }
@@ -317,7 +330,7 @@ async function handleOAuthGoogle(req, res) {
       },
     });
   } catch (error) {
-    logError("GadTalk OAuth error:", error);
+    logError("[GadTalk] OAuth error:", error);
     res.status(HTTP_BAD_REQUEST).send(formatErrorResponse(error.message || "OAuth failed"));
   }
 }

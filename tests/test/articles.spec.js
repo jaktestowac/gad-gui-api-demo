@@ -327,6 +327,25 @@ describe("Endpoint /articles", () => {
       expect(response.status, JSON.stringify(response.body)).to.equal(401);
     });
 
+    it("PATCH /articles/:id - should ignore user_id value from body and preserve actual owner", async () => {
+      // Arrange:
+      const newArticleData = {
+        title: `${testArticleData.title}-patched`,
+        body: testArticleData.body,
+        date: testArticleData.date,
+        user_id: 0,
+      };
+
+      // Act:
+      const response = await request.patch(`${baseUrl}/${articleId}`).set(headers).send(newArticleData);
+
+      // Assert:
+      expect(response.status, JSON.stringify(response.body)).to.equal(200);
+      expect(response.body.user_id).to.equal(userId);
+      expect(response.body.title).to.equal(newArticleData.title);
+      expect(response.body.body).to.equal(newArticleData.body);
+    });
+
     ["title", "body", "date"].forEach((field) => {
       it(`PATCH /articles/:id - should not full update with invalid data - ${field}`, async () => {
         const testData = { ...testArticleData };
