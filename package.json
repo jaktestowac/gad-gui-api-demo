@@ -56,7 +56,7 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "compression": "^1.7.1",
-    "connect-pause": "^0.1.0",
+    "connect-pause": "^1.0.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.4",
     "ejs": "^3.1.8",
