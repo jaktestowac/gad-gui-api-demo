@@ -2501,6 +2501,7 @@ function registerNewUser(userData) {
     avatar: avatar || "/data/icons/user.png",
     joinDate: new Date().toISOString(),
     role: "student",
+    funds: 0,
   };
 
   dataProvider.addUser(newUser);
