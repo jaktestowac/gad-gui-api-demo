@@ -282,6 +282,32 @@ function replaceCourse(courseId, newCourse) {
   return true;
 }
 
+function deleteCourseData(courseId) {
+  const course = getCourseById(courseId);
+  if (!course) {
+    return { success: false, error: "Course not found" };
+  }
+
+  const deleted = { course: 1, lessons: getCourseLessons(courseId).length };
+  delete data.courseLessons[courseId];
+  data.courses = data.courses.filter((item) => !areIdsEqual(item.id, courseId));
+
+  Object.keys(dataProxy.getAllData()).forEach((collectionName) => {
+    const collection = data[collectionName];
+    if (!Array.isArray(collection) || collectionName === "courses") {
+      return;
+    }
+
+    const relatedItems = collection.filter((item) => areIdsEqual(item?.courseId, courseId));
+    if (relatedItems.length > 0) {
+      deleted[collectionName] = relatedItems.length;
+      data[collectionName] = collection.filter((item) => !areIdsEqual(item?.courseId, courseId));
+    }
+  });
+
+  return { success: true, deleted };
+}
+
 function addLessonProgress(progress) {
   data.lessonProgress.push(progress);
 }
@@ -337,6 +363,42 @@ function deactivateUserData(userId) {
   });
 
   return { success: true };
+}
+
+function deleteUserData(userId) {
+  const user = data.users.find((item) => areIdsEqual(item.id, userId));
+  if (!user) {
+    return { success: false, error: "User not found" };
+  }
+
+  if (user.role === "admin") {
+    return { success: false, error: "Admin user cannot be deleted" };
+  }
+
+  const deleted = { user: 1 };
+  data.users = data.users.filter((item) => !areIdsEqual(item.id, userId));
+
+  Object.keys(dataProxy.getAllData()).forEach((collectionName) => {
+    const collection = data[collectionName];
+    if (!Array.isArray(collection) || collectionName === "users") {
+      return;
+    }
+
+    const relatedItems = collection.filter((item) => areIdsEqual(item?.userId, userId));
+    if (relatedItems.length > 0) {
+      deleted[collectionName] = relatedItems.length;
+      data[collectionName] = collection.filter((item) => !areIdsEqual(item?.userId, userId));
+    }
+  });
+
+  const failedLoginAttempts = data.failedLoginAttempts || {};
+  if (Object.prototype.hasOwnProperty.call(failedLoginAttempts, user.email)) {
+    delete failedLoginAttempts[user.email];
+    deleted.failedLoginAttempts = 1;
+    data.failedLoginAttempts = failedLoginAttempts;
+  }
+
+  return { success: true, deleted };
 }
 
 function getUserRatings() {
@@ -562,7 +624,9 @@ module.exports = {
   updateLesson,
   updateUser,
   replaceUser,
+  deleteCourseData,
   deactivateUserData,
+  deleteUserData,
   getUserByUsernameOrEmail,
   getUserByUsernameAndPassword,
   restoreDefaultDatabase,

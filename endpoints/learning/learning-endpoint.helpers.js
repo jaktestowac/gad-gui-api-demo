@@ -353,8 +353,25 @@ function handleLearning(req, res) {
         const id = parseInt(urlParts[4]);
         switch (urlParts[3]) {
           case "users": {
-            const result = dataProvider.deactivateUserData(id);
+            if (urlParts[5] === "delete") {
+              if (Number.isNaN(id)) {
+                res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Invalid user ID"));
+                return;
+              }
 
+              const result = dataProvider.deleteUserData(id);
+
+              if (result.success === false) {
+                const status = result.error === "User not found" ? HTTP_NOT_FOUND : HTTP_UNPROCESSABLE_ENTITY;
+                res.status(status).send(formatErrorResponse(`Failed to delete account: ${result.error}`));
+                return;
+              }
+
+              res.status(HTTP_OK).send(result);
+              return;
+            }
+
+            const result = dataProvider.deactivateUserData(id);
             if (result.success === false) {
               res
                 .status(HTTP_UNPROCESSABLE_ENTITY)
@@ -365,10 +382,22 @@ function handleLearning(req, res) {
             res.status(HTTP_OK).send({ success: true });
             return;
           }
-          case "courses":
-            // Implement course deletion logic
-            res.status(HTTP_OK).send({ success: true });
+          case "courses": {
+            if (Number.isNaN(id)) {
+              res.status(HTTP_BAD_REQUEST).send(formatErrorResponse("Invalid course ID"));
+              return;
+            }
+
+            const result = dataProvider.deleteCourseData(id);
+            if (!result.success) {
+              res.status(HTTP_NOT_FOUND).send(formatErrorResponse(result.error));
+              return;
+            }
+
+            dataProvider.recalculateCourseData();
+            res.status(HTTP_OK).send(result);
             return;
+          }
         }
       }
     }
