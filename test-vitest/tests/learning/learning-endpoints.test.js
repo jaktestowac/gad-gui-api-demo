@@ -65,6 +65,68 @@ describe('Learning Endpoints (core flows)', () => {
       expect(response.body).toHaveProperty('id', 1)
       expect(response.body).toHaveProperty('title')
     })
+
+        it('DELETE /api/learning/admin/users/3/delete should remove the user and its dependencies', async () => {
+      await request(baseUrl).get('/api/learning/system/restore').expect(200)
+
+      const adminLogin = await request(baseUrl)
+        .post('/api/learning/auth/login')
+        .send({ username: 'admin', password: '1234' })
+        .expect(200)
+
+      const response = await request(baseUrl)
+        .delete('/api/learning/admin/users/3/delete')
+        .set('Authorization', `Bearer ${adminLogin.body.access_token}`)
+        .expect(200)
+
+      expect(response.body.success).toBe(true)
+      expect(response.body.deleted.user).toBe(1)
+
+      const data = await request(baseUrl).get('/api/learning/system/data').expect(200)
+      expect(data.body.users.some((user) => user.id === 3)).toBe(false)
+      expect(data.body.failedLoginAttempts['jane_smith@test.test.com']).toBeUndefined()
+
+      for (const collection of [
+        'userEnrollments',
+        'lessonProgress',
+        'userStats',
+        'certificates',
+        'userRatings',
+        'fundsHistory',
+        'quizAttempts',
+        'roleRequests',
+      ]) {
+        expect(data.body[collection].some((item) => item.userId === 3)).toBe(false)
+      }
+    })
+
+    it('DELETE /api/learning/admin/courses/1 should remove the course and its dependencies', async () => {
+      await request(baseUrl).get('/api/learning/system/restore').expect(200)
+
+      const adminLogin = await request(baseUrl)
+        .post('/api/learning/auth/login')
+        .send({ username: 'admin', password: '1234' })
+        .expect(200)
+
+      const response = await request(baseUrl)
+        .delete('/api/learning/admin/courses/1')
+        .set('Authorization', `Bearer ${adminLogin.body.access_token}`)
+        .expect(200)
+
+      expect(response.body.success).toBe(true)
+      expect(response.body.deleted.course).toBe(1)
+      expect(response.body.deleted.lessons).toBeGreaterThan(0)
+
+      const data = await request(baseUrl).get('/api/learning/system/data').expect(200)
+      expect(data.body.courses.some((course) => course.id === 1)).toBe(false)
+      expect(data.body.courseLessons['1']).toBeUndefined()
+      expect(data.body.userEnrollments.some((item) => item.courseId === 1)).toBe(false)
+      expect(data.body.lessonProgress.some((item) => item.courseId === 1)).toBe(false)
+      expect(data.body.certificates.some((item) => item.courseId === 1)).toBe(false)
+      expect(data.body.userRatings.some((item) => item.courseId === 1)).toBe(false)
+      expect(data.body.quizAttempts.some((item) => item.courseId === 1)).toBe(false)
+      expect(data.body.courses.some((course) => course.id === 2)).toBe(true)
+    })
   })
 
   describe('Enrollment and Progress', () => {
