@@ -1,112 +1,198 @@
-# Introduction
+<a id="introduction"></a>
 
-<p align="center">
-  <img src="./assets/gad-header.png" alt="GAD" width="300" height="300">
-</p>
+<div align="center">
 
-> [!TIP]
-> 💡 Choose your language:
+<img src="./assets/readme/hero.svg" alt="GAD — GUI · API · DEMO. The app built to be broken, on purpose." width="100%"/>
+
+<br/>
+
+<a href="https://github.com/jaktestowac/gad-gui-api-demo/releases"><img src="https://img.shields.io/badge/version-2.9.0-7b2ff7?style=for-the-badge&labelColor=0b0628" alt="version"/></a>
+<a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-20%20%7C%2022-00f5d4?style=for-the-badge&logo=nodedotjs&logoColor=00f5d4&labelColor=0b0628" alt="node"/></a>
+<a href="https://hub.docker.com/r/jaktestowac/gad"><img src="https://img.shields.io/badge/docker-jaktestowac%2Fgad-38bdf8?style=for-the-badge&logo=docker&logoColor=38bdf8&labelColor=0b0628" alt="docker"/></a>
+<a href="./LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-f72585?style=for-the-badge&labelColor=0b0628" alt="license"/></a>
+<a href="https://discord.gg/mUAqQ7FUaZ"><img src="https://img.shields.io/badge/discord-community-818cf8?style=for-the-badge&logo=discord&logoColor=818cf8&labelColor=0b0628" alt="discord"/></a>
+
+<br/>
+
+**🇬🇧 [English](./README.md)** &nbsp;·&nbsp; 🇵🇱 [Polski](./README.pl.md)
+
+<br/>
+
+### 🦎 A playground app for testers, packed with deliberate bugs 🐛
+
+<sub>GUI · REST API · WebSockets · Swagger · feature flags · bug flags · games · and some <b>serious design flaws</b>. Can you spot them? 😉</sub>
+
+</div>
+
+<img src="./assets/readme/divider.svg" width="100%" alt=""/>
+
+## ⚡ Quick start
+
+```bash
+git clone https://github.com/jaktestowac/gad-gui-api-demo.git
+cd gad-gui-api-demo
+npm i
+npm run start
+```
+
+> [!IMPORTANT]
+> Open **[http://localhost:3000](http://localhost:3000)** and start testing and automating **🦎 GAD**.
 >
-> - 🇬🇧 [English](./README.md)
-> - 🇵🇱 [Polski](./README.pl.md)
+> Prefer containers? &nbsp;`docker run -p 3000:3000 -d jaktestowac/gad`
 
-This application (called **🦎 GAD**) was prepared and developed **only for testing purposes**. It provides:
+<img src="./assets/readme/stats.svg" width="100%" alt="GAD in numbers"/>
 
-- A graphical user interface (GUI)
-- REST API
-- Integrated Swagger documentation
+## 🧭 Table of Contents
 
-The application includes features such as simple logic, statistics, charts, games, and various resources. It is intentionally designed with **deliberately bugs**🐛 and challenges to simulate real-world project complexities.
+<table>
+<tr>
+<td valign="top">
 
-**🦎 GAD** is ideal for learning test automation, refining QA techniques, and practicing with scenarios encountered in diverse, **real-world projects** with diverse real-world scenarios.
+**🚀 Explore**
 
-P.S. In addition, the application has some **serious design flaws** - I wonder if you will notice them?😉
+- [What is GAD?](#-what-is-gad)
+- [Module map](#module-map)
+- [Features](#-features)
 
-> [!IMPORTANT]  
-> Want to quickly test the application?
->
-> - clone or download the repository
-> - run `npm i`
-> - run `npm run start`
-> - open [http://localhost:3000](http://localhost:3000) in your browser
-> - enjoy testing and automating **🦎 GAD**!
+</td>
+<td valign="top">
 
-# Table of Contents
+**🛠️ Deploy**
 
-- [Features](#features)
-- [Deployment](#deployment)
-  - [Deploy on Local](#deploy-on-local)
-    - [First use](#first-use)
-    - [Update version](#update-version)
-      - [If You are using zip package](#if-you-are-using-zip-package)
-      - [If You are using cloned repository](#if-you-are-using-cloned-repository)
-      - [Update version if You have any changes (e.g. in database)](#update-version-if-you-have-any-changes-eg-in-database)
-    - [CLI options](#cli-options)
-      - [Running CLI options](#running-cli-options)
-  - [Deploy to Glitch](#deploy-to-glitch)
-  - [Deploy to Render](#deploy-to-render)
-  - [Deploy using Docker image](#deploy-using-docker-image)
-    - [Prerequisites:](#prerequisites)
-    - [Running](#running)
-- [Happy Automation!](#happy-automation)
-- [📞 Contact & Support](#-contact--support)
-- [Learning Resources](#learning-resources)
-  - [🇵🇱 Polish Resources](#-polish-resources)
-  - [🇬🇧 English Resources](#-english-resources)
+- [Local](#-deploy-on-local) *(recommended)*
+- [CLI options](#cli-options)
+- [Docker](#-deploy-using-docker-image)
+- [Render](#deploy-to-render)
+- [Glitch](#-deploy-to-glitch-obsolete) *(obsolete)*
 
-# Features
+</td>
+<td valign="top">
 
-Features of **🦎 GAD**:
+**💚 Community**
 
-- **GUI** (front-end)
-- **REST API** and **WebSockets** (back-end)
-- **Two Application Domains**:
-  - **Testers Blog**
-    - Resources - Articles, Users, Comments, and more
-    - Functionalities - Likes, Comments, Tags, and user engagement tools
-    - Insights - Statistics and charts (e.g., likes per user, comments per article)
-    - **Authentication** and **Authorization**
-  - **Practice pages**
-    - A collection of pages featuring automation challenges, such as:
-      - Iframes
-      - File uploads
-      - Drag-and-drop
-      - Dynamic elements
-      - Likes, labels, and surveys
-      - Banners, pop-ups, front-end, and back-end logic
-      - Games and more!
-- **Swagger Documentation** - API documentation for seamless integration
-- **Simple Database** - JSON-based database with REST API endpoints for clearing/restoring data
-- **Various Data Sets** - Small, medium, and large datasets to simulate real-world scenarios
-- **Dynamic Configuration** - Adjust application settings **easily from the UI**
-  - **Feature Flags** - Enable or disable features
-  - **Bug Flags** - Introduce or remove bugs for testing purposes
-- Different **data presentation** (charts, tables etc.)
-- **Challenging elements for test automation** (iframes, file uploads, drag&drop, 2 factor authentication, labels, surveys, banners, pop-ups, logic on front-end and back-end, dynamic elements, games etc.)
-- **Admins' Backoffice**: Includes advanced functionalities such as:
-  - Database reset
-  - SQL playground for experimenting and testing queries
+- [Happy Automation!](#-happy-automation)
+- [Contact & Support](#-contact--support)
+- [Learning Resources](#-learning-resources)
 
-# Deployment
+</td>
+</tr>
+</table>
 
-Instructions how to deploy presented service to various free hosting sites.
+<img src="./assets/readme/divider.svg" width="100%" alt=""/>
 
-- [Deploy to Local](#deploy-on-local) (recommended)
-- [Deploy to Glitch](#deploy-to-glitch)
-- [Deploy to Render](#deploy-to-render)
-- [Deploy using Docker image](#deploy-using-docker-image)
+## 🦎 What is GAD?
 
-## Deploy on **Local**
+**GAD** was prepared and developed **only for testing purposes**. It's a full-stack sandbox that combines a graphical user interface, a REST API and integrated Swagger documentation, and it is intentionally built with **deliberate bugs** 🐛 and challenges that simulate the complexity of real-world projects.
 
-Requirements:
+It's ideal for:
 
-- **node.js** installed in the system
-  - tested on node.js **v20** and **v22**
-- **git** installed in the system
+| 🎯 | Who / what |
+| :-: | :-- |
+| 🧑‍💻 | **Learning test automation** with Playwright, Cypress, Selenium, Postman, Supertest… |
+| 🔍 | **Refining QA techniques**: exploratory testing, bug hunting, API contract checks |
+| 🏗️ | **Building frameworks** against realistic, multi-domain applications |
+| 🎤 | **Workshops & interviews**: reproducible datasets and toggleable bugs |
 
-### First use
+<a id="module-map"></a>
 
-Steps:
+## 🗺️ Module map
+
+<div align="center">
+<img src="./assets/readme/modules.svg" width="100%" alt="GAD module map"/>
+</div>
+
+## ✨ Features
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 📝 Testers Blog
+The main domain of the app.
+- **Resources**: articles, users, comments, labels, bookmarks, flashposts
+- **Engagement**: likes, comments, tags
+- **Insights**: statistics and charts (likes per user, comments per article…)
+- **Authentication** and **authorization** with user roles
+
+</td>
+<td width="50%" valign="top">
+
+### 🧪 Practice Pages
+180+ pages of automation challenges:
+- iframes, file uploads, drag & drop
+- dynamic elements, banners, pop-ups
+- 2-factor authentication, captcha
+- labels, surveys, front-end and back-end logic
+- and many more tricky widgets
+
+</td>
+</tr>
+<tr>
+<td valign="top">
+
+### 🧩 Sub-applications
+Complete mini-products to test end to end:
+- 📚 **Book Shop**: catalogue, orders, payments, roles
+- 🎓 **Learning**: courses, lessons, progress, certificates
+- 💬 **GadTalk**: a social network with feeds and followers
+- 🐞 **Bug Hatch**: an issue tracker with analytics
+- 📈 **Projects**: dashboards and ROI calculators
+
+</td>
+<td valign="top">
+
+### 🎮 Games Arcade
+25+ games with scores and high scores:
+- Sudoku, Minesweeper, Maze, Hangman
+- Tic-tac-toe (hot-seat, bot, API-driven)
+- Quiz, Memorizer, Pong, Bug Eater, Regex Challenge…
+- Perfect for testing canvas, timing and state
+
+</td>
+</tr>
+<tr>
+<td valign="top">
+
+### ⚙️ Dynamic configuration
+Adjust the application **easily from the UI**:
+- 🚩 **Feature flags**: enable or disable features
+- 🐛 **Bug flags**: inject or remove bugs on demand
+- 🔒 **Read-only mode**, custom port, SSL
+- 🗃️ Multiple **datasets** (tiny → big, empty, interview)
+
+</td>
+<td valign="top">
+
+### 🛠️ Admin Backoffice & API
+- 💾 **Database reset / restore** via REST endpoints
+- 🧮 **SQL playground** for experimenting with queries
+- 📘 **Swagger documentation** for the whole API
+- ⚡ **REST + WebSockets** back-end
+- 🛰️ Standalone **microservices** (QR, hasher, URL shortener, GraphQL to-do…)
+
+</td>
+</tr>
+</table>
+
+<img src="./assets/readme/divider.svg" width="100%" alt=""/>
+
+## 🚀 Deployment
+
+| Method | Best for | Status |
+| :-- | :-- | :-: |
+| 💻 [Local](#-deploy-on-local) | Everyday learning and development | ✅ **Recommended** |
+| 🐋 [Docker](#-deploy-using-docker-image) | Local runs & CI/CD pipelines | ✅ |
+| ☁️ [Render](#deploy-to-render) | One-click cloud demo | ⚠️ Partial |
+| 🎏 [Glitch](#-deploy-to-glitch-obsolete) | – | ❌ Obsolete |
+
+### 💻 Deploy on Local
+
+**Requirements**
+
+- **node.js** installed (tested on **v20** and **v22**)
+- **git** installed
+
+#### First use
 
 1. Open the project root directory in cmd/terminal
 1. Clone the repository using `git clone ...`
@@ -118,38 +204,45 @@ Steps:
 
 The application will be available at `http://localhost:3000`
 
-### Update version
+#### Update version
 
-#### If You are using zip package
+<details>
+<summary><b>📦 If you are using the zip package</b></summary>
 
-Steps:
+<br/>
 
-1. Download zipped repository
-1. Unzip and replace Your local instance of GAD
-1. Run `npm i` in root directory
+1. Download the zipped repository
+1. Unzip and replace your local instance of GAD
+1. Run `npm i` in the root directory
    - to install new modules
 1. Run `npm run start`
    - to start GAD
 
-#### If You are using cloned repository
+</details>
 
-Steps:
+<details>
+<summary><b>🌿 If you are using a cloned repository</b></summary>
+
+<br/>
 
 1. Open the project root directory in cmd/terminal
-1. Pull latest changes using `git pull`
+1. Pull the latest changes using `git pull`
 1. Run `npm i`
    - to install new modules
 1. Run `npm run start`
    - to start GAD
 
-### Update version if You have any changes (e.g. in database)
+</details>
 
-One possibility is to reset all Your local changes and pull new version.Using this method **You will lose all Your local changes and data**!
+<details>
+<summary><b>♻️ If you have local changes (e.g. in the database)</b></summary>
 
-Steps:
+<br/>
+
+One possibility is to reset all your local changes and pull the new version. Using this method **you will lose all your local changes and data**!
 
 1. Open the project root directory in cmd/terminal
-1. Reset local changes and pull latest changes using:
+1. Reset local changes and pull the latest changes using:
    ```
    git reset --hard HEAD
    git pull
@@ -159,143 +252,145 @@ Steps:
 1. Run `npm run start`
    - to start GAD
 
-### CLI options
+</details>
+
+<a id="cli-options"></a>
+
+### ⌨️ CLI options
 
 > [!TIP]
 > CLI (Command Line Interface) is an interface that allows you to interact with the application using commands in the terminal.
 
-| Option       | Description                                                                                                                          |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
-| READ_ONLY=1  | Run in Read Only mode. This disables all POST, PUT, and PATCH methods, besides login.                                                |
-| PORT=3001    | Run on selected port. GAD runs on default port `3000`.                                                                               |
-| DB="db_name" | Use selected database file. GAD uses `db.json` as default database. Example (for PowerShell): `$env:DB="db-base-big"; npm run start` |
+| Option | Description |
+| :-- | :-- |
+| `READ_ONLY=1` | Run in Read Only mode. This disables all POST, PUT, and PATCH methods, besides login. |
+| `PORT=3001` | Run on selected port. GAD runs on default port `3000`. |
+| `DB="db_name"` | Use selected database file. GAD uses `db.json` as default database. Example (for PowerShell): `$env:DB="db-base-big"; npm run start` |
 
 > [!WARNING]
-> ⚠️ Warning: Any environment variables set in the terminal will be used by the application. If you want to run the application without any options, make sure to clear the environment variables.
+> ⚠️ Any environment variables set in the terminal will be used by the application. If you want to run the application without any options, make sure to clear the environment variables.
 
-#### Running CLI options
+**Running with CLI options**, e.g.:
 
-To run GAD with **CLI options**, use the following commands e.g.:
+<table>
+<tr><th>PowerShell</th><th>Bash</th><th>Windows Cmd</th></tr>
+<tr>
+<td>
 
-PowerShell:
-
-```PowerShell
+```powershell
 $env:PORT=3001; npm run start
 ```
 
-Bash:
+</td>
+<td>
 
-```Bash
+```bash
 PORT=3001 npm run start
 ```
 
-Windows Cmd:
+</td>
+<td>
 
-```
+```bat
 set PORT=3001 && npm run start
 ```
 
-## Deploy to **Render**
+</td>
+</tr>
+</table>
 
-Render - a popular Heroku-like PaaS with a free tier and a “Deploy to Render” button for one-click deploys.
+### 🐋 Deploy using Docker image
 
-- Create free account on: https://dashboard.render.com/register
-- After successful registration hit the button:
+This method can be used locally and in CI/CD services (GitHub Actions, GitLab CI etc.).
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/jaktestowac/gad-gui-api-demo)
+**Prerequisites:** the latest Docker installed.
 
-- name your app
-- hit `Apply`
-- wait a while and click link to project `GUI API Demo`
-- click link to open app (under project name and repository)
-- enjoy 750 free hours of service per month
+Get the latest image:
 
-When deploying the GAD application on Render, please be aware that the application may not function fully due to the limitations of the Render platform. However, we are making every effort to ensure the highest possible compatibility.
-
-## Deploy using Docker image
-
-This method can be used:
-
-- locally
-- in CI/CD services (GitHub Actions, GitLab CI etc.)
-
-### Prerequisites:
-
-On local environment:
-
-- latest Docker is installed
-
-### Running
-
-Just run following command to get latest image:
-
-```
+```bash
 docker run -p 3000:3000 -d jaktestowac/gad
 ```
 
-or specific version:
+or a specific version:
 
-```
+```bash
 docker run -p 3000:3000 -d jaktestowac/gad:2.5.5
 ```
 
-Application should be running under http://localhost:3000/
+The application should be running at http://localhost:3000/
 
-Images are available at:
-[🐋 https://hub.docker.com/r/jaktestowac/gad](https://hub.docker.com/r/jaktestowac/gad)
+Images are available at: [🐋 hub.docker.com/r/jaktestowac/gad](https://hub.docker.com/r/jaktestowac/gad)
 
-## Deploy to **Glitch**
+<a id="deploy-to-render"></a>
+
+### ☁️ Deploy to Render
+
+Render is a popular Heroku-like PaaS with a free tier and a "Deploy to Render" button for one-click deploys.
+
+1. Create a free account at https://dashboard.render.com/register
+1. After successful registration, hit the button:
+
+   [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/jaktestowac/gad-gui-api-demo)
+
+1. Name your app
+1. Hit `Apply`
+1. Wait a while and click the link to the project `GUI API Demo`
+1. Click the link to open the app (under the project name and repository)
+1. Enjoy 750 free hours of service per month
+
+> [!NOTE]
+> When deploying GAD on Render, the application may not function fully due to the limitations of the Render platform. However, we are making every effort to ensure the highest possible compatibility.
+
+### 🎏 Deploy to Glitch (obsolete)
 
 > [!WARNING]
-> **⚠️ Warning: This deployment method is obsolete and no longer recommended.**
+> **⚠️ This deployment method is obsolete and no longer recommended.**
 >
 > Glitch has changed their [platform policies](https://blog.glitch.com/post/changes-are-coming-to-glitch/) and this deployment method may no longer work as expected. Please use one of the other deployment methods instead.
 
+<details>
+<summary>Legacy instructions</summary>
+
+<br/>
+
 ~~No account needed - but your project will be deleted in 5 days.~~
 
-~~After clicking button below wait a minute or two to finish deployment.~~
+~~After clicking the button below, wait a minute or two to finish deployment.~~
 
 ~~[![Remix on Glitch](https://cdn.glitch.me/2703baf2-b643-4da7-ab91-7ee2a2d00b5b%2Fremix-button-v2.svg)](https://glitch.com/edit/#!/import/github/jaktestowac/gad-gui-api-demo)~~
 
-~~To see website:~~
+~~To see the website: go to the bottom buttons, click `🔎PREVIEW`, choose `👯Preview in a new window`.~~
 
-~~- go to bottom buttons~~
-~~- click `🔎PREVIEW`~~
-~~- choose `👯Preview in a new window`~~
+</details>
 
-~~When deploying the GAD application on Glitch, please be aware that the application may not function fully due to the limitations of the Glitch platform. However, we are making every effort to ensure the highest possible compatibility.~~
+<img src="./assets/readme/divider.svg" width="100%" alt=""/>
 
-## Happy Automation!
+## 🎉 Happy Automation!
 
-We hope you'll have a great time testing and automating this application!
+We hope you'll have a great time testing and automating this application! The challenges and features are designed to help you grow your testing skills while having fun.
 
-The challenges and features included are designed to help you grow your testing skills while having fun.
+If you have ideas for improvements or encounter any issues, please open an issue on our [GitHub repository](https://github.com/jaktestowac/gad-gui-api-demo/issues). Your feedback helps make GAD better for everyone!
 
-If you have any ideas for improvements or encounter any issues, please don't hesitate to open an issue on our [GitHub repository](https://github.com/jaktestowac/gad-gui-api-demo/issues).
-
-Your feedback helps make GAD better for everyone!
-
-📢 Looking forward to your contributions and happy testing!🦎
-
-[🔝 Back to top](#introduction)
+📢 Looking forward to your contributions and happy testing! 🦎
 
 ## 📞 Contact & Support
 
-Feel free to reach out to us:
+<div align="center">
 
-- 🌐 **Website**: [jaktestowac.pl](https://jaktestowac.pl)
-- 💼 **LinkedIn**: [jaktestowac.pl](https://www.linkedin.com/company/jaktestowac/)
-- 💬 **Discord**: [Polish Playwright Community](https://discord.gg/mUAqQ7FUaZ)
-- 📧 **Support**: Check our website for contact details
-- 🐛 **Issues**: [GitHub Issues](https://github.com/jaktestowac/gad-gui-api-demo/issues)
+<a href="https://jaktestowac.pl"><img src="https://img.shields.io/badge/website-jaktestowac.pl-00f5d4?style=for-the-badge&logo=googlechrome&logoColor=00f5d4&labelColor=0b0628" alt="Website"/></a>
+<a href="https://www.linkedin.com/company/jaktestowac/"><img src="https://img.shields.io/badge/linkedin-jaktestowac-38bdf8?style=for-the-badge&logo=linkedin&logoColor=38bdf8&labelColor=0b0628" alt="LinkedIn"/></a>
+<a href="https://discord.gg/mUAqQ7FUaZ"><img src="https://img.shields.io/badge/discord-Polish%20Playwright%20Community-818cf8?style=for-the-badge&logo=discord&logoColor=818cf8&labelColor=0b0628" alt="Discord"/></a>
+<a href="https://github.com/jaktestowac/gad-gui-api-demo/issues"><img src="https://img.shields.io/badge/issues-report%20a%20bug-f72585?style=for-the-badge&logo=github&logoColor=f72585&labelColor=0b0628" alt="Issues"/></a>
 
----
+</div>
 
-## Learning Resources
+- 📧 **Support**: check our website for contact details
+
+## 📚 Learning Resources
 
 We have gathered a collection of resources to help you learn and master Playwright, both in Polish and English. Whether you're a beginner or an advanced user, these resources will help you enhance your skills and knowledge.
 
-## 🇵🇱 Polish Resources
+### 🇵🇱 Polish Resources
 
 - [TypeScript for Testers - Express Introduction](https://jaktestowac.pl/tsx/) - Free (4h+) course on TypeScript for Testers
 - [JavaScript and TypeScript for Testers](https://jaktestowac.pl/js-ts/) - Comprehensive (13h+) course on JavaScript and TypeScript for testers, with practical examples and exercises
@@ -308,7 +403,7 @@ We have gathered a collection of resources to help you learn and master Playwrig
 - [Discord Community](https://discord.gg/mUAqQ7FUaZ) - First Polish Playwright community!
 - [Playwright Info](https://playwright.info/) - first and only Polish Playwright blog
 
-### AI_Testers
+#### 🤖 AI_Testers
 
 <div align="center">
 <a href="https://aitesters.pl">
@@ -316,18 +411,26 @@ We have gathered a collection of resources to help you learn and master Playwrig
 </a>
 </div>
 
-Gain an edge by combining AI knowledge with the most popular tools in the IT market.  
+Gain an edge by combining AI knowledge with the most popular tools in the IT market.
 We'll show you how to accelerate with AI and build a professional test automation framework. 😉
 
 - [AI_Testers](https://aitesters.pl) - Main page about AI_Testers Program
 - [AI_Testers LinkedIn](https://www.linkedin.com/company/aitesters) - Follow us on LinkedIn
 
-## 🇬🇧 English Resources
+### 🇬🇧 English Resources
 
 - [VS Code Extensions](https://marketplace.visualstudio.com/publishers/jaktestowac-pl) - Our free Playwright plugins
 
 _PS. For more resources and updates, follow us on our [website](https://jaktestowac.pl) and [GitHub](https://github.com/jaktestowac)._
 
----
+<img src="./assets/readme/divider.svg" width="100%" alt=""/>
 
-Powered by **[jaktestowac.pl](https://www.jaktestowac.pl) team!** 💚❤️
+<div align="center">
+
+<img src="./assets/gad-header.png" alt="GAD" width="120"/>
+
+**Powered by the [jaktestowac.pl](https://www.jaktestowac.pl) team** 💚❤️
+
+[🔝 Back to top](#introduction)
+
+</div>

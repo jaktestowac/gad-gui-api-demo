@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" role="img" aria-label="GAD - GUI API Demo. The app built to be broken, on purpose.">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#05040c"/>
+      <stop offset="0.62" stop-color="#0d0620"/>
+      <stop offset="1" stop-color="#1a0630"/>
+    </linearGradient>
+    <linearGradient id="horizon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ff2a6d" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#ff2a6d"/>
+      <stop offset="1" stop-color="#ff2a6d" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="floorFade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0.9"/>
+    </linearGradient>
+    <mask id="floorMask"><rect x="0" y="300" width="1200" height="120" fill="url(#floorFade)"/></mask>
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="1" fill="#000" fill-opacity="0.22"/>
+    </pattern>
+    <filter id="haze" x="-20%" y="-50%" width="140%" height="200%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+    <clipPath id="frame"><rect width="1200" height="420" rx="18"/></clipPath>
+    <clipPath id="slice1"><rect x="-100" y="118" width="1400" height="18"/></clipPath>
+    <clipPath id="slice2"><rect x="-100" y="168" width="1400" height="12"/></clipPath>
+    <style>
+      .title { font-family: 'Segoe UI Black','Arial Black','Segoe UI',Impact,sans-serif; font-weight: 900; font-size: 168px; letter-spacing: 6px; }
+      .mono { font-family: 'JetBrains Mono','Fira Code',Consolas,'Courier New',monospace; }
+      .blink { animation: blink 1s steps(1) infinite; }
+      @keyframes blink { 50% { opacity: 0; } }
+      .g1 { animation: g1 4s steps(1) infinite; }
+      .g2 { animation: g2 4s steps(1) infinite; }
+      @keyframes g1 { 0%,88%,100% { transform: translateX(0); opacity: 0; } 89% { transform: translateX(-14px); opacity: 1; } 91% { transform: translateX(10px); opacity: 1; } 93% { transform: translateX(-4px); opacity: 1; } }
+      @keyframes g2 { 0%,90%,100% { transform: translateX(0); opacity: 0; } 91% { transform: translateX(16px); opacity: 1; } 94% { transform: translateX(-8px); opacity: 1; } }
+      .floor { animation: move 2.2s linear infinite; }
+      @keyframes move { from { transform: translateY(0); } to { transform: translateY(24px); } }
+      .sweep { animation: sweep 5s linear infinite; }
+      @keyframes sweep { from { transform: translateY(-20px); } to { transform: translateY(440px); } }
+      .bar { animation: bar 1.6s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: bottom; }
+      .b2 { animation-delay: .2s; } .b3 { animation-delay: .4s; } .b4 { animation-delay: .6s; } .b5 { animation-delay: .8s; } .b6 { animation-delay: 1s; } .b7 { animation-delay: 1.2s; }
+      @keyframes bar { from { transform: scaleY(.3); } to { transform: scaleY(1); } }
+      .glitchword { animation: gw 3s steps(1) infinite; }
+      @keyframes gw { 0%,84%,100% { opacity: 1; } 85%,87% { opacity: .2; } }
+    </style>
+  </defs>
+
+  <g clip-path="url(#frame)">
+    <rect width="1200" height="420" fill="url(#bg)"/>
+
+    <!-- synthwave floor -->
+    <g mask="url(#floorMask)" stroke="#ff2a6d" stroke-opacity="0.55" stroke-width="1">
+      <g class="floor">
+        <path d="M0 276H1200M0 300H1200M0 316H1200M0 336H1200M0 360H1200M0 388H1200M0 420H1200"/>
+      </g>
+      <path d="M600 300L-600 420M600 300L-300 420M600 300L0 420M600 300L200 420M600 300L400 420M600 300L600 420M600 300L800 420M600 300L1000 420M600 300L1200 420M600 300L1500 420M600 300L1800 420"/>
+    </g>
+    <rect x="0" y="299" width="1200" height="2" fill="url(#horizon)"/>
+
+    <!-- soft backlight behind title -->
+    <ellipse cx="240" cy="160" rx="230" ry="70" fill="#00f0ff" opacity="0.16" filter="url(#haze)"/>
+
+    <!-- HUD top bar -->
+    <g class="mono" font-size="13" letter-spacing="2">
+      <rect x="0" y="0" width="1200" height="36" fill="#000" fill-opacity="0.55"/>
+      <rect x="0" y="35" width="1200" height="1" fill="#00f0ff" fill-opacity="0.5"/>
+      <text x="24" y="23" fill="#00f0ff">SYS://GAD</text>
+      <text x="140" y="23" fill="#6b6f8f">│</text>
+      <text x="162" y="23" fill="#e8e6ff">BUILD v2.9.0</text>
+      <text x="300" y="23" fill="#6b6f8f">│</text>
+      <text x="322" y="23" fill="#e8e6ff">STATUS:</text>
+      <circle class="blink" cx="414" cy="18" r="4" fill="#39ff14"/>
+      <text x="424" y="23" fill="#39ff14">ONLINE</text>
+      <text x="500" y="23" fill="#6b6f8f">│</text>
+      <text x="522" y="23" fill="#e8e6ff">BUGS:</text>
+      <text x="580" y="23" fill="#ff2a6d" font-weight="700">ARMED</text>
+      <text x="1176" y="23" fill="#fcee0a" text-anchor="end">JAKTESTOWAC.PL // TEST AUTOMATION PLAYGROUND</text>
+    </g>
+
+    <!-- TITLE: crisp core, chromatic aberration layers, glitch slices -->
+    <g transform="translate(48,0) skewX(-8)">
+      <text x="-5" y="214" class="title" fill="#ff2a6d">GAD</text>
+      <text x="5" y="214" class="title" fill="#00f0ff">GAD</text>
+      <text x="0" y="214" class="title" fill="#f5f3ff">GAD</text>
+      <g clip-path="url(#slice1)"><text x="0" y="214" class="title g1" fill="#00f0ff">GAD</text></g>
+      <g clip-path="url(#slice2)"><text x="0" y="214" class="title g2" fill="#fcee0a">GAD</text></g>
+    </g>
+
+    <!-- subtitle plate -->
+    <g>
+      <path d="M470 78H930L950 98V150H470Z" fill="#fcee0a"/>
+      <text x="492" y="130" class="mono" font-size="38" font-weight="800" fill="#05040c" letter-spacing="3">GUI·API·DEMO</text>
+      <text x="938" y="144" class="mono" font-size="10" fill="#05040c" text-anchor="end">_01</text>
+
+      <rect x="470" y="164" width="680" height="46" fill="#05040c" fill-opacity="0.88" stroke="#00f0ff" stroke-opacity="0.6"/>
+      <rect x="470" y="164" width="5" height="46" fill="#00f0ff"/>
+      <text x="492" y="195" class="mono" font-size="22" fill="#f5f3ff">The app built to be <tspan class="glitchword" fill="#ff2a6d" font-weight="800">BROKEN</tspan> — on purpose.</text>
+    </g>
+
+    <!-- terminal panel -->
+    <g class="mono">
+      <path d="M48 236H640V292L626 306H48Z" fill="#05040c" fill-opacity="0.92" stroke="#ff2a6d" stroke-opacity="0.7"/>
+      <text x="66" y="264" font-size="19" fill="#fcee0a">❯</text>
+      <text x="90" y="264" font-size="19" fill="#f5f3ff">npm i &amp;&amp; npm run start</text>
+      <rect class="blink" x="352" y="249" width="11" height="19" fill="#fcee0a"/>
+      <text x="66" y="292" font-size="16" fill="#8a8fb3">ONLINE ▸ <tspan fill="#00f0ff">http://localhost:3000</tspan></text>
+    </g>
+
+    <!-- bug threat meter -->
+    <g class="mono" transform="translate(670,236)">
+      <path d="M0 0H480V56L466 70H0Z" fill="#05040c" fill-opacity="0.92" stroke="#00f0ff" stroke-opacity="0.6"/>
+      <text x="16" y="26" font-size="12" fill="#8a8fb3" letter-spacing="2">BUG THREAT</text>
+      <text x="16" y="54" font-size="22" font-weight="800" fill="#ff2a6d">MAX</text>
+      <g transform="translate(110,11)">
+        <rect class="bar" x="0" y="0" width="14" height="48" fill="#00f0ff"/>
+        <rect class="bar b2" x="20" y="0" width="14" height="48" fill="#00f0ff"/>
+        <rect class="bar b3" x="40" y="0" width="14" height="48" fill="#7b5cff"/>
+        <rect class="bar b4" x="60" y="0" width="14" height="48" fill="#7b5cff"/>
+        <rect class="bar b5" x="80" y="0" width="14" height="48" fill="#ff2a6d"/>
+        <rect class="bar b6" x="100" y="0" width="14" height="48" fill="#ff2a6d"/>
+        <rect class="bar b7" x="120" y="0" width="14" height="48" fill="#fcee0a"/>
+      </g>
+      <text x="270" y="30" font-size="14" fill="#f5f3ff">40+ bug flags</text>
+      <text x="270" y="52" font-size="14" fill="#8a8fb3">toggle them from the UI</text>
+    </g>
+
+    <!-- module chips -->
+    <g class="mono" font-size="15" font-weight="700" letter-spacing="1.5">
+      <g transform="translate(48,336)">
+        <path d="M0 0H250L264 14V46H14L0 32Z" fill="#05040c" stroke="#00f0ff"/>
+        <text x="132" y="29" text-anchor="middle" fill="#00f0ff">REST + WS API</text>
+      </g>
+      <g transform="translate(330,336)">
+        <path d="M0 0H250L264 14V46H14L0 32Z" fill="#05040c" stroke="#fcee0a"/>
+        <text x="132" y="29" text-anchor="middle" fill="#fcee0a">330+ GUI PAGES</text>
+      </g>
+      <g transform="translate(612,336)">
+        <path d="M0 0H250L264 14V46H14L0 32Z" fill="#05040c" stroke="#ff2a6d"/>
+        <text x="132" y="29" text-anchor="middle" fill="#ff5c8d">180+ CHALLENGES</text>
+      </g>
+      <g transform="translate(894,336)">
+        <path d="M0 0H242L256 14V46H14L0 32Z" fill="#05040c" stroke="#39ff14"/>
+        <text x="128" y="29" text-anchor="middle" fill="#39ff14">25+ GAMES</text>
+      </g>
+    </g>
+
+    <!-- scanlines + sweep -->
+    <rect width="1200" height="420" fill="url(#scan)"/>
+    <rect class="sweep" x="0" y="0" width="1200" height="14" fill="#00f0ff" opacity="0.05"/>
+
+    <!-- bottom tri-colour bar -->
+    <rect x="0" y="414" width="400" height="6" fill="#00f0ff"/>
+    <rect x="400" y="414" width="400" height="6" fill="#ff2a6d"/>
+    <rect x="800" y="414" width="400" height="6" fill="#fcee0a"/>
+  </g>
+</svg>

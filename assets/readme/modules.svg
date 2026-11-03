@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-label="GAD module map: Testers Blog, Practice Pages, Games Arcade, Book Shop, Learning Platform, GadTalk, Bug Hatch, Projects and ROI, Stats, Backoffice, Swagger and External Microservices around the GAD core">
+  <defs>
+    <radialGradient id="bg" cx="0.5" cy="0.5" r="0.75">
+      <stop offset="0" stop-color="#140a3a"/>
+      <stop offset="1" stop-color="#04020d"/>
+    </radialGradient>
+    <radialGradient id="core" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#7b2ff7" stop-opacity="0.9"/>
+      <stop offset="0.6" stop-color="#3a0ca3" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#3a0ca3" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="neon" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#00f0ff"/>
+      <stop offset="0.5" stop-color="#7b2ff7"/>
+      <stop offset="1" stop-color="#ff2a6d"/>
+    </linearGradient>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#4c3d99" fill-opacity="0.45"/>
+    </pattern>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <style>
+      .t { font-family: 'Segoe UI','Inter','Helvetica Neue',Arial,sans-serif; font-weight: 700; font-size: 16px; fill: #f1efff; }
+      .s { font-family: 'JetBrains Mono','Fira Code',Consolas,monospace; font-size: 11px; fill: #b4b8d6; letter-spacing: .5px; }
+      .link { stroke-dasharray: 4 7; animation: flow 1.6s linear infinite; }
+      @keyframes flow { to { stroke-dashoffset: -22; } }
+      .ring { animation: spin 40s linear infinite; transform-origin: 600px 280px; }
+      .ring2 { animation: spin 60s linear infinite reverse; transform-origin: 600px 280px; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .pulse { animation: p 2.8s ease-in-out infinite; transform-origin: 600px 280px; }
+      @keyframes p { 0%,100% { transform: scale(1); opacity: .9; } 50% { transform: scale(1.08); opacity: 1; } }
+    </style>
+  </defs>
+
+  <rect width="1200" height="560" rx="8" fill="url(#bg)"/>
+  <rect width="1200" height="560" rx="8" fill="url(#dots)"/>
+
+  <!-- links from core to nodes -->
+  <g stroke="url(#neon)" stroke-width="1.6" fill="none" opacity="0.75">
+    <path class="link" d="M600 280L170 80"/>
+    <path class="link" d="M600 280L430 70"/>
+    <path class="link" d="M600 280L770 70"/>
+    <path class="link" d="M600 280L1030 80"/>
+    <path class="link" d="M600 280L120 280"/>
+    <path class="link" d="M600 280L1080 280"/>
+    <path class="link" d="M600 280L170 480"/>
+    <path class="link" d="M600 280L430 490"/>
+    <path class="link" d="M600 280L770 490"/>
+    <path class="link" d="M600 280L1030 480"/>
+    <path class="link" d="M600 280L330 190"/>
+    <path class="link" d="M600 280L870 370"/>
+  </g>
+
+  <!-- orbit rings -->
+  <g fill="none">
+    <circle class="ring" cx="600" cy="280" r="120" stroke="#00f0ff" stroke-opacity="0.35" stroke-dasharray="2 10"/>
+    <circle class="ring2" cx="600" cy="280" r="150" stroke="#ff2a6d" stroke-opacity="0.25" stroke-dasharray="30 14"/>
+  </g>
+
+  <!-- core -->
+  <circle cx="600" cy="280" r="110" fill="url(#core)"/>
+  <g class="pulse">
+    <circle cx="600" cy="280" r="70" fill="#0b0628" stroke="url(#neon)" stroke-width="3"/>
+    <text x="600" y="282" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-weight="900" font-size="40" fill="#f5f3ff" letter-spacing="4">GAD</text>
+    <text x="600" y="306" text-anchor="middle" class="s" fill="#c4b5fd">CORE · v2.9</text>
+  </g>
+
+  <!-- node template: rect 210x60 centered -->
+  <g>
+    <g transform="translate(65,50)"><rect width="210" height="60" rx="2" fill="#07060f" stroke="#00f0ff" stroke-opacity="0.7"/><text x="16" y="27" class="t">📝 Testers Blog</text><text x="16" y="46" class="s">articles · comments · likes</text></g>
+    <g transform="translate(325,40)"><rect width="210" height="60" rx="2" fill="#07060f" stroke="#38bdf8" stroke-opacity="0.7"/><text x="16" y="27" class="t">🧪 Practice Pages</text><text x="16" y="46" class="s">180+ automation challenges</text></g>
+    <g transform="translate(665,40)"><rect width="210" height="60" rx="2" fill="#07060f" stroke="#fcee0a" stroke-opacity="0.7"/><text x="16" y="27" class="t">🎮 Games Arcade</text><text x="16" y="46" class="s">sudoku · maze · tic-tac-toe</text></g>
+    <g transform="translate(925,50)"><rect width="210" height="60" rx="2" fill="#07060f" stroke="#a78bfa" stroke-opacity="0.7"/><text x="16" y="27" class="t">📚 Book Shop</text><text x="16" y="46" class="s">orders · roles · payments</text></g>
+
+    <g transform="translate(225,160)"><rect width="210" height="60" rx="2" fill="#07060f" stroke="#39ff14" stroke-opacity="0.7"/><text x="16" y="27" class="t">🎓 Learning</text><text x="16" y="46" class="s">courses · certificates</text></g>
+    <g transform="translate(15,250)"><rect width="210" height="60" rx="2" fill="#07060f" stroke="#ff2a6d" stroke-opacity="0.7"/><text x="16" y="27" class="t">💬 GadTalk</text><text x="16" y="46" class="s">social network · feeds</text></g>
+    <g transform="translate(975,250)"><rect width="210" height="60" rx="2" fill="#07060f" stroke="#fb7185" stroke-opacity="0.7"/><text x="16" y="27" class="t">🐞 Bug Hatch</text><text x="16" y="46" class="s">issue tracker · analytics</text></g>
+    <g transform="translate(765,340)"><rect width="210" height="60" rx="2" fill="#07060f" stroke="#22d3ee" stroke-opacity="0.7"/><text x="16" y="27" class="t">📈 Projects &amp; ROI</text><text x="16" y="46" class="s">dashboards · calculators</text></g>
+
+    <g transform="translate(65,450)"><rect width="210" height="60" rx="2" fill="#07060f" stroke="#818cf8" stroke-opacity="0.7"/><text x="16" y="27" class="t">📊 Stats &amp; Charts</text><text x="16" y="46" class="s">activity · histograms</text></g>
+    <g transform="translate(325,460)"><rect width="210" height="60" rx="2" fill="#07060f" stroke="#f472b6" stroke-opacity="0.7"/><text x="16" y="27" class="t">🛠️ Backoffice</text><text x="16" y="46" class="s">flags · DB reset · SQL</text></g>
+    <g transform="translate(665,460)"><rect width="210" height="60" rx="2" fill="#07060f" stroke="#4ade80" stroke-opacity="0.7"/><text x="16" y="27" class="t">📘 Swagger Docs</text><text x="16" y="46" class="s">REST · WebSockets</text></g>
+    <g transform="translate(925,450)"><rect width="210" height="60" rx="2" fill="#07060f" stroke="#fcee0a" stroke-opacity="0.7"/><text x="16" y="27" class="t">🛰️ Microservices</text><text x="16" y="46" class="s">QR · hasher · GraphQL · …</text></g>
+  </g>
+</svg>

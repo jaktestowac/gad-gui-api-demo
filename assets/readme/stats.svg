@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="190" viewBox="0 0 1200 190" role="img" aria-label="GAD in numbers: 330+ GUI pages, 180+ practice pages, 45+ API resource groups, 25+ games, 40+ bug flags, 10+ microservices">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07031a"/>
+      <stop offset="1" stop-color="#0a1626"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#00f0ff"/>
+      <stop offset="0.5" stop-color="#7b2ff7"/>
+      <stop offset="1" stop-color="#ff2a6d"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-60%" width="160%" height="220%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <style>
+      .n { font-family: 'Segoe UI','Inter','Helvetica Neue',Arial,sans-serif; font-weight: 800; font-size: 46px; }
+      .l { font-family: 'JetBrains Mono','Fira Code',Consolas,monospace; font-size: 13px; letter-spacing: 2px; fill: #c9cce6; }
+      .card { animation: rise .9s cubic-bezier(.2,.8,.2,1) both; }
+      .c2 { animation-delay: .1s; } .c3 { animation-delay: .2s; } .c4 { animation-delay: .3s; } .c5 { animation-delay: .4s; } .c6 { animation-delay: .5s; }
+      @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+      .bar { animation: fill 2.4s ease-out both; transform-box: fill-box; transform-origin: left; }
+      @keyframes fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    </style>
+  </defs>
+  <rect width="1200" height="190" rx="6" fill="url(#bg)"/>
+  <rect x="1" y="1" width="1198" height="188" rx="5" fill="none" stroke="url(#edge)" stroke-opacity="0.6"/>
+
+  <g transform="translate(20,20)"><g class="card c1">
+    <rect width="181" height="150" rx="3" fill="#00f0ff" fill-opacity="0.06" stroke="#00f0ff" stroke-opacity="0.35"/>
+    <text x="90" y="72" text-anchor="middle" class="n" fill="#00f0ff">330+</text>
+    <text x="90" y="104" text-anchor="middle" class="l">GUI PAGES</text>
+    <rect class="bar" x="24" y="124" width="133" height="4" rx="2" fill="#00f0ff"/></g>
+  </g>
+  <g transform="translate(216,20)"><g class="card c2">
+    <rect width="181" height="150" rx="3" fill="#38bdf8" fill-opacity="0.06" stroke="#38bdf8" stroke-opacity="0.35"/>
+    <text x="90" y="72" text-anchor="middle" class="n" fill="#38bdf8">180+</text>
+    <text x="90" y="104" text-anchor="middle" class="l">PRACTICE PAGES</text>
+    <rect class="bar" x="24" y="124" width="133" height="4" rx="2" fill="#38bdf8"/></g>
+  </g>
+  <g transform="translate(412,20)"><g class="card c3">
+    <rect width="181" height="150" rx="3" fill="#7b2ff7" fill-opacity="0.08" stroke="#9d84ff" stroke-opacity="0.4"/>
+    <text x="90" y="72" text-anchor="middle" class="n" fill="#9d84ff">45+</text>
+    <text x="90" y="104" text-anchor="middle" class="l">API RESOURCES</text>
+    <rect class="bar" x="24" y="124" width="133" height="4" rx="2" fill="#9d84ff"/></g>
+  </g>
+  <g transform="translate(608,20)"><g class="card c4">
+    <rect width="181" height="150" rx="3" fill="#fcee0a" fill-opacity="0.06" stroke="#fcee0a" stroke-opacity="0.35"/>
+    <text x="90" y="72" text-anchor="middle" class="n" fill="#fcee0a">25+</text>
+    <text x="90" y="104" text-anchor="middle" class="l">GAMES</text>
+    <rect class="bar" x="24" y="124" width="133" height="4" rx="2" fill="#fcee0a"/></g>
+  </g>
+  <g transform="translate(804,20)"><g class="card c5">
+    <rect width="181" height="150" rx="3" fill="#ff2a6d" fill-opacity="0.07" stroke="#ff2a6d" stroke-opacity="0.4"/>
+    <text x="90" y="72" text-anchor="middle" class="n" fill="#ff5c8d">40+</text>
+    <text x="90" y="104" text-anchor="middle" class="l">BUG FLAGS</text>
+    <rect class="bar" x="24" y="124" width="133" height="4" rx="2" fill="#ff5c8d"/></g>
+  </g>
+  <g transform="translate(1000,20)"><g class="card c6">
+    <rect width="180" height="150" rx="3" fill="#39ff14" fill-opacity="0.06" stroke="#39ff14" stroke-opacity="0.35"/>
+    <text x="90" y="72" text-anchor="middle" class="n" fill="#39ff14">10+</text>
+    <text x="90" y="104" text-anchor="middle" class="l">MICROSERVICES</text>
+    <rect class="bar" x="24" y="124" width="132" height="4" rx="2" fill="#39ff14"/></g>
+  </g>
+</svg>
