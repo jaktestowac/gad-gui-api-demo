@@ -6,11 +6,14 @@
 
 <br/>
 
-<a href="https://github.com/jaktestowac/gad-gui-api-demo/releases"><img src="https://img.shields.io/badge/version-2.9.0-7b2ff7?style=for-the-badge&labelColor=0b0628" alt="version"/></a>
-<a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-20%20%7C%2022-00f5d4?style=for-the-badge&logo=nodedotjs&logoColor=00f5d4&labelColor=0b0628" alt="node"/></a>
-<a href="https://hub.docker.com/r/jaktestowac/gad"><img src="https://img.shields.io/badge/docker-jaktestowac%2Fgad-38bdf8?style=for-the-badge&logo=docker&logoColor=38bdf8&labelColor=0b0628" alt="docker"/></a>
-<a href="./LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-f72585?style=for-the-badge&labelColor=0b0628" alt="license"/></a>
-<a href="https://discord.gg/mUAqQ7FUaZ"><img src="https://img.shields.io/badge/discord-community-818cf8?style=for-the-badge&logo=discord&logoColor=818cf8&labelColor=0b0628" alt="discord"/></a>
+<a href="https://github.com/jaktestowac/gad-gui-api-demo/stargazers"><img src="https://img.shields.io/github/stars/jaktestowac/gad-gui-api-demo?style=for-the-badge&logo=github&logoColor=white&label=stars&labelColor=1a1033&color=b45309" alt="GitHub stars"/></a>
+<a href="https://github.com/jaktestowac/gad-gui-api-demo/network/members"><img src="https://img.shields.io/github/forks/jaktestowac/gad-gui-api-demo?style=for-the-badge&logo=github&logoColor=white&label=forks&labelColor=1a1033&color=5b3fd6" alt="GitHub forks"/></a>
+<a href="https://hub.docker.com/r/jaktestowac/gad"><img src="https://img.shields.io/docker/pulls/jaktestowac/gad?style=for-the-badge&logo=docker&logoColor=white&label=docker%20pulls&labelColor=1a1033&color=0369a1" alt="Docker pulls"/></a>
+<a href="https://discord.gg/mUAqQ7FUaZ"><img src="https://img.shields.io/badge/discord-join%20us-5b3fd6?style=for-the-badge&logo=discord&logoColor=white&labelColor=1a1033" alt="Discord"/></a>
+
+<a href="https://github.com/jaktestowac/gad-gui-api-demo/releases"><img src="https://img.shields.io/github/package-json/v/jaktestowac/gad-gui-api-demo?style=for-the-badge&label=version&labelColor=1a1033&color=c2185b" alt="Version"/></a>
+<a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-20%20%7C%2022-1b7f3b?style=for-the-badge&logo=nodedotjs&logoColor=white&labelColor=1a1033" alt="Node.js 20 | 22"/></a>
+<a href="./LICENSE"><img src="https://img.shields.io/github/license/jaktestowac/gad-gui-api-demo?style=for-the-badge&labelColor=1a1033&color=c2185b" alt="License"/></a>
 
 <br/>
 
@@ -321,6 +324,10 @@ The application should be running at http://localhost:3000/
 
 Images are available at: [🐋 hub.docker.com/r/jaktestowac/gad](https://hub.docker.com/r/jaktestowac/gad)
 
+<a href="https://hub.docker.com/r/jaktestowac/gad/tags"><img src="https://img.shields.io/docker/v/jaktestowac/gad?sort=semver&style=for-the-badge&logo=docker&logoColor=white&label=latest%20image&labelColor=1a1033&color=0369a1" alt="Latest Docker image"/></a>
+<a href="https://hub.docker.com/r/jaktestowac/gad"><img src="https://img.shields.io/docker/pulls/jaktestowac/gad?style=for-the-badge&logo=docker&logoColor=white&label=pulls&labelColor=1a1033&color=0369a1" alt="Docker pulls"/></a>
+<a href="https://hub.docker.com/r/jaktestowac/gad/tags"><img src="https://img.shields.io/docker/image-size/jaktestowac/gad/latest?style=for-the-badge&logo=docker&logoColor=white&label=image%20size&labelColor=1a1033&color=5b3fd6" alt="Docker image size"/></a>
+
 <a id="deploy-to-render"></a>
 
 ### ☁️ Deploy to Render
@@ -377,10 +384,11 @@ If you have ideas for improvements or encounter any issues, please open an issue
 
 <div align="center">
 
-<a href="https://jaktestowac.pl"><img src="https://img.shields.io/badge/website-jaktestowac.pl-00f5d4?style=for-the-badge&logo=googlechrome&logoColor=00f5d4&labelColor=0b0628" alt="Website"/></a>
-<a href="https://www.linkedin.com/company/jaktestowac/"><img src="https://img.shields.io/badge/linkedin-jaktestowac-38bdf8?style=for-the-badge&logo=linkedin&logoColor=38bdf8&labelColor=0b0628" alt="LinkedIn"/></a>
-<a href="https://discord.gg/mUAqQ7FUaZ"><img src="https://img.shields.io/badge/discord-Polish%20Playwright%20Community-818cf8?style=for-the-badge&logo=discord&logoColor=818cf8&labelColor=0b0628" alt="Discord"/></a>
-<a href="https://github.com/jaktestowac/gad-gui-api-demo/issues"><img src="https://img.shields.io/badge/issues-report%20a%20bug-f72585?style=for-the-badge&logo=github&logoColor=f72585&labelColor=0b0628" alt="Issues"/></a>
+<a href="https://jaktestowac.pl"><img src="https://img.shields.io/badge/website-jaktestowac.pl-007c91?style=for-the-badge&logo=googlechrome&logoColor=white&labelColor=1a1033" alt="Website"/></a>
+<a href="https://www.linkedin.com/company/jaktestowac/"><img src="https://img.shields.io/badge/linkedin-jaktestowac-0369a1?style=for-the-badge&labelColor=1a1033" alt="LinkedIn"/></a>
+<a href="https://discord.gg/mUAqQ7FUaZ"><img src="https://img.shields.io/badge/discord-Polish%20Playwright%20Community-5b3fd6?style=for-the-badge&logo=discord&logoColor=white&labelColor=1a1033" alt="Discord"/></a>
+<a href="https://github.com/jaktestowac/gad-gui-api-demo/issues"><img src="https://img.shields.io/github/issues/jaktestowac/gad-gui-api-demo?style=for-the-badge&logo=github&logoColor=white&label=issues&labelColor=1a1033&color=c2185b" alt="Open issues"/></a>
+<a href="https://github.com/jaktestowac/gad-gui-api-demo/graphs/contributors"><img src="https://img.shields.io/github/contributors/jaktestowac/gad-gui-api-demo?style=for-the-badge&logo=github&logoColor=white&labelColor=1a1033&color=1b7f3b" alt="Contributors"/></a>
 
 </div>
 
